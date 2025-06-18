@@ -1,0 +1,28 @@
+{
+  "name": "sophon-sso",
+  "version": "0.1.0",
+  "description": "Web3 wallet connector with SSO features",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "web3",
+    "wallet",
+    "sso",
+    "authentication",
+    "passkey"
+  ],
+  "author": "Sophon",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0"
+  }
+}
