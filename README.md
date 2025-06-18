@@ -1,6 +1,6 @@
 # Sophon SSO - Proof of Concept
 
-A passkey-based authentication system for Web3 applications using WebAuthn and account abstraction.
+A basic passkey-based authentication system using some of the zksync-sso features.
 
 ## 🚀 Quick Start
 
@@ -104,27 +104,6 @@ npm run build:all       # Build all packages
 - Make sure you're running commands from the project root
 - Try deleting `node_modules` and `package-lock.json` then reinstall
 
-## 📝 Integration Guide
-
-To integrate Sophon SSO into your own app:
-
-1. **Install the connector:**
-
-   ```bash
-   npm install sophon-sso
-   ```
-
-2. **Open authentication popup:**
-
-   ```javascript
-   import { openSophonAuth } from "sophon-sso";
-
-   const authData = await openSophonAuth("http://localhost:3000");
-   console.log("User authenticated:", authData);
-   ```
-
-3. **Handle the authentication response** - see `packages/demo-app/src/` for complete examples
-
 ## 🤝 Contributing
 
 This is a proof of concept. Feel free to:
@@ -138,8 +117,4 @@ This is a proof of concept. Feel free to:
 - This is a **proof of concept** - not production ready
 - Passkeys are stored locally on your device
 - Auth server should use HTTPS in production
-- Smart contract wallet addresses are generated but not deployed to mainnet
-
----
-
-**Need help?** Open an issue or reach out to the team!
+- Smart contract wallet addresses are generated on Sophon Testnet
