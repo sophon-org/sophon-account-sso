@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { fetchAccount } from "zksync-sso/client";
-import { createPublicClient, http } from "viem";
+import { createPublicClient, http, toHex } from "viem";
 import { CHAIN_CONTRACTS, DEFAULT_CHAIN_ID } from "@/lib/constants";
 import { sophonTestnet } from "viem/chains";
 import { useAccountStore } from "./useAccountState";
@@ -64,7 +64,7 @@ export const useAccountLogin = () => {
       login({
         username: accountInfo.username,
         address: accountInfo.address,
-        passkey: credential.id as `0x${string}`,
+        passkey: toHex(accountInfo.passkeyPublicKey),
       });
 
       setSuccess(true);

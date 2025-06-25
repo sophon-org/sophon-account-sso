@@ -5,28 +5,10 @@ import { type Address, type Hash, toBytes } from "viem";
 type SmartAccount = {
   username: string;
   address: Address;
-  passkey: Hash;
+  passkey?: Hash | null; // Make passkey optional for EOA accounts
+  privateKey?: string | null; // Add privateKey support for EOA accounts
+  accountType?: "passkey" | "eoa"; // Track account type
 };
-
-type AccountChangeListener = (address: Address | null) => void;
-
-// Simple observable implementation
-class AccountObservable {
-  private listeners: AccountChangeListener[] = [];
-
-  subscribe(listener: AccountChangeListener) {
-    this.listeners.push(listener);
-    return () => {
-      this.listeners = this.listeners.filter((l) => l !== listener);
-    };
-  }
-
-  notify(address: Address | null) {
-    this.listeners.forEach((listener) => listener(address));
-  }
-}
-
-const accountObservable = new AccountObservable();
 
 export const useAccountStore = () => {
   const [accountData, setAccountData] = useState<SmartAccount | null>(null);
@@ -57,8 +39,6 @@ export const useAccountStore = () => {
       } else {
         localStorage.removeItem("sophon-account");
       }
-      // Notify observers of address change
-      accountObservable.notify(accountData?.address || null);
     } catch (error) {
       console.warn("Failed to save account to storage:", error);
     }
@@ -67,6 +47,8 @@ export const useAccountStore = () => {
   // Computed values
   const address = accountData?.address || null;
   const passkey = accountData?.passkey ? toBytes(accountData.passkey) : null;
+  const privateKey = accountData?.privateKey || null;
+  const accountType = accountData?.accountType || null;
   const username = accountData?.username || null;
   const isLoggedIn = !!address;
 
@@ -79,21 +61,14 @@ export const useAccountStore = () => {
     setAccountData(null);
   }, []);
 
-  // Observable subscription
-  const subscribeOnAccountChange = useCallback(
-    (listener: AccountChangeListener) => {
-      return accountObservable.subscribe(listener);
-    },
-    []
-  );
-
   return {
     address,
     passkey,
+    privateKey,
+    accountType,
     username,
     isLoggedIn,
     isInitialized,
-    subscribeOnAccountChange,
     login,
     logout,
   };

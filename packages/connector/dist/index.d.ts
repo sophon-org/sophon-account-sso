@@ -14,4 +14,8 @@ export interface SophonAuthOptions {
     popupHeight?: number;
 }
 export declare function connectSophon(options?: SophonAuthOptions): Promise<SophonAuthResult>;
+export declare const sophonSsoConnector: (options?: {
+    session?: any;
+    paymaster?: `0x${string}`;
+}) => import("@wagmi/core").CreateConnectorFn<import("zksync-sso/.").ProviderInterface, Record<string, unknown>, Record<string, unknown>>;
 export default connectSophon;

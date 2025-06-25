@@ -1,3 +1,5 @@
+import { zksyncSsoConnector } from "zksync-sso/connector";
+
 export interface SophonAuthResult {
   type: "SOPHON_ACCOUNT_CREATED" | "SOPHON_ACCOUNT_LOGIN";
   data: {
@@ -31,7 +33,7 @@ export function connectSophon(
     const popup = window.open(
       authUrl,
       "sophon-auth",
-      `width=${popupWidth},height=${popupHeight},left=${left},top=${top},scrollbars=yes,resizable=yes`
+      `width=${popupWidth},height=${popupHeight},left=${left},top=${top},scrollbars=no,resizable=no,status=no,toolbar=no,menubar=no,location=no,titlebar=no`
     );
 
     if (!popup) {
@@ -68,5 +70,34 @@ export function connectSophon(
     }, 1000);
   });
 }
+
+export const sophonSsoConnector = (options?: {
+  session?: any; // TODO: type this properly later
+  paymaster?: `0x${string}`;
+}) => {
+  return zksyncSsoConnector({
+    authServerUrl: "http://localhost:3000", // auth server
+    metadata: {
+      name: "Sophon SSO",
+      icon: "/sophon-icon.png",
+    },
+    paymasterHandler: async () => ({
+      paymaster:
+        options?.paymaster || "0x98546B226dbbA8230cf620635a1e4ab01F6A99B2",
+      paymasterInput: "0x",
+    }),
+    // Remove session config to test auth-server mode
+    // session: options?.session || {
+    //   expiresAt: BigInt(Math.floor(Date.now() / 1000) + 60 * 60 * 24), // 24 hours
+    //   feeLimit: {
+    //     limitType: "Lifetime" as const, // Need to check proper enum value
+    //     limit: parseEther("0.01"), // 0.01 ETH for gas fees
+    //   },
+    //   callPolicies: [], // Contract calls allowed
+    //   transferPolicies: [], // Token transfers allowed
+    //   // Message signing is implicitly allowed in sessions
+    // },
+  });
+};
 
 export default connectSophon;
