@@ -43,12 +43,6 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
       if (event.data && event.data.id && event.data.content) {
         const method = event.data.content?.action?.method;
 
-        console.log("🔍 Received RPC message:", {
-          method,
-          params: event.data.content.action?.params,
-          fullData: event.data,
-        });
-
         if (method === "eth_requestAccounts") {
           const params = event.data.content.action?.params as
             | { sessionPreferences?: unknown }
@@ -62,9 +56,7 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
           }
           setSigningRequest(null);
         } else if (method === "eth_signTypedData_v4") {
-          console.log("🎯 Processing eth_signTypedData_v4 request");
           const params = event.data.content.action?.params;
-          console.log("🔍 SignTypedData params:", params);
 
           if (params && params.length >= 2) {
             const address = params[0];
@@ -72,14 +64,6 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
 
             try {
               const typedData = JSON.parse(typedDataJson);
-
-              console.log("✅ Setting signing request:", {
-                address,
-                domain: typedData.domain,
-                types: typedData.types,
-                primaryType: typedData.primaryType,
-                message: typedData.message,
-              });
 
               setSigningRequest({
                 domain: typedData.domain,
@@ -91,18 +75,13 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
 
               setSessionPreferences(null);
             } catch (parseError) {
-              console.error("❌ Failed to parse typed data JSON:", parseError);
+              console.error("Failed to parse typed data JSON:", parseError);
             }
           } else {
-            console.error(
-              "❌ Invalid params for eth_signTypedData_v4:",
-              params
-            );
+            console.error("Invalid params for eth_signTypedData_v4:", params);
           }
         } else if (method === "eth_sendTransaction") {
-          console.log("🔄 Sending transaction...");
           const params = event.data.content.action?.params;
-          console.log("🔍 Transaction params:", params);
 
           if (params && params.length >= 1) {
             const txData = params[0];

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { FormEventHandler, useEffect, useState } from "react";
 import { useAccountCreate } from "@/hooks/useAccountCreate";
 import { useAccountLogin } from "@/hooks/useAccountLogin";
 import { useAccountStore } from "@/hooks/useAccountState";
@@ -10,9 +10,35 @@ import SigningRequestView from "@/components/SigningRequestView";
 import TransactionRequestView from "@/components/TransactionRequestView";
 import CreateSuccessView from "@/components/CreateSuccessView";
 import LoginSuccessView from "@/components/LoginSuccessView";
+import {
+  useConnectWithOtp,
+  useDynamicContext,
+} from "@dynamic-labs/sdk-react-core";
 
 export default function AuthPage() {
   const [accountType, setAccountType] = useState<"passkey" | "eoa">("eoa");
+  const { user, primaryWallet } = useDynamicContext();
+  const { connectWithEmail, verifyOneTimePassword } = useConnectWithOtp();
+
+  const onSubmitEmailHandler: FormEventHandler<HTMLFormElement> = async (
+    event
+  ) => {
+    event.preventDefault();
+
+    const email = event.currentTarget.email.value;
+
+    await connectWithEmail(email);
+  };
+
+  const onSubmitOtpHandler: FormEventHandler<HTMLFormElement> = async (
+    event
+  ) => {
+    event.preventDefault();
+
+    const otp = event.currentTarget.otp.value;
+
+    await verifyOneTimePassword(otp);
+  };
 
   const {
     incomingRequest,
@@ -50,11 +76,38 @@ export default function AuthPage() {
     accountData,
   } = useAccountLogin();
 
-  if (
-    signingRequest &&
-    (accountStore.isLoggedIn || accountStore.passkey) &&
-    incomingRequest
-  ) {
+  useEffect(() => {
+    if (
+      user &&
+      primaryWallet &&
+      incomingRequest &&
+      !signingRequest &&
+      !transactionRequest
+    ) {
+      console.log("🔥 Dynamic user authenticated, sending success response!");
+
+      handleAuthSuccessResponse(
+        { address: primaryWallet.address },
+        incomingRequest,
+        sessionPreferences
+      );
+
+      // Close the popup after a short delay
+      /* setTimeout(() => {
+        window.close();
+      }, 500); */
+    }
+  }, [
+    user,
+    primaryWallet,
+    incomingRequest,
+    signingRequest,
+    transactionRequest,
+    sessionPreferences,
+    handleAuthSuccessResponse,
+  ]);
+
+  if (signingRequest && incomingRequest) {
     return (
       <SigningRequestView
         signingRequest={signingRequest}
@@ -64,7 +117,7 @@ export default function AuthPage() {
     );
   }
 
-  if (transactionRequest && accountStore.isLoggedIn && incomingRequest) {
+  if (transactionRequest && incomingRequest) {
     return (
       <TransactionRequestView
         transactionRequest={transactionRequest}
@@ -145,7 +198,6 @@ export default function AuthPage() {
               🔐 Passkey
             </button>
           </div>
-
           {accountType === "passkey" ? (
             <>
               <button
@@ -197,6 +249,55 @@ export default function AuthPage() {
               )}
             </div>
           )}
+          <div className="space-y-4">
+            <form key="email-form" onSubmit={onSubmitEmailHandler}>
+              <input
+                className="w-full bg-white border border-gray-300 rounded-md p-2 placeholder:text-gray-400 mb-2"
+                type="email"
+                name="email"
+                placeholder="Email"
+              />
+              <button
+                className="w-full py-3 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                type="submit"
+              >
+                Submit
+              </button>
+            </form>
+
+            <form key="otp-form" onSubmit={onSubmitOtpHandler}>
+              <input
+                className="w-full bg-white border border-gray-300 rounded-md p-2 placeholder:text-gray-400 mb-2"
+                type="text"
+                name="otp"
+                placeholder="OTP"
+              />
+              <button
+                className="w-full py-3 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                type="submit"
+              >
+                Submit
+              </button>
+            </form>
+
+            {!!primaryWallet && (
+              <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded">
+                <p className="text-sm font-medium text-blue-800">
+                  🔗 Dynamic Wallet Connected
+                </p>
+                <p className="text-xs text-blue-600 mt-1">
+                  <strong>Address:</strong> {primaryWallet.address}
+                </p>
+                <p className="text-xs text-blue-600">
+                  <strong>Connector:</strong>{" "}
+                  {primaryWallet.connector?.name || "Unknown"}
+                </p>
+                <p className="text-xs text-blue-600">
+                  <strong>Chain:</strong> {primaryWallet.chain || "Unknown"}
+                </p>
+              </div>
+            )}
+          </div>
         </div>
 
         {(createError || loginError) && (

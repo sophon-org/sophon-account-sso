@@ -7,6 +7,9 @@ import type { TransactionRequestProps } from "@/types/auth";
 import { createZksyncEcdsaClient } from "zksync-sso/client/ecdsa";
 import { toAccount } from "viem/accounts";
 import { useAccount, useWalletClient } from "wagmi";
+import { isEthereumWallet } from "@dynamic-labs/ethereum";
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
+import { isZKsyncConnector } from "@dynamic-labs/ethereum-aa-zksync";
 
 export default function TransactionRequestView({
   transactionRequest,
@@ -15,6 +18,7 @@ export default function TransactionRequestView({
 }: TransactionRequestProps) {
   const { address: connectedAddress } = useAccount();
   const { data: walletClient } = useWalletClient();
+  const { primaryWallet } = useDynamicContext();
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow">
@@ -64,16 +68,36 @@ export default function TransactionRequestView({
             <button
               onClick={async () => {
                 console.log(transactionRequest);
-
+                const availableAddress =
+                  accountStore.address || primaryWallet?.address;
+                if (!availableAddress) {
+                  throw new Error("No account address available");
+                }
                 try {
-                  if (!accountStore.address) {
-                    throw new Error("No account address available");
-                  }
-
                   const isEOAAccount = !accountStore.passkey;
                   let txHash;
-                  if (isEOAAccount) {
-                    console.log("🔄 Sending transaction with EOA...");
+                  if (primaryWallet && isEthereumWallet(primaryWallet)) {
+                    console.log("Sending transaction with Ethereum wallet...");
+                    try {
+                      if (isZKsyncConnector(primaryWallet.connector)) {
+                        const ecdsaClient =
+                          primaryWallet.connector.getAccountAbstractionProvider();
+
+                        txHash = await ecdsaClient.sendTransaction({
+                          to: transactionRequest.to as `0x${string}`,
+                          value: BigInt(transactionRequest.value || "0"),
+                          data:
+                            (transactionRequest.data as `0x${string}`) || "0x",
+                        });
+
+                        console.log("Transaction sent:", txHash);
+                      }
+                    } catch (error) {
+                      console.error("Transaction error:", error);
+                      throw error;
+                    }
+                  } else if (isEOAAccount) {
+                    console.log("Sending transaction with EOA...");
                     const localAccount = toAccount({
                       address: connectedAddress as `0x${string}`,
                       async signMessage({ message }) {
@@ -122,9 +146,9 @@ export default function TransactionRequestView({
                         data:
                           (transactionRequest.data as `0x${string}`) || "0x",
                       });
-                      console.log("⛽ Gas estimate:", gasEstimate.toString());
+                      console.log("Gas estimate:", gasEstimate.toString());
                     } catch (gasError) {
-                      console.error("❌ Gas estimation failed:", gasError);
+                      console.error("Gas estimation failed:", gasError);
                     }
 
                     txHash = await client.sendTransaction({
@@ -133,7 +157,7 @@ export default function TransactionRequestView({
                       data: (transactionRequest.data as `0x${string}`) || "0x",
                     });
                   } else {
-                    console.log("🔄 Sending transaction with Passkey...");
+                    console.log("Sending transaction with Passkey...");
                     if (!accountStore.passkey) {
                       throw new Error("No passkey data available");
                     }
@@ -164,9 +188,9 @@ export default function TransactionRequestView({
                         data:
                           (transactionRequest.data as `0x${string}`) || "0x",
                       });
-                      console.log("⛽ Gas estimate:", gasEstimate.toString());
+                      console.log("Gas estimate:", gasEstimate.toString());
                     } catch (gasError) {
-                      console.error("❌ Gas estimation failed:", gasError);
+                      console.error("Gas estimation failed:", gasError);
                     }
 
                     txHash = await client.sendTransaction({
@@ -180,7 +204,7 @@ export default function TransactionRequestView({
                     });
                   }
 
-                  console.log("✅ Transaction sent:", txHash);
+                  console.log("Transaction sent:", txHash);
 
                   if (window.opener && incomingRequest) {
                     const txResponse = {
@@ -195,7 +219,7 @@ export default function TransactionRequestView({
                     window.close();
                   }
                 } catch (error) {
-                  console.error("❌ Transaction failed:", error);
+                  console.error("Transaction failed:", error);
                   alert("Transaction failed: " + (error as Error).message);
                 }
               }}
@@ -206,7 +230,7 @@ export default function TransactionRequestView({
 
             <button
               onClick={() => {
-                console.log("❌ User cancelled transaction");
+                console.log("User cancelled transaction");
                 window.close();
               }}
               className="w-full px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"

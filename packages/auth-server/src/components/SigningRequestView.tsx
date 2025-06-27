@@ -7,6 +7,9 @@ import { CHAIN_CONTRACTS, DEFAULT_CHAIN_ID } from "@/lib/constants";
 import type { SigningRequestProps } from "@/types/auth";
 import { toAccount } from "viem/accounts";
 import { verifyEIP1271Signature } from "@/lib/utils";
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
+import { isEthereumWallet } from "@dynamic-labs/ethereum";
+import { isZKsyncConnector } from "@dynamic-labs/ethereum-aa-zksync";
 
 export default function SigningRequestView({
   signingRequest,
@@ -15,6 +18,7 @@ export default function SigningRequestView({
 }: SigningRequestProps) {
   const { address: connectedAddress } = useAccount();
   const { data: walletClient } = useWalletClient();
+  const { primaryWallet } = useDynamicContext();
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow">
@@ -51,7 +55,9 @@ export default function SigningRequestView({
             <button
               onClick={async () => {
                 try {
-                  if (!accountStore.address) {
+                  const availableAddress =
+                    accountStore.address || primaryWallet?.address;
+                  if (!availableAddress) {
                     throw new Error("No account address available");
                   }
 
@@ -59,7 +65,31 @@ export default function SigningRequestView({
 
                   let signature;
 
-                  if (isEOAAccount) {
+                  if (primaryWallet && isEthereumWallet(primaryWallet)) {
+                    try {
+                      if (isZKsyncConnector(primaryWallet.connector)) {
+                        const ecdsaClient =
+                          primaryWallet.connector.getAccountAbstractionProvider();
+
+                        signature = await ecdsaClient.signTypedData({
+                          domain: signingRequest.domain,
+                          types: signingRequest.types,
+                          primaryType: signingRequest.primaryType,
+                          message: signingRequest.message,
+                        });
+
+                        /* const client = await primaryWallet.getWalletClient();
+                        const signature = await client.signMessage({
+                          message: "Hello World",
+                        });
+
+                        console.log(signature); */
+                      }
+                    } catch (error) {
+                      console.error("Signing error:", error);
+                      throw error;
+                    }
+                  } else if (isEOAAccount) {
                     if (!connectedAddress) {
                       throw new Error("Wallet not connected for EOA signing!");
                     }
@@ -174,7 +204,7 @@ export default function SigningRequestView({
                     //window.close();
                   }
                 } catch (error) {
-                  console.error("❌ Signing failed:", error);
+                  console.error("Signing failed:", error);
                   alert("Signing failed: " + (error as Error).message);
                 }
               }}
@@ -185,7 +215,7 @@ export default function SigningRequestView({
 
             <button
               onClick={() => {
-                console.log("❌ User cancelled signing");
+                console.log("User cancelled signing");
                 window.close();
               }}
               className="w-full px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"

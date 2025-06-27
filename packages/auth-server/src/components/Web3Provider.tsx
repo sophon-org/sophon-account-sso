@@ -5,6 +5,9 @@ import { createConfig, http } from "wagmi";
 import { metaMask } from "wagmi/connectors";
 import { sophonTestnet } from "viem/chains";
 import { ReactNode } from "react";
+import { DynamicContextProvider } from "@dynamic-labs/sdk-react-core";
+import { EthereumWalletConnectors } from "@dynamic-labs/ethereum";
+import { ZKsyncSmartWalletConnectors } from "@dynamic-labs/ethereum-aa-zksync";
 
 // Wagmi config with MetaMask connector
 const wagmiConfig = createConfig({
@@ -26,8 +29,20 @@ const queryClient = new QueryClient({
 
 export const Web3Provider = ({ children }: { children: ReactNode }) => {
   return (
-    <WagmiProvider config={wagmiConfig}>
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-    </WagmiProvider>
+    <DynamicContextProvider
+      settings={{
+        environmentId: "d5d382fc-4ebe-4962-8699-d6598426b722",
+        walletConnectors: [
+          EthereumWalletConnectors,
+          ZKsyncSmartWalletConnectors,
+        ],
+      }}
+    >
+      <WagmiProvider config={wagmiConfig}>
+        <QueryClientProvider client={queryClient}>
+          {children}
+        </QueryClientProvider>
+      </WagmiProvider>
+    </DynamicContextProvider>
   );
 };
