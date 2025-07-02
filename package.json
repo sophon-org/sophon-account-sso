@@ -1,15 +1,21 @@
 {
-  "name": "sophon-sso-workspace",
-  "version": "1.0.0",
+  "name": "@sophon-labs/sso",
+  "version": "0.0.1",
   "private": true,
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "apps/*",
+    "examples/*"
   ],
+  "packageManager": "yarn@1.22.22",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
     "build:connector": "npm run build --workspace=packages/connector",
-    "dev:auth": "npm run dev --workspace=packages/auth-server",
-    "dev:demo": "npm run dev --workspace=packages/demo-app",
-    "build:auth": "npm run build --workspace=packages/auth-server",
+    "dev:auth": "npm run dev --workspace=apps/auth-server",
+    "dev:demo": "npm run dev --workspace=examples/sandbox-app",
+    "build:auth": "npm run build --workspace=apps/auth-server",
     "dev:connector": "npm run dev --workspace=packages/connector",
     "build:all": "npm run build --workspaces",
     "install:all": "npm install"

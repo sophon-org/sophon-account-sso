@@ -75,7 +75,7 @@ export const sophonSsoConnector = (options?: {
   session?: any; // TODO: type this properly later
   paymaster?: `0x${string}`;
 }) => {
-  return zksyncSsoConnector({
+  const connector = zksyncSsoConnector({
     authServerUrl: "http://localhost:3000", // auth server
     metadata: {
       name: "Sophon SSO",
@@ -98,6 +98,8 @@ export const sophonSsoConnector = (options?: {
     //   // Message signing is implicitly allowed in sessions
     // },
   });
+
+  return connector;
 };
 
 export default connectSophon;

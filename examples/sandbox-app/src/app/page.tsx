@@ -1,5 +1,5 @@
 "use client";
-import { connectSophon, SophonAuthResult } from "sophon-sso";
+import { connectSophon, SophonAuthResult } from "@sophon-labs/sso-connector";
 import { sophonTestnet } from "viem/chains";
 import { useState, useEffect } from "react";
 import {

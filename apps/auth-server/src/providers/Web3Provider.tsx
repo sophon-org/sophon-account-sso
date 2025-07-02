@@ -7,7 +7,6 @@ import { sophonTestnet } from "viem/chains";
 import { ReactNode } from "react";
 import { DynamicContextProvider } from "@dynamic-labs/sdk-react-core";
 import { EthereumWalletConnectors } from "@dynamic-labs/ethereum";
-import { ZKsyncSmartWalletConnectors } from "@dynamic-labs/ethereum-aa-zksync";
 
 // Wagmi config with MetaMask connector
 const wagmiConfig = createConfig({
@@ -31,11 +30,8 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
   return (
     <DynamicContextProvider
       settings={{
-        environmentId: "d5d382fc-4ebe-4962-8699-d6598426b722",
-        walletConnectors: [
-          EthereumWalletConnectors,
-          ZKsyncSmartWalletConnectors,
-        ],
+        environmentId: process.env.DYNAMIC_PROVIDER_ID!,
+        walletConnectors: [EthereumWalletConnectors],
       }}
     >
       <WagmiProvider config={wagmiConfig}>
