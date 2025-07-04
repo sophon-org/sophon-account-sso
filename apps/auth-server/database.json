@@ -1,0 +1,104 @@
+[
+  {
+    "address": "0x1234567890123456789012345678901234567890",
+    "owners": [
+      "0x1234567890123456789012345678901234567890"
+    ]
+  },
+  {
+    "address": "0x5680BF91540Aeb0072FCC41ef2f9f1FB6b24BDdf",
+    "owners": [
+      "0xcddf73a920bd213268641f6a10c9c0d760d45ea7"
+    ]
+  },
+  {
+    "address": "0xb75C4040c642C29D25155Ff7726C63cB0BD5a25d",
+    "owners": [
+      "0x0796500494ebea69e51235255433a5f5196ba685"
+    ]
+  },
+  {
+    "address": "0xFA05d3E04D20AD688Aa4d2bA4EF73f8c5f18adc0",
+    "owners": [
+      "0xe0ab76b6a200f962f7516ea1841fdf4f7cb917d0"
+    ]
+  },
+  {
+    "address": "0x764bE82eB0D3517214Fdc93D2539eFfc89c8aE18",
+    "owners": [
+      "0xc555e484a9f6266dd8ff4056ee2382275e42b8fd"
+    ]
+  },
+  {
+    "address": "0x10eA50b682e8403edcC6C4383e3d043CaFb6f0fA",
+    "owners": [
+      "0x81ed310bdb1acd834c06b2fc94d2264cc14808eb"
+    ]
+  },
+  {
+    "address": "0x4447651a6Fd884253CDec9FbcA5b216Cb87A1cBc",
+    "owners": [
+      "0xdbfb9a9581cb3f6a428d67b4881674b01e38c97e"
+    ]
+  },
+  {
+    "address": "0xbAbe120d44c2Dc7c5B28e2D9ed364a7bf3010019",
+    "owners": [
+      "0x6d483d3e611eac6830864b781f1894b2346e718e"
+    ]
+  },
+  {
+    "address": "0x90ad08B8b97b055D5a2164C941A2A26359769D79",
+    "owners": [
+      "0x7c2d82327e12ed1cd6438e7e924c8a0c7240d961"
+    ]
+  },
+  {
+    "address": "0x010C9E4418B753A1ED10Ef0D966e99D730eAA00b",
+    "owners": [
+      "0x2bbc16b9eb59ddc0344e81d1c0a1eaec1e957d87"
+    ]
+  },
+  {
+    "address": "0x71893152672338b6110ffda59054910e005B7e12",
+    "owners": [
+      "0x41da6d8c9935f0244dafcdc30746ce5526566383"
+    ]
+  },
+  {
+    "address": "0xa25D8bE4c8475fEE4d94c34e90C8b928Ce728D09",
+    "owners": [
+      "0x9524f431cd987a576a28b5d17dbf5143d8dea5b8"
+    ]
+  },
+  {
+    "address": "0xA8940b1f81F28238780A8fD0BA194Cb9637716Fe",
+    "owners": [
+      "0x53fb06eb8e9a04f6e6ef75935713cf26fefd8843"
+    ]
+  },
+  {
+    "address": "0xa5809A275f515Cd1757244B7bb206D42Ca3873bA",
+    "owners": [
+      "0xafef72a126e5492b824d055e83d570d80b05b00a"
+    ]
+  },
+  {
+    "address": "0xf976529476D4067E62C8D8eb84Ed3fa4324bE60d",
+    "owners": [
+      "0x35d0ebc6db2dceb5c6458cff1cfe940bf88ad3c7"
+    ]
+  },
+  {
+    "address": "0x3999D1388505A72E09d8c5b1693363B030cbd104",
+    "owners": [
+      "0x5241311ca8382d5cac96dfe2adfa2ec96e4d8673"
+    ]
+  },
+  {
+    "address": "0x217575eE5c59464E1f87EffdeB1dC5f920CC0D1F",
+    "owners": [
+      "0xc459beb6b1b0da588061c3b192a6ebbb465a4707"
+    ]
+  }
+]

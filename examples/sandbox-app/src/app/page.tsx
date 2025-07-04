@@ -1,5 +1,5 @@
 "use client";
-import { connectSophon, SophonAuthResult } from "@sophon-labs/sso-connector";
+import { connectSophon, SophonAuthResult } from "../../../../packages/sophon-account-connector/dist";
 import { sophonTestnet } from "viem/chains";
 import { useState, useEffect } from "react";
 import {
@@ -24,6 +24,7 @@ export default function Home() {
     signTypedData,
     data: signatureData,
     isPending: isSignPending,
+    error: signError,
   } = useSignTypedData();
   const { sendTransaction, isPending: isSendPending } = useSendTransaction();
 
@@ -172,6 +173,11 @@ export default function Home() {
                   Disconnect
                 </button>
               </div>
+              {signError && (
+                <div style={{ color: "red", marginTop: "10px" }}>
+                  {signError.message}
+                </div>
+              )}
               {signatureData && (
                 <div
                   style={{
@@ -215,130 +221,6 @@ export default function Home() {
             >
               {isPending ? "Connecting..." : "Connect with Wagmi"}
             </button>
-          )}
-        </div>
-
-        {/* Original Popup Test */}
-        <div
-          style={{
-            margin: "20px 0",
-            padding: "20px",
-            border: "1px solid #6b7280",
-            borderRadius: "8px",
-          }}
-        >
-          <h3 style={{ color: "#6b7280", marginTop: 0 }}>
-            Original Popup Test
-          </h3>
-
-          {!result && !error && (
-            <div style={{ margin: "20px 0" }}>
-              <button
-                onClick={handleConnect}
-                disabled={loading}
-                style={{
-                  backgroundColor: loading ? "#94a3b8" : "#6b7280",
-                  color: "white",
-                  border: "none",
-                  padding: "12px 24px",
-                  borderRadius: "8px",
-                  fontSize: "16px",
-                  cursor: loading ? "not-allowed" : "pointer",
-                  transition: "background-color 0.2s",
-                }}
-              >
-                {loading ? "Opening popup..." : "Connect with Popup"}
-              </button>
-            </div>
-          )}
-
-          {result && (
-            <div
-              style={{
-                backgroundColor: "#000",
-                border: "1px solid #000",
-                borderRadius: "8px",
-                padding: "20px",
-                margin: "20px 0",
-                maxWidth: "500px",
-              }}
-            >
-              <h4 style={{ color: "#0f766e", marginTop: 0 }}>Success!</h4>
-              <div style={{ textAlign: "left", fontSize: "14px" }}>
-                <p>
-                  <strong>Address:</strong>
-                </p>
-                <code
-                  style={{
-                    backgroundColor: "#000",
-                    padding: "4px 8px",
-                    borderRadius: "4px",
-                    fontSize: "12px",
-                    wordBreak: "break-all",
-                  }}
-                >
-                  {result.data.address}
-                </code>
-                <p style={{ marginTop: "10px" }}>
-                  <strong>Mode:</strong> {result.data.mode}
-                </p>
-                {result.data.username && (
-                  <p>
-                    <strong>Username:</strong> {result.data.username}
-                  </p>
-                )}
-                <p>
-                  <strong>Timestamp:</strong>{" "}
-                  {new Date(result.data.timestamp).toLocaleString()}
-                </p>
-              </div>
-              <button
-                onClick={resetTest}
-                style={{
-                  backgroundColor: "#6b7280",
-                  color: "white",
-                  border: "none",
-                  padding: "8px 16px",
-                  borderRadius: "4px",
-                  fontSize: "14px",
-                  cursor: "pointer",
-                  marginTop: "10px",
-                }}
-              >
-                Test Again
-              </button>
-            </div>
-          )}
-
-          {error && (
-            <div
-              style={{
-                backgroundColor: "#fef2f2",
-                border: "1px solid #ef4444",
-                borderRadius: "8px",
-                padding: "20px",
-                margin: "20px 0",
-                maxWidth: "500px",
-              }}
-            >
-              <h4 style={{ color: "#dc2626", marginTop: 0 }}>Error</h4>
-              <p style={{ color: "#dc2626", fontSize: "14px" }}>{error}</p>
-              <button
-                onClick={resetTest}
-                style={{
-                  backgroundColor: "#6b7280",
-                  color: "white",
-                  border: "none",
-                  padding: "8px 16px",
-                  borderRadius: "4px",
-                  fontSize: "14px",
-                  cursor: "pointer",
-                  marginTop: "10px",
-                }}
-              >
-                Try Again
-              </button>
-            </div>
           )}
         </div>
 

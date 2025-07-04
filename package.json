@@ -4,8 +4,7 @@
   "private": true,
   "workspaces": [
     "packages/*",
-    "apps/*",
-    "examples/*"
+    "apps/*"
   ],
   "packageManager": "yarn@1.22.22",
   "engines": {
@@ -22,5 +21,6 @@
   },
   "devDependencies": {
     "typescript": "^5.0.0"
-  }
+  },
+  "dependencies": {}
 }

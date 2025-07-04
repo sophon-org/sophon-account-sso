@@ -13,7 +13,7 @@ import { isZKsyncConnector } from "@dynamic-labs/ethereum-aa-zksync";
 
 export default function TransactionRequestView({
   transactionRequest,
-  accountStore,
+  account,
   incomingRequest,
 }: TransactionRequestProps) {
   const { address: connectedAddress } = useAccount();
@@ -69,12 +69,12 @@ export default function TransactionRequestView({
               onClick={async () => {
                 console.log(transactionRequest);
                 const availableAddress =
-                  accountStore.address || primaryWallet?.address;
+                  account.address || primaryWallet?.address;
                 if (!availableAddress) {
                   throw new Error("No account address available");
                 }
                 try {
-                  const isEOAAccount = !accountStore.passkey;
+                  const isEOAAccount = !account.owner.passkey;
                   let txHash;
                   if (primaryWallet && isEthereumWallet(primaryWallet)) {
                     console.log("Sending transaction with Ethereum wallet...");
@@ -129,7 +129,7 @@ export default function TransactionRequestView({
                     });
 
                     const client = await createZksyncEcdsaClient({
-                      address: accountStore.address as `0x${string}`,
+                      address: account.address as `0x${string}`,
                       owner: localAccount,
                       chain: sophonTestnet,
                       transport: http(),
@@ -158,15 +158,15 @@ export default function TransactionRequestView({
                     });
                   } else {
                     console.log("Sending transaction with Passkey...");
-                    if (!accountStore.passkey) {
+                    if (!account.passkey) {
                       throw new Error("No passkey data available");
                     }
 
                     const client = createZksyncPasskeyClient({
-                      address: accountStore.address as `0x${string}`,
-                      credentialPublicKey: accountStore.passkey,
-                      userName: accountStore.username || "Sophon User",
-                      userDisplayName: accountStore.username || "Sophon User",
+                      address: account.address as `0x${string}`,
+                      credentialPublicKey: account.passkey,
+                      userName: account.username || "Sophon User",
+                      userDisplayName: account.username || "Sophon User",
                       contracts: {
                         accountFactory: CHAIN_CONTRACTS[DEFAULT_CHAIN_ID]
                           .accountFactory as `0x${string}`,

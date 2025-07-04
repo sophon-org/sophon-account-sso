@@ -1,4 +1,5 @@
 import type { TypedDataParameter, Address, Hash } from "viem";
+import { SmartAccount } from "./smart-account";
 
 // ==========================================
 // VIEM TYPE EXTENSIONS
@@ -55,13 +56,13 @@ export interface AccountStore {
 
 export interface SigningRequestProps {
   signingRequest: SigningRequest;
-  accountStore: AccountStore;
+  account: SmartAccount;
   incomingRequest: IncomingRequest;
 }
 
 export interface TransactionRequestProps {
   transactionRequest: TransactionRequest;
-  accountStore: AccountStore;
+  account: SmartAccount;
   incomingRequest: IncomingRequest;
 }
 

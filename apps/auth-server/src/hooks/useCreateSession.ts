@@ -1,5 +1,5 @@
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
-import { useAccountStore } from "./useAccountState";
+import { useAccountContext } from "./useAccountContext";
 import { createZksyncPasskeyClient } from "zksync-sso/client/passkey";
 import { http } from "viem";
 import { sophonTestnet } from "viem/chains";
@@ -7,11 +7,11 @@ import { CHAIN_CONTRACTS, DEFAULT_CHAIN_ID } from "@/lib/constants";
 import { parseEther } from "viem";
 
 export const useCreateSession = () => {
-  const accountStore = useAccountStore();
+  const { account } = useAccountContext();
 
   const createSession = async () => {
     // TODO: Integrate this into button handlers
-    console.log("Session creation requested for:", accountStore.address);
+    console.log("Session creation requested for:", account?.address);
 
     try {
       // Generate session key
@@ -19,23 +19,19 @@ export const useCreateSession = () => {
       const sessionSigner = privateKeyToAccount(sessionKey);
 
       // ✅ Get passkey data from account store (now stored as hex, retrieved as bytes)
-      if (
-        !accountStore.isLoggedIn ||
-        !accountStore.passkey ||
-        !accountStore.address
-      ) {
+      if (!account || !account.passkey || !account.address) {
         throw new Error(
           "No passkey data available - account may not be fully created yet"
         );
       }
 
-      const accountAddress = accountStore.address;
+      const accountAddress = account.address;
 
       const client = createZksyncPasskeyClient({
         address: accountAddress as `0x${string}`,
-        credentialPublicKey: accountStore.passkey,
-        userName: accountStore.username || "Sophon User",
-        userDisplayName: accountStore.username || "Sophon User",
+        credentialPublicKey: account.passkey,
+        userName: account.username || "Sophon User",
+        userDisplayName: account.username || "Sophon User",
         contracts: {
           accountFactory: CHAIN_CONTRACTS[DEFAULT_CHAIN_ID]
             .accountFactory as `0x${string}`,

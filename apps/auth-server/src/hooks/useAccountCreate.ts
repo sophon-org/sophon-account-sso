@@ -3,13 +3,14 @@ import { useState } from "react";
 import { useWalletClient } from "wagmi";
 import { deployModularAccount } from "zksync-sso/client";
 import { registerNewPasskey } from "zksync-sso/client/passkey";
-import { createWalletClient, http, toHex } from "viem";
+import { createWalletClient, http } from "viem";
 import { eip712WalletActions } from "viem/zksync";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { sophonTestnet } from "viem/chains";
 import { CHAIN_CONTRACTS, DEFAULT_CHAIN_ID } from "@/lib/constants";
-import { useAccountStore } from "./useAccountState";
+import { useAccountContext } from "./useAccountContext";
 import { checkAccountOwnership } from "@/lib/utils";
+import { env } from "@/env";
 
 export const useAccountCreate = () => {
   const [loading, setLoading] = useState(false);
@@ -17,7 +18,7 @@ export const useAccountCreate = () => {
   const [success, setSuccess] = useState(false);
   const [accountAddress, setAccountAddress] = useState<string>("");
 
-  const { login } = useAccountStore();
+  const { login } = useAccountContext();
   const { data: walletClient } = useWalletClient();
 
   const deployAccount = async (connectedAddress: string) => {
@@ -38,8 +39,11 @@ export const useAccountCreate = () => {
     login({
       username: `EOA Account ${connectedAddress!.slice(0, 8)}...`,
       address: deployedAccount.address,
-      passkey: null,
-      privateKey: null,
+      owner: {
+        address: connectedAddress! as `0x${string}`,
+        passkey: null,
+        privateKey: null,
+      },
     });
 
     setSuccess(true);
@@ -99,7 +103,10 @@ export const useAccountCreate = () => {
           login({
             username: passkeyName,
             address: deployedAccount.address,
-            passkey: toHex(passkeyResult.credentialPublicKey),
+            owner: {
+              address: ownerAddress,
+              passkey: passkeyResult.credentialPublicKey,
+            },
           });
 
           setSuccess(true);
@@ -133,7 +140,8 @@ export const useAccountCreate = () => {
         }
 
         const existingAccountAddress = await checkAccountOwnership(
-          connectedAddress
+          connectedAddress,
+          env.NEXT_PUBLIC_DEPLOYER_ADDRESS as `0x${string}`
         );
         if (
           existingAccountAddress &&
@@ -143,8 +151,11 @@ export const useAccountCreate = () => {
           login({
             username: `EOA Account ${connectedAddress.slice(0, 8)}...`,
             address: existingAccountAddress,
-            passkey: null,
-            privateKey: null,
+            owner: {
+              address: connectedAddress as `0x${string}`,
+              passkey: null,
+              privateKey: null,
+            },
           });
           setAccountAddress(existingAccountAddress);
           setSuccess(true);

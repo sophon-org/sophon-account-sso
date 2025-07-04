@@ -9,82 +9,81 @@ import { toAccount } from "viem/accounts";
 import { verifyEIP1271Signature } from "@/lib/utils";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { isEthereumWallet } from "@dynamic-labs/ethereum";
-import { isZKsyncConnector } from "@dynamic-labs/ethereum-aa-zksync";
+import { Loader } from "@/components/loader";
+import { useState } from "react";
+import { Dialog } from "@/components/dialog";
 
 export default function SigningRequestView({
   signingRequest,
-  accountStore,
+  account,
   incomingRequest,
 }: SigningRequestProps) {
+  const [isSigning, setIsSigning] = useState(false);
   const { address: connectedAddress } = useAccount();
   const { data: walletClient } = useWalletClient();
   const { primaryWallet } = useDynamicContext();
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-blue-600">Sign Message</h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Please review and sign this message
-          </p>
+    <Dialog
+      title="Sophon Auth"
+      onClose={() => console.log("close")}
+      onBack={() => console.log("back")}
+      className="relative"
+    >
+      <div className="text-center">
+        <h2 className="text-2xl font-bold text-blue-600">Sign Message</h2>
+        <p className="mt-2 text-sm text-gray-600">
+          Please review and sign this message
+        </p>
 
-          <div className="mt-4 p-3 bg-gray-50 rounded border text-left">
-            <p className="text-xs text-gray-500 mb-2">Typed Data to sign:</p>
-            <div className="text-sm text-black">
-              <p>
-                <strong>Domain:</strong> {signingRequest.domain.name} v
-                {signingRequest.domain.version}
-              </p>
-              <p>
-                <strong>Type:</strong> {signingRequest.primaryType}
-              </p>
-              <pre className="text-xs mt-2 whitespace-pre-wrap break-words">
-                {JSON.stringify(signingRequest.message, null, 2)}
-              </pre>
-            </div>
-          </div>
-
-          <div className="mt-4 p-3 bg-blue-50 rounded border">
-            <p className="text-xs text-gray-500">Signing Address:</p>
-            <p className="text-sm font-mono break-all text-blue-600">
-              {signingRequest.address}
+        <div className="mt-4 p-3 bg-gray-50 rounded border text-left">
+          <p className="text-xs text-gray-500 mb-2">Typed Data to sign:</p>
+          <div className="text-sm text-black">
+            <p>
+              <strong>Domain:</strong> {signingRequest.domain.name} v
+              {signingRequest.domain.version}
             </p>
+            <p>
+              <strong>Type:</strong> {signingRequest.primaryType}
+            </p>
+            <pre className="text-xs mt-2 whitespace-pre-wrap break-words">
+              {JSON.stringify(signingRequest.message, null, 2)}
+            </pre>
           </div>
+        </div>
 
-          <div className="mt-4 space-y-2">
-            <button
-              onClick={async () => {
+        <div className="mt-4 p-3 bg-blue-50 rounded border">
+          <p className="text-xs text-gray-500">Signing Address:</p>
+          <p className="text-sm font-mono break-all text-blue-600">
+            {signingRequest.address}
+          </p>
+        </div>
+
+        <div className="mt-4 space-y-2">
+          <button
+            onClick={async () => {
+              try {
+                setIsSigning(true);
                 try {
                   const availableAddress =
-                    accountStore.address || primaryWallet?.address;
+                    account.address || primaryWallet?.address;
                   if (!availableAddress) {
                     throw new Error("No account address available");
                   }
 
-                  const isEOAAccount = !accountStore.passkey;
+                  const isEOAAccount = !account.owner.passkey;
 
                   let signature;
 
                   if (primaryWallet && isEthereumWallet(primaryWallet)) {
+                    console.log("🔥🔥🔥🔥🔥 Signing with Ethereum wallet");
                     try {
-                      if (isZKsyncConnector(primaryWallet.connector)) {
-                        const ecdsaClient =
-                          primaryWallet.connector.getAccountAbstractionProvider();
-
-                        signature = await ecdsaClient.signTypedData({
-                          domain: signingRequest.domain,
-                          types: signingRequest.types,
-                          primaryType: signingRequest.primaryType,
-                          message: signingRequest.message,
-                        });
-
-                        /* const client = await primaryWallet.getWalletClient();
-                        const signature = await client.signMessage({
-                          message: "Hello World",
-                        });
-
-                        console.log(signature); */
-                      }
+                      const client = await primaryWallet.getWalletClient();
+                      signature = await client.signTypedData({
+                        domain: signingRequest.domain,
+                        types: signingRequest.types,
+                        primaryType: signingRequest.primaryType,
+                        message: signingRequest.message,
+                      });
                     } catch (error) {
                       console.error("Signing error:", error);
                       throw error;
@@ -125,7 +124,7 @@ export default function SigningRequestView({
                     });
 
                     const client = await createZksyncEcdsaClient({
-                      address: accountStore.address as `0x${string}`,
+                      address: account.address as `0x${string}`,
                       owner: localAccount,
                       chain: sophonTestnet,
                       transport: http(),
@@ -151,15 +150,15 @@ export default function SigningRequestView({
                       message: signingRequest.message,
                     });
                   } else {
-                    if (!accountStore.passkey) {
+                    if (!account.owner.passkey) {
                       throw new Error("No passkey data available for signing");
                     }
 
                     const client = createZksyncPasskeyClient({
-                      address: accountStore.address as `0x${string}`,
-                      credentialPublicKey: accountStore.passkey,
-                      userName: accountStore.username || "Sophon User",
-                      userDisplayName: accountStore.username || "Sophon User",
+                      address: account.address as `0x${string}`,
+                      credentialPublicKey: account.owner.passkey,
+                      userName: account.username || "Sophon User",
+                      userDisplayName: account.username || "Sophon User",
                       contracts: {
                         accountFactory: CHAIN_CONTRACTS[DEFAULT_CHAIN_ID]
                           .accountFactory as `0x${string}`,
@@ -201,30 +200,47 @@ export default function SigningRequestView({
                     };
 
                     window.opener.postMessage(signResponse, "*");
-                    //window.close();
+                    window.close();
                   }
                 } catch (error) {
                   console.error("Signing failed:", error);
                   alert("Signing failed: " + (error as Error).message);
                 }
-              }}
-              className="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-            >
-              Sign Message
-            </button>
+              } finally {
+                setIsSigning(false);
+              }
+            }}
+            className="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            {isSigning ? <Loader className="w-4 h-4" /> : "Sign Message"}
+          </button>
 
-            <button
-              onClick={() => {
-                console.log("User cancelled signing");
-                window.close();
-              }}
-              className="w-full px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-            >
-              Cancel
-            </button>
-          </div>
+          <button
+            onClick={() => {
+              if (window.opener && incomingRequest) {
+                const signResponse = {
+                  id: crypto.randomUUID(),
+                  requestId: incomingRequest.id,
+                  content: {
+                    result: null,
+                    error: {
+                      message: "User cancelled signing",
+                      code: -32002,
+                    },
+                  },
+                };
+
+                window.opener.postMessage(signResponse, "*");
+              }
+              console.log("User cancelled signing");
+              window.close();
+            }}
+            className="w-full px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+          >
+            Cancel
+          </button>
         </div>
       </div>
-    </div>
+    </Dialog>
   );
 }

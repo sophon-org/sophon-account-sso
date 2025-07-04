@@ -7,19 +7,67 @@ import {
   toBytes,
   concat,
   hashTypedData,
+  Address,
 } from "viem";
 
 import { sophonTestnet } from "viem/chains";
 import { CHAIN_CONTRACTS, DEFAULT_CHAIN_ID } from "@/lib/constants";
 
-export const checkAccountOwnership = async (connectedAddress: string) => {
+const SALT_PREFIX = "SophonLabs";
+
+// TODO: change this implementation to a indexed one
+export const isAccountDeployed = async (connectedAddress: string) => {
+  const existingAccountAddress = await checkAccountOwnership(
+    connectedAddress,
+    process.env.NEXT_PUBLIC_DEPLOYER_ADDRESS as `0x${string}`
+  );
+  return (
+    existingAccountAddress &&
+    existingAccountAddress !== "0x0000000000000000000000000000000000000000"
+  );
+};
+
+export const getSmartAccountUniqueId = (ownerAddress: Address) => {
+  const salt = `0x${Buffer.from(toBytes(SALT_PREFIX, { size: 32 })).toString(
+    "hex"
+  )}` as `0x${string}`;
+
+  const uniqueIds: `0x${string}`[] = [];
+  uniqueIds.push(toHex(salt));
+  uniqueIds.push(ownerAddress as `0x${string}`);
+  const transformedUniqueId = keccak256(toHex(concat(uniqueIds)));
+
+  return transformedUniqueId;
+};
+
+export const getSmartAccountAddress = (
+  ownerAddress: Address,
+  deployerAddress?: Address
+) => {
+  const knownUniqueId = getSmartAccountUniqueId(ownerAddress);
+
+  return keccak256(
+    encodePacked(
+      ["bytes32", "address"],
+      [
+        knownUniqueId as `0x${string}`,
+        (deployerAddress ?? ownerAddress) as `0x${string}`,
+      ]
+    )
+  );
+};
+
+export const checkAccountOwnership = async (
+  connectedAddress: string,
+  deployerAddress: Address
+) => {
   const contracts = CHAIN_CONTRACTS[DEFAULT_CHAIN_ID];
   const publicClient = createPublicClient({
     chain: sophonTestnet,
     transport: http("https://rpc.testnet.sophon.xyz"),
   });
 
-  const salt = `0x${Buffer.from(toBytes("DynamicLabs", { size: 32 })).toString(
+  const salt = `0x${Buffer.from(toBytes(SALT_PREFIX, { size: 32 })).toString(
     "hex"
   )}` as `0x${string}`;
 
@@ -29,14 +77,21 @@ export const checkAccountOwnership = async (connectedAddress: string) => {
   const transformedUniqueId = keccak256(toHex(concat(uniqueIds)));
 
   const knownUniqueId = transformedUniqueId;
-  console.log("Known uniqueId:", knownUniqueId);
 
   try {
     const uniqueAccountId = keccak256(
       encodePacked(
         ["bytes32", "address"],
-        [knownUniqueId as `0x${string}`, connectedAddress as `0x${string}`]
+        [knownUniqueId as `0x${string}`, deployerAddress as `0x${string}`]
       )
+    );
+    console.log(
+      "calaulating",
+      uniqueAccountId,
+      "connected address",
+      connectedAddress,
+      "for deployer",
+      deployerAddress
     );
 
     const existingAccountAddress = await publicClient.readContract({

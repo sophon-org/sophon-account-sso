@@ -1,9 +1,10 @@
-import { useAccountStore } from "./useAccountState";
+import { env } from "@/env";
+import { useAccountContext } from "./useAccountContext";
 import { useCreateSession } from "./useCreateSession";
 import type { AccountData, IncomingRequest } from "@/types/auth";
 
 export function useAuthResponse() {
-  const accountStore = useAccountStore();
+  const { account } = useAccountContext();
   const createSession = useCreateSession();
 
   const handleAuthSuccessResponse = async (
@@ -16,7 +17,13 @@ export function useAuthResponse() {
       return;
     }
 
-    const responseAddress = accountStore.address || accountData.address;
+    const responseAddress = account?.address || accountData.address;
+    console.log(
+      "🔥🔥🔥🔥🔥 responseAddress",
+      responseAddress,
+      accountData,
+      account
+    );
 
     let sessionData = null;
     if (sessionPreferences) {
@@ -36,12 +43,12 @@ export function useAuthResponse() {
         result: {
           account: {
             address: responseAddress,
-            activeChainId: 531050104,
+            activeChainId: env.NEXT_PUBLIC_CHAIN_ID,
             ...(sessionData && { session: sessionData }),
           },
           chainsInfo: [
             {
-              id: 531050104,
+              id: env.NEXT_PUBLIC_CHAIN_ID,
               capabilities: {
                 paymasterService: { supported: true },
                 atomicBatch: { supported: true },

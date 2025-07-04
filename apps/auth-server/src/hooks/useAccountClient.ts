@@ -17,7 +17,7 @@ import {
 } from "zksync-sso/client/passkey";
 import { createZksyncRecoveryGuardianClient } from "zksync-sso/client/recovery";
 import { CHAIN_CONTRACTS, DEFAULT_CHAIN_ID } from "@/lib/constants";
-import { useAccountStore } from "./useAccountState";
+import { useAccountContext } from "./useAccountContext";
 
 // Extend Window interface for ethereum provider
 declare global {
@@ -56,7 +56,12 @@ export const chainParameters: Record<SupportedChainId, { blockTime: number }> =
   };
 
 export const useClientStore = () => {
-  const { address, username, passkey } = useAccountStore();
+  const { account } = useAccountContext();
+  const { address, username, passkey } = account || {
+    address: null,
+    username: null,
+    passkey: null,
+  };
 
   const defaultChainId = DEFAULT_CHAIN_ID as SupportedChainId;
   const defaultChain = supportedChains.find(

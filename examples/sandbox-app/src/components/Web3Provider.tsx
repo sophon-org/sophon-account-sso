@@ -1,8 +1,7 @@
 "use client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { WagmiProvider } from "wagmi";
-import { createConfig, http } from "wagmi";
-import { sophonSsoConnector } from "@sophon-labs/sso-connector";
+import { createConfig, http, WagmiProvider} from "wagmi";
+import { sophonSsoConnector } from "../../../../packages/sophon-account-connector/dist";
 import { sophonTestnet } from "viem/chains";
 import { ReactNode } from "react";
 
