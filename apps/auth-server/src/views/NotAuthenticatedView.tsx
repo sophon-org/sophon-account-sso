@@ -43,12 +43,12 @@ export const NotAuthenticatedView = () => {
   const { authStep, setAuthStep } = useAccountContext();
   const [emailLoading, setEmailLoading] = useState(false);
   const [waitingOTP, setWaitingOTP] = useState(false);
-  const { authenticateUser, isAuthenticating } = useAuthenticateConnectedUser();
-  const { user, primaryWallet, authMode } = useDynamicContext();
+  // const { authenticateUser, isAuthenticating } = useAuthenticateConnectedUser();
+  // const { user, primaryWallet, authMode } = useDynamicContext();
 
-  console.log("🔥 user", user);
-  console.log("🔥 primaryWallet", primaryWallet);
-  console.log("🔥 authMode", authMode);
+  // console.log("🔥 user", user);
+  // console.log("🔥 primaryWallet", primaryWallet);
+  // console.log("🔥 authMode", authMode);
 
   const { connectWithEmail, verifyOneTimePassword } = useConnectWithOtp();
   const {

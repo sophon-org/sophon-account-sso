@@ -1,9 +1,9 @@
 import { WebView, type WebViewProps } from 'react-native-webview';
 import { USER_AGENT } from './constants/user-agent';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+// import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {
   BottomSheetModal,
-  BottomSheetModalProvider,
+  // BottomSheetModalProvider,
   BottomSheetView,
 } from '@gorhom/bottom-sheet';
 import { StyleSheet } from 'react-native';
@@ -16,17 +16,17 @@ export interface SophonWebViewProps {
   modalRef?: React.RefObject<BottomSheetModal>;
 }
 
-export const SophonAccountProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
-  return (
-    <GestureHandlerRootView style={styles.container}>
-      <BottomSheetModalProvider>{children}</BottomSheetModalProvider>
-    </GestureHandlerRootView>
-  );
-};
+// export const SophonAccountProvider = ({
+//   children,
+// }: {
+//   children: React.ReactNode;
+// }) => {
+//   return (
+//     <GestureHandlerRootView style={styles.container}>
+//       <BottomSheetModalProvider>{children}</BottomSheetModalProvider>
+//     </GestureHandlerRootView>
+//   );
+// };
 
 export const SophonWebView = ({
   style,
@@ -39,12 +39,16 @@ export const SophonWebView = ({
   }, []);
 
   return (
-    <BottomSheetModal ref={modalRef} onChange={handleSheetChanges}>
-      <BottomSheetView style={styles.contentContainer}>
+    <BottomSheetModal ref={modalRef} onChange={handleSheetChanges} enableDynamicSizing={false} snapPoints={[900]}>
+      <BottomSheetView
+        style={styles.contentContainer}
+        testID="sophon-account-bottom-sheet-view"
+      >
         <WebView
+          testID="sophon-account-webview"
           ref={webViewRef}
           source={{ uri: url }}
-          style={[{ flex: 1 }, style]}
+          style={[{ flex: 1}, style]}
           userAgent={USER_AGENT}
           onMessage={(event) => {
             console.warn(event.nativeEvent.data);
@@ -63,6 +67,7 @@ export const useSophonAccount = (
 
   // callbacks
   const handlePresentModalPress = useCallback(() => {
+    console.log('handlePresentModalPress', modalRef.current);
     modalRef.current?.present();
   }, []);
 

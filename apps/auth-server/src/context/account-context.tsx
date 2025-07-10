@@ -9,6 +9,7 @@ import {
 } from "react";
 import { deleteCookie, getCookies } from "cookies-next/client";
 import { Wallet } from "@dynamic-labs/sdk-react-core";
+import { sendAuthMessage } from "@/lib/events";
 
 export enum AccountStep {
   AUTHENTICATING = "authenticating",
@@ -68,27 +69,38 @@ const AccountContextProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [account, isInitialized]);
 
-  const login = useCallback(async (data: SmartAccount, wallet?: Wallet) => {
-    setAccount(data);
-    setDynamicWallet(wallet ?? null);
-  }, []);
+  const login = useCallback(
+    async (
+      data: SmartAccount,
+      wallet?: Wallet,
+      externalLogout?: () => void
+    ) => {
+      setAccount(data);
+      setDynamicWallet(wallet ?? null);
+      externalLogout?.();
+    },
+    []
+  );
 
   const logout = useCallback(() => {
+    sendAuthMessage("logout", {
+      address: account?.address ?? "0x0000000000000000000000000000000000000000",
+    });
     setAccount(null);
-    const cookies = getCookies();
-    for (const key in cookies) {
-      deleteCookie(key);
-    }
-    localStorage.removeItem(LOCAL_STORAGE_KEY);
-    // clear dynamic local storage
-    for (const key in localStorage) {
-      localStorage.removeItem(key);
-    }
+    // const cookies = getCookies();
+    // for (const key in cookies) {
+    //   deleteCookie(key);
+    // }
+    // localStorage.removeItem(LOCAL_STORAGE_KEY);
+    // // clear dynamic local storage
+    // for (const key in localStorage) {
+    //   localStorage.removeItem(key);
+    // }
 
-    // clear dynamic from session storage
-    for (const key in sessionStorage) {
-      sessionStorage.removeItem(key);
-    }
+    // // clear dynamic from session storage
+    // for (const key in sessionStorage) {
+    //   sessionStorage.removeItem(key);
+    // }
 
     setAuthStep(null);
   }, []);

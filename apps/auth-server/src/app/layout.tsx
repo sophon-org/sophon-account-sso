@@ -4,6 +4,7 @@ import "./globals.css";
 import { Web3Provider } from "@/providers/Web3Provider";
 import DefaultLayout from "@/layouts/default";
 import { AccountContextProvider } from "@/context/account-context";
+import { GenericEventProvider } from "@/providers/GerericEventProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,6 +33,7 @@ export default function RootLayout({
       >
         <AccountContextProvider>
           <Web3Provider>
+            <GenericEventProvider />
             <DefaultLayout>{children}</DefaultLayout>
           </Web3Provider>
         </AccountContextProvider>

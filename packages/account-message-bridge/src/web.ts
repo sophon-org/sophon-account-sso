@@ -1,3 +1,5 @@
+"use client";
+
 import EventEmitter from "events";
 import { useEffect } from "react";
 import type {
@@ -62,4 +64,6 @@ const onMessageFromRN = (message: string) => {
 
 // Attach the handler to `window` so we can access it from
 // scripts injected by React Native WebView.
-window.onMessageFromRN = onMessageFromRN;
+if (typeof window !== "undefined") {
+  window.onMessageFromRN = onMessageFromRN;
+}

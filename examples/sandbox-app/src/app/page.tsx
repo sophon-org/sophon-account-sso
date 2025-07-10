@@ -1,5 +1,8 @@
 "use client";
-import { connectSophon, SophonAuthResult } from "../../../../packages/sophon-account-connector/dist";
+import {
+  connectSophon,
+  SophonAuthResult,
+} from "@sophon-labs/account-connector";
 import { sophonTestnet } from "viem/chains";
 import { useState, useEffect } from "react";
 import {
