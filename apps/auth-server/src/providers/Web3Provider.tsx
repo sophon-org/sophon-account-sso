@@ -10,9 +10,7 @@ import { EthereumWalletConnectors } from "@dynamic-labs/ethereum";
 import { useAccountContext } from "@/hooks/useAccountContext";
 import { useMessageHandler } from "@/hooks/useMessageHandler";
 import { useAuthResponse } from "@/hooks/useAuthResponse";
-import { getSmartAccountAddress } from "@/lib/utils";
 import { deployAccount, getsSmartAccounts } from "@/service/account.service";
-import { AccountStep } from "@/context/account-context";
 import { env } from "@/env";
 
 // Wagmi config with MetaMask connector
@@ -36,7 +34,7 @@ const queryClient = new QueryClient({
 export const Web3Provider = ({ children }: { children: ReactNode }) => {
   const { incomingRequest, sessionPreferences } = useMessageHandler();
 
-  const { login, logout, setAuthStep } = useAccountContext();
+  const { login, logout } = useAccountContext();
   const { handleAuthSuccessResponse } = useAuthResponse();
 
   return (
@@ -53,7 +51,6 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
             );
 
             if (accounts.length === 0) {
-              setAuthStep(AccountStep.DEPLOYING_ACCOUNT);
               console.log("🔥🔥🔥🔥🔥 No smart account found, deploying...");
               const response = await deployAccount(
                 wallet.address as `0x${string}`
@@ -75,7 +72,11 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
               },
             });
 
-            setAuthStep(AccountStep.AUTHENTICATED);
+            console.log(
+              "🔥🔥🔥🔥🔥 handleAuthSuccessResponse",
+              incomingRequest,
+              sessionPreferences
+            );
 
             handleAuthSuccessResponse(
               { address: accounts[0] },
@@ -104,7 +105,6 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
               );
 
               if (accounts.length === 0) {
-                setAuthStep(AccountStep.DEPLOYING_ACCOUNT);
                 console.log("🔥🔥🔥🔥🔥 No smart account found, deploying...");
                 const response = await deployAccount(
                   payload.primaryWallet!.address as `0x${string}`
@@ -126,7 +126,11 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
                 },
               });
 
-              setAuthStep(AccountStep.AUTHENTICATED);
+              console.log(
+                "🔥🔥🔥🔥🔥 handleAuthSuccessResponse",
+                incomingRequest,
+                sessionPreferences
+              );
 
               handleAuthSuccessResponse(
                 { address: accounts[0] },
@@ -134,8 +138,14 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
                 sessionPreferences
               );
             } else if (payload.isAuthenticated) {
-              setAuthStep(AccountStep.CREATING_EMBEDDED_WALLET);
+              // User authenticated but wallet still being created
+              console.log(
+                "🔥🔥🔥🔥🔥 User authenticated, wallet being created..."
+              );
             }
+          },
+          onAuthFailure: (error) => {
+            console.log("🔥🔥🔥🔥🔥 Dynamic auth failed", error);
           },
           onLogout: () => {
             console.log(

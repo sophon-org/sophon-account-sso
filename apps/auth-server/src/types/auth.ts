@@ -70,6 +70,7 @@ export interface CreateSuccessProps {
   accountAddress: string;
   sessionPreferences: unknown;
   onUseAccount: () => Promise<void>;
+  onDisconnect: () => void;
 }
 
 export interface LoginSuccessProps {
@@ -78,6 +79,7 @@ export interface LoginSuccessProps {
   };
   sessionPreferences: unknown;
   onUseAccount: () => Promise<void>;
+  onDisconnect: () => void;
 }
 
 // ==========================================

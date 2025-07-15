@@ -68,6 +68,9 @@ export function useAuthResponse() {
     };
 
     window.opener.postMessage(rpcResponse, "*");
+
+    // Clean up sessionStorage after successful response
+    sessionStorage.removeItem("sophon-incoming-request");
   };
 
   return { handleAuthSuccessResponse };

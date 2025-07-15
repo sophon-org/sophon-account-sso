@@ -160,5 +160,17 @@
     "owners": [
       "0xd794d3fd27b000ce61d26c13e2235e856dcb243d"
     ]
+  },
+  {
+    "address": "0xF3EE0d5c18A129E8cDBc42804F6fd5cb6c8FA005",
+    "owners": [
+      "0x0f5d67a850a3beb44d8dafd5e1d1870193882a2b"
+    ]
+  },
+  {
+    "address": "0xB954CF0Ef3098b397d58b4E05f48c882CaC81482",
+    "owners": [
+      "0xe9dcdfb0d5933695ad02b61c28eb2fb8ec52c9fc"
+    ]
   }
 ]

@@ -13,7 +13,14 @@ interface UseMessageHandlerReturn {
   transactionRequest: TransactionRequest | null;
 }
 
-export const useMessageHandler = (): UseMessageHandlerReturn => {
+interface UseMessageHandlerCallbacks {
+  onSigningRequest?: (request: SigningRequest) => void;
+  onTransactionRequest?: (request: TransactionRequest) => void;
+}
+
+export const useMessageHandler = (
+  callbacks?: UseMessageHandlerCallbacks
+): UseMessageHandlerReturn => {
   const [incomingRequest, setIncomingRequest] =
     useState<IncomingRequest | null>(null);
   const [sessionPreferences, setSessionPreferences] = useState<unknown>(null);
@@ -24,6 +31,18 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
     useState<TransactionRequest | null>(null);
 
   useEffect(() => {
+    // Check sessionStorage for saved request (survives OAuth redirects)
+    const savedRequest = sessionStorage.getItem("sophon-incoming-request");
+    if (savedRequest && !incomingRequest) {
+      try {
+        const parsedRequest = JSON.parse(savedRequest);
+        setIncomingRequest(parsedRequest);
+      } catch (error) {
+        console.error("Failed to parse saved request:", error);
+        sessionStorage.removeItem("sophon-incoming-request");
+      }
+    }
+
     // Initialize popup communication
     const urlParams = new URLSearchParams(window.location.search);
     const origin = urlParams.get("origin");
@@ -65,15 +84,21 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
             try {
               const typedData = JSON.parse(typedDataJson);
 
-              setSigningRequest({
+              const signingRequestData = {
                 domain: typedData.domain,
                 types: typedData.types,
                 primaryType: typedData.primaryType,
                 message: typedData.message,
                 address: address,
-              });
+              };
 
+              setSigningRequest(signingRequestData);
               setSessionPreferences(null);
+
+              // BABY STEP: Call the callback if provided (clean integration)
+              if (callbacks?.onSigningRequest) {
+                callbacks.onSigningRequest(signingRequestData);
+              }
             } catch (parseError) {
               console.error("Failed to parse typed data JSON:", parseError);
             }
@@ -86,20 +111,32 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
           if (params && params.length >= 1) {
             const txData = params[0];
 
-            setTransactionRequest({
+            const transactionRequestData = {
               to: txData.to,
               value: txData.value || "0x0",
               data: txData.data || "0x",
               from: txData.from,
               paymaster: txData.paymaster,
-            });
+            };
 
+            setTransactionRequest(transactionRequestData);
             setSigningRequest(null);
             setSessionPreferences(null);
+
+            // BABY STEP: Call the callback if provided (clean integration)
+            if (callbacks?.onTransactionRequest) {
+              callbacks.onTransactionRequest(transactionRequestData);
+            }
           }
         }
 
         setIncomingRequest(event.data);
+
+        // Save to sessionStorage (survives OAuth redirects)
+        sessionStorage.setItem(
+          "sophon-incoming-request",
+          JSON.stringify(event.data)
+        );
       }
     };
 
@@ -110,7 +147,7 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
     return () => {
       window.removeEventListener("message", messageHandler);
     };
-  }, []); // Empty dependency array - this effect should run once on mount
+  }, [callbacks, incomingRequest]);
 
   return {
     incomingRequest,
