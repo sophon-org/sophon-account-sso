@@ -19,6 +19,14 @@ import { Loader } from "@/components/loader";
 import { LegalNotice } from "@/components/legal";
 import { useAccountContext } from "@/hooks/useAccountContext";
 import { AccountStep } from "@/context/account-context";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 const SOCIAL_PROVIDERS = {
   [ProviderEnum.Google]: {
@@ -224,6 +232,46 @@ export const NotAuthenticatedView = () => {
           </p>
         </div>
       )}
+
+      {/* Sheet Example */}
+      <div className="mt-4 text-center">
+        <Sheet>
+          <SheetTrigger asChild>
+            <button className="text-sm text-blue-600 hover:text-blue-800 underline">
+              More Options
+            </button>
+          </SheetTrigger>
+          <SheetContent side="bottom">
+            <SheetHeader>
+              <SheetTitle>Authentication Options</SheetTitle>
+              <SheetDescription>
+                Choose how you&apos;d like to sign in to your Sophon account
+              </SheetDescription>
+            </SheetHeader>
+            <div className="mt-6 space-y-4">
+              <div className="space-y-2">
+                <h3 className="font-medium">Social Login</h3>
+                <p className="text-sm text-gray-600">
+                  Sign in quickly using your existing social media accounts
+                </p>
+              </div>
+              <div className="space-y-2">
+                <h3 className="font-medium">Email</h3>
+                <p className="text-sm text-gray-600">
+                  Use your email address with OTP verification
+                </p>
+              </div>
+              <div className="space-y-2">
+                <h3 className="font-medium">Wallet</h3>
+                <p className="text-sm text-gray-600">
+                  Connect your existing wallet like MetaMask
+                </p>
+              </div>
+            </div>
+          </SheetContent>
+        </Sheet>
+      </div>
+
       <LegalNotice className="max-h-4" />
     </Dialog>
   );
