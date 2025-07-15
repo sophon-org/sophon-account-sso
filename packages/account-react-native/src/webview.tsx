@@ -1,19 +1,18 @@
 import { WebView, type WebViewProps } from 'react-native-webview';
 import { USER_AGENT } from './constants/user-agent';
-// import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import {
-  BottomSheetModal,
-  // BottomSheetModalProvider,
-  BottomSheetView,
-} from '@gorhom/bottom-sheet';
-import { StyleSheet } from 'react-native';
-import { useCallback, useRef } from 'react';
+// import { BottomSheetView } from '@gorhom/bottom-sheet';
+// import { StyleSheet } from 'react-native';
+import { Modal } from 'react-native';
+import { useEffect, type ComponentType } from 'react';
+import { useSophonContext } from './hooks';
+// import { View } from 'react-native';
 
 export interface SophonWebViewProps {
-  url: string;
+  // url: string;
   style?: WebViewProps['style'];
-  webViewRef?: React.RefObject<WebView>;
-  modalRef?: React.RefObject<BottomSheetModal>;
+  webViewRef?: React.RefObject<WebView | null>;
+  // modalRef?: React.RefObject<Modal>;
+  // isModalVisible: boolean;
 }
 
 // export const SophonAccountProvider = ({
@@ -28,70 +27,100 @@ export interface SophonWebViewProps {
 //   );
 // };
 
-export const SophonWebView = ({
-  style,
-  url,
-  webViewRef,
-  modalRef,
-}: SophonWebViewProps) => {
-  const handleSheetChanges = useCallback((index: number) => {
-    console.log('handleSheetChanges', index);
-  }, []);
+const ModalSafeForReact18 = Modal as ComponentType<Modal['props']>;
 
+const WebViewSafeForReact18 = WebView as any;
+
+export const SophonModal = ({ style, webViewRef }: SophonWebViewProps) => {
+  // const handleSheetChanges = useCallback((index: number) => {
+  //   console.log('handleSheetChanges', index);
+  // }, []);
+
+  useEffect(() => {
+    console.log('webViewRef def', webViewRef, webViewRef?.current);
+  }, [webViewRef]);
+  console.log('webViewRef def3', webViewRef, webViewRef?.current);
+
+  const url = 'http://localhost:3000';
+  const { isModalVisible, hideModal } = useSophonContext();
+
+  console.log('isModalVisible 2', isModalVisible);
   return (
-    <BottomSheetModal ref={modalRef} onChange={handleSheetChanges} enableDynamicSizing={false} snapPoints={[900]}>
-      <BottomSheetView
+    <ModalSafeForReact18
+      // ref={modalRef}
+      // transparent={true}
+      animationType="slide"
+      onRequestClose={() => {
+        hideModal();
+      }}
+      visible={isModalVisible}
+      // isVisible={isModalVisible}
+      presentationStyle="pageSheet"
+      onShow={() => {
+        console.log('onShow');
+      }}
+      // visible={isModalVisible}
+      // useNativeDriver={true}
+      // useNativeDriverForBackdrop={true}
+      // hideModalContentWhileAnimating={true}
+      // animationIn="slideInUp"
+      // animationOut="slideOutDown"
+    >
+      {/* <ActionSheet
+      ref={modalRef}
+      // snapPoints={[800]}
+      testIDs={{
+        backdrop: 'sophon-account-bottom-sheet-backdrop',
+        modal: 'sophon-account-bottom-sheet-modal',
+        sheet: 'sophon-account-bottom-sheet-sheet',
+        root: 'sophon-account-bottom-sheet-root',
+      }}
+    > */}
+      {/* <View> */}
+      {/* <BottomSheetModal
+        ref={modalRef}
+        onChange={handleSheetChanges}
+        enableDynamicSizing={false}
+        snapPoints={[900]}
+      > */}
+      {/* <BottomSheetView
         style={styles.contentContainer}
         testID="sophon-account-bottom-sheet-view"
-      >
-        <WebView
-          testID="sophon-account-webview"
-          ref={webViewRef}
-          source={{ uri: url }}
-          style={[{ flex: 1}, style]}
-          userAgent={USER_AGENT}
-          onMessage={(event) => {
-            console.warn(event.nativeEvent.data);
-          }}
-        />
-      </BottomSheetView>
-    </BottomSheetModal>
+      > */}
+      <WebViewSafeForReact18
+        testID="sophon-account-webview"
+        ref={webViewRef}
+        // ref={(ref) => {
+        //   console.log('ref', ref);
+        // }}
+        source={{ uri: url }}
+        style={[{ flex: 1 }, style]}
+        userAgent={USER_AGENT}
+        onMessage={(event: any) => {
+          const { action, payload } = JSON.parse(event.nativeEvent.data);
+          console.warn(action, payload);
+          if (action === 'connected') {
+            hideModal();
+          }
+        }}
+      />
+      {/* </View> */}
+      {/* </BottomSheetView> */}
+      {/* </BottomSheetModal> */}
+      {/* </ActionSheet> */}
+    </ModalSafeForReact18>
   );
 };
 
-export const useSophonAccount = (
-  { url }: { url: string } = { url: 'http://localhost:3000' }
-) => {
-  const modalRef = useRef<BottomSheetModal>(null);
-  const webviewRef = useRef<WebView>(null);
-
-  // callbacks
-  const handlePresentModalPress = useCallback(() => {
-    console.log('handlePresentModalPress', modalRef.current);
-    modalRef.current?.present();
-  }, []);
-
-  return {
-    showModal: handlePresentModalPress,
-    modal: (
-      <SophonWebView
-        url={url}
-        webViewRef={webviewRef as any}
-        modalRef={modalRef as any}
-      />
-    ),
-  };
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 24,
-    justifyContent: 'center',
-    backgroundColor: 'grey',
-  },
-  contentContainer: {
-    flex: 1,
-    alignItems: 'center',
-  },
-});
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     padding: 24,
+//     justifyContent: 'center',
+//     backgroundColor: 'grey',
+//   },
+//   contentContainer: {
+//     flex: 1,
+//     alignItems: 'center',
+//   },
+// });

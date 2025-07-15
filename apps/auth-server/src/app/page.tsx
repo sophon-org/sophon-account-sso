@@ -14,7 +14,10 @@ import PreferencesView from "@/views/PreferencesView";
 import { useAccountContext } from "@/hooks/useAccountContext";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { Loader } from "@/components/loader";
-import { useRNHandler } from "@sophon-labs/account-message-bridge";
+import {
+  sendMessageToRN,
+  useRNHandler,
+} from "@sophon-labs/account-message-bridge";
 
 export default function RootPage() {
   const { sdkHasLoaded } = useDynamicContext();
@@ -142,7 +145,7 @@ export default function RootPage() {
           if (window.opener) {
             window.close();
           } else if (window.ReactNativeWebView) {
-            window.ReactNativeWebView.postMessage("Hello, React Native!");
+            sendMessageToRN("connected", { address: account.address });
           }
         }}
       />

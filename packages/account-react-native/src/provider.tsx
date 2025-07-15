@@ -1,14 +1,26 @@
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import React, { createContext, useState, useMemo } from 'react';
-import { StyleSheet } from 'react-native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import React, { createContext, useState, useMemo, useRef } from 'react';
+import { SophonModal } from './webview';
+import type WebView from 'react-native-webview';
+import { createWalletProvider } from './wallet-provider';
+import { FlowController } from './flow-controller';
+import type { WalletProvider } from 'zksync-sso';
 
 export const SophonAccountContext = createContext<{
   user: any;
   setUser: (user: any) => void;
+  isModalVisible: boolean;
+  hideModal: () => void;
+  showModal: () => void;
+  flow: typeof FlowController;
+  walletProvider: WalletProvider | null;
 }>({
   user: null,
   setUser: () => {},
+  isModalVisible: false,
+  hideModal: () => {},
+  showModal: () => {},
+  flow: FlowController,
+  walletProvider: null,
 });
 
 export const SophonAccountProvider = ({
@@ -17,38 +29,28 @@ export const SophonAccountProvider = ({
   children: React.ReactNode;
 }) => {
   const [user, setUser] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const webViewRef = useRef<WebView>(null);
+  const flow = useMemo(() => FlowController.init(webViewRef), [webViewRef]);
+  const walletProvider = useMemo(() => createWalletProvider(flow), [flow]);
 
   const contextValue = useMemo(
     () => ({
       user,
       setUser,
+      isModalVisible,
+      hideModal: () => setIsModalVisible(false),
+      showModal: () => setIsModalVisible(true),
+      walletProvider,
+      flow,
     }),
-    [user, setUser]
+    [user, setUser, isModalVisible, setIsModalVisible, walletProvider, flow]
   );
 
   return (
-    <GestureHandlerRootView
-      style={styles.container}
-      testID="sophon-account-gesture-handler-root-view"
-    >
-      <BottomSheetModalProvider>
-        <SophonAccountContext.Provider value={contextValue}>
-          {children}
-        </SophonAccountContext.Provider>
-      </BottomSheetModalProvider>
-    </GestureHandlerRootView>
+    <SophonAccountContext.Provider value={contextValue}>
+      <SophonModal style={{ flex: 1 }} webViewRef={webViewRef} />
+      {children}
+    </SophonAccountContext.Provider>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 24,
-    justifyContent: 'center',
-    backgroundColor: 'grey',
-  },
-  contentContainer: {
-    flex: 1,
-    alignItems: 'center',
-  },
-});

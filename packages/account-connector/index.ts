@@ -1,3 +1,5 @@
+import { createConnector } from "@wagmi/core";
+import { Communicator } from "zksync-sso/communicator";
 import { zksyncSsoConnector } from "zksync-sso/connector";
 
 export interface SophonAuthResult {
@@ -71,9 +73,10 @@ export function connectSophon(
   });
 }
 
-export const sophonSsoConnector = (options?: {
+export const sophonSsoConnector: any = (options?: {
   session?: any; // TODO: type this properly later
   paymaster?: `0x${string}`;
+  communicator?: Communicator;
 }) => {
   const connector = zksyncSsoConnector({
     authServerUrl: "http://localhost:3000", // auth server
@@ -97,6 +100,7 @@ export const sophonSsoConnector = (options?: {
     //   transferPolicies: [], // Token transfers allowed
     //   // Message signing is implicitly allowed in sessions
     // },
+    communicator: options?.communicator,
   });
 
   return connector;

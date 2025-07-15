@@ -5,6 +5,9 @@ export type FromWebActions = {
   echo: {
     message: string;
   };
+  connected: {
+    address: string;
+  };
 };
 
 export type FromWebActionNames = keyof FromWebActions;

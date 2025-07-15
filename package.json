@@ -22,5 +22,8 @@
   "devDependencies": {
     "typescript": "^5.0.0"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "resolutions": {
+    "react-native-webview": "13.15.0"
+  }
 }

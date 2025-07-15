@@ -26,11 +26,10 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "zksync-sso": "^0.3.3"
+    "zksync-sso": "file:../../../zksync-sso/packages/sdk"
   },
   "peerDependencies": {
     "viem": "^2.31.3",
-    "@wagmi/core": "^2.17.3",
-    "zksync-sso": "^0.3.3"
+    "@wagmi/core": "^2.17.3"
   }
 }
