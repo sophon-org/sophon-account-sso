@@ -1,4 +1,5 @@
 import { useAccountContext } from "@/hooks/useAccountContext";
+import { windowService } from "@/service/window.service";
 import { sendMessageToRN } from "@sophon-labs/account-message-bridge/dist/src/web";
 
 const sendMessageToNative = (message: string) => {
@@ -11,7 +12,6 @@ export default function PreferencesView({
   onUseAccount: () => void;
 }) {
   const { account, logout } = useAccountContext();
-  const externallyOpened = !!window.opener || !!window.ReactNativeWebView;
 
   return (
     <div className="text-center">
@@ -26,7 +26,7 @@ export default function PreferencesView({
         </p>
       </div>
 
-      {!!externallyOpened && (
+      {windowService.isManaged() && (
         <div className="mt-4 space-y-2">
           <button
             onClick={onUseAccount}

@@ -2,6 +2,7 @@ import { env } from "@/env";
 import { useAccountContext } from "./useAccountContext";
 import { useCreateSession } from "./useCreateSession";
 import type { AccountData, IncomingRequest } from "@/types/auth";
+import { windowService } from "@/service/window.service";
 
 export function useAuthResponse() {
   const { account } = useAccountContext();
@@ -12,7 +13,7 @@ export function useAuthResponse() {
     incomingRequest: IncomingRequest,
     sessionPreferences?: unknown
   ) => {
-    if (!window.opener || !incomingRequest) {
+    if (!windowService.isManaged() || !incomingRequest) {
       console.error("No RPC request to respond to!");
       return;
     }
@@ -67,7 +68,10 @@ export function useAuthResponse() {
       },
     };
 
-    window.opener.postMessage(rpcResponse, "*");
+    windowService.sendMessage(rpcResponse);
+
+    // Clean up sessionStorage after successful response
+    sessionStorage.removeItem("sophon-incoming-request");
   };
 
   return { handleAuthSuccessResponse };

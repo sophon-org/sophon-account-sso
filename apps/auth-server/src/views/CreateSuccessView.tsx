@@ -6,6 +6,7 @@ export default function CreateSuccessView({
   accountAddress,
   sessionPreferences,
   onUseAccount,
+  onDisconnect,
 }: CreateSuccessProps) {
   const { address: connectedAddress } = useAccount();
 
@@ -41,6 +42,13 @@ export default function CreateSuccessView({
               {sessionPreferences
                 ? "Create Account with Session"
                 : "Use This Account"}
+            </button>
+
+            <button
+              onClick={onDisconnect}
+              className="w-full px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+            >
+              Disconnect
             </button>
           </div>
         </div>

@@ -139,6 +139,8 @@ export const useAccountCreate = () => {
           );
         }
 
+        console.log("Checking account ownership for", connectedAddress);
+
         const existingAccountAddress = await checkAccountOwnership(
           connectedAddress,
           env.NEXT_PUBLIC_DEPLOYER_ADDRESS as `0x${string}`

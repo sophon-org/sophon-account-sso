@@ -10,6 +10,7 @@ import { useAccount, useWalletClient } from "wagmi";
 import { isEthereumWallet } from "@dynamic-labs/ethereum";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { isZKsyncConnector } from "@dynamic-labs/ethereum-aa-zksync";
+import { windowService } from "@/service/window.service";
 
 export default function TransactionRequestView({
   transactionRequest,
@@ -206,7 +207,7 @@ export default function TransactionRequestView({
 
                   console.log("Transaction sent:", txHash);
 
-                  if (window.opener && incomingRequest) {
+                  if (windowService.isManaged() && incomingRequest) {
                     const txResponse = {
                       id: crypto.randomUUID(),
                       requestId: incomingRequest.id,
@@ -215,8 +216,8 @@ export default function TransactionRequestView({
                       },
                     };
 
-                    window.opener.postMessage(txResponse, "*");
-                    window.close();
+                    windowService.sendMessage(txResponse);
+                    windowService.close();
                   }
                 } catch (error) {
                   console.error("Transaction failed:", error);
@@ -231,7 +232,7 @@ export default function TransactionRequestView({
             <button
               onClick={() => {
                 console.log("User cancelled transaction");
-                window.close();
+                windowService.close();
               }}
               className="w-full px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
             >

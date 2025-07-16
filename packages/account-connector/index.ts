@@ -101,6 +101,7 @@ export const sophonSsoConnector: any = (options?: {
     //   // Message signing is implicitly allowed in sessions
     // },
     communicator: options?.communicator,
+    storage: localStorage,
   });
 
   return connector;

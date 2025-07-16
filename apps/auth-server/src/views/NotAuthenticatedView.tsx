@@ -14,8 +14,6 @@ import { IconDiscord } from "@/components/icons/icon-discord";
 import { IconTelegram } from "@/components/icons/icon-telegram";
 import { Loader } from "@/components/loader";
 import { LegalNotice } from "@/components/legal";
-import { useAccountContext } from "@/hooks/useAccountContext";
-import { AccountStep } from "@/context/account-context";
 import {
   Sheet,
   SheetContent,
@@ -44,16 +42,19 @@ const SOCIAL_PROVIDERS = {
   },
 };
 
-export const NotAuthenticatedView = () => {
-  const { authStep, setAuthStep } = useAccountContext();
+interface NotAuthenticatedViewProps {
+  onConnectWallet?: () => Promise<void>;
+  onEmailAuth?: (email: string) => Promise<void>;
+  onSocialAuth?: (provider: ProviderEnum) => Promise<void>;
+}
+
+export const NotAuthenticatedView = ({
+  onConnectWallet,
+  onEmailAuth,
+  onSocialAuth,
+}: NotAuthenticatedViewProps) => {
   const [emailLoading, setEmailLoading] = useState(false);
   const [waitingOTP, setWaitingOTP] = useState(false);
-  // const { authenticateUser, isAuthenticating } = useAuthenticateConnectedUser();
-  // const { user, primaryWallet, authMode } = useDynamicContext();
-
-  // console.log("🔥 user", user);
-  // console.log("🔥 primaryWallet", primaryWallet);
-  // console.log("🔥 authMode", authMode);
 
   const { connectWithEmail, verifyOneTimePassword } = useConnectWithOtp();
   const {
@@ -70,8 +71,14 @@ export const NotAuthenticatedView = () => {
       setEmailLoading(true);
       event.preventDefault();
       const email = event.currentTarget.email.value;
-      await connectWithEmail(email);
-      setWaitingOTP(true);
+
+      // Use state machine if available, otherwise use original logic
+      if (onEmailAuth) {
+        await onEmailAuth(email);
+      } else {
+        await connectWithEmail(email);
+        setWaitingOTP(true);
+      }
     } finally {
       setEmailLoading(false);
     }
@@ -83,7 +90,6 @@ export const NotAuthenticatedView = () => {
     try {
       setEmailLoading(true);
       event.preventDefault();
-      setAuthStep(AccountStep.AUTHENTICATING);
       const otp = event.currentTarget.otp.value;
       await verifyOneTimePassword(otp);
       //   if (!isAuthenticated) {
@@ -115,21 +121,6 @@ export const NotAuthenticatedView = () => {
   } = useAccountLogin();
   return (
     <>
-      {!!authStep && authStep !== AccountStep.AUTHENTICATED && (
-        <div className="text-center justify-items-center absolute top-0 left-0 right-0 bottom-0 bg-white/90 z-50 h-full w-full justify-center content-center flex flex-col gap-4">
-          <div>
-            <Loader className="w-4 h-4" />
-          </div>
-          <div className="text-xl">
-            {authStep === AccountStep.AUTHENTICATING && "Authenticating..."}
-            {authStep === AccountStep.CREATING_EMBEDDED_WALLET &&
-              "Creating your social wallet..."}
-            {authStep === AccountStep.DEPLOYING_ACCOUNT &&
-              "Deploying your wallet... Almost there!"}
-          </div>
-        </div>
-      )}
-
       <div className="text-center justify-items-center">
         <LogoSophon />
         <h2 className="text-xl font-bold text-gray-900 mt-4">Sign in</h2>
@@ -148,7 +139,12 @@ export const NotAuthenticatedView = () => {
         {Object.entries(SOCIAL_PROVIDERS).map(([provider, { icon }]) => {
           const onClick = () => {
             setSocialProvider(provider as ProviderEnum);
-            signInWithSocialAccount(provider as ProviderEnum);
+            // Use state machine if available, otherwise use original logic
+            if (onSocialAuth) {
+              onSocialAuth(provider as ProviderEnum);
+            } else {
+              signInWithSocialAccount(provider as ProviderEnum);
+            }
           };
           return (
             <button
@@ -209,7 +205,7 @@ export const NotAuthenticatedView = () => {
       <div className="space-y-4">
         <div className="space-y-3">
           <button
-            onClick={handleEOACreation}
+            onClick={onConnectWallet || handleEOACreation}
             disabled={loading || isPending}
             className="w-full py-3 px-4 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >

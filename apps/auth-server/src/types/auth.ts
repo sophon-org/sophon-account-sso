@@ -1,10 +1,6 @@
 import type { TypedDataParameter, Address, Hash } from "viem";
 import { SmartAccount } from "./smart-account";
 
-// ==========================================
-// VIEM TYPE EXTENSIONS
-// ==========================================
-
 export type TypedDataDomain = {
   name?: string;
   version?: string;
@@ -12,10 +8,6 @@ export type TypedDataDomain = {
   verifyingContract?: Address;
   salt?: Hash;
 };
-
-// ==========================================
-// RPC & MESSAGE TYPES
-// ==========================================
 
 export interface IncomingRequest {
   id: string;
@@ -38,10 +30,6 @@ export interface TransactionRequest {
   paymaster?: `0x${string}`;
 }
 
-// ==========================================
-// ACCOUNT STORE TYPES
-// ==========================================
-
 export interface AccountStore {
   passkey: Uint8Array | null;
   address: string | null;
@@ -49,10 +37,6 @@ export interface AccountStore {
   isLoggedIn: boolean;
   isInitialized: boolean;
 }
-
-// ==========================================
-// COMPONENT PROP TYPES
-// ==========================================
 
 export interface SigningRequestProps {
   signingRequest: SigningRequest;
@@ -70,6 +54,7 @@ export interface CreateSuccessProps {
   accountAddress: string;
   sessionPreferences: unknown;
   onUseAccount: () => Promise<void>;
+  onDisconnect: () => void;
 }
 
 export interface LoginSuccessProps {
@@ -78,14 +63,33 @@ export interface LoginSuccessProps {
   };
   sessionPreferences: unknown;
   onUseAccount: () => Promise<void>;
+  onDisconnect: () => void;
 }
-
-// ==========================================
-// UI STATE TYPES
-// ==========================================
-
-export type AuthMode = "create" | "login";
 
 export interface AccountData {
   address: string;
+}
+
+export enum AuthState {
+  LOADING = "loading",
+  NOT_AUTHENTICATED = "not_authenticated",
+  CREATING_ACCOUNT = "creating_account",
+  WAITING_OTP = "waiting_otp",
+  WAITING_PRIMARY_WALLET = "waiting_primary_wallet",
+  LOGGING_IN = "logging_in",
+  AUTHENTICATED = "authenticated",
+  SIGNING_REQUEST = "signing_request",
+  TRANSACTION_REQUEST = "transaction_request",
+  SUCCESS = "success",
+  ERROR = "error",
+}
+
+export interface AuthContext {
+  account?: SmartAccount;
+  accountAddress?: string;
+  accountData?: unknown;
+  error?: string;
+  email?: string;
+  signingRequest?: SigningRequest;
+  transactionRequest?: TransactionRequest;
 }

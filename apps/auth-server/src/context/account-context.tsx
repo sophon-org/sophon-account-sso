@@ -11,20 +11,13 @@ import { deleteCookie, getCookies } from "cookies-next/client";
 import { Wallet } from "@dynamic-labs/sdk-react-core";
 import { sendAuthMessage } from "@/lib/events";
 
-export enum AccountStep {
-  AUTHENTICATING = "authenticating",
-  CREATING_EMBEDDED_WALLET = "creating-embedded-wallet",
-  DEPLOYING_ACCOUNT = "deploying-account",
-  AUTHENTICATED = "authenticated",
-}
-
 interface AccountContextProps {
   account: SmartAccount | null;
   setAccount: (account: SmartAccount | null) => void;
   login: (account: SmartAccount, dynamicWallet?: Wallet) => Promise<void>;
   logout: () => void;
-  authStep: AccountStep | null;
-  setAuthStep: (step: AccountStep | null) => void;
+  dynamicWallet: Wallet | null;
+  setDynamicWallet: (wallet: Wallet | null) => void;
 }
 
 const LOCAL_STORAGE_KEY = "sophon-account";
@@ -37,7 +30,6 @@ const AccountContextProvider: React.FC<{ children: React.ReactNode }> = ({
   const [account, setAccount] = useState<SmartAccount | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
   const [dynamicWallet, setDynamicWallet] = useState<Wallet | null>(null);
-  const [authStep, setAuthStep] = useState<AccountStep | null>(null);
 
   // Initialize from localStorage on mount
   useEffect(() => {
@@ -101,8 +93,6 @@ const AccountContextProvider: React.FC<{ children: React.ReactNode }> = ({
     // for (const key in sessionStorage) {
     //   sessionStorage.removeItem(key);
     // }
-
-    setAuthStep(null);
   }, []);
 
   const contextValue = useMemo<AccountContextProps>(
@@ -113,19 +103,8 @@ const AccountContextProvider: React.FC<{ children: React.ReactNode }> = ({
       logout,
       dynamicWallet,
       setDynamicWallet,
-      authStep,
-      setAuthStep,
     }),
-    [
-      account,
-      setAccount,
-      login,
-      logout,
-      dynamicWallet,
-      setDynamicWallet,
-      authStep,
-      setAuthStep,
-    ]
+    [account, setAccount, login, logout, dynamicWallet, setDynamicWallet]
   );
 
   return (

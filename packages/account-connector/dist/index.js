@@ -53,6 +53,7 @@ export const sophonSsoConnector = (options) => {
         //   transferPolicies: [], // Token transfers allowed
         //   // Message signing is implicitly allowed in sessions
         // },
+        communicator: options?.communicator,
     });
     return connector;
 };

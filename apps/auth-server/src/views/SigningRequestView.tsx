@@ -12,6 +12,7 @@ import { isEthereumWallet } from "@dynamic-labs/ethereum";
 import { Loader } from "@/components/loader";
 import { useState } from "react";
 import { Dialog } from "@/components/dialog";
+import { windowService } from "@/service/window.service";
 
 export default function SigningRequestView({
   signingRequest,
@@ -190,7 +191,7 @@ export default function SigningRequestView({
                     });
                   }
 
-                  if (window.opener && incomingRequest) {
+                  if (windowService.isManaged() && incomingRequest) {
                     const signResponse = {
                       id: crypto.randomUUID(),
                       requestId: incomingRequest.id,
@@ -199,8 +200,8 @@ export default function SigningRequestView({
                       },
                     };
 
-                    window.opener.postMessage(signResponse, "*");
-                    window.close();
+                    windowService.sendMessage(signResponse);
+                    windowService.close();
                   }
                 } catch (error) {
                   console.error("Signing failed:", error);
@@ -217,7 +218,7 @@ export default function SigningRequestView({
 
           <button
             onClick={() => {
-              if (window.opener && incomingRequest) {
+              if (windowService.isManaged() && incomingRequest) {
                 const signResponse = {
                   id: crypto.randomUUID(),
                   requestId: incomingRequest.id,
@@ -230,10 +231,9 @@ export default function SigningRequestView({
                   },
                 };
 
-                window.opener.postMessage(signResponse, "*");
+                windowService.sendMessage(signResponse);
               }
-              console.log("User cancelled signing");
-              window.close();
+              windowService.close();
             }}
             className="w-full px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
           >
