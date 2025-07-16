@@ -15,7 +15,6 @@ import { IconDiscord } from "@/components/icons/icon-discord";
 import { IconTelegram } from "@/components/icons/icon-telegram";
 import { Loader } from "@/components/loader";
 import { LegalNotice } from "@/components/legal";
-// useAccountContext removed - no longer needed
 
 const SOCIAL_PROVIDERS = {
   [ProviderEnum.Google]: {
@@ -49,12 +48,6 @@ export const NotAuthenticatedView = ({
 }: NotAuthenticatedViewProps) => {
   const [emailLoading, setEmailLoading] = useState(false);
   const [waitingOTP, setWaitingOTP] = useState(false);
-  // const { authenticateUser, isAuthenticating } = useAuthenticateConnectedUser();
-  // const { user, primaryWallet, authMode } = useDynamicContext();
-
-  // console.log("🔥 user", user);
-  // console.log("🔥 primaryWallet", primaryWallet);
-  // console.log("🔥 authMode", authMode);
 
   const { connectWithEmail, verifyOneTimePassword } = useConnectWithOtp();
   const {

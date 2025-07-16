@@ -95,7 +95,6 @@ export const useMessageHandler = (
               setSigningRequest(signingRequestData);
               setSessionPreferences(null);
 
-              // BABY STEP: Call the callback if provided (clean integration)
               if (callbacks?.onSigningRequest) {
                 callbacks.onSigningRequest(signingRequestData);
               }
@@ -123,7 +122,6 @@ export const useMessageHandler = (
             setSigningRequest(null);
             setSessionPreferences(null);
 
-            // BABY STEP: Call the callback if provided (clean integration)
             if (callbacks?.onTransactionRequest) {
               callbacks.onTransactionRequest(transactionRequestData);
             }
@@ -132,7 +130,7 @@ export const useMessageHandler = (
 
         setIncomingRequest(event.data);
 
-        // Save to sessionStorage (survives OAuth redirects)
+        // Save to sessionStorage (survives OAuth redirects when social auth is used)
         sessionStorage.setItem(
           "sophon-incoming-request",
           JSON.stringify(event.data)
@@ -140,10 +138,8 @@ export const useMessageHandler = (
       }
     };
 
-    // Add event listener
     window.addEventListener("message", messageHandler);
 
-    // Cleanup function
     return () => {
       window.removeEventListener("message", messageHandler);
     };

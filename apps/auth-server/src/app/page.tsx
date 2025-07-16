@@ -40,37 +40,6 @@ export default function RootPage() {
   const { account, logout } = useAccountContext();
   const { handleAuthSuccessResponse } = useAuthResponse();
 
-  // useEffect(() => {
-  //   if (
-  //     user &&
-  //     primaryWallet &&
-  //     incomingRequest &&
-  //     !signingRequest &&
-  //     !transactionRequest
-  //   ) {
-  //     console.log("🔥 Dynamic user authenticated, sending success response!");
-
-  //     handleAuthSuccessResponse(
-  //       { address: primaryWallet.address },
-  //       incomingRequest,
-  //       sessionPreferences
-  //     );
-
-  //     // Close the popup after a short delay
-  //     /* setTimeout(() => {
-  //       window.close();
-  //     }, 500); */
-  //   }
-  // }, [
-  //   user,
-  //   primaryWallet,
-  //   incomingRequest,
-  //   signingRequest,
-  //   transactionRequest,
-  //   sessionPreferences,
-  //   handleAuthSuccessResponse,
-  // ]);
-
   if (authState === AuthState.LOADING) {
     return (
       <div className="flex h-screen w-screen items-center justify-center">
@@ -102,7 +71,6 @@ export default function RootPage() {
   }
 
   if (authState === AuthState.NOT_AUTHENTICATED) {
-    console.log("NOT AUTHENTICATED");
     return (
       <NotAuthenticatedView
         onConnectWallet={startWalletConnection}
@@ -161,8 +129,6 @@ export default function RootPage() {
   }
 
   if (authState === AuthState.AUTHENTICATED && account) {
-    console.log("LOGIN SUCCESS");
-
     const handleDisconnect = () => {
       logout();
       goToNotAuthenticated();
@@ -178,7 +144,7 @@ export default function RootPage() {
             incomingRequest!,
             sessionPreferences
           );
-          //window.close();
+          window.close();
         }}
         onDisconnect={handleDisconnect}
       />
@@ -186,8 +152,6 @@ export default function RootPage() {
   }
 
   if (authState === AuthState.SUCCESS && account) {
-    console.log("CREATE SUCCESS");
-
     const handleDisconnect = () => {
       logout();
       goToNotAuthenticated();
@@ -211,8 +175,6 @@ export default function RootPage() {
   }
 
   if (account) {
-    console.log("PREFERENCES");
-
     return (
       <PreferencesView
         onUseAccount={async () => {
