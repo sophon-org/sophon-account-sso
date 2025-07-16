@@ -1,3 +1,6 @@
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
 import {
   createPublicClient,
   http,
@@ -15,6 +18,10 @@ import { CHAIN_CONTRACTS, DEFAULT_CHAIN_ID } from "@/lib/constants";
 
 const SALT_PREFIX = "DynamicLabs";
 //const SALT_PREFIX = "SophonLabs";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
 
 // TODO: change this implementation to a indexed one
 export const isAccountDeployed = async (connectedAddress: string) => {
