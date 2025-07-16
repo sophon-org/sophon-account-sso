@@ -1,126 +1,100 @@
-import { WebView, type WebViewProps } from 'react-native-webview';
+import { WebView } from 'react-native-webview';
+import { StyleSheet, View } from 'react-native';
+import { useMemo, useRef } from 'react';
+import { useModalVisibility } from './hooks/use-modal-visibility';
 import { USER_AGENT } from './constants/user-agent';
-// import { BottomSheetView } from '@gorhom/bottom-sheet';
-// import { StyleSheet } from 'react-native';
-import { Modal } from 'react-native';
-import { useEffect, type ComponentType } from 'react';
-import { useSophonContext } from './hooks';
-// import { View } from 'react-native';
+import { sendUIMessage, useUIEventHandler } from './messaging/ui';
+import { postMessageToWebApp } from '@sophon-labs/account-message-bridge';
+
+const defaultUrl = 'http://localhost:3000/webview';
 
 export interface SophonWebViewProps {
-  // url: string;
-  style?: WebViewProps['style'];
-  webViewRef?: React.RefObject<WebView | null>;
-  // modalRef?: React.RefObject<Modal>;
-  // isModalVisible: boolean;
+  url?: string;
+  debugEnabled?: boolean;
 }
+export const SophonWebView = ({
+  url = defaultUrl,
+  debugEnabled = false,
+}: SophonWebViewProps) => {
+  const webViewRef = useRef(null);
+  const { visible } = useModalVisibility();
 
-// export const SophonAccountProvider = ({
-//   children,
-// }: {
-//   children: React.ReactNode;
-// }) => {
-//   return (
-//     <GestureHandlerRootView style={styles.container}>
-//       <BottomSheetModalProvider>{children}</BottomSheetModalProvider>
-//     </GestureHandlerRootView>
-//   );
-// };
+  console.log('visible', visible);
+  const containerStyles = {
+    ...styles.container,
+    ...(visible ? styles.show : styles.hide),
+  };
 
-const ModalSafeForReact18 = Modal as ComponentType<Modal['props']>;
+  const key = useMemo(() => url.toString(), [url]);
 
-const WebViewSafeForReact18 = WebView as any;
+  useUIEventHandler('showModal', () => {
+    postMessageToWebApp(webViewRef, 'openModal', {});
+  });
 
-export const SophonModal = ({ style, webViewRef }: SophonWebViewProps) => {
-  // const handleSheetChanges = useCallback((index: number) => {
-  //   console.log('handleSheetChanges', index);
-  // }, []);
+  useUIEventHandler('outgoingRpc', (payload) => {
+    postMessageToWebApp(webViewRef, 'rpc', payload as any);
+  });
 
-  useEffect(() => {
-    console.log('webViewRef def', webViewRef, webViewRef?.current);
-  }, [webViewRef]);
-  console.log('webViewRef def3', webViewRef, webViewRef?.current);
-
-  const url = 'http://localhost:3000';
-  const { isModalVisible, hideModal } = useSophonContext();
-
-  console.log('isModalVisible 2', isModalVisible);
   return (
-    <ModalSafeForReact18
-      // ref={modalRef}
-      // transparent={true}
-      animationType="slide"
-      onRequestClose={() => {
-        hideModal();
-      }}
-      visible={isModalVisible}
-      // isVisible={isModalVisible}
-      presentationStyle="pageSheet"
-      onShow={() => {
-        console.log('onShow');
-      }}
-      // visible={isModalVisible}
-      // useNativeDriver={true}
-      // useNativeDriverForBackdrop={true}
-      // hideModalContentWhileAnimating={true}
-      // animationIn="slideInUp"
-      // animationOut="slideOutDown"
-    >
-      {/* <ActionSheet
-      ref={modalRef}
-      // snapPoints={[800]}
-      testIDs={{
-        backdrop: 'sophon-account-bottom-sheet-backdrop',
-        modal: 'sophon-account-bottom-sheet-modal',
-        sheet: 'sophon-account-bottom-sheet-sheet',
-        root: 'sophon-account-bottom-sheet-root',
-      }}
-    > */}
-      {/* <View> */}
-      {/* <BottomSheetModal
-        ref={modalRef}
-        onChange={handleSheetChanges}
-        enableDynamicSizing={false}
-        snapPoints={[900]}
-      > */}
-      {/* <BottomSheetView
-        style={styles.contentContainer}
-        testID="sophon-account-bottom-sheet-view"
-      > */}
-      <WebViewSafeForReact18
-        testID="sophon-account-webview"
+    <View style={containerStyles}>
+      <WebView
+        key={key}
         ref={webViewRef}
-        // ref={(ref) => {
-        //   console.log('ref', ref);
-        // }}
-        source={{ uri: url }}
-        style={[{ flex: 1 }, style]}
+        source={{ uri: defaultUrl }}
+        style={styles.webview}
+        // containerStyles={containerStyles}
+        hideKeyboardAccessoryView={true}
         userAgent={USER_AGENT}
-        onMessage={(event: any) => {
+        webviewDebuggingEnabled={debugEnabled}
+        onLoadEnd={() => console.log('load end')}
+        onLoadStart={() => console.log('load start')}
+        onLoad={() => console.log('load')}
+        onMessage={(event) => {
+          console.log('message', event.nativeEvent.data);
           const { action, payload } = JSON.parse(event.nativeEvent.data);
-          console.warn(action, payload);
-          if (action === 'connected') {
-            hideModal();
+          if (action === 'closeModal') {
+            sendUIMessage('hideModal', payload);
+          } else if (action === 'rpc') {
+            sendUIMessage('incommingRpc', payload);
           }
         }}
+        onError={(event) => {
+          console.log('error', event);
+        }}
+        onContentProcessDidTerminate={() => {
+          console.log('content process did terminate');
+        }}
+        onRenderProcessGone={() => {
+          console.log('render process gone');
+        }}
       />
-      {/* </View> */}
-      {/* </BottomSheetView> */}
-      {/* </BottomSheetModal> */}
-      {/* </ActionSheet> */}
-    </ModalSafeForReact18>
+    </View>
   );
 };
 
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     padding: 24,
-//     justifyContent: 'center',
-//     backgroundColor: 'grey',
-//   },
-//   contentContainer: {
-//     flex: 1,
-//     alignItems: 'center',
-//   },
-// });
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: 'transparent',
+    bottom: 0,
+    flex: 1,
+    left: 0,
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    width: '100%',
+  },
+  hide: {
+    elevation: 0,
+    opacity: 0,
+    zIndex: -10000,
+  },
+  show: {
+    elevation: 10000,
+    opacity: 1,
+    zIndex: 10000,
+  },
+  webview: {
+    backgroundColor: 'transparent',
+    flex: 1,
+  },
+});

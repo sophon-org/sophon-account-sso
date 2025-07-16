@@ -4,12 +4,9 @@ import { useAccountLogin } from "@/hooks/useAccountLogin";
 import { useWalletConnection } from "@/hooks/useWalletConnection";
 import { ProviderEnum } from "@dynamic-labs/types";
 import {
-  useAuthenticateConnectedUser,
   useConnectWithOtp,
-  useDynamicContext,
   useSocialAccounts,
 } from "@dynamic-labs/sdk-react-core";
-import { Dialog } from "@/components/dialog";
 import { LogoSophon } from "@/components/logos/logo-sophon";
 import { IconGoogle } from "@/components/icons/icon-google";
 import { IconTwitter } from "@/components/icons/icon-twitter";
@@ -117,12 +114,7 @@ export const NotAuthenticatedView = () => {
     error: loginError,
   } = useAccountLogin();
   return (
-    <Dialog
-      title="Sophon Auth"
-      onClose={() => console.log("close")}
-      onBack={() => console.log("back")}
-      className="relative"
-    >
+    <>
       {!!authStep && authStep !== AccountStep.AUTHENTICATED && (
         <div className="text-center justify-items-center absolute top-0 left-0 right-0 bottom-0 bg-white/90 z-50 h-full w-full justify-center content-center flex flex-col gap-4">
           <div>
@@ -144,9 +136,11 @@ export const NotAuthenticatedView = () => {
       </div>
 
       <div className="my-4">
-        {errorSocial && (
+        {(errorSocial || loginError) && (
           <div className="p-3 bg-red-50 border border-red-200 rounded">
-            <p className="text-red-600 text-sm">{errorSocial.message}</p>
+            <p className="text-red-600 text-sm">
+              {errorSocial?.message || loginError}
+            </p>
           </div>
         )}
       </div>
@@ -273,6 +267,6 @@ export const NotAuthenticatedView = () => {
       </div>
 
       <LegalNotice className="max-h-4" />
-    </Dialog>
+    </>
   );
 };

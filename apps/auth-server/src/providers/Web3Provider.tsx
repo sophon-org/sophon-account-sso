@@ -10,10 +10,10 @@ import { EthereumWalletConnectors } from "@dynamic-labs/ethereum";
 import { useAccountContext } from "@/hooks/useAccountContext";
 import { useMessageHandler } from "@/hooks/useMessageHandler";
 import { useAuthResponse } from "@/hooks/useAuthResponse";
-import { getSmartAccountAddress } from "@/lib/utils";
 import { deployAccount, getsSmartAccounts } from "@/service/account.service";
 import { AccountStep } from "@/context/account-context";
 import { env } from "@/env";
+import { DynamicWagmiConnector } from "@dynamic-labs/wagmi-connector";
 
 // Wagmi config with MetaMask connector
 const wagmiConfig = createConfig({
@@ -45,6 +45,16 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
         environmentId: env.NEXT_PUBLIC_DYNAMIC_PROVIDER_ID!,
         walletConnectors: [EthereumWalletConnectors],
         events: {
+          onAuthFailure: () => {
+            alert("failure");
+          },
+          onAuthInit: () => {
+            alert("init");
+          },
+          onAuthFlowCancel: () => {
+            alert("cancel");
+          },
+
           onWalletAdded: async ({ wallet, userWallets }) => {
             console.log("🔥🔥🔥🔥🔥 Dynamic wallet added", wallet, userWallets);
 
@@ -91,6 +101,7 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
             );
           },
           onAuthSuccess: async (payload) => {
+            alert("success");
             console.log(
               "🔥🔥🔥🔥🔥 Dynamic user authenticated, sending success response!",
               payload
@@ -138,6 +149,7 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
             }
           },
           onLogout: () => {
+            alert("logout");
             console.log(
               "🔥🔥🔥🔥🔥 Dynamic user logged out, logging out from account context"
             );
@@ -148,7 +160,7 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
     >
       <WagmiProvider config={wagmiConfig}>
         <QueryClientProvider client={queryClient}>
-          {children}
+          <DynamicWagmiConnector>{children}</DynamicWagmiConnector>
         </QueryClientProvider>
       </WagmiProvider>
     </DynamicContextProvider>

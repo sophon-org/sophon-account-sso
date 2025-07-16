@@ -1,1 +1,1 @@
-export * from './use-sophon-context';
+export * from './use-modal-visibility';

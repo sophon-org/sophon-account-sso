@@ -38,6 +38,7 @@ export const useRNHandler = (action, callback) => {
 };
 const onMessageFromRN = (message) => {
     const { action, payload } = JSON.parse(message);
+    console.log("onMessageFromRN", action, payload);
     RNEvents.emit(action, payload);
 };
 // Attach the handler to `window` so we can access it from

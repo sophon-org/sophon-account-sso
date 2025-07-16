@@ -12,5 +12,6 @@ const buildMessageJavaScript = (action, payload) => {
  * @param payload the payload of the message
  */
 export const postMessageToWebApp = (webViewRef, action, payload) => {
+    console.log("postMessageToWebApp", webViewRef.current ? "ready" : "not ready", action, payload);
     webViewRef.current?.injectJavaScript(buildMessageJavaScript(action, payload));
 };

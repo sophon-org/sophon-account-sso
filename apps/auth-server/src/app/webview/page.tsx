@@ -8,7 +8,6 @@ import SigningRequestView from "@/views/SigningRequestView";
 import TransactionRequestView from "@/views/TransactionRequestView";
 import CreateSuccessView from "@/views/CreateSuccessView";
 import LoginSuccessView from "@/views/LoginSuccessView";
-// import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { NotAuthenticatedView } from "@/views/NotAuthenticatedView";
 import PreferencesView from "@/views/PreferencesView";
 import { useAccountContext } from "@/hooks/useAccountContext";
@@ -18,9 +17,16 @@ import {
   sendMessageToRN,
   useRNHandler,
 } from "@sophon-labs/account-message-bridge/dist/src/web";
-import { Dialog } from "@/components/dialog";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { useState } from "react";
 
 export default function RootPage() {
+  const [open, setOpen] = useState(true);
   const { sdkHasLoaded } = useDynamicContext();
   const {
     incomingRequest,
@@ -32,6 +38,10 @@ export default function RootPage() {
   useRNHandler("echo", (payload) => {
     console.log("🔥 Received message from React Native:", payload);
     alert(payload.message);
+  });
+
+  useRNHandler("openModal", () => {
+    setOpen(true);
   });
 
   const { account } = useAccountContext();
@@ -136,38 +146,56 @@ export default function RootPage() {
 
   if (account) {
     return (
-      <Dialog
-        title="Sophon Auth"
-        onClose={() => console.log("close")}
-        onBack={() => console.log("back")}
-        className="relative"
+      <Sheet
+        open={open}
+        modal={true}
+        onOpenChange={(open) => {
+          setOpen(open);
+          if (!open) {
+            sendMessageToRN("closeModal", {});
+          }
+        }}
       >
-        <PreferencesView
-          onUseAccount={async () => {
-            await handleAuthSuccessResponse(
-              { address: account.address },
-              incomingRequest!,
-              sessionPreferences
-            );
-            if (window.opener) {
-              window.close();
-            } else if (window.ReactNativeWebView) {
-              sendMessageToRN("connected", { address: account.address });
-            }
-          }}
-        />
-      </Dialog>
+        <SheetContent side="bottom" className="rounded-t-3xl pb-8 px-4">
+          <SheetHeader hidden={true}>
+            <SheetTitle>Sophon Preferences Modal</SheetTitle>
+          </SheetHeader>
+          <PreferencesView
+            onUseAccount={async () => {
+              await handleAuthSuccessResponse(
+                { address: account.address },
+                incomingRequest!,
+                sessionPreferences
+              );
+              if (window.opener) {
+                window.close();
+              } else if (window.ReactNativeWebView) {
+                sendMessageToRN("connected", { address: account.address });
+              }
+            }}
+          />
+        </SheetContent>
+      </Sheet>
     );
   }
 
   return (
-    <Dialog
-      title="Sophon Auth"
-      onClose={() => console.log("close")}
-      onBack={() => console.log("back")}
-      className="relative"
+    <Sheet
+      open={open}
+      modal={true}
+      onOpenChange={(open) => {
+        setOpen(open);
+        if (!open) {
+          sendMessageToRN("closeModal", {});
+        }
+      }}
     >
-      <NotAuthenticatedView />
-    </Dialog>
+      <SheetContent side="bottom" className="rounded-t-3xl">
+        <SheetHeader hidden={true}>
+          <SheetTitle>Sophon Authentication Modal</SheetTitle>
+        </SheetHeader>
+        <NotAuthenticatedView />
+      </SheetContent>
+    </Sheet>
   );
 }
