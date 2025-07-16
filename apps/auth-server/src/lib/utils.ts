@@ -16,7 +16,8 @@ import {
 import { sophonTestnet } from "viem/chains";
 import { CHAIN_CONTRACTS, DEFAULT_CHAIN_ID } from "@/lib/constants";
 
-const SALT_PREFIX = "SophonLabs";
+const SALT_PREFIX = "DynamicLabs";
+//const SALT_PREFIX = "SophonLabs";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -89,7 +90,8 @@ export const checkAccountOwnership = async (
     const uniqueAccountId = keccak256(
       encodePacked(
         ["bytes32", "address"],
-        [knownUniqueId as `0x${string}`, deployerAddress as `0x${string}`]
+        [knownUniqueId as `0x${string}`, connectedAddress as `0x${string}`]
+        //[knownUniqueId as `0x${string}`, deployerAddress as `0x${string}`]
       )
     );
     console.log(
