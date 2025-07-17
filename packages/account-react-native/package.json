@@ -62,7 +62,7 @@
   },
   "dependencies": {
     "@sophon-labs/account-message-bridge": "link:../account-message-bridge",
-    "EventEmitter": "1.0.0",
+    "eventemitter3": "5.0.1",
     "viem": "^2.31.3",
     "react-native-mmkv": "^3.3.0",
     "react-native-webview": "13.15.0",

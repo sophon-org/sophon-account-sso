@@ -1,5 +1,4 @@
-// @ts-ignore
-import EventEmitter from 'EventEmitter';
+import { EventEmitter } from 'eventemitter3';
 import { useEffect } from 'react';
 import type { Message } from 'zksync-sso/communicator';
 

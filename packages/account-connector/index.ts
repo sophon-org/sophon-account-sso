@@ -1,4 +1,3 @@
-import { createConnector } from "@wagmi/core";
 import { Communicator } from "zksync-sso/communicator";
 import { zksyncSsoConnector } from "zksync-sso/connector";
 
@@ -101,7 +100,6 @@ export const sophonSsoConnector: any = (options?: {
     //   // Message signing is implicitly allowed in sessions
     // },
     communicator: options?.communicator,
-    storage: localStorage,
   });
 
   return connector;
