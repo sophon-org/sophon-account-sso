@@ -1,29 +1,31 @@
 {
   "name": "@sophon-labs/account-connector",
-  "version": "0.0.1",
   "description": "Web3 wallet connector with SSO features",
-  "main": "dist/index.js",
+  "version": "0.0.1",
+  "author": "Sophon Team",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
-  "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
-    "watch": "nodemon -e ts,tsx -w ./src -x 'yarn build'"
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "require": "./dist/index.cjs"
+      }
+    }
   },
-  "keywords": [
-    "web3",
-    "wallet",
-    "sso",
-    "authentication",
-    "passkey"
-  ],
-  "author": "Sophon",
-  "license": "MIT",
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch"
+  },
   "devDependencies": {
     "@types/node": "^20.0.0",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "tsup": "^8.5.0"
   },
   "dependencies": {
     "zksync-sso": "file:../../../zksync-sso/packages/sdk"

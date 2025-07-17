@@ -33,31 +33,10 @@
     "!**/.*"
   ],
   "scripts": {
-    "example": "yarn workspace @sophon-labs/account-react-native-example",
     "test": "jest",
-    "typecheck": "tsc",
     "clean": "del-cli lib",
     "build": "bob build",
-    "release": "release-it --only-version",
-    "watch": "nodemon -e ts,tsx -w ./src -x 'yarn build'"
-  },
-  "keywords": [
-    "react-native",
-    "ios",
-    "android"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/falleco/sophon-labs-account-react-native.git"
-  },
-  "author": "Israel Crisanto <israel@sophon.xyz> (https://github.com/falleco)",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/falleco/sophon-labs-account-react-native/issues"
-  },
-  "homepage": "https://github.com/falleco/sophon-labs-account-react-native#readme",
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/"
+    "dev": "nodemon -e ts,tsx -w ./src -x 'yarn build'"
   },
   "dependencies": {
     "@sophon-labs/account-message-bridge": "link:../account-message-bridge",
@@ -79,7 +58,8 @@
     "prettier": "^3.0.3",
     "react-native-builder-bob": "^0.40.12",
     "release-it": "^17.10.0",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "tsup": "^8.5.0"
   },
   "peerDependencies": {
     "react": "*",
@@ -94,37 +74,6 @@
       "<rootDir>/example/node_modules",
       "<rootDir>/dist/"
     ]
-  },
-  "commitlint": {
-    "extends": [
-      "@commitlint/config-conventional"
-    ]
-  },
-  "release-it": {
-    "git": {
-      "commitMessage": "chore: release ${version}",
-      "tagName": "v${version}"
-    },
-    "npm": {
-      "publish": true
-    },
-    "github": {
-      "release": true
-    },
-    "plugins": {
-      "@release-it/conventional-changelog": {
-        "preset": {
-          "name": "angular"
-        }
-      }
-    }
-  },
-  "prettier": {
-    "quoteProps": "consistent",
-    "singleQuote": true,
-    "tabWidth": 2,
-    "trailingComma": "es5",
-    "useTabs": false
   },
   "react-native-builder-bob": {
     "source": "src",
