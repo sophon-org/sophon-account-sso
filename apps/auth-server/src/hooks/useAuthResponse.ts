@@ -1,8 +1,8 @@
-import { env } from "@/env";
-import { useAccountContext } from "./useAccountContext";
-import { useCreateSession } from "./useCreateSession";
-import type { AccountData, IncomingRequest } from "@/types/auth";
-import { windowService } from "@/service/window.service";
+import { env } from '@/env';
+import { windowService } from '@/service/window.service';
+import type { AccountData, IncomingRequest } from '@/types/auth';
+import { useAccountContext } from './useAccountContext';
+import { useCreateSession } from './useCreateSession';
 
 export function useAuthResponse() {
   const { account } = useAccountContext();
@@ -11,19 +11,19 @@ export function useAuthResponse() {
   const handleAuthSuccessResponse = async (
     accountData: AccountData,
     incomingRequest: IncomingRequest,
-    sessionPreferences?: unknown
+    sessionPreferences?: unknown,
   ) => {
     if (!windowService.isManaged() || !incomingRequest) {
-      console.error("No RPC request to respond to!");
+      console.error('No RPC request to respond to!');
       return;
     }
 
     const responseAddress = account?.address || accountData.address;
     console.log(
-      "🔥🔥🔥🔥🔥 responseAddress",
+      '🔥🔥🔥🔥🔥 responseAddress',
       responseAddress,
       accountData,
-      account
+      account,
     );
 
     let sessionData = null;
@@ -56,11 +56,11 @@ export function useAuthResponse() {
                 auxiliaryFunds: { supported: true },
               },
               contracts: {
-                accountFactory: "0x0000000000000000000000000000000000000000",
-                passkey: "0x0000000000000000000000000000000000000000",
-                session: "0x0000000000000000000000000000000000000000",
-                recovery: "0x0000000000000000000000000000000000000000",
-                accountPaymaster: "0x0000000000000000000000000000000000000000",
+                accountFactory: '0x0000000000000000000000000000000000000000',
+                passkey: '0x0000000000000000000000000000000000000000',
+                session: '0x0000000000000000000000000000000000000000',
+                recovery: '0x0000000000000000000000000000000000000000',
+                accountPaymaster: '0x0000000000000000000000000000000000000000',
               },
             },
           ],
@@ -71,7 +71,7 @@ export function useAuthResponse() {
     windowService.sendMessage(rpcResponse);
 
     // Clean up sessionStorage after successful response
-    sessionStorage.removeItem("sophon-incoming-request");
+    sessionStorage.removeItem('sophon-incoming-request');
   };
 
   return { handleAuthSuccessResponse };

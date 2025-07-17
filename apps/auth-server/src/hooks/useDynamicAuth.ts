@@ -1,10 +1,10 @@
-import { useEffect } from "react";
-import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
-import { useAccountContext } from "./useAccountContext";
-import { useAuthResponse } from "./useAuthResponse";
-import { useMessageHandler } from "./useMessageHandler";
-import { deployAccount, getsSmartAccounts } from "@/service/account.service";
-import { AuthState, AuthContext } from "@/types/auth";
+import { useDynamicContext } from '@dynamic-labs/sdk-react-core';
+import { useCallback, useEffect } from 'react';
+import { deployAccount, getsSmartAccounts } from '@/service/account.service';
+import { type AuthContext, AuthState } from '@/types/auth';
+import { useAccountContext } from './useAccountContext';
+import { useAuthResponse } from './useAuthResponse';
+import { useMessageHandler } from './useMessageHandler';
 
 interface UseDynamicAuthParams {
   state: AuthState;
@@ -24,17 +24,17 @@ export function useDynamicAuth({
   const { handleAuthSuccessResponse } = useAuthResponse();
   const { incomingRequest, sessionPreferences } = useMessageHandler();
 
-  const handleAuthentication = async () => {
+  const handleAuthentication = useCallback(async () => {
     try {
-      console.log("🔥 handleAuthentication XXX");
+      console.log('🔥 handleAuthentication XXX');
       const { accounts } = await getsSmartAccounts(
-        primaryWallet!.address as `0x${string}`
+        primaryWallet!.address as `0x${string}`,
       );
 
       let smartAccountAddress: `0x${string}`;
       if (accounts.length === 0) {
         const response = await deployAccount(
-          primaryWallet!.address as `0x${string}`
+          primaryWallet!.address as `0x${string}`,
         );
         smartAccountAddress = response.accounts[0] as `0x${string}`;
       } else {
@@ -57,21 +57,30 @@ export function useDynamicAuth({
         handleAuthSuccessResponse(
           { address: smartAccountAddress },
           incomingRequest,
-          sessionPreferences
+          sessionPreferences,
         );
       }
     } catch (error) {
-      console.error("❌ Authentication failed:", error);
+      console.error('❌ Authentication failed:', error);
       setState(AuthState.ERROR);
-      setContext((prev) => ({ ...prev, error: "Authentication failed" }));
+      setContext((prev) => ({ ...prev, error: 'Authentication failed' }));
     }
-  };
+  }, [
+    handleAuthSuccessResponse,
+    incomingRequest,
+    primaryWallet,
+    setContext,
+    setState,
+    user,
+    sessionPreferences,
+    login,
+  ]);
 
   // Handle logout
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     logout();
     setState(AuthState.NOT_AUTHENTICATED);
-  };
+  }, [logout, setState]);
 
   // SDK sync useEffect
   useEffect(() => {
@@ -79,17 +88,24 @@ export function useDynamicAuth({
       // Check if user is already authenticated in Dynamic SDK
       if (user && primaryWallet) {
         console.log(
-          "🔥 SDK loaded, user already authenticated, transitioning to AUTHENTICATED"
+          '🔥 SDK loaded, user already authenticated, transitioning to AUTHENTICATED',
         );
         handleAuthentication();
       } else {
         console.log(
-          "🔥 SDK loaded, no user found, transitioning to NOT_AUTHENTICATED"
+          '🔥 SDK loaded, no user found, transitioning to NOT_AUTHENTICATED',
         );
         goToNotAuthenticated();
       }
     }
-  }, [sdkHasLoaded, state, user, primaryWallet]);
+  }, [
+    sdkHasLoaded,
+    state,
+    user,
+    primaryWallet,
+    handleAuthentication,
+    goToNotAuthenticated,
+  ]);
 
   // Watch for authentication changes after initial load
   useEffect(() => {
@@ -101,12 +117,12 @@ export function useDynamicAuth({
       // User authenticated after being in NOT_AUTHENTICATED state
       if (user && primaryWallet) {
         console.log(
-          "🔥 User authenticated via Dynamic SDK, transitioning to AUTHENTICATED"
+          '🔥 User authenticated via Dynamic SDK, transitioning to AUTHENTICATED',
         );
         handleAuthentication();
       }
     }
-  }, [sdkHasLoaded, state, user, primaryWallet]);
+  }, [sdkHasLoaded, state, user, primaryWallet, handleAuthentication]);
 
   // Watch for Dynamic logout
   useEffect(() => {
@@ -118,10 +134,10 @@ export function useDynamicAuth({
       state === AuthState.AUTHENTICATED &&
       dynamicWallet
     ) {
-      console.log("🔥 logged out from dynamic");
+      console.log('🔥 logged out from dynamic');
       handleLogout();
     }
-  }, [sdkHasLoaded, user, state, dynamicWallet]);
+  }, [sdkHasLoaded, user, state, dynamicWallet, handleLogout]);
 
   return {
     handleAuthentication,

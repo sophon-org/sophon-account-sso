@@ -1,6 +1,6 @@
-import { useAccount } from "wagmi";
+import { useAccount } from 'wagmi';
 
-import type { CreateSuccessProps } from "@/types/auth";
+import type { CreateSuccessProps } from '@/types/auth';
 
 export default function CreateSuccessView({
   accountAddress,
@@ -32,15 +32,17 @@ export default function CreateSuccessView({
 
       <div className="mt-4 space-y-2">
         <button
+          type="button"
           onClick={onUseAccount}
           className="w-full px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
         >
           {sessionPreferences
-            ? "Create Account with Session"
-            : "Use This Account"}
+            ? 'Create Account with Session'
+            : 'Use This Account'}
         </button>
 
         <button
+          type="button"
           onClick={onDisconnect}
           className="w-full px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
         >

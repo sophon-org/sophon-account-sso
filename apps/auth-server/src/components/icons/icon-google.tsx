@@ -7,6 +7,8 @@ export const IconGoogle = ({ className }: { className?: string }) => {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
+      aria-label="Google Icon"
+      role="img"
     >
       <path
         d="M21.68 12.2292C21.68 11.5142 21.6158 10.8267 21.4967 10.1667H12V14.0717H17.4267C17.1883 15.3275 16.4733 16.3909 15.4008 17.1059V19.645H18.6733C20.58 17.885 21.68 15.3 21.68 12.2292Z"

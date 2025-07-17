@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   type Address,
@@ -7,15 +7,15 @@ import {
   http,
   publicActions,
   walletActions,
-} from "viem";
-import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
-import { sophonTestnet, sophon } from "viem/chains";
-import { eip712WalletActions } from "viem/zksync";
-import { createZksyncPasskeyClient } from "zksync-sso/client/passkey";
-import { createZksyncRecoveryGuardianClient } from "zksync-sso/client/recovery";
-import { CONTRACTS, VIEM_CHAIN } from "@/lib/constants";
-import { useAccountContext } from "./useAccountContext";
-import { env } from "@/env";
+} from 'viem';
+import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
+import { sophon, sophonTestnet } from 'viem/chains';
+import { eip712WalletActions } from 'viem/zksync';
+import { createZksyncPasskeyClient } from 'zksync-sso/client/passkey';
+import { createZksyncRecoveryGuardianClient } from 'zksync-sso/client/recovery';
+import { env } from '@/env';
+import { CONTRACTS, VIEM_CHAIN } from '@/lib/constants';
+import { useAccountContext } from './useAccountContext';
 
 // Extend Window interface for ethereum provider
 declare global {
@@ -28,7 +28,7 @@ declare global {
 
 // Supported chains for Sophon
 export const supportedChains = [VIEM_CHAIN];
-export type SupportedChainId = (typeof supportedChains)[number]["id"];
+export type SupportedChainId = (typeof supportedChains)[number]['id'];
 
 // Chain parameters
 export const chainParameters: Record<SupportedChainId, { blockTime: number }> =
@@ -51,12 +51,12 @@ export const useClientStore = () => {
 
   const defaultChainId = env.NEXT_PUBLIC_CHAIN_ID as SupportedChainId;
   const defaultChain = supportedChains.find(
-    (chain) => chain.id === defaultChainId
+    (chain) => chain.id === defaultChainId,
   );
 
   if (!defaultChain) {
     throw new Error(
-      `Default chain is set to ${defaultChainId}, but is missing from the supported chains list`
+      `Default chain is set to ${defaultChainId}, but is missing from the supported chains list`,
     );
   }
 
@@ -76,11 +76,11 @@ export const useClientStore = () => {
   // Main passkey client for transactions (requires logged in user)
   const getClient = ({ chainId }: { chainId: SupportedChainId }) => {
     if (!address)
-      throw new Error("Address is not set - user must be logged in");
+      throw new Error('Address is not set - user must be logged in');
     if (!passkey)
-      throw new Error("Passkey is not set - user must be logged in");
+      throw new Error('Passkey is not set - user must be logged in');
     if (!username)
-      throw new Error("Username is not set - user must be logged in");
+      throw new Error('Username is not set - user must be logged in');
 
     const chain = supportedChains.find((chain) => chain.id === chainId);
     if (!chain) throw new Error(`Chain with id ${chainId} is not supported`);
@@ -172,19 +172,19 @@ export const useClientStore = () => {
     if (!chain) throw new Error(`Chain with id ${chainId} is not supported`);
 
     // Check if window.ethereum exists (MetaMask or other injected wallet)
-    if (typeof window === "undefined" || !window.ethereum) {
+    if (typeof window === 'undefined' || !window.ethereum) {
       throw new Error(
-        "No ethereum provider found - please install MetaMask or another Web3 wallet"
+        'No ethereum provider found - please install MetaMask or another Web3 wallet',
       );
     }
 
     // Request account access
     const accounts = (await window.ethereum.request({
-      method: "eth_requestAccounts",
+      method: 'eth_requestAccounts',
     })) as Address[];
 
     if (!accounts || accounts.length === 0) {
-      throw new Error("No accounts found - please connect your wallet");
+      throw new Error('No accounts found - please connect your wallet');
     }
 
     return createWalletClient({

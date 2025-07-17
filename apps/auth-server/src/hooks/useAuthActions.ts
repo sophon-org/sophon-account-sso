@@ -1,16 +1,16 @@
-import { useAccountCreate } from "./useAccountCreate";
-import { useWalletConnection } from "./useWalletConnection";
 import {
   useConnectWithOtp,
   useSocialAccounts,
-} from "@dynamic-labs/sdk-react-core";
-import { ProviderEnum } from "@dynamic-labs/types";
+} from '@dynamic-labs/sdk-react-core';
+import type { ProviderEnum } from '@dynamic-labs/types';
 import {
+  type AuthContext,
   AuthState,
-  AuthContext,
-  SigningRequest,
-  TransactionRequest,
-} from "@/types/auth";
+  type SigningRequest,
+  type TransactionRequest,
+} from '@/types/auth';
+import { useAccountCreate } from './useAccountCreate';
+import { useWalletConnection } from './useWalletConnection';
 
 interface UseAuthActionsParams {
   setState: (state: AuthState) => void;
@@ -30,18 +30,18 @@ export function useAuthActions({
 
   const startWalletConnection = async () => {
     setState(AuthState.CREATING_ACCOUNT);
-    console.log("🔥 Starting wallet connection and account creation...");
+    console.log('🔥 Starting wallet connection and account creation...');
 
     try {
       if (!isConnected) {
-        console.log("🔥 Connecting wallet...");
+        console.log('🔥 Connecting wallet...');
         await connectWallet();
       }
-      console.log("🔥 Creating account with wallet address:", address);
-      await createAccount("eoa", address);
+      console.log('🔥 Creating account with wallet address:', address);
+      await createAccount('eoa', address);
       setState(AuthState.AUTHENTICATED);
     } catch (error) {
-      console.error("❌ Wallet connection failed:", error);
+      console.error('❌ Wallet connection failed:', error);
     }
   };
 
@@ -49,7 +49,7 @@ export function useAuthActions({
     setState(AuthState.LOGGING_IN);
     // TODO: Call the actual login logic here
     // For now, just simulate
-    console.log("🔥 Starting login...");
+    console.log('🔥 Starting login...');
   };
 
   const startEmailAuthentication = async (email: string) => {
@@ -58,13 +58,13 @@ export function useAuthActions({
     try {
       // Send email with OTP
       await connectWithEmail(email);
-      console.log("🔥 Email sent successfully");
+      console.log('🔥 Email sent successfully');
       setState(AuthState.WAITING_OTP);
       setContext((prev) => ({ ...prev, email }));
     } catch (error) {
-      console.error("❌ Email authentication failed:", error);
+      console.error('❌ Email authentication failed:', error);
       setState(AuthState.ERROR);
-      setContext((prev) => ({ ...prev, error: "Email authentication failed" }));
+      setContext((prev) => ({ ...prev, error: 'Email authentication failed' }));
     }
   };
 
@@ -75,9 +75,9 @@ export function useAuthActions({
       await verifyOneTimePassword(otp);
       setState(AuthState.WAITING_PRIMARY_WALLET);
     } catch (error) {
-      console.error("❌ OTP verification failed:", error);
+      console.error('❌ OTP verification failed:', error);
       setState(AuthState.ERROR);
-      setContext((prev) => ({ ...prev, error: "OTP verification failed" }));
+      setContext((prev) => ({ ...prev, error: 'OTP verification failed' }));
     }
   };
 
@@ -90,9 +90,9 @@ export function useAuthActions({
 
       setState(AuthState.AUTHENTICATED);
     } catch (error) {
-      console.error("❌ Social authentication failed:", error);
+      console.error('❌ Social authentication failed:', error);
       setState(AuthState.ERROR);
-      setContext({ ...context, error: "Social authentication failed" });
+      setContext({ ...context, error: 'Social authentication failed' });
     }
   };
 

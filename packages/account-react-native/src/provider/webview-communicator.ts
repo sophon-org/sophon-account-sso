@@ -1,9 +1,9 @@
+import type { Communicator, Message } from 'zksync-sso/communicator';
 import {
   registerUIEventHandler,
-  sendUIMessage,
   type SophonUIActions,
+  sendUIMessage,
 } from '../messaging';
-import type { Communicator, Message } from 'zksync-sso/communicator';
 
 const MODAL_TIMEOUT = 500000;
 
@@ -19,17 +19,17 @@ export class WebViewCommunicator implements Communicator {
     sendUIMessage('outgoingRpc', message);
   };
   postRequestAndWaitForResponse = async <M extends Message>(
-    request: Message & { id: NonNullable<Message['id']> }
+    request: Message & { id: NonNullable<Message['id']> },
   ): Promise<M> => {
     console.log('$$$$$$$$$$$$$$$$ postRequestAndWaitForResponse', request);
     const responsePromise = this.onMessage<M>(
-      ({ requestId }) => requestId === request.id
+      ({ requestId }) => requestId === request.id,
     );
     this.postMessage(request);
     return await responsePromise;
   };
   onMessage = async <M extends Message>(
-    predicate: (_: Partial<M>) => boolean
+    predicate: (_: Partial<M>) => boolean,
   ): Promise<M> => {
     console.log('!!!!!!!!!!!! onMessage', predicate);
     return new Promise((resolve, reject) => {

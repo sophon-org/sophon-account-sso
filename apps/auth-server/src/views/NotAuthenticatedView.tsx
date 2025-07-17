@@ -1,19 +1,16 @@
-import { FormEventHandler, useState } from "react";
-import { useAccountCreate } from "@/hooks/useAccountCreate";
-import { useAccountLogin } from "@/hooks/useAccountLogin";
-import { useWalletConnection } from "@/hooks/useWalletConnection";
-import { ProviderEnum } from "@dynamic-labs/types";
 import {
   useConnectWithOtp,
   useSocialAccounts,
-} from "@dynamic-labs/sdk-react-core";
-import { LogoSophon } from "@/components/logos/logo-sophon";
-import { IconGoogle } from "@/components/icons/icon-google";
-import { IconTwitter } from "@/components/icons/icon-twitter";
-import { IconDiscord } from "@/components/icons/icon-discord";
-import { IconTelegram } from "@/components/icons/icon-telegram";
-import { Loader } from "@/components/loader";
-import { LegalNotice } from "@/components/legal";
+} from '@dynamic-labs/sdk-react-core';
+import { ProviderEnum } from '@dynamic-labs/types';
+import { type FormEventHandler, useState } from 'react';
+import { IconDiscord } from '@/components/icons/icon-discord';
+import { IconGoogle } from '@/components/icons/icon-google';
+import { IconTelegram } from '@/components/icons/icon-telegram';
+import { IconTwitter } from '@/components/icons/icon-twitter';
+import { LegalNotice } from '@/components/legal';
+import { Loader } from '@/components/loader';
+import { LogoSophon } from '@/components/logos/logo-sophon';
 import {
   Sheet,
   SheetContent,
@@ -21,24 +18,27 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
+} from '@/components/ui/sheet';
+import { useAccountCreate } from '@/hooks/useAccountCreate';
+import { useAccountLogin } from '@/hooks/useAccountLogin';
+import { useWalletConnection } from '@/hooks/useWalletConnection';
 
 const SOCIAL_PROVIDERS = {
   [ProviderEnum.Google]: {
     icon: <IconGoogle />,
-    label: "Google",
+    label: 'Google',
   },
   [ProviderEnum.Twitter]: {
     icon: <IconTwitter />,
-    label: "Twitter",
+    label: 'Twitter',
   },
   [ProviderEnum.Discord]: {
     icon: <IconDiscord />,
-    label: "Discord",
+    label: 'Discord',
   },
   [ProviderEnum.Telegram]: {
     icon: <IconTelegram />,
-    label: "Telegram",
+    label: 'Telegram',
   },
 };
 
@@ -65,7 +65,7 @@ export const NotAuthenticatedView = ({
   const [socialProvider, setSocialProvider] = useState<ProviderEnum>();
 
   const onSubmitEmailHandler: FormEventHandler<HTMLFormElement> = async (
-    event
+    event,
   ) => {
     try {
       setEmailLoading(true);
@@ -85,7 +85,7 @@ export const NotAuthenticatedView = ({
   };
 
   const onSubmitOtpHandler: FormEventHandler<HTMLFormElement> = async (
-    event
+    event,
   ) => {
     try {
       setEmailLoading(true);
@@ -101,24 +101,20 @@ export const NotAuthenticatedView = ({
     }
   };
 
-  const { address, isConnected, connectWallet, disconnect, isPending } =
+  const { address, isConnected, connectWallet, isPending } =
     useWalletConnection();
 
   const handleEOACreation = async () => {
     if (!isConnected) {
       await connectWallet();
     } else {
-      await createAccount("eoa", address);
+      await createAccount('eoa', address);
     }
   };
 
   const { createAccount, loading, error: createError } = useAccountCreate();
 
-  const {
-    loginToAccount,
-    loading: loginLoading,
-    error: loginError,
-  } = useAccountLogin();
+  const { error: loginError } = useAccountLogin();
   return (
     <>
       <div className="text-center justify-items-center">
@@ -148,6 +144,7 @@ export const NotAuthenticatedView = ({
           };
           return (
             <button
+              type="button"
               key={provider}
               className="w-full py-3 px-4 bg-white text-black rounded-lg hover:bg-gray-200 pointer-events-auto disabled:opacity-50 disabled:cursor-not-allowed justify-items-center"
               onClick={onClick}
@@ -179,7 +176,7 @@ export const NotAuthenticatedView = ({
             className="w-full py-3 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             type="submit"
           >
-            {emailLoading ? <Loader className="w-4 h-4" /> : "Continue"}
+            {emailLoading ? <Loader className="w-4 h-4" /> : 'Continue'}
           </button>
         </form>
 
@@ -195,7 +192,7 @@ export const NotAuthenticatedView = ({
             className="w-full py-3 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             type="submit"
           >
-            {emailLoading ? <Loader className="w-4 h-4" /> : "Verify"}
+            {emailLoading ? <Loader className="w-4 h-4" /> : 'Verify'}
           </button>
         </form>
       </div>
@@ -205,11 +202,12 @@ export const NotAuthenticatedView = ({
       <div className="space-y-4">
         <div className="space-y-3">
           <button
+            type="button"
             onClick={onConnectWallet || handleEOACreation}
             disabled={loading || isPending}
             className="w-full py-3 px-4 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? <Loader className="w-4 h-4" /> : "Connect With Metamask"}
+            {loading ? <Loader className="w-4 h-4" /> : 'Connect With Metamask'}
           </button>
         </div>
       </div>
@@ -227,7 +225,10 @@ export const NotAuthenticatedView = ({
       <div className="mt-4 text-center">
         <Sheet>
           <SheetTrigger asChild>
-            <button className="text-sm text-blue-600 hover:text-blue-800 underline">
+            <button
+              type="button"
+              className="text-sm text-blue-600 hover:text-blue-800 underline"
+            >
               More Options
             </button>
           </SheetTrigger>

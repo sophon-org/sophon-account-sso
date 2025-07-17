@@ -1,28 +1,25 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { useAuthResponse } from "@/hooks/useAuthResponse";
-import { useMessageHandler } from "@/hooks/useMessageHandler";
-import SigningRequestView from "@/views/SigningRequestView";
-import TransactionRequestView from "@/views/TransactionRequestView";
-import CreateSuccessView from "@/views/CreateSuccessView";
-import LoginSuccessView from "@/views/LoginSuccessView";
-import { NotAuthenticatedView } from "@/views/NotAuthenticatedView";
-import { useAccountContext } from "@/hooks/useAccountContext";
-import { Loader } from "@/components/loader";
-import { useAuthState, AuthState } from "@/hooks/useAuthState";
-import {
-  sendMessageToRN,
-  useRNHandler,
-} from "@sophon-labs/account-message-bridge/dist/src/web";
-import { Dialog } from "@/components/dialog";
-import { windowService } from "@/service/window.service";
+import { useRNHandler } from '@sophon-labs/account-message-bridge';
+import { useState } from 'react';
+import { Dialog } from '@/components/dialog';
+import { Loader } from '@/components/loader';
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
-} from "@/components/ui/sheet";
+} from '@/components/ui/sheet';
+import { useAccountContext } from '@/hooks/useAccountContext';
+import { useAuthResponse } from '@/hooks/useAuthResponse';
+import { AuthState, useAuthState } from '@/hooks/useAuthState';
+import { useMessageHandler } from '@/hooks/useMessageHandler';
+import { windowService } from '@/service/window.service';
+import CreateSuccessView from '@/views/CreateSuccessView';
+import LoginSuccessView from '@/views/LoginSuccessView';
+import { NotAuthenticatedView } from '@/views/NotAuthenticatedView';
+import SigningRequestView from '@/views/SigningRequestView';
+import TransactionRequestView from '@/views/TransactionRequestView';
 
 export default function RootPage() {
   const [open, setOpen] = useState(true);
@@ -43,7 +40,7 @@ export default function RootPage() {
     onTransactionRequest: startTransactionRequest,
   });
 
-  useRNHandler("openModal", () => {
+  useRNHandler('openModal', () => {
     setOpen(true);
   });
 
@@ -118,7 +115,7 @@ export default function RootPage() {
         <Loader className="h-10 w-10 animate-spin block" />
         <br />
         <p className="text-black ml-2">
-          {context.email ? "Verifying code..." : "Authenticating..."}
+          {context.email ? 'Verifying code...' : 'Authenticating...'}
         </p>
       </div>
     );
@@ -136,7 +133,7 @@ export default function RootPage() {
             onSubmit={async (e) => {
               e.preventDefault();
               const formData = new FormData(e.currentTarget);
-              const otp = formData.get("otp") as string;
+              const otp = formData.get('otp') as string;
               await verifyOTP(otp);
             }}
             className="space-y-4"
@@ -188,7 +185,7 @@ export default function RootPage() {
               await handleAuthSuccessResponse(
                 { address: account.address },
                 incomingRequest!,
-                sessionPreferences
+                sessionPreferences,
               );
               windowService.close();
             }}
@@ -227,7 +224,7 @@ export default function RootPage() {
               await handleAuthSuccessResponse(
                 { address: account.address },
                 incomingRequest!,
-                sessionPreferences
+                sessionPreferences,
               );
               windowService.close();
             }}
@@ -269,8 +266,8 @@ export default function RootPage() {
     return (
       <Dialog
         title="Sophon Auth"
-        onClose={() => console.log("close")}
-        onBack={() => console.log("back")}
+        onClose={() => console.log('close')}
+        onBack={() => console.log('back')}
         className="relative"
       >
         <div className="flex h-screen w-screen items-center justify-center flex-col">
@@ -278,9 +275,10 @@ export default function RootPage() {
             <div className="text-6xl mb-4">❌</div>
             <h1 className="text-2xl font-bold mb-2">Error!</h1>
             <p className="text-gray-600 mb-4">
-              {context.error || "Something went wrong"}
+              {context.error || 'Something went wrong'}
             </p>
             <button
+              type="button"
               onClick={goToNotAuthenticated}
               className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
             >

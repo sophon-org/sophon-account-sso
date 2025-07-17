@@ -1,9 +1,9 @@
-"use client";
-import { useState } from "react";
-import { fetchAccount } from "zksync-sso/client";
-import { createPublicClient, http } from "viem";
-import { CONTRACTS, VIEM_CHAIN } from "@/lib/constants";
-import { useAccountContext } from "./useAccountContext";
+'use client';
+import { useState } from 'react';
+import { createPublicClient, http } from 'viem';
+import { fetchAccount } from 'zksync-sso/client';
+import { CONTRACTS, VIEM_CHAIN } from '@/lib/constants';
+import { useAccountContext } from './useAccountContext';
 
 export const useAccountLogin = () => {
   const [loading, setLoading] = useState(false);
@@ -27,12 +27,12 @@ export const useAccountLogin = () => {
         publicKey: {
           challenge: new Uint8Array(32),
           timeout: 60000,
-          userVerification: "required",
+          userVerification: 'required',
         },
       })) as PublicKeyCredential | null;
 
       if (!credential) {
-        throw new Error("No passkey credential provided");
+        throw new Error('No passkey credential provided');
       }
 
       const publicClient = createPublicClient({
@@ -69,9 +69,9 @@ export const useAccountLogin = () => {
 
       setSuccess(true);
     } catch (err: unknown) {
-      console.error("Account login failed:", err);
+      console.error('Account login failed:', err);
 
-      const errorMessage = "Failed to login to account";
+      const errorMessage = 'Failed to login to account';
 
       setError(errorMessage);
     } finally {

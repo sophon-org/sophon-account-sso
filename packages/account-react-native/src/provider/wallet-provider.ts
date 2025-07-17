@@ -1,8 +1,8 @@
-import { WalletProvider } from 'zksync-sso';
-import { WebViewCommunicator } from './webview-communicator';
-import { sophonTestnet } from 'viem/chains';
 import { http } from 'viem';
+import { sophonTestnet } from 'viem/chains';
+import { WalletProvider } from 'zksync-sso';
 import { SophonAppStorage } from './storage';
+import { WebViewCommunicator } from './webview-communicator';
 
 export const createWalletProvider = () => {
   return new WalletProvider({

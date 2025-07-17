@@ -1,15 +1,14 @@
-"use client";
-import { SmartAccount } from "@/types/smart-account";
+'use client';
+import type { Wallet } from '@dynamic-labs/sdk-react-core';
 import {
   createContext,
   useCallback,
   useEffect,
   useMemo,
   useState,
-} from "react";
-import { deleteCookie, getCookies } from "cookies-next/client";
-import { Wallet } from "@dynamic-labs/sdk-react-core";
-import { sendAuthMessage } from "@/lib/events";
+} from 'react';
+import { sendAuthMessage } from '@/lib/events';
+import type { SmartAccount } from '@/types/smart-account';
 
 interface AccountContextProps {
   account: SmartAccount | null;
@@ -20,7 +19,7 @@ interface AccountContextProps {
   setDynamicWallet: (wallet: Wallet | null) => void;
 }
 
-const LOCAL_STORAGE_KEY = "sophon-account";
+const LOCAL_STORAGE_KEY = 'sophon-account';
 
 const AccountContext = createContext<AccountContextProps | null>(null);
 
@@ -40,7 +39,7 @@ const AccountContextProvider: React.FC<{ children: React.ReactNode }> = ({
         setAccount(parsed);
       }
     } catch (error) {
-      console.warn("Failed to load account from storage:", error);
+      console.warn('Failed to load account from storage:', error);
     } finally {
       setIsInitialized(true);
     }
@@ -57,7 +56,7 @@ const AccountContextProvider: React.FC<{ children: React.ReactNode }> = ({
         localStorage.removeItem(LOCAL_STORAGE_KEY);
       }
     } catch (error) {
-      console.warn("Failed to save account to storage:", error);
+      console.warn('Failed to save account to storage:', error);
     }
   }, [account, isInitialized]);
 
@@ -65,35 +64,21 @@ const AccountContextProvider: React.FC<{ children: React.ReactNode }> = ({
     async (
       data: SmartAccount,
       wallet?: Wallet,
-      externalLogout?: () => void
+      externalLogout?: () => void,
     ) => {
       setAccount(data);
       setDynamicWallet(wallet ?? null);
       externalLogout?.();
     },
-    []
+    [],
   );
 
   const logout = useCallback(() => {
-    sendAuthMessage("logout", {
-      address: account?.address ?? "0x0000000000000000000000000000000000000000",
+    sendAuthMessage('logout', {
+      address: account?.address ?? '0x0000000000000000000000000000000000000000',
     });
     setAccount(null);
-    // const cookies = getCookies();
-    // for (const key in cookies) {
-    //   deleteCookie(key);
-    // }
-    // localStorage.removeItem(LOCAL_STORAGE_KEY);
-    // // clear dynamic local storage
-    // for (const key in localStorage) {
-    //   localStorage.removeItem(key);
-    // }
-
-    // // clear dynamic from session storage
-    // for (const key in sessionStorage) {
-    //   sessionStorage.removeItem(key);
-    // }
-  }, []);
+  }, [account?.address]);
 
   const contextValue = useMemo<AccountContextProps>(
     () => ({
@@ -104,7 +89,7 @@ const AccountContextProvider: React.FC<{ children: React.ReactNode }> = ({
       dynamicWallet,
       setDynamicWallet,
     }),
-    [account, setAccount, login, logout, dynamicWallet, setDynamicWallet]
+    [account, login, logout, dynamicWallet],
   );
 
   return (

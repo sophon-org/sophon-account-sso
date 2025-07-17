@@ -1,10 +1,10 @@
-import { WebView } from 'react-native-webview';
-import { StyleSheet, View } from 'react-native';
-import { useMemo, useRef } from 'react';
-import { useModalVisibility } from './hooks/use-modal-visibility';
-import { USER_AGENT } from './constants/user-agent';
-import { sendUIMessage, useUIEventHandler } from './messaging/ui';
 import { postMessageToWebApp } from '@sophon-labs/account-message-bridge';
+import { useMemo, useRef } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { WebView } from 'react-native-webview';
+import { USER_AGENT } from './constants/user-agent';
+import { useModalVisibility } from './hooks/use-modal-visibility';
+import { sendUIMessage, useUIEventHandler } from './messaging/ui';
 
 const defaultUrl = 'http://localhost:3000/webview';
 
@@ -32,7 +32,7 @@ export const SophonWebView = ({
   });
 
   useUIEventHandler('outgoingRpc', (payload) => {
-    console.log('>>>>>>>>>>>> outgoingRpc to webview', payload);
+    // biome-ignore lint/suspicious/noExplicitAny: future check
     postMessageToWebApp(webViewRef, 'rpc', payload as any);
   });
 

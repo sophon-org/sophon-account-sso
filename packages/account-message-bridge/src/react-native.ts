@@ -1,10 +1,10 @@
-import type { RefObject } from "react";
-import WebView from "react-native-webview";
-import type { FromNativeActionNames, FromNativeActions } from "./messages";
+import type { RefObject } from 'react';
+import type WebView from 'react-native-webview';
+import type { FromNativeActionNames, FromNativeActions } from './messages';
 
 const buildMessageJavaScript = <T extends FromNativeActionNames>(
   action: T,
-  payload: FromNativeActions[T]
+  payload: FromNativeActions[T],
 ) => {
   const message = JSON.stringify({ action, payload });
   // Stringify the message a second time to escape quotes etc.
@@ -22,13 +22,13 @@ const buildMessageJavaScript = <T extends FromNativeActionNames>(
 export const postMessageToWebApp = <T extends FromNativeActionNames>(
   webViewRef: RefObject<WebView | null>,
   action: T,
-  payload: FromNativeActions[T]
+  payload: FromNativeActions[T],
 ) => {
   console.log(
-    "postMessageToWebApp",
-    webViewRef.current ? "ready" : "not ready",
+    'postMessageToWebApp',
+    webViewRef.current ? 'ready' : 'not ready',
     action,
-    payload
+    payload,
   );
   webViewRef.current?.injectJavaScript(buildMessageJavaScript(action, payload));
 };

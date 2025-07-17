@@ -1,11 +1,11 @@
-import { EventEmitter } from "eventemitter3";
-import { useEffect } from "react";
+import { EventEmitter } from 'eventemitter3';
+import { useEffect } from 'react';
 import type {
   FromNativeActionNames,
   FromNativeActions,
   FromWebActionNames,
   FromWebActions,
-} from "./messages";
+} from './messages';
 
 const RNEvents = new EventEmitter();
 
@@ -14,7 +14,7 @@ const RNEvents = new EventEmitter();
  */
 export const sendMessageToRN = <T extends FromWebActionNames>(
   action: T,
-  payload: FromWebActions[T]
+  payload: FromWebActions[T],
 ) => {
   window.ReactNativeWebView.postMessage(JSON.stringify({ action, payload }));
 };
@@ -29,7 +29,7 @@ export const sendMessageToRN = <T extends FromWebActionNames>(
  */
 export const registerRNHandler = <T extends FromNativeActionNames>(
   action: T,
-  callback: (payload: FromNativeActions[T]) => void
+  callback: (payload: FromNativeActions[T]) => void,
 ) => {
   RNEvents.on(action, callback);
   return () => RNEvents.off(action, callback);
@@ -45,7 +45,7 @@ export const registerRNHandler = <T extends FromNativeActionNames>(
  */
 export const useRNHandler = <T extends FromNativeActionNames>(
   action: T,
-  callback: (payload: FromNativeActions[T]) => void
+  callback: (payload: FromNativeActions[T]) => void,
 ) => {
   useEffect(() => {
     const deregister = registerRNHandler(action, callback);
@@ -57,12 +57,12 @@ export const useRNHandler = <T extends FromNativeActionNames>(
 
 const onMessageFromRN = (message: string) => {
   const { action, payload } = JSON.parse(message);
-  console.log("onMessageFromRN", action, payload);
+  console.log('onMessageFromRN', action, payload);
   RNEvents.emit(action, payload);
 };
 
 // Attach the handler to `window` so we can access it from
 // scripts injected by React Native WebView.
-if (typeof window !== "undefined") {
+if (typeof window !== 'undefined') {
   window.onMessageFromRN = onMessageFromRN;
 }

@@ -1,11 +1,11 @@
-"use client";
-import { useEffect, useState } from "react";
+'use client';
+import { useEffect, useState } from 'react';
+import { windowService } from '@/service/window.service';
 import type {
   IncomingRequest,
   SigningRequest,
   TransactionRequest,
-} from "@/types/auth";
-import { windowService } from "@/service/window.service";
+} from '@/types/auth';
 
 interface UseMessageHandlerReturn {
   incomingRequest: IncomingRequest | null;
@@ -20,51 +20,52 @@ interface UseMessageHandlerCallbacks {
 }
 
 export const useMessageHandler = (
-  callbacks?: UseMessageHandlerCallbacks
+  callbacks?: UseMessageHandlerCallbacks,
 ): UseMessageHandlerReturn => {
   const [incomingRequest, setIncomingRequest] =
     useState<IncomingRequest | null>(null);
   const [sessionPreferences, setSessionPreferences] = useState<unknown>(null);
   const [signingRequest, setSigningRequest] = useState<SigningRequest | null>(
-    null
+    null,
   );
   const [transactionRequest, setTransactionRequest] =
     useState<TransactionRequest | null>(null);
 
   useEffect(() => {
     // Check sessionStorage for saved request (survives OAuth redirects)
-    const savedRequest = sessionStorage.getItem("sophon-incoming-request");
+    const savedRequest = sessionStorage.getItem('sophon-incoming-request');
     if (savedRequest && !incomingRequest) {
       try {
         const parsedRequest = JSON.parse(savedRequest);
         setIncomingRequest(parsedRequest);
       } catch (error) {
-        console.error("Failed to parse saved request:", error);
-        sessionStorage.removeItem("sophon-incoming-request");
+        console.error('Failed to parse saved request:', error);
+        sessionStorage.removeItem('sophon-incoming-request');
       }
     }
 
     // Initialize popup communication
     const urlParams = new URLSearchParams(window.location.search);
-    const origin = urlParams.get("origin");
+    const origin = urlParams.get('origin');
 
     // Send the exact PopupLoaded signal that ZKsync SSO expects
     if (origin && windowService.isManaged()) {
       const popupLoadedSignal = {
-        event: "PopupLoaded",
+        event: 'PopupLoaded',
         id: crypto.randomUUID(),
       };
       windowService.sendMessage(popupLoadedSignal);
     }
 
     // Define the message handler
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
+    // biome-ignore lint/suspicious/noExplicitAny: review that in the future  TODO
     const messageHandler = (data: any) => {
       // Store the incoming request if it's an RPC request
-      if (data && data.id && data.content) {
+      if (data?.id && data?.content) {
         const method = data.content?.action?.method;
 
-        if (method === "eth_requestAccounts") {
+        if (method === 'eth_requestAccounts') {
           const params = data.content.action?.params as
             | { sessionPreferences?: unknown }
             | undefined;
@@ -76,7 +77,7 @@ export const useMessageHandler = (
             setSessionPreferences(null);
           }
           setSigningRequest(null);
-        } else if (method === "eth_signTypedData_v4") {
+        } else if (method === 'eth_signTypedData_v4') {
           const params = data.content.action?.params;
 
           if (params && params.length >= 2) {
@@ -101,12 +102,12 @@ export const useMessageHandler = (
                 callbacks.onSigningRequest(signingRequestData);
               }
             } catch (parseError) {
-              console.error("Failed to parse typed data JSON:", parseError);
+              console.error('Failed to parse typed data JSON:', parseError);
             }
           } else {
-            console.error("Invalid params for eth_signTypedData_v4:", params);
+            console.error('Invalid params for eth_signTypedData_v4:', params);
           }
-        } else if (method === "eth_sendTransaction") {
+        } else if (method === 'eth_sendTransaction') {
           const params = data.content.action?.params;
 
           if (params && params.length >= 1) {
@@ -114,8 +115,8 @@ export const useMessageHandler = (
 
             const transactionRequestData = {
               to: txData.to,
-              value: txData.value || "0x0",
-              data: txData.data || "0x",
+              value: txData.value || '0x0',
+              data: txData.data || '0x',
               from: txData.from,
               paymaster: txData.paymaster,
             };
@@ -133,7 +134,7 @@ export const useMessageHandler = (
         setIncomingRequest(data);
 
         // Save to sessionStorage (survives OAuth redirects when social auth is used)
-        sessionStorage.setItem("sophon-incoming-request", JSON.stringify(data));
+        sessionStorage.setItem('sophon-incoming-request', JSON.stringify(data));
       }
     };
 

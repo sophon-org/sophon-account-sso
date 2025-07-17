@@ -1,5 +1,5 @@
-import { windowService } from "@/service/window.service";
-import type { LoginSuccessProps } from "@/types/auth";
+import { windowService } from '@/service/window.service';
+import type { LoginSuccessProps } from '@/types/auth';
 
 export default function LoginSuccessView({
   accountData,
@@ -21,14 +21,16 @@ export default function LoginSuccessView({
       <div className="mt-4 space-y-2">
         {windowService.isManaged() && (
           <button
+            type="button"
             onClick={onUseAccount}
             className="w-full px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
           >
-            {sessionPreferences ? "Login with Session" : "Use This Account"}
+            {sessionPreferences ? 'Login with Session' : 'Use This Account'}
           </button>
         )}
 
         <button
+          type="button"
           onClick={() => windowService.reload()}
           className="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
         >
@@ -36,6 +38,7 @@ export default function LoginSuccessView({
         </button>
 
         <button
+          type="button"
           onClick={onDisconnect}
           className="w-full px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
         >

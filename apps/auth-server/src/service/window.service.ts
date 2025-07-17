@@ -1,9 +1,9 @@
-import { isSSR } from "@/lib/is-ssr";
-import { FromWebActions } from "@sophon-labs/account-message-bridge/dist/src/messages";
 import {
   registerRNHandler,
   sendMessageToRN,
-} from "@sophon-labs/account-message-bridge/dist/src/web";
+} from '@sophon-labs/account-message-bridge';
+import type { FromWebActions } from '@sophon-labs/account-message-bridge/dist/src/messages';
+import { isSSR } from '@/lib/is-ssr';
 
 /**
  * Simple interface to be used by all possible comnunications services,
@@ -36,7 +36,7 @@ interface WindowCommunicationService {
 }
 
 const noopWindowService: WindowCommunicationService = {
-  name: "noop",
+  name: 'noop',
 
   isManaged: () => false,
 
@@ -54,7 +54,7 @@ const noopWindowService: WindowCommunicationService = {
 };
 
 const popupWindowService: WindowCommunicationService = {
-  name: "popup",
+  name: 'popup',
 
   isManaged: () => !isSSR() && !!window.opener,
 
@@ -68,40 +68,40 @@ const popupWindowService: WindowCommunicationService = {
 
   sendMessage: (message: unknown) => {
     // alert(`sendMessage webview ${JSON.stringify(message)}`);
-    window.opener.postMessage(message, "*");
+    window.opener.postMessage(message, '*');
   },
 
   listen: (callback: (message: unknown) => void) => {
     const listener = (event: MessageEvent) => {
       callback(event.data);
     };
-    window.addEventListener("message", listener);
+    window.addEventListener('message', listener);
 
     return () => {
-      window.removeEventListener("message", listener);
+      window.removeEventListener('message', listener);
     };
   },
 };
 
 const webViewWindowService: WindowCommunicationService = {
-  name: "webview",
+  name: 'webview',
 
   isManaged: () => !isSSR() && !!window.ReactNativeWebView,
 
   reload: () => {},
 
   close: () => {
-    sendMessageToRN("closeModal", {});
+    sendMessageToRN('closeModal', {});
   },
 
   sendMessage: (message: unknown) => {
     // alert(`sendMessage webview ${JSON.stringify(message)}`);
-    sendMessageToRN("rpc", message as FromWebActions["rpc"]);
+    sendMessageToRN('rpc', message as FromWebActions['rpc']);
   },
 
   listen: (callback: (message: unknown) => void) => {
-    console.log("listen webview");
-    return registerRNHandler("rpc", callback);
+    console.log('listen webview');
+    return registerRNHandler('rpc', callback);
   },
 };
 

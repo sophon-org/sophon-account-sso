@@ -1,9 +1,9 @@
-"use client";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { createConfig, http, WagmiProvider } from "wagmi";
-import { sophonSsoConnector } from "@sophon-labs/account-connector";
-import { sophonTestnet } from "viem/chains";
-import { ReactNode } from "react";
+'use client';
+import { sophonSsoConnector } from '@sophon-labs/account-connector';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import type { ReactNode } from 'react';
+import { sophonTestnet } from 'viem/chains';
+import { createConfig, http, WagmiProvider } from 'wagmi';
 
 // Wagmi config
 const wagmiConfig = createConfig({

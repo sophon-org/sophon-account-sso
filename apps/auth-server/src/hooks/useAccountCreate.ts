@@ -1,21 +1,21 @@
-"use client";
-import { useState } from "react";
-import { useWalletClient } from "wagmi";
-import { deployModularAccount } from "zksync-sso/client";
-import { registerNewPasskey } from "zksync-sso/client/passkey";
-import { createWalletClient, http } from "viem";
-import { eip712WalletActions } from "viem/zksync";
-import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
-import { CONTRACTS, VIEM_CHAIN } from "@/lib/constants";
-import { useAccountContext } from "./useAccountContext";
-import { checkAccountOwnership } from "@/lib/smart-contract";
-import { env } from "@/env";
+'use client';
+import { useState } from 'react';
+import { createWalletClient, http } from 'viem';
+import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
+import { eip712WalletActions } from 'viem/zksync';
+import { useWalletClient } from 'wagmi';
+import { deployModularAccount } from 'zksync-sso/client';
+import { registerNewPasskey } from 'zksync-sso/client/passkey';
+import { env } from '@/env';
+import { CONTRACTS, VIEM_CHAIN } from '@/lib/constants';
+import { checkAccountOwnership } from '@/lib/smart-contract';
+import { useAccountContext } from './useAccountContext';
 
 export const useAccountCreate = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const [accountAddress, setAccountAddress] = useState<string>("");
+  const [accountAddress, setAccountAddress] = useState<string>('');
 
   const { login } = useAccountContext();
   const { data: walletClient } = useWalletClient();
@@ -48,11 +48,11 @@ export const useAccountCreate = () => {
   };
 
   const createAccount = async (
-    accountType: "passkey" | "eoa",
-    connectedAddress?: string
+    accountType: 'passkey' | 'eoa',
+    connectedAddress?: string,
   ) => {
-    console.log("Creating account with type:", accountType);
-    if (accountType === "passkey") {
+    console.log('Creating account with type:', accountType);
+    if (accountType === 'passkey') {
       try {
         setLoading(true);
         setError(null);
@@ -107,13 +107,13 @@ export const useAccountCreate = () => {
 
           setSuccess(true);
         } catch (deployError: unknown) {
-          console.error("deployModularAccount failed:", deployError);
+          console.error('deployModularAccount failed:', deployError);
           throw deployError;
         }
       } catch (err: unknown) {
-        console.error("Account creation failed:", err);
+        console.error('Account creation failed:', err);
         setError(
-          err instanceof Error ? err.message : "Failed to create account"
+          err instanceof Error ? err.message : 'Failed to create account',
         );
       } finally {
         setLoading(false);
@@ -125,26 +125,26 @@ export const useAccountCreate = () => {
 
         if (!connectedAddress) {
           throw new Error(
-            "No wallet connected. Please connect your wallet first."
+            'No wallet connected. Please connect your wallet first.',
           );
         }
 
         if (!walletClient) {
           throw new Error(
-            "Wallet client not available. Please ensure your wallet is connected."
+            'Wallet client not available. Please ensure your wallet is connected.',
           );
         }
 
-        console.log("Checking account ownership for", connectedAddress);
+        console.log('Checking account ownership for', connectedAddress);
 
         const existingAccountAddress = await checkAccountOwnership(
           connectedAddress,
-          env.NEXT_PUBLIC_DEPLOYER_ADDRESS as `0x${string}`
+          env.NEXT_PUBLIC_DEPLOYER_ADDRESS as `0x${string}`,
         );
         if (
           existingAccountAddress &&
           existingAccountAddress !==
-            "0x0000000000000000000000000000000000000000"
+            '0x0000000000000000000000000000000000000000'
         ) {
           login({
             username: `EOA Account ${connectedAddress.slice(0, 8)}...`,
@@ -159,11 +159,11 @@ export const useAccountCreate = () => {
           setSuccess(true);
           return;
         } else {
-          console.log("No existing account found, deploying new account");
+          console.log('No existing account found, deploying new account');
           await deployAccount(connectedAddress);
         }
       } catch (checkError) {
-        console.error("❌ Account check failed:", checkError);
+        console.error('❌ Account check failed:', checkError);
       } finally {
         setLoading(false);
       }

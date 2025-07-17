@@ -8,7 +8,7 @@ export type FromWebActions = {
   connected: {
     address: string;
   };
-  closeModal: {};
+  closeModal: unknown;
   rpc: {
     id: string;
     requestId: string;
@@ -25,7 +25,7 @@ export type FromNativeActions = {
   echo: {
     message: string;
   };
-  openModal: {};
+  openModal: unknown;
   rpc: {
     id: string;
     requestId: string;

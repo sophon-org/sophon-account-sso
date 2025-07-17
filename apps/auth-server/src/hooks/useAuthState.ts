@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { AuthState, AuthContext } from "@/types/auth";
-import { useAuthActions } from "./useAuthActions";
-import { useDynamicAuth } from "./useDynamicAuth";
+import { useState } from 'react';
+import { type AuthContext, AuthState } from '@/types/auth';
+import { useAuthActions } from './useAuthActions';
+import { useDynamicAuth } from './useDynamicAuth';
 
 function useAuthState() {
   const [state, setState] = useState<AuthState>(AuthState.LOADING);

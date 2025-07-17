@@ -1,4 +1,4 @@
-import { Address } from "viem";
+import type { Address } from 'viem';
 
 export enum Platform {
   WEB,
@@ -6,9 +6,9 @@ export enum Platform {
 }
 
 export enum AccountType {
-  Passkey = "passkey",
-  EOA = "eoa",
-  EMBEDDED = "embedded",
+  Passkey = 'passkey',
+  EOA = 'eoa',
+  EMBEDDED = 'embedded',
 }
 
 export type k1Owner = {

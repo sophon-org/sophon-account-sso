@@ -1,16 +1,16 @@
-import { useAccount, useWalletClient } from "wagmi";
-import { createZksyncPasskeyClient } from "zksync-sso/client/passkey";
-import { createZksyncEcdsaClient } from "zksync-sso/client/ecdsa";
-import { http } from "viem";
-import { CONTRACTS, VIEM_CHAIN } from "@/lib/constants";
-import type { SigningRequestProps } from "@/types/auth";
-import { toAccount } from "viem/accounts";
-import { verifyEIP1271Signature } from "@/lib/smart-contract";
-import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
-import { isEthereumWallet } from "@dynamic-labs/ethereum";
-import { Loader } from "@/components/loader";
-import { useState } from "react";
-import { windowService } from "@/service/window.service";
+import { isEthereumWallet } from '@dynamic-labs/ethereum';
+import { useDynamicContext } from '@dynamic-labs/sdk-react-core';
+import { useState } from 'react';
+import { http } from 'viem';
+import { toAccount } from 'viem/accounts';
+import { useAccount, useWalletClient } from 'wagmi';
+import { createZksyncEcdsaClient } from 'zksync-sso/client/ecdsa';
+import { createZksyncPasskeyClient } from 'zksync-sso/client/passkey';
+import { Loader } from '@/components/loader';
+import { CONTRACTS, VIEM_CHAIN } from '@/lib/constants';
+import { verifyEIP1271Signature } from '@/lib/smart-contract';
+import { windowService } from '@/service/window.service';
+import type { SigningRequestProps } from '@/types/auth';
 
 export default function SigningRequestView({
   signingRequest,
@@ -53,6 +53,7 @@ export default function SigningRequestView({
 
       <div className="mt-4 space-y-2">
         <button
+          type="button"
           onClick={async () => {
             try {
               setIsSigning(true);
@@ -60,15 +61,15 @@ export default function SigningRequestView({
                 const availableAddress =
                   account.address || primaryWallet?.address;
                 if (!availableAddress) {
-                  throw new Error("No account address available");
+                  throw new Error('No account address available');
                 }
 
                 const isEOAAccount = !account.owner.passkey;
 
-                let signature;
+                let signature: string;
 
                 if (primaryWallet && isEthereumWallet(primaryWallet)) {
-                  console.log("🔥🔥🔥🔥🔥 Signing with Ethereum wallet");
+                  console.log('🔥🔥🔥🔥🔥 Signing with Ethereum wallet');
                   try {
                     const client = await primaryWallet.getWalletClient();
                     signature = await client.signTypedData({
@@ -78,12 +79,12 @@ export default function SigningRequestView({
                       message: signingRequest.message,
                     });
                   } catch (error) {
-                    console.error("Signing error:", error);
+                    console.error('Signing error:', error);
                     throw error;
                   }
                 } else if (isEOAAccount) {
                   if (!connectedAddress) {
-                    throw new Error("Wallet not connected for EOA signing!");
+                    throw new Error('Wallet not connected for EOA signing!');
                   }
 
                   const localAccount = toAccount({
@@ -92,25 +93,25 @@ export default function SigningRequestView({
                       const signature = await walletClient?.signMessage({
                         message,
                       });
-                      if (!signature) throw new Error("Failed to sign message");
+                      if (!signature) throw new Error('Failed to sign message');
                       return signature;
                     },
                     async signTransaction(transaction) {
                       const signature = await walletClient?.signTransaction(
                         // @ts-expect-error - Type mismatch between viem account interface and wallet client
-                        transaction
+                        transaction,
                       );
                       if (!signature)
-                        throw new Error("Failed to sign transaction");
+                        throw new Error('Failed to sign transaction');
                       return signature;
                     },
                     async signTypedData(typedData) {
                       const signature = await walletClient?.signTypedData(
                         // @ts-expect-error - Type mismatch between viem account interface and wallet client
-                        typedData
+                        typedData,
                       );
                       if (!signature)
-                        throw new Error("Failed to sign typed data");
+                        throw new Error('Failed to sign typed data');
                       return signature;
                     },
                   });
@@ -142,14 +143,14 @@ export default function SigningRequestView({
                   });
                 } else {
                   if (!account.owner.passkey) {
-                    throw new Error("No passkey data available for signing");
+                    throw new Error('No passkey data available for signing');
                   }
 
                   const client = createZksyncPasskeyClient({
                     address: account.address,
                     credentialPublicKey: account.owner.passkey,
-                    userName: account.username || "Sophon User",
-                    userDisplayName: account.username || "Sophon User",
+                    userName: account.username || 'Sophon User',
+                    userDisplayName: account.username || 'Sophon User',
                     contracts: {
                       accountFactory: CONTRACTS.accountFactory,
                       passkey: CONTRACTS.passkey,
@@ -190,8 +191,7 @@ export default function SigningRequestView({
                   windowService.close();
                 }
               } catch (error) {
-                console.error("Signing failed:", error);
-                alert("Signing failed: " + (error as Error).message);
+                console.error('Signing failed:', error);
               }
             } finally {
               setIsSigning(false);
@@ -199,10 +199,11 @@ export default function SigningRequestView({
           }}
           className="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
         >
-          {isSigning ? <Loader className="w-4 h-4" /> : "Sign Message"}
+          {isSigning ? <Loader className="w-4 h-4" /> : 'Sign Message'}
         </button>
 
         <button
+          type="button"
           onClick={() => {
             if (windowService.isManaged() && incomingRequest) {
               const signResponse = {
@@ -211,7 +212,7 @@ export default function SigningRequestView({
                 content: {
                   result: null,
                   error: {
-                    message: "User cancelled signing",
+                    message: 'User cancelled signing',
                     code: -32002,
                   },
                 },

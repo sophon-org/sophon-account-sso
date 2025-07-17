@@ -1,5 +1,5 @@
-"use client";
-import { useAccount, useConnect, useDisconnect } from "wagmi";
+'use client';
+import { useAccount, useConnect, useDisconnect } from 'wagmi';
 
 export const useWalletConnection = () => {
   const { address, isConnected, isConnecting } = useAccount();
@@ -8,21 +8,21 @@ export const useWalletConnection = () => {
 
   const connectWallet = async () => {
     const metaMaskConnector = connectors.find(
-      (connector) => connector.id === "metaMaskSDK"
+      (connector) => connector.id === 'metaMaskSDK',
     );
     if (metaMaskConnector) {
-      console.log("Found MetaMask connector, attempting to connect...");
+      console.log('Found MetaMask connector, attempting to connect...');
       try {
         const result = await connect({ connector: metaMaskConnector });
-        console.log("Connection result:", result);
+        console.log('Connection result:', result);
       } catch (error) {
-        console.error("Connection failed:", error);
+        console.error('Connection failed:', error);
       }
     } else {
-      console.error("MetaMask connector not found!");
+      console.error('MetaMask connector not found!');
       console.log(
-        "Available connector IDs:",
-        connectors.map((c) => c.id)
+        'Available connector IDs:',
+        connectors.map((c) => c.id),
       );
     }
   };

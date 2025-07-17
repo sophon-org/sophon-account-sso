@@ -1,16 +1,15 @@
-import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
-import { useAccountContext } from "./useAccountContext";
-import { createZksyncPasskeyClient } from "zksync-sso/client/passkey";
-import { http } from "viem";
-import { CONTRACTS, VIEM_CHAIN } from "@/lib/constants";
-import { parseEther } from "viem";
+import { http, parseEther } from 'viem';
+import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
+import { createZksyncPasskeyClient } from 'zksync-sso/client/passkey';
+import { CONTRACTS, VIEM_CHAIN } from '@/lib/constants';
+import { useAccountContext } from './useAccountContext';
 
 export const useCreateSession = () => {
   const { account } = useAccountContext();
 
   const createSession = async () => {
     // TODO: Integrate this into button handlers
-    console.log("Session creation requested for:", account?.address);
+    console.log('Session creation requested for:', account?.address);
 
     try {
       // Generate session key
@@ -20,7 +19,7 @@ export const useCreateSession = () => {
       // ✅ Get passkey data from account store (now stored as hex, retrieved as bytes)
       if (!account || !account.owner.passkey || !account.address) {
         throw new Error(
-          "No passkey data available - account may not be fully created yet"
+          'No passkey data available - account may not be fully created yet',
         );
       }
 
@@ -29,8 +28,8 @@ export const useCreateSession = () => {
       const client = createZksyncPasskeyClient({
         address: accountAddress,
         credentialPublicKey: account.owner.passkey,
-        userName: account.username || "Sophon User",
-        userDisplayName: account.username || "Sophon User",
+        userName: account.username || 'Sophon User',
+        userDisplayName: account.username || 'Sophon User',
         contracts: {
           accountFactory: CONTRACTS.accountFactory,
           passkey: CONTRACTS.passkey,
@@ -46,20 +45,20 @@ export const useCreateSession = () => {
         expiresAt: BigInt(Math.floor(Date.now() / 1000) + 60 * 60 * 24), // 24 hours
         feeLimit: {
           limitType: 0,
-          limit: parseEther("0.01"),
+          limit: parseEther('0.01'),
           period: BigInt(0),
         },
         callPolicies: [], // Empty - allow message signing
         transferPolicies: [], // Empty - allow message signing
       };
 
-      console.log("📄 Session config:", sessionConfig);
-      console.log("🔐 Account address:", accountAddress);
-      console.log("🗝️ Session signer:", sessionSigner.address);
+      console.log('📄 Session config:', sessionConfig);
+      console.log('🔐 Account address:', accountAddress);
+      console.log('🗝️ Session signer:', sessionSigner.address);
 
       // Generate a unique session signer each time to avoid conflicts
       const timestamp = Date.now();
-      console.log("⏰ Session timestamp:", timestamp);
+      console.log('⏰ Session timestamp:', timestamp);
 
       const sessionPromise = client.createSession({
         sessionConfig,
@@ -69,8 +68,8 @@ export const useCreateSession = () => {
       const timeoutPromise = new Promise((_, reject) => {
         setTimeout(
           () =>
-            reject(new Error("Session creation timed out after 30 seconds")),
-          30000
+            reject(new Error('Session creation timed out after 30 seconds')),
+          30000,
         );
       });
 
@@ -80,9 +79,9 @@ export const useCreateSession = () => {
       ])) as unknown;
 
       console.log(
-        "✅ Session created successfully:",
+        '✅ Session created successfully:',
         (result as { transactionReceipt?: { transactionHash?: string } })
-          ?.transactionReceipt?.transactionHash
+          ?.transactionReceipt?.transactionHash,
       );
 
       return {
@@ -100,8 +99,8 @@ export const useCreateSession = () => {
         },
       };
     } catch (error) {
-      console.error("❌ Session creation failed:", error);
-      console.log("🔄 Falling back to regular connection (no session)");
+      console.error('❌ Session creation failed:', error);
+      console.log('🔄 Falling back to regular connection (no session)');
       return null; // Fallback to regular connection
     }
   };

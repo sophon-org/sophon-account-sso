@@ -1,7 +1,7 @@
-import { createEnv } from "@t3-oss/env-nextjs";
-import { z } from "zod";
+import { createEnv } from '@t3-oss/env-nextjs';
+import { z } from 'zod';
 
-export const VALID_CHAIN_IDS = ["531050104", "50104"] as const;
+export const VALID_CHAIN_IDS = ['531050104', '50104'] as const;
 
 export const env = createEnv({
   /**

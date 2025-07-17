@@ -5,9 +5,9 @@ import type { Message } from 'zksync-sso/communicator';
 const SophonUIEvents = new EventEmitter();
 
 export type SophonUIActions = {
-  showModal: {};
-  hideModal: {};
-  modalReady: {};
+  showModal: unknown;
+  hideModal: unknown;
+  modalReady: unknown;
   incomingRpc: Message;
   outgoingRpc: Message;
 };
@@ -24,7 +24,7 @@ export type SophonUIActionsName = keyof SophonUIActions;
  */
 export const registerUIEventHandler = <T extends SophonUIActionsName>(
   action: T,
-  callback: (payload: SophonUIActions[T]) => void
+  callback: (payload: SophonUIActions[T]) => void,
 ) => {
   SophonUIEvents.on(action, callback);
   return () => SophonUIEvents.off(action, callback);
@@ -40,7 +40,7 @@ export const registerUIEventHandler = <T extends SophonUIActionsName>(
  */
 export const useUIEventHandler = <T extends SophonUIActionsName>(
   action: T,
-  callback: (payload: SophonUIActions[T]) => void
+  callback: (payload: SophonUIActions[T]) => void,
 ) => {
   useEffect(() => {
     const deregister = registerUIEventHandler(action, callback);
@@ -52,7 +52,7 @@ export const useUIEventHandler = <T extends SophonUIActionsName>(
 
 export const sendUIMessage = <T extends SophonUIActionsName>(
   action: T,
-  payload: SophonUIActions[T]
+  payload: SophonUIActions[T],
 ) => {
   SophonUIEvents.emit(action, payload);
 };

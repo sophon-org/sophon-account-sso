@@ -1,13 +1,13 @@
-import { Communicator } from "zksync-sso/communicator";
-import { zksyncSsoConnector } from "zksync-sso/connector";
+import type { Communicator } from 'zksync-sso/communicator';
+import { zksyncSsoConnector } from 'zksync-sso/connector';
 
 export interface SophonAuthResult {
-  type: "SOPHON_ACCOUNT_CREATED" | "SOPHON_ACCOUNT_LOGIN";
+  type: 'SOPHON_ACCOUNT_CREATED' | 'SOPHON_ACCOUNT_LOGIN';
   data: {
     address: string;
     username?: string;
     passkeyPublicKey?: string;
-    mode: "create" | "login";
+    mode: 'create' | 'login';
     timestamp: string;
   };
 }
@@ -19,10 +19,10 @@ export interface SophonAuthOptions {
 }
 
 export function connectSophon(
-  options: SophonAuthOptions = {}
+  options: SophonAuthOptions = {},
 ): Promise<SophonAuthResult> {
   const {
-    authUrl = "http://localhost:3000",
+    authUrl = 'http://localhost:3000',
     popupWidth = 400,
     popupHeight = 600,
   } = options;
@@ -33,60 +33,62 @@ export function connectSophon(
 
     const popup = window.open(
       authUrl,
-      "sophon-auth",
-      `width=${popupWidth},height=${popupHeight},left=${left},top=${top},scrollbars=no,resizable=no,status=no,toolbar=no,menubar=no,location=no,titlebar=no`
+      'sophon-auth',
+      `width=${popupWidth},height=${popupHeight},left=${left},top=${top},scrollbars=no,resizable=no,status=no,toolbar=no,menubar=no,location=no,titlebar=no`,
     );
 
     if (!popup) {
-      reject(new Error("Popup blocked. Please allow popups for this site."));
+      reject(new Error('Popup blocked. Please allow popups for this site.'));
       return;
     }
 
     const messageHandler = (event: MessageEvent) => {
       if (
-        !event.origin.includes("localhost") &&
-        !event.origin.includes("sophon")
+        !event.origin.includes('localhost') &&
+        !event.origin.includes('sophon')
       ) {
         return;
       }
 
       if (
-        event.data.type === "SOPHON_ACCOUNT_CREATED" ||
-        event.data.type === "SOPHON_ACCOUNT_LOGIN"
+        event.data.type === 'SOPHON_ACCOUNT_CREATED' ||
+        event.data.type === 'SOPHON_ACCOUNT_LOGIN'
       ) {
-        window.removeEventListener("message", messageHandler);
+        window.removeEventListener('message', messageHandler);
         clearInterval(checkClosed);
         resolve(event.data);
       }
     };
 
-    window.addEventListener("message", messageHandler);
+    window.addEventListener('message', messageHandler);
 
     const checkClosed = setInterval(() => {
       if (popup.closed) {
         clearInterval(checkClosed);
-        window.removeEventListener("message", messageHandler);
-        reject(new Error("Authentication cancelled"));
+        window.removeEventListener('message', messageHandler);
+        reject(new Error('Authentication cancelled'));
       }
     }, 1000);
   });
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: TODO remove later
 export const sophonSsoConnector: any = (options?: {
+  // biome-ignore lint/suspicious/noExplicitAny: TODO remove later
   session?: any; // TODO: type this properly later
   paymaster?: `0x${string}`;
   communicator?: Communicator;
 }) => {
   const connector = zksyncSsoConnector({
-    authServerUrl: "http://localhost:3000", // auth server
+    authServerUrl: 'http://localhost:3000', // auth server
     metadata: {
-      name: "Sophon SSO",
-      icon: "/sophon-icon.png",
+      name: 'Sophon SSO',
+      icon: '/sophon-icon.png',
     },
     paymasterHandler: async () => ({
       paymaster:
-        options?.paymaster || "0x98546B226dbbA8230cf620635a1e4ab01F6A99B2",
-      paymasterInput: "0x",
+        options?.paymaster || '0x98546B226dbbA8230cf620635a1e4ab01F6A99B2',
+      paymasterInput: '0x',
     }),
     // Remove session config to test auth-server mode
     // session: options?.session || {

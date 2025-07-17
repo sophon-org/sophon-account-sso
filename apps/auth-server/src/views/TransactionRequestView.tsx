@@ -1,15 +1,14 @@
-import { formatEther } from "viem";
-import { createZksyncPasskeyClient } from "zksync-sso/client/passkey";
-import { http } from "viem";
-import { CONTRACTS, VIEM_CHAIN } from "@/lib/constants";
-import type { TransactionRequestProps } from "@/types/auth";
-import { createZksyncEcdsaClient } from "zksync-sso/client/ecdsa";
-import { toAccount } from "viem/accounts";
-import { useAccount, useWalletClient } from "wagmi";
-import { isEthereumWallet } from "@dynamic-labs/ethereum";
-import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
-import { isZKsyncConnector } from "@dynamic-labs/ethereum-aa-zksync";
-import { windowService } from "@/service/window.service";
+import { isEthereumWallet } from '@dynamic-labs/ethereum';
+import { isZKsyncConnector } from '@dynamic-labs/ethereum-aa-zksync';
+import { useDynamicContext } from '@dynamic-labs/sdk-react-core';
+import { formatEther, http } from 'viem';
+import { toAccount } from 'viem/accounts';
+import { useAccount, useWalletClient } from 'wagmi';
+import { createZksyncEcdsaClient } from 'zksync-sso/client/ecdsa';
+import { createZksyncPasskeyClient } from 'zksync-sso/client/passkey';
+import { CONTRACTS, VIEM_CHAIN } from '@/lib/constants';
+import { windowService } from '@/service/window.service';
+import type { TransactionRequestProps } from '@/types/auth';
 
 export default function TransactionRequestView({
   transactionRequest,
@@ -41,13 +40,13 @@ export default function TransactionRequestView({
             <div className="p-3 bg-gray-50 rounded border text-left">
               <p className="text-xs text-gray-500">Value:</p>
               <p className="text-sm text-black">
-                {transactionRequest.value && transactionRequest.value !== "0x0"
+                {transactionRequest.value && transactionRequest.value !== '0x0'
                   ? `${formatEther(BigInt(transactionRequest.value))} SOPH`
-                  : "0 SOPH"}
+                  : '0 SOPH'}
               </p>
             </div>
 
-            {transactionRequest.data && transactionRequest.data !== "0x" && (
+            {transactionRequest.data && transactionRequest.data !== '0x' && (
               <div className="p-3 bg-gray-50 rounded border text-left">
                 <p className="text-xs text-gray-500">Data:</p>
                 <p className="text-xs font-mono break-all text-black">
@@ -66,18 +65,19 @@ export default function TransactionRequestView({
 
           <div className="mt-4 space-y-2">
             <button
+              type="button"
               onClick={async () => {
                 console.log(transactionRequest);
                 const availableAddress =
                   account.address || primaryWallet?.address;
                 if (!availableAddress) {
-                  throw new Error("No account address available");
+                  throw new Error('No account address available');
                 }
                 try {
                   const isEOAAccount = !account.owner.passkey;
-                  let txHash;
+                  let txHash: string = '';
                   if (primaryWallet && isEthereumWallet(primaryWallet)) {
-                    console.log("Sending transaction with Ethereum wallet...");
+                    console.log('Sending transaction with Ethereum wallet...');
                     try {
                       if (isZKsyncConnector(primaryWallet.connector)) {
                         const ecdsaClient =
@@ -85,19 +85,19 @@ export default function TransactionRequestView({
 
                         txHash = await ecdsaClient.sendTransaction({
                           to: transactionRequest.to as `0x${string}`,
-                          value: BigInt(transactionRequest.value || "0"),
+                          value: BigInt(transactionRequest.value || '0'),
                           data:
-                            (transactionRequest.data as `0x${string}`) || "0x",
+                            (transactionRequest.data as `0x${string}`) || '0x',
                         });
 
-                        console.log("Transaction sent:", txHash);
+                        console.log('Transaction sent:', txHash);
                       }
                     } catch (error) {
-                      console.error("Transaction error:", error);
+                      console.error('Transaction error:', error);
                       throw error;
                     }
                   } else if (isEOAAccount) {
-                    console.log("Sending transaction with EOA...");
+                    console.log('Sending transaction with EOA...');
                     const localAccount = toAccount({
                       address: connectedAddress as `0x${string}`,
                       async signMessage({ message }) {
@@ -105,25 +105,25 @@ export default function TransactionRequestView({
                           message,
                         });
                         if (!signature)
-                          throw new Error("Failed to sign message");
+                          throw new Error('Failed to sign message');
                         return signature; // Now guaranteed to be Hex
                       },
                       async signTransaction(transaction) {
                         const signature = await walletClient?.signTransaction(
                           // @ts-expect-error - Type mismatch between viem account interface and wallet client
-                          transaction
+                          transaction,
                         );
                         if (!signature)
-                          throw new Error("Failed to sign transaction");
+                          throw new Error('Failed to sign transaction');
                         return signature;
                       },
                       async signTypedData(typedData) {
                         const signature = await walletClient?.signTypedData(
                           // @ts-expect-error - Type mismatch between viem account interface and wallet client
-                          typedData
+                          typedData,
                         );
                         if (!signature)
-                          throw new Error("Failed to sign typed data");
+                          throw new Error('Failed to sign typed data');
                         return signature;
                       },
                     });
@@ -141,31 +141,31 @@ export default function TransactionRequestView({
                     try {
                       const gasEstimate = await client.estimateGas({
                         to: transactionRequest.to as `0x${string}`,
-                        value: BigInt(transactionRequest.value || "0"),
+                        value: BigInt(transactionRequest.value || '0'),
                         data:
-                          (transactionRequest.data as `0x${string}`) || "0x",
+                          (transactionRequest.data as `0x${string}`) || '0x',
                       });
-                      console.log("Gas estimate:", gasEstimate.toString());
+                      console.log('Gas estimate:', gasEstimate.toString());
                     } catch (gasError) {
-                      console.error("Gas estimation failed:", gasError);
+                      console.error('Gas estimation failed:', gasError);
                     }
 
                     txHash = await client.sendTransaction({
                       to: transactionRequest.to as `0x${string}`,
-                      value: BigInt(transactionRequest.value || "0"),
-                      data: (transactionRequest.data as `0x${string}`) || "0x",
+                      value: BigInt(transactionRequest.value || '0'),
+                      data: (transactionRequest.data as `0x${string}`) || '0x',
                     });
                   } else {
-                    console.log("Sending transaction with Passkey...");
+                    console.log('Sending transaction with Passkey...');
                     if (!account.owner.passkey) {
-                      throw new Error("No passkey data available");
+                      throw new Error('No passkey data available');
                     }
 
                     const client = createZksyncPasskeyClient({
                       address: account.address as `0x${string}`,
                       credentialPublicKey: account.owner.passkey,
-                      userName: account.username || "Sophon User",
-                      userDisplayName: account.username || "Sophon User",
+                      userName: account.username || 'Sophon User',
+                      userDisplayName: account.username || 'Sophon User',
                       contracts: {
                         accountFactory: CONTRACTS.accountFactory,
                         passkey: CONTRACTS.passkey,
@@ -179,19 +179,19 @@ export default function TransactionRequestView({
                     try {
                       const gasEstimate = await client.estimateGas({
                         to: transactionRequest.to as `0x${string}`,
-                        value: BigInt(transactionRequest.value || "0"),
+                        value: BigInt(transactionRequest.value || '0'),
                         data:
-                          (transactionRequest.data as `0x${string}`) || "0x",
+                          (transactionRequest.data as `0x${string}`) || '0x',
                       });
-                      console.log("Gas estimate:", gasEstimate.toString());
+                      console.log('Gas estimate:', gasEstimate.toString());
                     } catch (gasError) {
-                      console.error("Gas estimation failed:", gasError);
+                      console.error('Gas estimation failed:', gasError);
                     }
 
                     txHash = await client.sendTransaction({
                       to: transactionRequest.to as `0x${string}`,
-                      value: BigInt(transactionRequest.value || "0"),
-                      data: (transactionRequest.data as `0x${string}`) || "0x",
+                      value: BigInt(transactionRequest.value || '0'),
+                      data: (transactionRequest.data as `0x${string}`) || '0x',
                       /* paymaster: transactionRequest.paymaster as `0x${string}`,
                       paymasterInput: getGeneralPaymasterInput({
                         innerInput: "0x",
@@ -199,7 +199,7 @@ export default function TransactionRequestView({
                     });
                   }
 
-                  console.log("Transaction sent:", txHash);
+                  console.log('Transaction sent:', txHash);
 
                   if (windowService.isManaged() && incomingRequest) {
                     const txResponse = {
@@ -214,8 +214,7 @@ export default function TransactionRequestView({
                     windowService.close();
                   }
                 } catch (error) {
-                  console.error("Transaction failed:", error);
-                  alert("Transaction failed: " + (error as Error).message);
+                  console.error('Transaction failed:', error);
                 }
               }}
               className="w-full px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
@@ -224,8 +223,9 @@ export default function TransactionRequestView({
             </button>
 
             <button
+              type="button"
               onClick={() => {
-                console.log("User cancelled transaction");
+                console.log('User cancelled transaction');
                 windowService.close();
               }}
               className="w-full px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
