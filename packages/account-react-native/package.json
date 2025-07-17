@@ -3,13 +3,13 @@
   "version": "0.0.1",
   "private": true,
   "description": "Library to handle sophon account on react native environments",
-  "main": "./lib/module/index.js",
-  "types": "./lib/typescript/src/index.d.ts",
+  "main": "./dist/module/index.js",
+  "types": "./dist/typescript/src/index.d.ts",
   "exports": {
     ".": {
       "source": "./src/index.tsx",
-      "types": "./lib/typescript/src/index.d.ts",
-      "default": "./lib/module/index.js"
+      "types": "./dist/typescript/src/index.d.ts",
+      "default": "./dist/module/index.js"
     },
     "./package.json": "./package.json"
   },
@@ -96,14 +96,11 @@
     "react-modal": "*",
     "@types/react": "*"
   },
-  "workspaces": [
-    "example"
-  ],
   "jest": {
     "preset": "react-native",
     "modulePathIgnorePatterns": [
       "<rootDir>/example/node_modules",
-      "<rootDir>/lib/"
+      "<rootDir>/dist/"
     ]
   },
   "commitlint": {
@@ -139,7 +136,7 @@
   },
   "react-native-builder-bob": {
     "source": "src",
-    "output": "lib",
+    "output": "dist",
     "targets": [
       [
         "module",

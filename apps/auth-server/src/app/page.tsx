@@ -41,8 +41,6 @@ export default function RootPage() {
   const { account, logout } = useAccountContext();
   const { handleAuthSuccessResponse } = useAuthResponse();
 
-  console.log("auth State", authState);
-
   if (authState === AuthState.LOADING) {
     return (
       <div className="flex h-screen w-screen items-center justify-center">
@@ -168,24 +166,6 @@ export default function RootPage() {
             windowService.close();
           }}
           onDisconnect={handleDisconnect}
-        />
-      </Dialog>
-    );
-  }
-
-  if (account) {
-    return (
-      <Dialog className="relative">
-        <PreferencesView
-          onUseAccount={async () => {
-            await handleAuthSuccessResponse(
-              { address: account.address },
-              incomingRequest!,
-              sessionPreferences
-            );
-
-            windowService.close();
-          }}
         />
       </Dialog>
     );

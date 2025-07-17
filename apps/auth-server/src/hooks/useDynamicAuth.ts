@@ -51,7 +51,6 @@ export function useDynamicAuth({
         },
       });
 
-      debugger;
       setState(AuthState.AUTHENTICATED);
 
       if (incomingRequest) {
