@@ -2,8 +2,7 @@ import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { useAccountContext } from "./useAccountContext";
 import { createZksyncPasskeyClient } from "zksync-sso/client/passkey";
 import { http } from "viem";
-import { sophonTestnet } from "viem/chains";
-import { CHAIN_CONTRACTS, DEFAULT_CHAIN_ID } from "@/lib/constants";
+import { CONTRACTS, VIEM_CHAIN } from "@/lib/constants";
 import { parseEther } from "viem";
 
 export const useCreateSession = () => {
@@ -19,7 +18,7 @@ export const useCreateSession = () => {
       const sessionSigner = privateKeyToAccount(sessionKey);
 
       // ✅ Get passkey data from account store (now stored as hex, retrieved as bytes)
-      if (!account || !account.passkey || !account.address) {
+      if (!account || !account.owner.passkey || !account.address) {
         throw new Error(
           "No passkey data available - account may not be fully created yet"
         );
@@ -28,19 +27,18 @@ export const useCreateSession = () => {
       const accountAddress = account.address;
 
       const client = createZksyncPasskeyClient({
-        address: accountAddress as `0x${string}`,
-        credentialPublicKey: account.passkey,
+        address: accountAddress,
+        credentialPublicKey: account.owner.passkey,
         userName: account.username || "Sophon User",
         userDisplayName: account.username || "Sophon User",
         contracts: {
-          accountFactory: CHAIN_CONTRACTS[DEFAULT_CHAIN_ID]
-            .accountFactory as `0x${string}`,
-          passkey: CHAIN_CONTRACTS[DEFAULT_CHAIN_ID].passkey as `0x${string}`,
-          session: CHAIN_CONTRACTS[DEFAULT_CHAIN_ID].session as `0x${string}`,
-          recovery: CHAIN_CONTRACTS[DEFAULT_CHAIN_ID].recovery as `0x${string}`,
+          accountFactory: CONTRACTS.accountFactory,
+          passkey: CONTRACTS.passkey,
+          session: CONTRACTS.session,
+          recovery: CONTRACTS.recovery,
         },
-        chain: sophonTestnet,
-        transport: http("https://rpc.testnet.sophon.xyz"),
+        chain: VIEM_CHAIN,
+        transport: http(),
       });
 
       const sessionConfig = {

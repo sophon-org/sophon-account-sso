@@ -1,12 +1,11 @@
 import { useAccount, useWalletClient } from "wagmi";
 import { createZksyncPasskeyClient } from "zksync-sso/client/passkey";
 import { createZksyncEcdsaClient } from "zksync-sso/client/ecdsa";
-import { sophonTestnet } from "viem/chains";
 import { http } from "viem";
-import { CHAIN_CONTRACTS, DEFAULT_CHAIN_ID } from "@/lib/constants";
+import { CONTRACTS, VIEM_CHAIN } from "@/lib/constants";
 import type { SigningRequestProps } from "@/types/auth";
 import { toAccount } from "viem/accounts";
-import { verifyEIP1271Signature } from "@/lib/utils";
+import { verifyEIP1271Signature } from "@/lib/smart-contract";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { isEthereumWallet } from "@dynamic-labs/ethereum";
 import { Loader } from "@/components/loader";
@@ -117,13 +116,12 @@ export default function SigningRequestView({
                   });
 
                   const client = await createZksyncEcdsaClient({
-                    address: account.address as `0x${string}`,
+                    address: account.address,
                     owner: localAccount,
-                    chain: sophonTestnet,
+                    chain: VIEM_CHAIN,
                     transport: http(),
                     contracts: {
-                      session: CHAIN_CONTRACTS[DEFAULT_CHAIN_ID]
-                        .session as `0x${string}`,
+                      session: CONTRACTS.session,
                     },
                   });
 
@@ -148,22 +146,18 @@ export default function SigningRequestView({
                   }
 
                   const client = createZksyncPasskeyClient({
-                    address: account.address as `0x${string}`,
+                    address: account.address,
                     credentialPublicKey: account.owner.passkey,
                     userName: account.username || "Sophon User",
                     userDisplayName: account.username || "Sophon User",
                     contracts: {
-                      accountFactory: CHAIN_CONTRACTS[DEFAULT_CHAIN_ID]
-                        .accountFactory as `0x${string}`,
-                      passkey: CHAIN_CONTRACTS[DEFAULT_CHAIN_ID]
-                        .passkey as `0x${string}`,
-                      session: CHAIN_CONTRACTS[DEFAULT_CHAIN_ID]
-                        .session as `0x${string}`,
-                      recovery: CHAIN_CONTRACTS[DEFAULT_CHAIN_ID]
-                        .recovery as `0x${string}`,
+                      accountFactory: CONTRACTS.accountFactory,
+                      passkey: CONTRACTS.passkey,
+                      session: CONTRACTS.session,
+                      recovery: CONTRACTS.recovery,
                     },
-                    chain: sophonTestnet,
-                    transport: http("https://rpc.testnet.sophon.xyz"),
+                    chain: VIEM_CHAIN,
+                    transport: http(),
                   });
 
                   signature = await client.signTypedData({

@@ -3,19 +3,19 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
 import { createConfig, http } from "wagmi";
 import { metaMask } from "wagmi/connectors";
-import { sophonTestnet } from "viem/chains";
 import { ReactNode } from "react";
 import { DynamicContextProvider } from "@dynamic-labs/sdk-react-core";
 import { EthereumWalletConnectors } from "@dynamic-labs/ethereum";
 import { env } from "@/env";
 import { DynamicWagmiConnector } from "@dynamic-labs/wagmi-connector";
+import { VIEM_CHAIN } from "@/lib/constants";
 
 // Wagmi config with MetaMask connector
 const wagmiConfig = createConfig({
-  chains: [sophonTestnet],
+  chains: [VIEM_CHAIN],
   connectors: [metaMask()],
   transports: {
-    [sophonTestnet.id]: http("https://rpc.testnet.sophon.xyz"),
+    [VIEM_CHAIN.id]: http(),
   },
 });
 

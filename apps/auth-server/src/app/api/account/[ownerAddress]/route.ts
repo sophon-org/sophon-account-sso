@@ -7,7 +7,7 @@ import { deployAccount } from "@/lib/account";
 const DATABASE_PATH = path.join(process.cwd(), "database.json");
 console.log("database path", DATABASE_PATH);
 if (!fs.existsSync(DATABASE_PATH)) {
-  fs.writeFileSync(DATABASE_PATH, JSON.stringify({}));
+  fs.writeFileSync(DATABASE_PATH, JSON.stringify([]));
 }
 
 type DatabaseSchema = {

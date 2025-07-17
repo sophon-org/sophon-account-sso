@@ -13,8 +13,7 @@ import {
   Address,
 } from "viem";
 
-import { sophonTestnet } from "viem/chains";
-import { CHAIN_CONTRACTS, DEFAULT_CHAIN_ID } from "@/lib/constants";
+import { CONTRACTS, VIEM_CHAIN } from "@/lib/constants";
 
 const SALT_PREFIX = "DynamicLabs";
 //const SALT_PREFIX = "SophonLabs";
@@ -69,10 +68,9 @@ export const checkAccountOwnership = async (
   connectedAddress: string,
   deployerAddress: Address
 ) => {
-  const contracts = CHAIN_CONTRACTS[DEFAULT_CHAIN_ID];
   const publicClient = createPublicClient({
-    chain: sophonTestnet,
-    transport: http("https://rpc.testnet.sophon.xyz"),
+    chain: VIEM_CHAIN,
+    transport: http(),
   });
 
   const salt = `0x${Buffer.from(toBytes(SALT_PREFIX, { size: 32 })).toString(
@@ -104,7 +102,7 @@ export const checkAccountOwnership = async (
     );
 
     const existingAccountAddress = await publicClient.readContract({
-      address: contracts.accountFactory as `0x${string}`,
+      address: CONTRACTS.accountFactory as `0x${string}`,
       abi: [
         {
           name: "accountMappings",
@@ -149,8 +147,8 @@ export const verifyEIP1271Signature = async ({
 }) => {
   try {
     const publicClient = createPublicClient({
-      chain: sophonTestnet,
-      transport: http("https://rpc.testnet.sophon.xyz"),
+      chain: VIEM_CHAIN,
+      transport: http(),
     });
 
     const messageHash = hashTypedData({

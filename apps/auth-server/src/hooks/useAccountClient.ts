@@ -1,5 +1,5 @@
 "use client";
-import { useMemo } from "react";
+
 import {
   type Address,
   createPublicClient,
@@ -11,13 +11,11 @@ import {
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { sophonTestnet, sophon } from "viem/chains";
 import { eip712WalletActions } from "viem/zksync";
-import {
-  createZksyncPasskeyClient,
-  type PasskeyRequiredContracts,
-} from "zksync-sso/client/passkey";
+import { createZksyncPasskeyClient } from "zksync-sso/client/passkey";
 import { createZksyncRecoveryGuardianClient } from "zksync-sso/client/recovery";
-import { CHAIN_CONTRACTS, DEFAULT_CHAIN_ID } from "@/lib/constants";
+import { CONTRACTS, VIEM_CHAIN } from "@/lib/constants";
 import { useAccountContext } from "./useAccountContext";
+import { env } from "@/env";
 
 // Extend Window interface for ethereum provider
 declare global {
@@ -29,20 +27,8 @@ declare global {
 }
 
 // Supported chains for Sophon
-export const supportedChains = [sophonTestnet, sophon];
+export const supportedChains = [VIEM_CHAIN];
 export type SupportedChainId = (typeof supportedChains)[number]["id"];
-
-// Block explorer URLs
-export const blockExplorerUrlByChain: Record<SupportedChainId, string> = {
-  [sophonTestnet.id]: "https://explorer.testnet.sophon.xyz",
-  [sophon.id]: "https://explorer.sophon.xyz",
-};
-
-// Contract type definition
-type ChainContracts = PasskeyRequiredContracts & {
-  accountFactory: NonNullable<PasskeyRequiredContracts["accountFactory"]>;
-  accountPaymaster: Address;
-};
 
 // Chain parameters
 export const chainParameters: Record<SupportedChainId, { blockTime: number }> =
@@ -57,13 +43,13 @@ export const chainParameters: Record<SupportedChainId, { blockTime: number }> =
 
 export const useClientStore = () => {
   const { account } = useAccountContext();
-  const { address, username, passkey } = account || {
+  const { address, username, owner } = account || {
     address: null,
     username: null,
-    passkey: null,
   };
+  const passkey = owner?.passkey;
 
-  const defaultChainId = DEFAULT_CHAIN_ID as SupportedChainId;
+  const defaultChainId = env.NEXT_PUBLIC_CHAIN_ID as SupportedChainId;
   const defaultChain = supportedChains.find(
     (chain) => chain.id === defaultChainId
   );
@@ -73,30 +59,6 @@ export const useClientStore = () => {
       `Default chain is set to ${defaultChainId}, but is missing from the supported chains list`
     );
   }
-
-  // Convert our CHAIN_CONTRACTS to the expected format
-  const contractsByChain: Record<SupportedChainId, ChainContracts> =
-    useMemo(() => {
-      const contracts: Record<SupportedChainId, ChainContracts> = {} as Record<
-        SupportedChainId,
-        ChainContracts
-      >;
-
-      for (const chainId of Object.keys(
-        CHAIN_CONTRACTS
-      ) as unknown as SupportedChainId[]) {
-        const chainContracts = CHAIN_CONTRACTS[chainId];
-        contracts[chainId] = {
-          accountFactory: chainContracts.accountFactory as Address,
-          passkey: chainContracts.passkey as Address,
-          session: chainContracts.session as Address,
-          recovery: chainContracts.recovery as Address,
-          accountPaymaster: chainContracts.accountPaymaster as Address,
-        };
-      }
-
-      return contracts;
-    }, []);
 
   // Public client for reading blockchain data
   const getPublicClient = ({ chainId }: { chainId: SupportedChainId }) => {
@@ -123,14 +85,12 @@ export const useClientStore = () => {
     const chain = supportedChains.find((chain) => chain.id === chainId);
     if (!chain) throw new Error(`Chain with id ${chainId} is not supported`);
 
-    const contracts = contractsByChain[chainId];
-
     const client = createZksyncPasskeyClient({
       address: address,
       credentialPublicKey: passkey,
       userName: username,
       userDisplayName: username,
-      contracts,
+      contracts: CONTRACTS,
       chain,
       transport: http(),
     });
@@ -149,11 +109,9 @@ export const useClientStore = () => {
     const chain = supportedChains.find((chain) => chain.id === chainId);
     if (!chain) throw new Error(`Chain with id ${chainId} is not supported`);
 
-    const contracts = contractsByChain[chainId];
-
     const client = createZksyncRecoveryGuardianClient({
       address: recoveryAddress,
-      contracts,
+      contracts: CONTRACTS,
       chain: chain,
       transport: http(),
     });
@@ -176,14 +134,12 @@ export const useClientStore = () => {
     const chain = supportedChains.find((chain) => chain.id === chainId);
     if (!chain) throw new Error(`Chain with id ${chainId} is not supported`);
 
-    const contracts = contractsByChain[chainId];
-
     return createZksyncPasskeyClient({
       address: clientAddress,
       credentialPublicKey,
       userName: clientUsername,
       userDisplayName: clientUsername,
-      contracts,
+      contracts: CONTRACTS,
       chain,
       transport: http(),
     });
@@ -243,7 +199,6 @@ export const useClientStore = () => {
 
   return {
     defaultChain,
-    contractsByChain,
     getPublicClient,
     getClient,
     getThrowAwayClient,

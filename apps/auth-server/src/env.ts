@@ -1,6 +1,8 @@
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
 
+export const VALID_CHAIN_IDS = ["531050104", "50104"] as const;
+
 export const env = createEnv({
   /**
    * Specify your server-side environment variables schema here. This way you can ensure the app
@@ -20,7 +22,7 @@ export const env = createEnv({
     NEXT_PUBLIC_DYNAMIC_PROVIDER_ID: z.string(),
     NEXT_PUBLIC_DEPLOYER_ADDRESS: z.string(),
     NEXT_PUBLIC_CHAIN_ID: z
-      .string()
+      .enum(VALID_CHAIN_IDS)
       .transform((val) => Number.parseInt(val.toString(), 10)),
   },
 

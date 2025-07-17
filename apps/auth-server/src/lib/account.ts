@@ -1,5 +1,5 @@
 import { eip712WalletActions } from "viem/zksync";
-import { CHAIN_CONTRACTS, DEFAULT_CHAIN_ID } from "./constants";
+import { CONTRACTS, VIEM_CHAIN } from "./constants";
 import { deployModularAccount } from "zksync-sso/client";
 import {
   Account,
@@ -9,8 +9,7 @@ import {
   Transport,
   WalletClient,
 } from "viem";
-import { sophonTestnet } from "viem/chains";
-import { getSmartAccountUniqueId } from "./utils";
+import { getSmartAccountUniqueId } from "./smart-contract";
 import { privateKeyToAccount } from "viem/accounts";
 import { env } from "@/env";
 
@@ -23,15 +22,14 @@ export const deployAccount = async (ownerAddress: `0x${string}`) => {
   const deployerClient: WalletClient<Transport, Chain, Account> =
     createWalletClient({
       account: deployerAccount,
-      chain: sophonTestnet,
-      transport: http("https://rpc.testnet.sophon.xyz"),
+      chain: VIEM_CHAIN,
+      transport: http(),
     }).extend(eip712WalletActions());
 
-  const contracts = CHAIN_CONTRACTS[DEFAULT_CHAIN_ID];
   const deployedAccount = await deployModularAccount(deployerClient, {
-    accountFactory: contracts.accountFactory as `0x${string}`,
+    accountFactory: CONTRACTS.accountFactory,
     paymaster: {
-      location: contracts.accountPaymaster as `0x${string}`,
+      location: CONTRACTS.accountPaymaster,
     },
     uniqueAccountId: getSmartAccountUniqueId(ownerAddress),
     owners: [ownerAddress! as `0x${string}`],

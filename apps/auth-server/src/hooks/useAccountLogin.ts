@@ -2,8 +2,7 @@
 import { useState } from "react";
 import { fetchAccount } from "zksync-sso/client";
 import { createPublicClient, http } from "viem";
-import { CHAIN_CONTRACTS, DEFAULT_CHAIN_ID } from "@/lib/constants";
-import { sophonTestnet } from "viem/chains";
+import { CONTRACTS, VIEM_CHAIN } from "@/lib/constants";
 import { useAccountContext } from "./useAccountContext";
 
 export const useAccountLogin = () => {
@@ -37,19 +36,17 @@ export const useAccountLogin = () => {
       }
 
       const publicClient = createPublicClient({
-        chain: sophonTestnet,
-        transport: http("https://rpc.testnet.sophon.xyz"),
+        chain: VIEM_CHAIN,
+        transport: http(),
       });
-
-      const contracts = CHAIN_CONTRACTS[DEFAULT_CHAIN_ID];
 
       // @ts-expect-error - fetchAccount type compatibility for testing
       const accountInfo = await fetchAccount(publicClient, {
         contracts: {
-          accountFactory: contracts.accountFactory as `0x${string}`,
-          passkey: contracts.passkey as `0x${string}`,
-          session: contracts.session as `0x${string}`,
-          recovery: contracts.recovery as `0x${string}`,
+          accountFactory: CONTRACTS.accountFactory as `0x${string}`,
+          passkey: CONTRACTS.passkey as `0x${string}`,
+          session: CONTRACTS.session as `0x${string}`,
+          recovery: CONTRACTS.recovery as `0x${string}`,
         },
         uniqueAccountId: credential.id,
       });

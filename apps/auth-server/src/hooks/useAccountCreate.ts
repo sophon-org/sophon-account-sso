@@ -6,10 +6,9 @@ import { registerNewPasskey } from "zksync-sso/client/passkey";
 import { createWalletClient, http } from "viem";
 import { eip712WalletActions } from "viem/zksync";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
-import { sophonTestnet } from "viem/chains";
-import { CHAIN_CONTRACTS, DEFAULT_CHAIN_ID } from "@/lib/constants";
+import { CONTRACTS, VIEM_CHAIN } from "@/lib/constants";
 import { useAccountContext } from "./useAccountContext";
-import { checkAccountOwnership } from "@/lib/utils";
+import { checkAccountOwnership } from "@/lib/smart-contract";
 import { env } from "@/env";
 
 export const useAccountCreate = () => {
@@ -23,11 +22,10 @@ export const useAccountCreate = () => {
 
   const deployAccount = async (connectedAddress: string) => {
     const deployerClient = walletClient!.extend(eip712WalletActions());
-    const contracts = CHAIN_CONTRACTS[DEFAULT_CHAIN_ID];
     const deployedAccount = await deployModularAccount(deployerClient, {
-      accountFactory: contracts.accountFactory as `0x${string}`,
+      accountFactory: CONTRACTS.accountFactory as `0x${string}`,
       paymaster: {
-        location: contracts.accountPaymaster as `0x${string}`,
+        location: CONTRACTS.accountPaymaster as `0x${string}`,
       },
       //uniqueAccountId: connectedAddress as `0x${string}`,
       owners: [connectedAddress! as `0x${string}`], // Connected wallet as owner
@@ -72,30 +70,28 @@ export const useAccountCreate = () => {
 
         const deployerClient = createWalletClient({
           account: ownerAccount,
-          chain: sophonTestnet,
-          transport: http("https://rpc.testnet.sophon.xyz"),
+          chain: VIEM_CHAIN,
+          transport: http(),
         }).extend(eip712WalletActions());
-
-        const contracts = CHAIN_CONTRACTS[DEFAULT_CHAIN_ID];
 
         try {
           const deployedAccount = await deployModularAccount(deployerClient, {
-            accountFactory: contracts.accountFactory as `0x${string}`,
+            accountFactory: CONTRACTS.accountFactory as `0x${string}`,
             passkeyModule: {
-              location: contracts.passkey as `0x${string}`,
+              location: CONTRACTS.passkey as `0x${string}`,
               credentialId: passkeyResult.credentialId,
               credentialPublicKey: passkeyResult.credentialPublicKey,
             },
             paymaster: {
-              location: contracts.accountPaymaster as `0x${string}`,
+              location: CONTRACTS.accountPaymaster as `0x${string}`,
             },
             uniqueAccountId: passkeyResult.credentialId,
             sessionModule: {
-              location: contracts.session as `0x${string}`,
+              location: CONTRACTS.session as `0x${string}`,
               initialSession: undefined,
             },
             owners: [ownerAddress],
-            installNoDataModules: [contracts.recovery as `0x${string}`],
+            installNoDataModules: [CONTRACTS.recovery as `0x${string}`],
           });
 
           setAccountAddress(deployedAccount.address);
