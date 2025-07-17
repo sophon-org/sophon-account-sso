@@ -1,10 +1,17 @@
 import { isSSR } from "@/lib/is-ssr";
+import { FromWebActions } from "@sophon-labs/account-message-bridge/dist/src/messages";
+import {
+  registerRNHandler,
+  sendMessageToRN,
+} from "@sophon-labs/account-message-bridge/dist/src/web";
 
 /**
  * Simple interface to be used by all possible comnunications services,
  * usually they are related to windows or iframes.
  */
 interface WindowCommunicationService {
+  name: string;
+
   /**
    * @returns if this service is active
    */
@@ -24,19 +31,31 @@ interface WindowCommunicationService {
    * Sends a message to the active window
    */
   sendMessage: (message: unknown) => void;
+
+  listen: (callback: (message: unknown) => void) => () => void;
 }
 
 const noopWindowService: WindowCommunicationService = {
+  name: "noop",
+
   isManaged: () => false,
 
   reload: () => {},
 
   close: () => {},
 
-  sendMessage: () => {},
+  sendMessage: (message: unknown) => {
+    alert(`sendMessage noop ${JSON.stringify(message)}`);
+  },
+
+  listen: () => {
+    return () => {};
+  },
 };
 
 const popupWindowService: WindowCommunicationService = {
+  name: "popup",
+
   isManaged: () => !isSSR() && !!window.opener,
 
   reload: () => {
@@ -48,18 +67,42 @@ const popupWindowService: WindowCommunicationService = {
   },
 
   sendMessage: (message: unknown) => {
+    // alert(`sendMessage webview ${JSON.stringify(message)}`);
     window.opener.postMessage(message, "*");
+  },
+
+  listen: (callback: (message: unknown) => void) => {
+    const listener = (event: MessageEvent) => {
+      callback(event.data);
+    };
+    window.addEventListener("message", listener);
+
+    return () => {
+      window.removeEventListener("message", listener);
+    };
   },
 };
 
 const webViewWindowService: WindowCommunicationService = {
+  name: "webview",
+
   isManaged: () => !isSSR() && !!window.ReactNativeWebView,
 
   reload: () => {},
 
-  close: () => {},
+  close: () => {
+    sendMessageToRN("closeModal", {});
+  },
 
-  sendMessage: () => {},
+  sendMessage: (message: unknown) => {
+    // alert(`sendMessage webview ${JSON.stringify(message)}`);
+    sendMessageToRN("rpc", message as FromWebActions["rpc"]);
+  },
+
+  listen: (callback: (message: unknown) => void) => {
+    console.log("listen webview");
+    return registerRNHandler("rpc", callback);
+  },
 };
 
 const availableServices: WindowCommunicationService[] = [
@@ -75,6 +118,10 @@ class DelegateWindowService implements WindowCommunicationService {
       noopWindowService;
   }
 
+  public get name() {
+    return this.proxy.name;
+  }
+
   isManaged = () => this.proxy.isManaged();
 
   reload = () => this.proxy.reload();
@@ -82,6 +129,9 @@ class DelegateWindowService implements WindowCommunicationService {
   close = () => this.proxy.close();
 
   sendMessage = (message: unknown) => this.proxy.sendMessage(message);
+
+  listen = (callback: (message: unknown) => void) =>
+    this.proxy.listen(callback);
 }
 
 export const windowService = new DelegateWindowService();

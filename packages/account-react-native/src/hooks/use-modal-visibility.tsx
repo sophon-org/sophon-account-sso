@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useUIEventHandler } from '../messaging/ui';
+import { sendUIMessage, useUIEventHandler } from '../messaging/ui';
 
 export const useModalVisibility = () => {
   const [visible, setVisible] = useState(false);
@@ -7,6 +7,10 @@ export const useModalVisibility = () => {
   useUIEventHandler('showModal', () => {
     console.log('showModal');
     setVisible(true);
+    setTimeout(() => {
+      //TODO: remove this
+      sendUIMessage('modalReady', {});
+    }, 1000);
   });
   useUIEventHandler('hideModal', () => {
     console.log('hideModal');

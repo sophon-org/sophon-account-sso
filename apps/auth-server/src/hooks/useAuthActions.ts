@@ -39,6 +39,7 @@ export function useAuthActions({
       }
       console.log("🔥 Creating account with wallet address:", address);
       await createAccount("eoa", address);
+      debugger;
       setState(AuthState.AUTHENTICATED);
     } catch (error) {
       console.error("❌ Wallet connection failed:", error);
@@ -88,6 +89,7 @@ export function useAuthActions({
 
       await signInWithSocialAccount(provider);
 
+      debugger;
       setState(AuthState.AUTHENTICATED);
     } catch (error) {
       console.error("❌ Social authentication failed:", error);

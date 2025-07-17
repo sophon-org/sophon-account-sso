@@ -110,7 +110,7 @@ export default function Home() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Test Sophon SSO</h1>
+        <h1>Sophon Account Example - Next + Wagmi</h1>
 
         {/* Wagmi Connection Test */}
         <div

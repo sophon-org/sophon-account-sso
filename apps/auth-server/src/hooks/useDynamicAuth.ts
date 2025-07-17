@@ -26,6 +26,7 @@ export function useDynamicAuth({
 
   const handleAuthentication = async () => {
     try {
+      console.log("🔥 handleAuthentication XXX");
       const { accounts } = await getsSmartAccounts(
         primaryWallet!.address as `0x${string}`
       );
@@ -50,6 +51,7 @@ export function useDynamicAuth({
         },
       });
 
+      debugger;
       setState(AuthState.AUTHENTICATED);
 
       if (incomingRequest) {
@@ -117,6 +119,7 @@ export function useDynamicAuth({
       state === AuthState.AUTHENTICATED &&
       dynamicWallet
     ) {
+      console.log("🔥 logged out from dynamic");
       handleLogout();
     }
   }, [sdkHasLoaded, user, state, dynamicWallet]);

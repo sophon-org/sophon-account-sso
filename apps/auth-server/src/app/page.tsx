@@ -8,7 +8,6 @@ import TransactionRequestView from "@/views/TransactionRequestView";
 import CreateSuccessView from "@/views/CreateSuccessView";
 import LoginSuccessView from "@/views/LoginSuccessView";
 import { NotAuthenticatedView } from "@/views/NotAuthenticatedView";
-import PreferencesView from "@/views/PreferencesView";
 import { useAccountContext } from "@/hooks/useAccountContext";
 import { Loader } from "@/components/loader";
 import { useAuthState, AuthState } from "@/hooks/useAuthState";
@@ -42,6 +41,8 @@ export default function RootPage() {
   const { account, logout } = useAccountContext();
   const { handleAuthSuccessResponse } = useAuthResponse();
 
+  console.log("auth State", authState);
+
   if (authState === AuthState.LOADING) {
     return (
       <div className="flex h-screen w-screen items-center justify-center">
@@ -54,11 +55,13 @@ export default function RootPage() {
 
   if (authState === AuthState.SIGNING_REQUEST) {
     return (
-      <SigningRequestView
-        signingRequest={context.signingRequest!}
-        account={account!}
-        incomingRequest={incomingRequest!}
-      />
+      <Dialog className="relative">
+        <SigningRequestView
+          signingRequest={context.signingRequest!}
+          account={account!}
+          incomingRequest={incomingRequest!}
+        />
+      </Dialog>
     );
   }
 
@@ -69,23 +72,6 @@ export default function RootPage() {
         account={account!}
         incomingRequest={incomingRequest!}
       />
-    );
-  }
-
-  if (authState === AuthState.NOT_AUTHENTICATED) {
-    return (
-      <Dialog
-        title="Sophon Auth"
-        onClose={() => console.log("close")}
-        onBack={() => console.log("back")}
-        className="relative"
-      >
-        <NotAuthenticatedView
-          onConnectWallet={startWalletConnection}
-          onEmailAuth={startEmailAuthentication}
-          onSocialAuth={startSocialAuthentication}
-        />
-      </Dialog>
     );
   }
 
@@ -144,19 +130,21 @@ export default function RootPage() {
     };
 
     return (
-      <LoginSuccessView
-        accountData={account}
-        sessionPreferences={sessionPreferences}
-        onUseAccount={async () => {
-          await handleAuthSuccessResponse(
-            { address: account.address },
-            incomingRequest!,
-            sessionPreferences
-          );
-          windowService.close();
-        }}
-        onDisconnect={handleDisconnect}
-      />
+      <Dialog className="relative">
+        <LoginSuccessView
+          accountData={account}
+          sessionPreferences={sessionPreferences}
+          onUseAccount={async () => {
+            await handleAuthSuccessResponse(
+              { address: account.address },
+              incomingRequest!,
+              sessionPreferences
+            );
+            windowService.close();
+          }}
+          onDisconnect={handleDisconnect}
+        />
+      </Dialog>
     );
   }
 
@@ -167,30 +155,27 @@ export default function RootPage() {
     };
 
     return (
-      <CreateSuccessView
-        accountAddress={account.address}
-        sessionPreferences={sessionPreferences}
-        onUseAccount={async () => {
-          await handleAuthSuccessResponse(
-            { address: account.address },
-            incomingRequest!,
-            sessionPreferences
-          );
-          windowService.close();
-        }}
-        onDisconnect={handleDisconnect}
-      />
+      <Dialog className="relative">
+        <CreateSuccessView
+          accountAddress={account.address}
+          sessionPreferences={sessionPreferences}
+          onUseAccount={async () => {
+            await handleAuthSuccessResponse(
+              { address: account.address },
+              incomingRequest!,
+              sessionPreferences
+            );
+            windowService.close();
+          }}
+          onDisconnect={handleDisconnect}
+        />
+      </Dialog>
     );
   }
 
   if (account) {
     return (
-      <Dialog
-        title="Sophon Auth"
-        onClose={() => console.log("close")}
-        onBack={() => console.log("back")}
-        className="relative"
-      >
+      <Dialog className="relative">
         <PreferencesView
           onUseAccount={async () => {
             await handleAuthSuccessResponse(
@@ -208,12 +193,7 @@ export default function RootPage() {
 
   if (authState === AuthState.ERROR) {
     return (
-      <Dialog
-        title="Sophon Auth"
-        onClose={() => console.log("close")}
-        onBack={() => console.log("back")}
-        className="relative"
-      >
+      <Dialog className="relative">
         <div className="flex h-screen w-screen items-center justify-center flex-col">
           <div className="text-center">
             <div className="text-6xl mb-4">❌</div>
@@ -234,13 +214,12 @@ export default function RootPage() {
   }
 
   return (
-    <Dialog
-      title="Sophon Auth"
-      onClose={() => console.log("close")}
-      onBack={() => console.log("back")}
-      className="relative"
-    >
-      <NotAuthenticatedView />
+    <Dialog className="relative">
+      <NotAuthenticatedView
+        onConnectWallet={startWalletConnection}
+        onEmailAuth={startEmailAuthentication}
+        onSocialAuth={startSocialAuthentication}
+      />
     </Dialog>
   );
 }

@@ -1,16 +1,15 @@
-// import type WebView from 'react-native-webview';
 import {
   registerUIEventHandler,
   sendUIMessage,
   type SophonUIActions,
-} from '@/messaging';
+} from '../messaging';
 import type { Communicator, Message } from 'zksync-sso/communicator';
 
-const MODAL_TIMEOUT = 5000;
+const MODAL_TIMEOUT = 500000;
 
 export class WebViewCommunicator implements Communicator {
   private listeners = new Map<
-    (payload: SophonUIActions['rpc']) => void,
+    (payload: SophonUIActions['incomingRpc']) => void,
     { reject: (_: Error) => void; deregister: () => void }
   >();
 
@@ -22,7 +21,7 @@ export class WebViewCommunicator implements Communicator {
   postRequestAndWaitForResponse = async <M extends Message>(
     request: Message & { id: NonNullable<Message['id']> }
   ): Promise<M> => {
-    console.log('postRequestAndWaitForResponse', request);
+    console.log('$$$$$$$$$$$$$$$$ postRequestAndWaitForResponse', request);
     const responsePromise = this.onMessage<M>(
       ({ requestId }) => requestId === request.id
     );
@@ -32,9 +31,10 @@ export class WebViewCommunicator implements Communicator {
   onMessage = async <M extends Message>(
     predicate: (_: Partial<M>) => boolean
   ): Promise<M> => {
-    console.log('onMessage', predicate);
+    console.log('!!!!!!!!!!!! onMessage', predicate);
     return new Promise((resolve, reject) => {
-      const listener = (payload: SophonUIActions['rpc']) => {
+      const listener = (payload: SophonUIActions['incomingRpc']) => {
+        console.log('!!!!!!!!!!!! onMessage listener', payload);
         // only act if the message target hits the given predicate
         if (predicate(payload as Partial<M>)) {
           resolve(payload as M);
@@ -42,7 +42,7 @@ export class WebViewCommunicator implements Communicator {
           this.listeners.delete(listener);
         }
       };
-      const deregister = registerUIEventHandler('rpc', listener);
+      const deregister = registerUIEventHandler('incomingRpc', listener);
       this.listeners.set(listener, { reject, deregister });
     });
   };
@@ -58,7 +58,9 @@ export class WebViewCommunicator implements Communicator {
   };
 
   private waitContextToBeReady = async () => {
-    return new Promise((resolve, reject) => {
+    console.log('!!!!!!!!!!!! waitContextToBeReady');
+
+    await new Promise((resolve, reject) => {
       const unregister = registerUIEventHandler('modalReady', () => {
         unregister();
         resolve(true);
@@ -73,6 +75,7 @@ export class WebViewCommunicator implements Communicator {
     });
   };
   ready = async () => {
+    console.log('!!!!!!!!!!!! ready');
     await this.waitContextToBeReady();
   };
 }

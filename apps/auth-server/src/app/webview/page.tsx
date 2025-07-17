@@ -8,7 +8,6 @@ import TransactionRequestView from "@/views/TransactionRequestView";
 import CreateSuccessView from "@/views/CreateSuccessView";
 import LoginSuccessView from "@/views/LoginSuccessView";
 import { NotAuthenticatedView } from "@/views/NotAuthenticatedView";
-import PreferencesView from "@/views/PreferencesView";
 import { useAccountContext } from "@/hooks/useAccountContext";
 import { Loader } from "@/components/loader";
 import { useAuthState, AuthState } from "@/hooks/useAuthState";
@@ -44,11 +43,6 @@ export default function RootPage() {
     onTransactionRequest: startTransactionRequest,
   });
 
-  useRNHandler("echo", (payload) => {
-    console.log("🔥 Received message from React Native:", payload);
-    alert(payload.message);
-  });
-
   useRNHandler("openModal", () => {
     setOpen(true);
   });
@@ -68,38 +62,53 @@ export default function RootPage() {
 
   if (authState === AuthState.SIGNING_REQUEST) {
     return (
-      <SigningRequestView
-        signingRequest={context.signingRequest!}
-        account={account!}
-        incomingRequest={incomingRequest!}
-      />
+      <Sheet
+        open={open}
+        modal={true}
+        onOpenChange={(open) => {
+          setOpen(open);
+          if (!open) {
+            windowService.close();
+          }
+        }}
+      >
+        <SheetContent side="bottom" className="rounded-t-3xl">
+          <SheetHeader hidden={true}>
+            <SheetTitle>Sophon Authentication Modal</SheetTitle>
+          </SheetHeader>
+          <SigningRequestView
+            signingRequest={context.signingRequest!}
+            account={account!}
+            incomingRequest={incomingRequest!}
+          />
+        </SheetContent>
+      </Sheet>
     );
   }
 
   if (authState === AuthState.TRANSACTION_REQUEST) {
     return (
-      <TransactionRequestView
-        transactionRequest={context.transactionRequest!}
-        account={account!}
-        incomingRequest={incomingRequest!}
-      />
-    );
-  }
-
-  if (authState === AuthState.NOT_AUTHENTICATED) {
-    return (
-      <Dialog
-        title="Sophon Auth"
-        onClose={() => console.log("close")}
-        onBack={() => console.log("back")}
-        className="relative"
+      <Sheet
+        open={open}
+        modal={true}
+        onOpenChange={(open) => {
+          setOpen(open);
+          if (!open) {
+            windowService.close();
+          }
+        }}
       >
-        <NotAuthenticatedView
-          onConnectWallet={startWalletConnection}
-          onEmailAuth={startEmailAuthentication}
-          onSocialAuth={startSocialAuthentication}
-        />
-      </Dialog>
+        <SheetContent side="bottom" className="rounded-t-3xl">
+          <SheetHeader hidden={true}>
+            <SheetTitle>Sophon Authentication Modal</SheetTitle>
+          </SheetHeader>
+          <TransactionRequestView
+            transactionRequest={context.transactionRequest!}
+            account={account!}
+            incomingRequest={incomingRequest!}
+          />
+        </SheetContent>
+      </Sheet>
     );
   }
 
@@ -158,19 +167,35 @@ export default function RootPage() {
     };
 
     return (
-      <LoginSuccessView
-        accountData={account}
-        sessionPreferences={sessionPreferences}
-        onUseAccount={async () => {
-          await handleAuthSuccessResponse(
-            { address: account.address },
-            incomingRequest!,
-            sessionPreferences
-          );
-          windowService.close();
+      <Sheet
+        open={open}
+        modal={true}
+        onOpenChange={(open) => {
+          setOpen(open);
+          if (!open) {
+            windowService.close();
+          }
         }}
-        onDisconnect={handleDisconnect}
-      />
+      >
+        <SheetContent side="bottom" className="rounded-t-3xl">
+          <SheetHeader hidden={true}>
+            <SheetTitle>Sophon Authentication Modal</SheetTitle>
+          </SheetHeader>
+          <LoginSuccessView
+            accountData={account}
+            sessionPreferences={sessionPreferences}
+            onUseAccount={async () => {
+              await handleAuthSuccessResponse(
+                { address: account.address },
+                incomingRequest!,
+                sessionPreferences
+              );
+              windowService.close();
+            }}
+            onDisconnect={handleDisconnect}
+          />
+        </SheetContent>
+      </Sheet>
     );
   }
 
@@ -181,19 +206,35 @@ export default function RootPage() {
     };
 
     return (
-      <CreateSuccessView
-        accountAddress={account.address}
-        sessionPreferences={sessionPreferences}
-        onUseAccount={async () => {
-          await handleAuthSuccessResponse(
-            { address: account.address },
-            incomingRequest!,
-            sessionPreferences
-          );
-          windowService.close();
+      <Sheet
+        open={open}
+        modal={true}
+        onOpenChange={(open) => {
+          setOpen(open);
+          if (!open) {
+            windowService.close();
+          }
         }}
-        onDisconnect={handleDisconnect}
-      />
+      >
+        <SheetContent side="bottom" className="rounded-t-3xl">
+          <SheetHeader hidden={true}>
+            <SheetTitle>Sophon Create Success Modal</SheetTitle>
+          </SheetHeader>
+          <CreateSuccessView
+            accountAddress={account.address}
+            sessionPreferences={sessionPreferences}
+            onUseAccount={async () => {
+              await handleAuthSuccessResponse(
+                { address: account.address },
+                incomingRequest!,
+                sessionPreferences
+              );
+              windowService.close();
+            }}
+            onDisconnect={handleDisconnect}
+          />
+        </SheetContent>
+      </Sheet>
     );
   }
 
@@ -205,7 +246,7 @@ export default function RootPage() {
         onOpenChange={(open) => {
           setOpen(open);
           if (!open) {
-            sendMessageToRN("closeModal", {});
+            windowService.close();
           }
         }}
       >
@@ -213,16 +254,11 @@ export default function RootPage() {
           <SheetHeader hidden={true}>
             <SheetTitle>Sophon Preferences Modal</SheetTitle>
           </SheetHeader>
-          <PreferencesView
-            onUseAccount={async () => {
-              await handleAuthSuccessResponse(
-                { address: account.address },
-                incomingRequest!,
-                sessionPreferences
-              );
 
-              windowService.close();
-            }}
+          <NotAuthenticatedView
+            onConnectWallet={startWalletConnection}
+            onEmailAuth={startEmailAuthentication}
+            onSocialAuth={startSocialAuthentication}
           />
         </SheetContent>
       </Sheet>
@@ -263,7 +299,7 @@ export default function RootPage() {
       onOpenChange={(open) => {
         setOpen(open);
         if (!open) {
-          sendMessageToRN("closeModal", {});
+          windowService.close();
         }
       }}
     >

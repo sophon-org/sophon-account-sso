@@ -58,13 +58,14 @@ export const useMessageHandler = (
     }
 
     // Define the message handler
-    const messageHandler = (event: MessageEvent) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const messageHandler = (data: any) => {
       // Store the incoming request if it's an RPC request
-      if (event.data && event.data.id && event.data.content) {
-        const method = event.data.content?.action?.method;
+      if (data && data.id && data.content) {
+        const method = data.content?.action?.method;
 
         if (method === "eth_requestAccounts") {
-          const params = event.data.content.action?.params as
+          const params = data.content.action?.params as
             | { sessionPreferences?: unknown }
             | undefined;
           const isSessionRequest = !!params?.sessionPreferences;
@@ -76,7 +77,7 @@ export const useMessageHandler = (
           }
           setSigningRequest(null);
         } else if (method === "eth_signTypedData_v4") {
-          const params = event.data.content.action?.params;
+          const params = data.content.action?.params;
 
           if (params && params.length >= 2) {
             const address = params[0];
@@ -106,7 +107,7 @@ export const useMessageHandler = (
             console.error("Invalid params for eth_signTypedData_v4:", params);
           }
         } else if (method === "eth_sendTransaction") {
-          const params = event.data.content.action?.params;
+          const params = data.content.action?.params;
 
           if (params && params.length >= 1) {
             const txData = params[0];
@@ -129,20 +130,17 @@ export const useMessageHandler = (
           }
         }
 
-        setIncomingRequest(event.data);
+        setIncomingRequest(data);
 
         // Save to sessionStorage (survives OAuth redirects when social auth is used)
-        sessionStorage.setItem(
-          "sophon-incoming-request",
-          JSON.stringify(event.data)
-        );
+        sessionStorage.setItem("sophon-incoming-request", JSON.stringify(data));
       }
     };
 
-    window.addEventListener("message", messageHandler);
+    const unregister = windowService.listen(messageHandler);
 
     return () => {
-      window.removeEventListener("message", messageHandler);
+      unregister();
     };
   }, [callbacks, incomingRequest]);
 

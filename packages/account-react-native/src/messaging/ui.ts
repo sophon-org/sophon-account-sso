@@ -1,4 +1,5 @@
-import EventEmitter from 'events';
+// @ts-ignore
+import EventEmitter from 'EventEmitter';
 import { useEffect } from 'react';
 import type { Message } from 'zksync-sso/communicator';
 
@@ -8,7 +9,7 @@ export type SophonUIActions = {
   showModal: {};
   hideModal: {};
   modalReady: {};
-  incommingRpc: Message;
+  incomingRpc: Message;
   outgoingRpc: Message;
 };
 

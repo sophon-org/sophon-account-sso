@@ -32,6 +32,7 @@ export const SophonWebView = ({
   });
 
   useUIEventHandler('outgoingRpc', (payload) => {
+    console.log('>>>>>>>>>>>> outgoingRpc to webview', payload);
     postMessageToWebApp(webViewRef, 'rpc', payload as any);
   });
 
@@ -50,12 +51,12 @@ export const SophonWebView = ({
         onLoadStart={() => console.log('load start')}
         onLoad={() => console.log('load')}
         onMessage={(event) => {
-          console.log('message', event.nativeEvent.data);
+          console.log('>>>>>>>>>>>> message', event.nativeEvent.data);
           const { action, payload } = JSON.parse(event.nativeEvent.data);
           if (action === 'closeModal') {
             sendUIMessage('hideModal', payload);
           } else if (action === 'rpc') {
-            sendUIMessage('incommingRpc', payload);
+            sendUIMessage('incomingRpc', payload);
           }
         }}
         onError={(event) => {
