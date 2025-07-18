@@ -1,44 +1,33 @@
-import {
-  useConnectWithOtp,
-  useSocialAccounts,
-} from '@dynamic-labs/sdk-react-core';
-import { ProviderEnum } from '@dynamic-labs/types';
-import { type FormEventHandler, useState } from 'react';
-import { IconDiscord } from '@/components/icons/icon-discord';
-import { IconGoogle } from '@/components/icons/icon-google';
-import { IconTelegram } from '@/components/icons/icon-telegram';
-import { IconTwitter } from '@/components/icons/icon-twitter';
-import { LegalNotice } from '@/components/legal';
-import { Loader } from '@/components/loader';
-import { LogoSophon } from '@/components/logos/logo-sophon';
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/ui/sheet';
-import { useAccountCreate } from '@/hooks/useAccountCreate';
-import { useAccountLogin } from '@/hooks/useAccountLogin';
-import { useWalletConnection } from '@/hooks/useWalletConnection';
+import { useConnectWithOtp, useSocialAccounts } from "@dynamic-labs/sdk-react-core";
+import { ProviderEnum } from "@dynamic-labs/types";
+import { type FormEventHandler, useState } from "react";
+import { IconDiscord } from "@/components/icons/icon-discord";
+import { IconGoogle } from "@/components/icons/icon-google";
+import { IconTelegram } from "@/components/icons/icon-telegram";
+import { IconTwitter } from "@/components/icons/icon-twitter";
+import { Loader } from "@/components/loader";
+import { LogoSophon } from "@/components/logos/logo-sophon";
+import { Button } from "@/components/ui/button";
+import { useAccountCreate } from "@/hooks/useAccountCreate";
+import { useAccountLogin } from "@/hooks/useAccountLogin";
+import { useWalletConnection } from "@/hooks/useWalletConnection";
 
 const SOCIAL_PROVIDERS = {
   [ProviderEnum.Google]: {
     icon: <IconGoogle />,
-    label: 'Google',
+    label: "Google",
   },
   [ProviderEnum.Twitter]: {
     icon: <IconTwitter />,
-    label: 'Twitter',
+    label: "Twitter",
   },
   [ProviderEnum.Discord]: {
     icon: <IconDiscord />,
-    label: 'Discord',
+    label: "Discord",
   },
   [ProviderEnum.Telegram]: {
     icon: <IconTelegram />,
-    label: 'Telegram',
+    label: "Telegram",
   },
 };
 
@@ -64,9 +53,7 @@ export const NotAuthenticatedView = ({
   } = useSocialAccounts();
   const [socialProvider, setSocialProvider] = useState<ProviderEnum>();
 
-  const onSubmitEmailHandler: FormEventHandler<HTMLFormElement> = async (
-    event,
-  ) => {
+  const onSubmitEmailHandler: FormEventHandler<HTMLFormElement> = async (event) => {
     try {
       setEmailLoading(true);
       event.preventDefault();
@@ -84,9 +71,7 @@ export const NotAuthenticatedView = ({
     }
   };
 
-  const onSubmitOtpHandler: FormEventHandler<HTMLFormElement> = async (
-    event,
-  ) => {
+  const onSubmitOtpHandler: FormEventHandler<HTMLFormElement> = async (event) => {
     try {
       setEmailLoading(true);
       event.preventDefault();
@@ -101,14 +86,13 @@ export const NotAuthenticatedView = ({
     }
   };
 
-  const { address, isConnected, connectWallet, isPending } =
-    useWalletConnection();
+  const { address, isConnected, connectWallet, isPending } = useWalletConnection();
 
   const handleEOACreation = async () => {
     if (!isConnected) {
       await connectWallet();
     } else {
-      await createAccount('eoa', address);
+      await createAccount("eoa", address);
     }
   };
 
@@ -116,154 +100,98 @@ export const NotAuthenticatedView = ({
 
   const { error: loginError } = useAccountLogin();
   return (
-    <>
-      <div className="text-center justify-items-center">
+    <div className="flex flex-col gap-14">
+      <div className="flex flex-col gap-6 justify-center items-center">
         <LogoSophon />
-        <h2 className="text-xl font-bold text-gray-900 mt-4">Sign in</h2>
+        <h2 className="text-2xl font-bold text-gray-900">Sign in</h2>
       </div>
 
-      <div className="my-4">
-        {(errorSocial || loginError) && (
+      <div className="flex flex-col gap-6 px-6">
+        <div className="flex flex-row gap-2">
+          {Object.entries(SOCIAL_PROVIDERS).map(([provider, { icon }]) => {
+            const onClick = () => {
+              setSocialProvider(provider as ProviderEnum);
+              // Use state machine if available, otherwise use original logic
+              if (onSocialAuth) {
+                onSocialAuth(provider as ProviderEnum);
+              } else {
+                signInWithSocialAccount(provider as ProviderEnum);
+              }
+            };
+            return (
+              <button
+                type="button"
+                key={provider}
+                className="p-2 h-16 w-full bg-white text-black rounded-2xl border border-[rgba(15, 14, 13, 0.08)] hover:bg-gray-100 transition-all duration-300 cursor-pointer pointer-events-auto disabled:opacity-50 disabled:cursor-not-allowed justify-items-center"
+                onClick={onClick}
+              >
+                {socialProvider === provider && isProcessingSocial ? (
+                  <Loader className="w-4 h-4" />
+                ) : (
+                  icon
+                )}
+              </button>
+            );
+          })}
+        </div>
+        <div className="space-y-4">
+          <form key="email-form" onSubmit={onSubmitEmailHandler} hidden={waitingOTP}>
+            <input
+              className="w-full h-14 p-3 bg-white border border-[#EBE9E6] rounded-md placeholder:text-[#CCCAC8] placeholder:text-lg mb-2"
+              type="email"
+              name="email"
+              placeholder="Enter email"
+              required
+            />
+            <Button variant="primary" type="submit">
+              {emailLoading ? <Loader className="w-4 h-4" /> : "Continue"}
+            </Button>
+          </form>
+
+          <form key="otp-form" onSubmit={onSubmitOtpHandler} hidden={!waitingOTP}>
+            <input
+              className="w-full bg-white border border-gray-300 rounded-md p-2 placeholder:text-gray-400 mb-2"
+              type="text"
+              name="otp"
+              placeholder="OTP"
+              autoComplete="off"
+            />
+            <button
+              className="w-full py-3 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              type="submit"
+            >
+              {emailLoading ? <Loader className="w-4 h-4" /> : "Verify"}
+            </button>
+          </form>
+        </div>
+        <div className="flex flex-row gap-4 justify-between items-center">
+          <div className="h-px w-full bg-[#0F0E0D] opacity-10" />
+          <div className="text-center">or</div>
+          <div className="h-px w-full bg-[#0F0E0D] opacity-10" />
+        </div>
+
+        <div className="mt-2">
+          <Button
+            variant="secondary"
+            type="button"
+            onClick={onConnectWallet || handleEOACreation}
+            disabled={loading || isPending}
+          >
+            {loading ? <Loader className="w-4 h-4" /> : "Continue with Wallet"}
+          </Button>
+        </div>
+
+        {(createError || loginError || errorSocial) && (
           <div className="p-3 bg-red-50 border border-red-200 rounded">
             <p className="text-red-600 text-sm">
-              {errorSocial?.message || loginError}
+              {createError || loginError || errorSocial?.message}
+            </p>
+            <p className="text-xs text-gray-500 mt-1">
+              💡 Tip: Make sure your device has Touch ID, Face ID, or a PIN set up
             </p>
           </div>
         )}
       </div>
-      <div className="flex flex-row gap-2 my-4">
-        {Object.entries(SOCIAL_PROVIDERS).map(([provider, { icon }]) => {
-          const onClick = () => {
-            setSocialProvider(provider as ProviderEnum);
-            // Use state machine if available, otherwise use original logic
-            if (onSocialAuth) {
-              onSocialAuth(provider as ProviderEnum);
-            } else {
-              signInWithSocialAccount(provider as ProviderEnum);
-            }
-          };
-          return (
-            <button
-              type="button"
-              key={provider}
-              className="w-full py-3 px-4 bg-white text-black rounded-lg hover:bg-gray-200 pointer-events-auto disabled:opacity-50 disabled:cursor-not-allowed justify-items-center"
-              onClick={onClick}
-            >
-              {socialProvider === provider && isProcessingSocial ? (
-                <Loader className="w-4 h-4" />
-              ) : (
-                icon
-              )}
-            </button>
-          );
-        })}
-      </div>
-
-      <div className="space-y-4">
-        <form
-          key="email-form"
-          onSubmit={onSubmitEmailHandler}
-          hidden={waitingOTP}
-        >
-          <input
-            className="w-full bg-white border border-gray-300 rounded-md p-2 placeholder:text-gray-400 mb-2"
-            type="email"
-            name="email"
-            placeholder="Email"
-            required
-          />
-          <button
-            className="w-full py-3 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-            type="submit"
-          >
-            {emailLoading ? <Loader className="w-4 h-4" /> : 'Continue'}
-          </button>
-        </form>
-
-        <form key="otp-form" onSubmit={onSubmitOtpHandler} hidden={!waitingOTP}>
-          <input
-            className="w-full bg-white border border-gray-300 rounded-md p-2 placeholder:text-gray-400 mb-2"
-            type="text"
-            name="otp"
-            placeholder="OTP"
-            autoComplete="off"
-          />
-          <button
-            className="w-full py-3 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-            type="submit"
-          >
-            {emailLoading ? <Loader className="w-4 h-4" /> : 'Verify'}
-          </button>
-        </form>
-      </div>
-
-      <div className="space-y-4 text-center pb-4">or</div>
-
-      <div className="space-y-4">
-        <div className="space-y-3">
-          <button
-            type="button"
-            onClick={onConnectWallet || handleEOACreation}
-            disabled={loading || isPending}
-            className="w-full py-3 px-4 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? <Loader className="w-4 h-4" /> : 'Connect With Metamask'}
-          </button>
-        </div>
-      </div>
-
-      {(createError || loginError) && (
-        <div className="p-3 bg-red-50 border border-red-200 rounded">
-          <p className="text-red-600 text-sm">{createError || loginError}</p>
-          <p className="text-xs text-gray-500 mt-1">
-            💡 Tip: Make sure your device has Touch ID, Face ID, or a PIN set up
-          </p>
-        </div>
-      )}
-
-      {/* Sheet Example */}
-      <div className="mt-4 text-center">
-        <Sheet>
-          <SheetTrigger asChild>
-            <button
-              type="button"
-              className="text-sm text-blue-600 hover:text-blue-800 underline"
-            >
-              More Options
-            </button>
-          </SheetTrigger>
-          <SheetContent side="bottom">
-            <SheetHeader>
-              <SheetTitle>Authentication Options</SheetTitle>
-              <SheetDescription>
-                Choose how you&apos;d like to sign in to your Sophon account
-              </SheetDescription>
-            </SheetHeader>
-            <div className="mt-6 space-y-4">
-              <div className="space-y-2">
-                <h3 className="font-medium">Social Login</h3>
-                <p className="text-sm text-gray-600">
-                  Sign in quickly using your existing social media accounts
-                </p>
-              </div>
-              <div className="space-y-2">
-                <h3 className="font-medium">Email</h3>
-                <p className="text-sm text-gray-600">
-                  Use your email address with OTP verification
-                </p>
-              </div>
-              <div className="space-y-2">
-                <h3 className="font-medium">Wallet</h3>
-                <p className="text-sm text-gray-600">
-                  Connect your existing wallet like MetaMask
-                </p>
-              </div>
-            </div>
-          </SheetContent>
-        </Sheet>
-      </div>
-
-      <LegalNotice className="max-h-4" />
-    </>
+    </div>
   );
 };
