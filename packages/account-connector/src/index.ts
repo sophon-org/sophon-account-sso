@@ -1,4 +1,4 @@
-import type { Communicator } from "zksync-sso/communicator";
+import { PopupCommunicator, type Communicator } from "zksync-sso/communicator";
 import { zksyncSsoConnector } from "zksync-sso/connector";
 
 // biome-ignore lint/suspicious/noExplicitAny: TODO remove later
@@ -15,8 +15,7 @@ export const sophonSsoConnector: any = (options?: {
       icon: "/sophon-icon.png",
     },
     paymasterHandler: async () => ({
-      paymaster:
-        options?.paymaster || "0x98546B226dbbA8230cf620635a1e4ab01F6A99B2",
+      paymaster: options?.paymaster || "0x98546B226dbbA8230cf620635a1e4ab01F6A99B2",
       paymasterInput: "0x",
     }),
     // Remove session config to test auth-server mode
@@ -30,7 +29,18 @@ export const sophonSsoConnector: any = (options?: {
     //   transferPolicies: [], // Token transfers allowed
     //   // Message signing is implicitly allowed in sessions
     // },
-    communicator: options?.communicator,
+    communicator:
+      options?.communicator ||
+      new PopupCommunicator("http://localhost:3000", {
+        width: 360,
+        height: 800,
+        calculatePosition(width, height) {
+          return {
+            left: window.screenX + (window.outerWidth - width) / 2,
+            top: window.screenY + (window.outerHeight - height) / 2,
+          };
+        },
+      }),
   });
 
   return connector;
