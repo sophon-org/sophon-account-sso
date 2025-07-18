@@ -2,6 +2,7 @@
   "name": "@sophon-labs/account-connector",
   "description": "Web3 wallet connector with SSO features",
   "version": "0.0.1",
+  "license": "MIT",
   "author": "Sophon Team",
   "main": "dist/index.cjs",
   "module": "dist/index.js",
@@ -20,12 +21,23 @@
   },
   "scripts": {
     "build": "tsup",
-    "dev": "tsup --watch"
+    "dev": "tsup --watch",
+    "------------------------- TESTING -------------------------": "",
+    "test": "vitest --watch false --passWithNoTests",
+    "test:dev": "vitest --watch true --passWithNoTests",
+    "test:ci": "vitest --watch false --passWithNoTests --coverage"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
     "typescript": "^5.0.0",
-    "tsup": "^8.5.0"
+    "tsup": "^8.5.0",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^3.2.4",
+    "vite": "^7.0.5",
+    "@vitest/coverage-v8": "^3.2.4",
+    "@playwright/test": "^1.54.1",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3"
   },
   "dependencies": {
     "zksync-sso": "file:../../../zksync-sso/packages/sdk"

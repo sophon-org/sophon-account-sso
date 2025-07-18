@@ -10,7 +10,7 @@ export default defineConfig({
     include: ["./src/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
 
     reporters: ["default"],
-    outputFile: "account-auth-server.junit.xml",
+    outputFile: "account-connector.junit.xml",
     setupFiles: ["./test.setup.ts"],
     coverage: {
       exclude: [
