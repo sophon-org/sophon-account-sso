@@ -1,12 +1,15 @@
-import { useConnectWithOtp, useSocialAccounts } from "@dynamic-labs/sdk-react-core";
-import type { ProviderEnum } from "@dynamic-labs/types";
+import {
+  useConnectWithOtp,
+  useSocialAccounts,
+} from '@dynamic-labs/sdk-react-core';
+import type { ProviderEnum } from '@dynamic-labs/types';
 import {
   type AuthContext,
   AuthState,
   type SigningRequest,
   type TransactionRequest,
-} from "@/types/auth";
-import { useWalletConnection } from "./useWalletConnection";
+} from '@/types/auth';
+import { useWalletConnection } from './useWalletConnection';
 
 interface UseAuthActionsParams {
   setState: (state: AuthState) => void;
@@ -14,7 +17,11 @@ interface UseAuthActionsParams {
   context: AuthContext;
 }
 
-export function useAuthActions({ setState, setContext, context }: UseAuthActionsParams) {
+export function useAuthActions({
+  setState,
+  setContext,
+  context,
+}: UseAuthActionsParams) {
   const { connectWallet } = useWalletConnection(setState);
   const { connectWithEmail, verifyOneTimePassword } = useConnectWithOtp();
   const { signInWithSocialAccount } = useSocialAccounts();
@@ -24,7 +31,7 @@ export function useAuthActions({ setState, setContext, context }: UseAuthActions
     try {
       await connectWallet(connectorName);
     } catch (error) {
-      console.error("❌ Wallet connection failed:", error);
+      console.error('❌ Wallet connection failed:', error);
     }
   };
 
@@ -34,13 +41,13 @@ export function useAuthActions({ setState, setContext, context }: UseAuthActions
     try {
       // Send email with OTP
       await connectWithEmail(email);
-      console.log("🔥 Email sent successfully");
+      console.log('🔥 Email sent successfully');
       setState(AuthState.WAITING_OTP);
       setContext((prev) => ({ ...prev, email }));
     } catch (error) {
-      console.error("❌ Email authentication failed:", error);
+      console.error('❌ Email authentication failed:', error);
       setState(AuthState.ERROR);
-      setContext((prev) => ({ ...prev, error: "Email authentication failed" }));
+      setContext((prev) => ({ ...prev, error: 'Email authentication failed' }));
     }
   };
 
@@ -51,9 +58,9 @@ export function useAuthActions({ setState, setContext, context }: UseAuthActions
       await verifyOneTimePassword(otp);
       setState(AuthState.WAITING_PRIMARY_WALLET);
     } catch (error) {
-      console.error("❌ OTP verification failed:", error);
+      console.error('❌ OTP verification failed:', error);
       setState(AuthState.ERROR);
-      setContext((prev) => ({ ...prev, error: "OTP verification failed" }));
+      setContext((prev) => ({ ...prev, error: 'OTP verification failed' }));
     }
   };
 
@@ -66,9 +73,9 @@ export function useAuthActions({ setState, setContext, context }: UseAuthActions
 
       setState(AuthState.AUTHENTICATED);
     } catch (error) {
-      console.error("❌ Social authentication failed:", error);
+      console.error('❌ Social authentication failed:', error);
       setState(AuthState.ERROR);
-      setContext({ ...context, error: "Social authentication failed" });
+      setContext({ ...context, error: 'Social authentication failed' });
     }
   };
 

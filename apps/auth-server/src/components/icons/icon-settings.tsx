@@ -32,8 +32,15 @@ export const IconSettings = ({ className }: { className?: string }) => {
             result="hardAlpha"
           />
           <feOffset dx="1" dy="1" />
-          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.64 0" />
-          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_2621_405" />
+          <feColorMatrix
+            type="matrix"
+            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.64 0"
+          />
+          <feBlend
+            mode="normal"
+            in2="BackgroundImageFix"
+            result="effect1_dropShadow_2621_405"
+          />
           <feBlend
             mode="normal"
             in="SourceGraphic"

@@ -1,7 +1,7 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from 'vitest';
 
-describe("example", () => {
-  it("should return true", () => {
+describe('example', () => {
+  it('should return true', () => {
     // when
     const result = true;
 

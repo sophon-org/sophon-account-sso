@@ -1,5 +1,5 @@
-import type { Address, Hash, TypedDataParameter } from "viem";
-import type { SmartAccount } from "./smart-account";
+import type { Address, Hash, TypedDataParameter } from 'viem';
+import type { SmartAccount } from './smart-account';
 
 export type TypedDataDomain = {
   name?: string;
@@ -71,18 +71,18 @@ export interface AccountData {
 }
 
 export enum AuthState {
-  LOADING = "loading",
-  NOT_AUTHENTICATED = "not_authenticated",
-  SELECTING_WALLET = "selecting_wallet",
-  CREATING_ACCOUNT = "creating_account",
-  WAITING_OTP = "waiting_otp",
-  WAITING_PRIMARY_WALLET = "waiting_primary_wallet",
-  LOGGING_IN = "logging_in",
-  AUTHENTICATED = "authenticated",
-  SIGNING_REQUEST = "signing_request",
-  TRANSACTION_REQUEST = "transaction_request",
-  SUCCESS = "success",
-  ERROR = "error",
+  LOADING = 'loading',
+  NOT_AUTHENTICATED = 'not_authenticated',
+  SELECTING_WALLET = 'selecting_wallet',
+  CREATING_ACCOUNT = 'creating_account',
+  WAITING_OTP = 'waiting_otp',
+  WAITING_PRIMARY_WALLET = 'waiting_primary_wallet',
+  LOGGING_IN = 'logging_in',
+  AUTHENTICATED = 'authenticated',
+  SIGNING_REQUEST = 'signing_request',
+  TRANSACTION_REQUEST = 'transaction_request',
+  SUCCESS = 'success',
+  ERROR = 'error',
 }
 
 export interface AuthContext {

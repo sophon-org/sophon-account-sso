@@ -3,4 +3,4 @@
  *
  * @returns True if the code is running on the server, false otherwise.
  */
-export const isSSR = () => typeof window === "undefined";
+export const isSSR = () => typeof window === 'undefined';

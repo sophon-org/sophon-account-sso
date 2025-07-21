@@ -1,19 +1,19 @@
-import { type ButtonHTMLAttributes, type ReactNode } from "react";
+import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary";
+  variant?: 'primary' | 'secondary';
   children: ReactNode;
 }
 
 export const Button = ({
-  variant = "primary",
+  variant = 'primary',
   children,
-  className = "",
+  className = '',
   ...props
 }: ButtonProps) => {
   const gradientStyle = {
     background:
-      "var(--Gradients-Aurora, linear-gradient(72deg, var(--Colour-Sophon-Blue-100, #EBF4FF) 12%, var(--Colour-Sophon-Blue-200, #CCE4FF) 72.12%))",
+      'var(--Gradients-Aurora, linear-gradient(72deg, var(--Colour-Sophon-Blue-100, #EBF4FF) 12%, var(--Colour-Sophon-Blue-200, #CCE4FF) 72.12%))',
   };
 
   const baseButtonClasses = `
@@ -22,7 +22,7 @@ export const Button = ({
     ${className}
   `.trim();
 
-  if (variant === "secondary") {
+  if (variant === 'secondary') {
     return (
       <div
         className="rounded-[144px] p-[2px] flex items-center justify-center"

@@ -1,21 +1,21 @@
-"use client";
+'use client';
 
-import { useRNHandler } from "@sophon-labs/account-message-bridge";
-import { Dialog } from "@/components/dialog";
-import { Loader } from "@/components/loader";
-import { useAccountContext } from "@/hooks/useAccountContext";
-import { useAuthResponse } from "@/hooks/useAuthResponse";
-import { AuthState, useAuthState } from "@/hooks/useAuthState";
-import { useMessageHandler } from "@/hooks/useMessageHandler";
-import { windowService } from "@/service/window.service";
-import CreateSuccessView from "@/views/CreateSuccessView";
-import LoginSuccessView from "@/views/LoginSuccessView";
-import { NotAuthenticatedView } from "@/views/NotAuthenticatedView";
-import SigningRequestView from "@/views/SigningRequestView";
-import TransactionRequestView from "@/views/TransactionRequestView";
-import { Button } from "@/components/ui/button";
-import { useWalletConnection } from "@/hooks/useWalletConnection";
-import SelectingWalletView from "@/views/SelectingWalletView";
+import { useRNHandler } from '@sophon-labs/account-message-bridge';
+import { Dialog } from '@/components/dialog';
+import { Loader } from '@/components/loader';
+import { Button } from '@/components/ui/button';
+import { useAccountContext } from '@/hooks/useAccountContext';
+import { useAuthResponse } from '@/hooks/useAuthResponse';
+import { AuthState, useAuthState } from '@/hooks/useAuthState';
+import { useMessageHandler } from '@/hooks/useMessageHandler';
+import { useWalletConnection } from '@/hooks/useWalletConnection';
+import { windowService } from '@/service/window.service';
+import CreateSuccessView from '@/views/CreateSuccessView';
+import LoginSuccessView from '@/views/LoginSuccessView';
+import { NotAuthenticatedView } from '@/views/NotAuthenticatedView';
+import SelectingWalletView from '@/views/SelectingWalletView';
+import SigningRequestView from '@/views/SigningRequestView';
+import TransactionRequestView from '@/views/TransactionRequestView';
 
 export default function RootPage() {
   const {
@@ -36,8 +36,8 @@ export default function RootPage() {
     onTransactionRequest: startTransactionRequest,
   });
 
-  useRNHandler("echo", (payload) => {
-    console.log("🔥 Received message from React Native:", payload);
+  useRNHandler('echo', (payload) => {
+    console.log('🔥 Received message from React Native:', payload);
     alert(payload.message);
   });
 
@@ -83,7 +83,7 @@ export default function RootPage() {
         <Loader className="h-10 w-10 animate-spin block" />
         <br />
         <p className="text-black ml-2">
-          {context.email ? "Verifying code..." : "Authenticating..."}
+          {context.email ? 'Verifying code...' : 'Authenticating...'}
         </p>
       </div>
     );
@@ -94,12 +94,14 @@ export default function RootPage() {
       <div className="flex h-screen w-screen items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-4">Check your email</h2>
-          <p className="text-gray-600 mb-6">We sent a verification code to {context.email}</p>
+          <p className="text-gray-600 mb-6">
+            We sent a verification code to {context.email}
+          </p>
           <form
             onSubmit={async (e) => {
               e.preventDefault();
               const formData = new FormData(e.currentTarget);
-              const otp = formData.get("otp") as string;
+              const otp = formData.get('otp') as string;
               await verifyOTP(otp);
             }}
             className="space-y-4"
@@ -132,7 +134,9 @@ export default function RootPage() {
         onClose={goToNotAuthenticated}
       >
         <SelectingWalletView
-          onConnectWallet={(connectorName: string) => startWalletConnection(connectorName)}
+          onConnectWallet={(connectorName: string) =>
+            startWalletConnection(connectorName)
+          }
         />
       </Dialog>
     );
@@ -149,7 +153,7 @@ export default function RootPage() {
       <Dialog
         className="relative"
         onSettings={() => {
-          window.parent.open("https://app.sophon.xyz/", "_blank");
+          window.parent.open('https://app.sophon.xyz/', '_blank');
         }}
         showLegalNotice={false}
         actions={<Button onClick={handleDisconnect}>Log out</Button>}
@@ -203,7 +207,9 @@ export default function RootPage() {
           <div className="text-center">
             <div className="text-6xl mb-4">❌</div>
             <h1 className="text-2xl font-bold mb-2">Error!</h1>
-            <p className="text-gray-600 mb-4">{context.error || "Something went wrong"}</p>
+            <p className="text-gray-600 mb-4">
+              {context.error || 'Something went wrong'}
+            </p>
             <button
               type="button"
               onClick={goToNotAuthenticated}

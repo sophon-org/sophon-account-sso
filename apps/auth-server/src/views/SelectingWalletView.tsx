@@ -1,6 +1,9 @@
-import { SUPPORTED_WALLETS, SupportedWallet } from "@/lib/supportedWallets";
-import { useState } from "react";
-import { useConnect } from "wagmi";
+import { useState } from 'react';
+import { useConnect } from 'wagmi';
+import {
+  SUPPORTED_WALLETS,
+  type SupportedWallet,
+} from '@/lib/supportedWallets';
 
 export default function SelectingWalletView({
   onConnectWallet,
@@ -8,7 +11,7 @@ export default function SelectingWalletView({
   onConnectWallet: (connectorName: string) => void;
 }) {
   const { connectors } = useConnect();
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
 
   const handleWalletClick = (wallet: SupportedWallet) => {
     const connector = connectors.find((c) => c.name === wallet.name);
@@ -17,7 +20,7 @@ export default function SelectingWalletView({
       onConnectWallet(connector.name);
     } else {
       // Wallet not installed - redirect to installation
-      window.open(wallet.downloadUrl, "_blank");
+      window.open(wallet.downloadUrl, '_blank');
     }
   };
 
@@ -35,7 +38,9 @@ export default function SelectingWalletView({
         {SUPPORTED_WALLETS.filter((wallet) =>
           wallet.name.toLowerCase().includes(search.toLowerCase()),
         ).map((wallet) => {
-          const isInstalled = connectors.some((connector) => connector.name === wallet.name);
+          const isInstalled = connectors.some(
+            (connector) => connector.name === wallet.name,
+          );
 
           return (
             <li key={wallet.name}>
@@ -45,7 +50,12 @@ export default function SelectingWalletView({
               >
                 <div className="flex items-center gap-4">
                   <div>
-                    <img src={wallet.icon} alt={wallet.name} width="20" height="20" />
+                    <img
+                      src={wallet.icon}
+                      alt={wallet.name}
+                      width="20"
+                      height="20"
+                    />
                   </div>
                   <p className="font-medium">{wallet.name}</p>
                 </div>

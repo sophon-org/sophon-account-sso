@@ -1,10 +1,14 @@
-import { cn } from "@/lib/cn";
-import { IconClose } from "../icons/icon-close";
-import { IconBack } from "../icons/icon-back";
-import { IconSophon } from "../icons/icon-sophon";
-import { LegalNotice } from "../legal";
-import { IconSettings } from "../icons/icon-settings";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { cn } from '@/lib/cn';
+import { IconBack } from '../icons/icon-back';
+import { IconClose } from '../icons/icon-close';
+import { IconSettings } from '../icons/icon-settings';
+import { IconSophon } from '../icons/icon-sophon';
+import { LegalNotice } from '../legal';
 
 export const DialogHeader = ({
   title,
@@ -101,14 +105,19 @@ export function Dialog({
 }: DialogProps) {
   return (
     <div
-      className={cn("bg-white h-full w-full", className)}
+      className={cn('bg-white h-full w-full', className)}
       style={{
         background:
-          "linear-gradient(180deg, rgba(255, 255, 255, 0.00) 0%, #FFF 75%), url(/images/skybg.webp) lightgray -46.312px 0px / 395.062% 100% no-repeat",
+          'linear-gradient(180deg, rgba(255, 255, 255, 0.00) 0%, #FFF 75%), url(/images/skybg.webp) lightgray -46.312px 0px / 395.062% 100% no-repeat',
       }}
     >
-      <div className={cn("mx-auto h-full relative w-[360px]")}>
-        <DialogHeader title={title} onBack={onBack} onClose={onClose} onSettings={onSettings} />
+      <div className={cn('mx-auto h-full relative w-[360px]')}>
+        <DialogHeader
+          title={title}
+          onBack={onBack}
+          onClose={onClose}
+          onSettings={onSettings}
+        />
         <div>{children}</div>
         <DialogFooter showLegalNotice={showLegalNotice} actions={actions} />
       </div>

@@ -1,10 +1,10 @@
-"use client";
-import { useEffect } from "react";
-import { useAccount, useConnect, useDisconnect, useWalletClient } from "wagmi";
-import { useAccountCreate } from "./useAccountCreate";
-import { useAuthResponse } from "./useAuthResponse";
-import { useMessageHandler } from "./useMessageHandler";
-import { AuthState } from "@/types/auth";
+'use client';
+import { useEffect } from 'react';
+import { useAccount, useConnect, useDisconnect, useWalletClient } from 'wagmi';
+import { AuthState } from '@/types/auth';
+import { useAccountCreate } from './useAccountCreate';
+import { useAuthResponse } from './useAuthResponse';
+import { useMessageHandler } from './useMessageHandler';
 
 export const useWalletConnection = (setState?: (state: AuthState) => void) => {
   const { address, isConnected, isConnecting } = useAccount();
@@ -23,17 +23,21 @@ export const useWalletConnection = (setState?: (state: AuthState) => void) => {
           connect({ connector });
         }
       } else {
-        handleAuthSuccessResponse({ address: address! }, incomingRequest!, sessionPreferences);
+        handleAuthSuccessResponse(
+          { address: address! },
+          incomingRequest!,
+          sessionPreferences,
+        );
         setState?.(AuthState.AUTHENTICATED);
       }
     } catch (error) {
-      console.error("❌ Wallet connection failed:", error);
+      console.error('❌ Wallet connection failed:', error);
     }
   };
 
   const handleCreateAccount = async () => {
     if (isSuccess && walletClient && address) {
-      await createAccount("eoa", address);
+      await createAccount('eoa', address);
     }
   };
 
@@ -43,7 +47,11 @@ export const useWalletConnection = (setState?: (state: AuthState) => void) => {
 
   useEffect(() => {
     if (accountCreated && address) {
-      handleAuthSuccessResponse({ address: address }, incomingRequest!, sessionPreferences);
+      handleAuthSuccessResponse(
+        { address: address },
+        incomingRequest!,
+        sessionPreferences,
+      );
       setState?.(AuthState.AUTHENTICATED);
     }
   }, [accountCreated, address]);

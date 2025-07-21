@@ -1,7 +1,7 @@
-import { windowService } from "@/service/window.service";
-import type { LoginSuccessProps } from "@/types/auth";
-import { shortenAddress } from "@/lib/formatting";
-import { IconSophon } from "@/components/icons/icon-sophon";
+import { IconSophon } from '@/components/icons/icon-sophon';
+import { shortenAddress } from '@/lib/formatting';
+import { windowService } from '@/service/window.service';
+import type { LoginSuccessProps } from '@/types/auth';
 
 export default function LoginSuccessView({
   accountData,
@@ -26,7 +26,9 @@ export default function LoginSuccessView({
         <div className="w-[72px] h-[73px] rounded-[109px] bg-[#37f] blur-[60px] absolute top-[10px] right-[0px] z-0"></div>
       </div>
 
-      <h5 className="text-lg font-bold">{shortenAddress(accountData.address)}</h5>
+      <h5 className="text-lg font-bold">
+        {shortenAddress(accountData.address)}
+      </h5>
     </div>
   );
 }

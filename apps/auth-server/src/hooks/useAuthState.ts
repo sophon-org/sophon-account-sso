@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { type AuthContext, AuthState } from "@/types/auth";
-import { useAuthActions } from "./useAuthActions";
-import { useDynamicAuth } from "./useDynamicAuth";
+import { useState } from 'react';
+import { type AuthContext, AuthState } from '@/types/auth';
+import { useAuthActions } from './useAuthActions';
+import { useDynamicAuth } from './useDynamicAuth';
 
 function useAuthState() {
   const [state, setState] = useState<AuthState>(AuthState.LOADING);
@@ -32,9 +32,11 @@ function useAuthState() {
     setContext((prev) => ({ ...prev, error }));
   };
 
-  const isLoading = [AuthState.LOADING, AuthState.CREATING_ACCOUNT, AuthState.LOGGING_IN].includes(
-    state,
-  );
+  const isLoading = [
+    AuthState.LOADING,
+    AuthState.CREATING_ACCOUNT,
+    AuthState.LOGGING_IN,
+  ].includes(state);
 
   return {
     state,
