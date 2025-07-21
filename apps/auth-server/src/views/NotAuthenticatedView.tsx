@@ -32,13 +32,13 @@ const SOCIAL_PROVIDERS = {
 };
 
 interface NotAuthenticatedViewProps {
-  onConnectWallet?: () => Promise<void>;
+  onSelectWallet?: () => void;
   onEmailAuth?: (email: string) => Promise<void>;
   onSocialAuth?: (provider: ProviderEnum) => Promise<void>;
 }
 
 export const NotAuthenticatedView = ({
-  onConnectWallet,
+  onSelectWallet,
   onEmailAuth,
   onSocialAuth,
 }: NotAuthenticatedViewProps) => {
@@ -86,17 +86,9 @@ export const NotAuthenticatedView = ({
     }
   };
 
-  const { address, isConnected, connectWallet, isPending } = useWalletConnection();
+  const { isPending } = useWalletConnection();
 
-  const handleEOACreation = async () => {
-    if (!isConnected) {
-      await connectWallet();
-    } else {
-      await createAccount("eoa", address);
-    }
-  };
-
-  const { createAccount, loading, error: createError } = useAccountCreate();
+  const { loading, error: createError } = useAccountCreate();
 
   const { error: loginError } = useAccountLogin();
   return (
@@ -174,7 +166,7 @@ export const NotAuthenticatedView = ({
           <Button
             variant="secondary"
             type="button"
-            onClick={onConnectWallet || handleEOACreation}
+            onClick={onSelectWallet}
             disabled={loading || isPending}
           >
             {loading ? <Loader className="w-4 h-4" /> : "Continue with Wallet"}

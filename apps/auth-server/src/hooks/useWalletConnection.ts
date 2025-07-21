@@ -1,31 +1,52 @@
-'use client';
-import { useAccount, useConnect, useDisconnect } from 'wagmi';
+"use client";
+import { useEffect } from "react";
+import { useAccount, useConnect, useDisconnect, useWalletClient } from "wagmi";
+import { useAccountCreate } from "./useAccountCreate";
+import { useAuthResponse } from "./useAuthResponse";
+import { useMessageHandler } from "./useMessageHandler";
+import { AuthState } from "@/types/auth";
 
-export const useWalletConnection = () => {
+export const useWalletConnection = (setState?: (state: AuthState) => void) => {
   const { address, isConnected, isConnecting } = useAccount();
-  const { connect, connectors, error, isPending } = useConnect();
+  const { connect, connectors, error, isPending, isSuccess } = useConnect();
   const { disconnect } = useDisconnect();
+  const { data: walletClient } = useWalletClient();
+  const { createAccount, success: accountCreated } = useAccountCreate();
+  const { handleAuthSuccessResponse } = useAuthResponse();
+  const { incomingRequest, sessionPreferences } = useMessageHandler();
 
-  const connectWallet = async () => {
-    const metaMaskConnector = connectors.find(
-      (connector) => connector.id === 'metaMaskSDK',
-    );
-    if (metaMaskConnector) {
-      console.log('Found MetaMask connector, attempting to connect...');
-      try {
-        const result = await connect({ connector: metaMaskConnector });
-        console.log('Connection result:', result);
-      } catch (error) {
-        console.error('Connection failed:', error);
+  const connectWallet = async (connectorName: string) => {
+    try {
+      if (!isConnected) {
+        const connector = connectors.find((c) => c.name === connectorName);
+        if (connector) {
+          connect({ connector });
+        }
+      } else {
+        handleAuthSuccessResponse({ address: address! }, incomingRequest!, sessionPreferences);
+        setState?.(AuthState.AUTHENTICATED);
       }
-    } else {
-      console.error('MetaMask connector not found!');
-      console.log(
-        'Available connector IDs:',
-        connectors.map((c) => c.id),
-      );
+    } catch (error) {
+      console.error("❌ Wallet connection failed:", error);
     }
   };
+
+  const handleCreateAccount = async () => {
+    if (isSuccess && walletClient && address) {
+      await createAccount("eoa", address);
+    }
+  };
+
+  useEffect(() => {
+    handleCreateAccount();
+  }, [isSuccess, walletClient, address]);
+
+  useEffect(() => {
+    if (accountCreated && address) {
+      handleAuthSuccessResponse({ address: address }, incomingRequest!, sessionPreferences);
+      setState?.(AuthState.AUTHENTICATED);
+    }
+  }, [accountCreated, address]);
 
   return {
     address,
@@ -35,5 +56,6 @@ export const useWalletConnection = () => {
     disconnect,
     error,
     isPending,
+    accountCreated,
   };
 };

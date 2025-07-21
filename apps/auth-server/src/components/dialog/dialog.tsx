@@ -20,13 +20,21 @@ export const DialogHeader = ({
   return (
     <div className="flex justify-between items-center p-2 min-h-16">
       {!!onBack && (
-        <button type="button" className="text-gray-500 hover:text-gray-700" onClick={onBack}>
+        <button
+          type="button"
+          className="text-gray-500 hover:text-gray-700 cursor-pointer"
+          onClick={onBack}
+        >
           <IconBack className="m-w-6 m-h-6" />
         </button>
       )}
       <h2 className="text-2xl font-bold flex-grow text-center">{title}</h2>
       {!!onClose && (
-        <button type="button" className="text-gray-500 hover:text-gray-700" onClick={onClose}>
+        <button
+          type="button"
+          className="text-gray-500 hover:text-gray-700 cursor-pointer"
+          onClick={onClose}
+        >
           <IconClose className="m-w-6 m-h-6" />
         </button>
       )}

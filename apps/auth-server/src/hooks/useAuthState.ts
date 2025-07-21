@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { type AuthContext, AuthState } from '@/types/auth';
-import { useAuthActions } from './useAuthActions';
-import { useDynamicAuth } from './useDynamicAuth';
+import { useState } from "react";
+import { type AuthContext, AuthState } from "@/types/auth";
+import { useAuthActions } from "./useAuthActions";
+import { useDynamicAuth } from "./useDynamicAuth";
 
 function useAuthState() {
   const [state, setState] = useState<AuthState>(AuthState.LOADING);
@@ -14,6 +14,7 @@ function useAuthState() {
     goToNotAuthenticated: () => setState(AuthState.NOT_AUTHENTICATED),
   });
 
+  const goToSelectingWallet = () => setState(AuthState.SELECTING_WALLET);
   const goToNotAuthenticated = () => setState(AuthState.NOT_AUTHENTICATED);
   const goToCreatingAccount = () => setState(AuthState.CREATING_ACCOUNT);
   const goToLoggingIn = () => setState(AuthState.LOGGING_IN);
@@ -31,16 +32,15 @@ function useAuthState() {
     setContext((prev) => ({ ...prev, error }));
   };
 
-  const isLoading = [
-    AuthState.LOADING,
-    AuthState.CREATING_ACCOUNT,
-    AuthState.LOGGING_IN,
-  ].includes(state);
+  const isLoading = [AuthState.LOADING, AuthState.CREATING_ACCOUNT, AuthState.LOGGING_IN].includes(
+    state,
+  );
 
   return {
     state,
     context,
     // State transition functions
+    goToSelectingWallet,
     goToNotAuthenticated,
     goToCreatingAccount,
     goToLoggingIn,

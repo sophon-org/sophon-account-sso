@@ -1,18 +1,18 @@
-'use client';
-import { EthereumWalletConnectors } from '@dynamic-labs/ethereum';
-import { DynamicContextProvider } from '@dynamic-labs/sdk-react-core';
-import { DynamicWagmiConnector } from '@dynamic-labs/wagmi-connector';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import type { ReactNode } from 'react';
-import { createConfig, http, WagmiProvider } from 'wagmi';
-import { metaMask } from 'wagmi/connectors';
-import { env } from '@/env';
-import { VIEM_CHAIN } from '@/lib/constants';
+"use client";
+import { EthereumWalletConnectors } from "@dynamic-labs/ethereum";
+import { DynamicContextProvider } from "@dynamic-labs/sdk-react-core";
+//import { DynamicWagmiConnector } from "@dynamic-labs/wagmi-connector";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import type { ReactNode } from "react";
+import { createConfig, http, WagmiProvider } from "wagmi";
+import { injected } from "wagmi/connectors";
+import { env } from "@/env";
+import { VIEM_CHAIN } from "@/lib/constants";
 
-// Wagmi config with MetaMask connector
+// Wagmi config with MetaMask connector - uses environment-based chain
 const wagmiConfig = createConfig({
   chains: [VIEM_CHAIN],
-  connectors: [metaMask()],
+  connectors: [injected()],
   transports: {
     [VIEM_CHAIN.id]: http(),
   },
@@ -36,9 +36,7 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
       }}
     >
       <WagmiProvider config={wagmiConfig}>
-        <QueryClientProvider client={queryClient}>
-          <DynamicWagmiConnector>{children}</DynamicWagmiConnector>
-        </QueryClientProvider>
+        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
       </WagmiProvider>
     </DynamicContextProvider>
   );

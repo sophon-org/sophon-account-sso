@@ -14,12 +14,15 @@ import { NotAuthenticatedView } from "@/views/NotAuthenticatedView";
 import SigningRequestView from "@/views/SigningRequestView";
 import TransactionRequestView from "@/views/TransactionRequestView";
 import { Button } from "@/components/ui/button";
+import { useWalletConnection } from "@/hooks/useWalletConnection";
+import SelectingWalletView from "@/views/SelectingWalletView";
 
 export default function RootPage() {
   const {
     state: authState,
     context,
     goToNotAuthenticated,
+    goToSelectingWallet,
     startWalletConnection,
     startEmailAuthentication,
     verifyOTP,
@@ -40,6 +43,7 @@ export default function RootPage() {
 
   const { account, logout } = useAccountContext();
   const { handleAuthSuccessResponse } = useAuthResponse();
+  const { disconnect } = useWalletConnection();
 
   if (authState === AuthState.LOADING) {
     return (
@@ -119,8 +123,24 @@ export default function RootPage() {
     );
   }
 
+  if (authState === AuthState.SELECTING_WALLET) {
+    return (
+      <Dialog
+        className="relative"
+        title="Select your wallet"
+        onBack={goToNotAuthenticated}
+        onClose={goToNotAuthenticated}
+      >
+        <SelectingWalletView
+          onConnectWallet={(connectorName: string) => startWalletConnection(connectorName)}
+        />
+      </Dialog>
+    );
+  }
+
   if (authState === AuthState.AUTHENTICATED && account) {
     const handleDisconnect = () => {
+      disconnect();
       logout();
       goToNotAuthenticated();
     };
@@ -200,7 +220,7 @@ export default function RootPage() {
   return (
     <Dialog className="relative">
       <NotAuthenticatedView
-        onConnectWallet={startWalletConnection}
+        onSelectWallet={goToSelectingWallet}
         onEmailAuth={startEmailAuthentication}
         onSocialAuth={startSocialAuthentication}
       />
