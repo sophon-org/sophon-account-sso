@@ -1,58 +1,27 @@
-'use client';
-import { useState } from 'react';
-import { createWalletClient, http } from 'viem';
-import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
-import { eip712WalletActions } from 'viem/zksync';
-import { useWalletClient } from 'wagmi';
-import { deployModularAccount } from 'zksync-sso/client';
-import { registerNewPasskey } from 'zksync-sso/client/passkey';
-import { env } from '@/env';
-import { CONTRACTS, VIEM_CHAIN } from '@/lib/constants';
-import { checkAccountOwnership } from '@/lib/smart-contract';
-import { useAccountContext } from './useAccountContext';
+"use client";
+import { useState } from "react";
+import { createWalletClient, http } from "viem";
+import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
+import { eip712WalletActions } from "viem/zksync";
+import { useWalletClient } from "wagmi";
+import { deployModularAccount } from "zksync-sso/client";
+import { registerNewPasskey } from "zksync-sso/client/passkey";
+import { CONTRACTS, VIEM_CHAIN } from "@/lib/constants";
+import { useAccountContext } from "./useAccountContext";
+import { deployAccount, getsSmartAccounts } from "@/service/account.service";
 
 export const useAccountCreate = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const [accountAddress, setAccountAddress] = useState<string>('');
+  const [accountAddress, setAccountAddress] = useState<string>("");
 
   const { login } = useAccountContext();
   const { data: walletClient } = useWalletClient();
 
-  const deployAccount = async (connectedAddress: string) => {
-    const deployerClient = walletClient!.extend(eip712WalletActions());
-    const deployedAccount = await deployModularAccount(deployerClient, {
-      accountFactory: CONTRACTS.accountFactory as `0x${string}`,
-      paymaster: {
-        location: CONTRACTS.accountPaymaster as `0x${string}`,
-      },
-      //uniqueAccountId: connectedAddress as `0x${string}`,
-      owners: [connectedAddress! as `0x${string}`], // Connected wallet as owner
-      installNoDataModules: [], // Empty - no modules for pure EOA account
-    });
-
-    setAccountAddress(deployedAccount.address);
-
-    login({
-      username: `EOA Account ${connectedAddress!.slice(0, 8)}...`,
-      address: deployedAccount.address,
-      owner: {
-        address: connectedAddress! as `0x${string}`,
-        passkey: null,
-        privateKey: null,
-      },
-    });
-
-    setSuccess(true);
-  };
-
-  const createAccount = async (
-    accountType: 'passkey' | 'eoa',
-    connectedAddress?: string,
-  ) => {
-    console.log('Creating account with type:', accountType);
-    if (accountType === 'passkey') {
+  const createAccount = async (accountType: "passkey" | "eoa", connectedAddress?: string) => {
+    console.log("Creating account with type:", accountType);
+    if (accountType === "passkey") {
       try {
         setLoading(true);
         setError(null);
@@ -107,14 +76,12 @@ export const useAccountCreate = () => {
 
           setSuccess(true);
         } catch (deployError: unknown) {
-          console.error('deployModularAccount failed:', deployError);
+          console.error("deployModularAccount failed:", deployError);
           throw deployError;
         }
       } catch (err: unknown) {
-        console.error('Account creation failed:', err);
-        setError(
-          err instanceof Error ? err.message : 'Failed to create account',
-        );
+        console.error("Account creation failed:", err);
+        setError(err instanceof Error ? err.message : "Failed to create account");
       } finally {
         setLoading(false);
       }
@@ -124,46 +91,44 @@ export const useAccountCreate = () => {
         setError(null);
 
         if (!connectedAddress) {
-          throw new Error(
-            'No wallet connected. Please connect your wallet first.',
-          );
+          throw new Error("No wallet connected. Please connect your wallet first.");
         }
 
         if (!walletClient) {
-          throw new Error(
-            'Wallet client not available. Please ensure your wallet is connected.',
-          );
+          throw new Error("Wallet client not available. Please ensure your wallet is connected.");
         }
 
-        console.log('Checking account ownership for', connectedAddress);
-
-        const existingAccountAddress = await checkAccountOwnership(
-          connectedAddress,
-          env.NEXT_PUBLIC_DEPLOYER_ADDRESS as `0x${string}`,
-        );
-        if (
-          existingAccountAddress &&
-          existingAccountAddress !==
-            '0x0000000000000000000000000000000000000000'
-        ) {
+        const { accounts } = await getsSmartAccounts(connectedAddress as `0x${string}`);
+        if (accounts.length > 0) {
           login({
             username: `EOA Account ${connectedAddress.slice(0, 8)}...`,
-            address: existingAccountAddress,
+            address: accounts[0],
             owner: {
               address: connectedAddress as `0x${string}`,
               passkey: null,
               privateKey: null,
             },
           });
-          setAccountAddress(existingAccountAddress);
+          setAccountAddress(accounts[0]);
           setSuccess(true);
           return;
         } else {
-          console.log('No existing account found, deploying new account');
-          await deployAccount(connectedAddress);
+          const { accounts } = await deployAccount(connectedAddress as `0x${string}`);
+          const smartAccountAddress = accounts[0] as `0x${string}`;
+          setAccountAddress(smartAccountAddress);
+          login({
+            username: `EOA Account ${connectedAddress!.slice(0, 8)}...`,
+            address: smartAccountAddress,
+            owner: {
+              address: smartAccountAddress,
+              passkey: null,
+              privateKey: null,
+            },
+          });
+          setSuccess(true);
         }
       } catch (checkError) {
-        console.error('❌ Account check failed:', checkError);
+        console.error("❌ Account check failed:", checkError);
       } finally {
         setLoading(false);
       }
