@@ -7,6 +7,7 @@ import { Loader } from '@/components/loader';
 import {
   Sheet,
   SheetContent,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
@@ -27,7 +28,6 @@ export default function RootPage() {
     state: authState,
     context,
     goToNotAuthenticated,
-    startWalletConnection,
     startEmailAuthentication,
     verifyOTP,
     startSocialAuthentication,
@@ -253,10 +253,10 @@ export default function RootPage() {
           </SheetHeader>
 
           <NotAuthenticatedView
-            onConnectWallet={startWalletConnection}
             onEmailAuth={startEmailAuthentication}
             onSocialAuth={startSocialAuthentication}
           />
+          <SheetFooter />
         </SheetContent>
       </Sheet>
     );
@@ -306,6 +306,7 @@ export default function RootPage() {
           <SheetTitle>Sophon Authentication Modal</SheetTitle>
         </SheetHeader>
         <NotAuthenticatedView />
+        <SheetFooter />
       </SheetContent>
     </Sheet>
   );

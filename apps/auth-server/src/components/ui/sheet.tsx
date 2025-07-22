@@ -5,6 +5,8 @@ import { XIcon } from 'lucide-react';
 import type * as React from 'react';
 
 import { cn } from '@/lib/smart-contract';
+import { IconSophon } from '../icons/icon-sophon';
+import { LegalNotice } from '../legal';
 
 function Sheet({ ...props }: React.ComponentProps<typeof SheetPrimitive.Root>) {
   return <SheetPrimitive.Root data-slot="sheet" {...props} />;
@@ -91,13 +93,26 @@ function SheetHeader({ className, ...props }: React.ComponentProps<'div'>) {
   );
 }
 
-function SheetFooter({ className, ...props }: React.ComponentProps<'div'>) {
+function SheetFooter({
+  className,
+  showLegalNotice = true,
+  ...props
+}: React.ComponentProps<'div'> & { showLegalNotice?: boolean }) {
   return (
     <div
       data-slot="sheet-footer"
-      className={cn('mt-auto flex flex-col gap-2 p-4', className)}
+      className={cn('mt-auto flex flex-col gap-2 p-2', className)}
       {...props}
-    />
+    >
+      <div>
+        <div className="flex flex-col items-center justify-center w-full">
+          {showLegalNotice && <LegalNotice />}
+          <div className="flex items-center justify-center gap-2 text-md mt-2">
+            Powered by <IconSophon className="w-12 h-12" />
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 

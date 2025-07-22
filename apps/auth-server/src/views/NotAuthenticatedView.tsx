@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { useAccountCreate } from '@/hooks/useAccountCreate';
 import { useAccountLogin } from '@/hooks/useAccountLogin';
 import { useWalletConnection } from '@/hooks/useWalletConnection';
+import { windowService } from '@/service/window.service';
 
 const SOCIAL_PROVIDERS = {
   [ProviderEnum.Google]: {
@@ -40,98 +41,59 @@ interface NotAuthenticatedViewProps {
   onSocialAuth?: (provider: ProviderEnum) => Promise<void>;
 }
 
-export const NotAuthenticatedView = ({
+// Props type for both Mobile and Web views
+interface ViewProps extends NotAuthenticatedViewProps {
+  emailLoading: boolean;
+  waitingOTP: boolean;
+  onSubmitEmailHandler: FormEventHandler<HTMLFormElement>;
+  onSubmitOtpHandler: FormEventHandler<HTMLFormElement>;
+  socialProvider?: ProviderEnum;
+  isProcessingSocial: boolean;
+  handleSocialAuth: (provider: ProviderEnum) => void;
+  loading: boolean;
+  isPending: boolean;
+  createError?: string | null;
+  loginError?: string | null;
+  errorSocial?: { message?: string };
+}
+
+const MobileView = ({
+  emailLoading,
+  waitingOTP,
+  onSubmitEmailHandler,
+  onSubmitOtpHandler,
+  socialProvider,
+  isProcessingSocial,
+  handleSocialAuth,
+  loading,
+  isPending,
   onSelectWallet,
-  onEmailAuth,
-  onSocialAuth,
-}: NotAuthenticatedViewProps) => {
-  const [emailLoading, setEmailLoading] = useState(false);
-  const [waitingOTP, setWaitingOTP] = useState(false);
-
-  const { connectWithEmail, verifyOneTimePassword } = useConnectWithOtp();
-  const {
-    error: errorSocial,
-    isProcessing: isProcessingSocial,
-    signInWithSocialAccount,
-  } = useSocialAccounts();
-  const [socialProvider, setSocialProvider] = useState<ProviderEnum>();
-
-  const onSubmitEmailHandler: FormEventHandler<HTMLFormElement> = async (
-    event,
-  ) => {
-    try {
-      setEmailLoading(true);
-      event.preventDefault();
-      const email = event.currentTarget.email.value;
-
-      // Use state machine if available, otherwise use original logic
-      if (onEmailAuth) {
-        await onEmailAuth(email);
-      } else {
-        await connectWithEmail(email);
-        setWaitingOTP(true);
-      }
-    } finally {
-      setEmailLoading(false);
-    }
-  };
-
-  const onSubmitOtpHandler: FormEventHandler<HTMLFormElement> = async (
-    event,
-  ) => {
-    try {
-      setEmailLoading(true);
-      event.preventDefault();
-      const otp = event.currentTarget.otp.value;
-      await verifyOneTimePassword(otp);
-      //   if (!isAuthenticated) {
-      //     // await authenticateUser();
-      //   }
-    } finally {
-      setEmailLoading(false);
-      setWaitingOTP(false);
-    }
-  };
-
-  const { isPending } = useWalletConnection();
-
-  const { loading, error: createError } = useAccountCreate();
-
-  const { error: loginError } = useAccountLogin();
+  createError,
+  loginError,
+  errorSocial,
+}: ViewProps) => {
   return (
-    <div className="flex flex-col gap-14">
-      <div className="flex flex-col gap-6 justify-center items-center">
-        <LogoSophon />
+    <div className="flex flex-col">
+      <div className="flex flex-col gap-6 justify-center items-center mt-12 mb-12">
         <h2 className="text-2xl font-bold text-gray-900">Sign in</h2>
       </div>
 
       <div className="flex flex-col gap-6 px-6">
         <div className="flex flex-row gap-2">
-          {Object.entries(SOCIAL_PROVIDERS).map(([provider, { icon }]) => {
-            const onClick = () => {
-              setSocialProvider(provider as ProviderEnum);
-              // Use state machine if available, otherwise use original logic
-              if (onSocialAuth) {
-                onSocialAuth(provider as ProviderEnum);
-              } else {
-                signInWithSocialAccount(provider as ProviderEnum);
-              }
-            };
-            return (
-              <button
-                type="button"
-                key={provider}
-                className="p-2 h-16 w-full bg-white text-black rounded-2xl border border-[rgba(15, 14, 13, 0.08)] hover:bg-gray-100 transition-all duration-300 cursor-pointer pointer-events-auto disabled:opacity-50 disabled:cursor-not-allowed justify-items-center"
-                onClick={onClick}
-              >
-                {socialProvider === provider && isProcessingSocial ? (
-                  <Loader className="w-4 h-4" />
-                ) : (
-                  icon
-                )}
-              </button>
-            );
-          })}
+          {Object.entries(SOCIAL_PROVIDERS).map(([provider, { icon }]) => (
+            <button
+              type="button"
+              key={provider}
+              className="p-2 h-16 w-full bg-white text-black rounded-2xl border border-[rgba(15, 14, 13, 0.08)] hover:bg-gray-100 transition-all duration-300 cursor-pointer pointer-events-auto disabled:opacity-50 disabled:cursor-not-allowed justify-items-center"
+              onClick={() => handleSocialAuth(provider as ProviderEnum)}
+            >
+              {socialProvider === provider && isProcessingSocial ? (
+                <Loader className="w-4 h-4" />
+              ) : (
+                icon
+              )}
+            </button>
+          ))}
         </div>
         <div className="space-y-4">
           <form
@@ -171,6 +133,106 @@ export const NotAuthenticatedView = ({
             </button>
           </form>
         </div>
+
+        {(createError || loginError || errorSocial) && (
+          <div className="p-3 bg-red-50 border border-red-200 rounded">
+            <p className="text-red-600 text-sm">
+              {createError || loginError || errorSocial?.message}
+            </p>
+            <p className="text-xs text-gray-500 mt-1">
+              💡 Tip: Make sure your device has Touch ID, Face ID, or a PIN set
+              up
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const WebView = ({
+  emailLoading,
+  waitingOTP,
+  onSubmitEmailHandler,
+  onSubmitOtpHandler,
+  socialProvider,
+  isProcessingSocial,
+  handleSocialAuth,
+  loading,
+  isPending,
+  onSelectWallet,
+  createError,
+  loginError,
+  errorSocial,
+}: ViewProps) => {
+  return (
+    <div className="flex flex-col gap-14">
+      <div className="flex flex-col gap-6 justify-center items-center">
+        <LogoSophon />
+        <h2 className="text-2xl font-bold text-gray-900">Sign in</h2>
+      </div>
+
+      <div className="flex flex-col gap-6 px-6">
+        <div className="flex flex-row gap-2">
+          {Object.entries(SOCIAL_PROVIDERS).map(
+            ([provider, { icon, label }]) => (
+              <button
+                type="button"
+                key={provider}
+                className="p-4 h-16 w-full bg-white text-black rounded-2xl border border-[rgba(15, 14, 13, 0.08)] hover:bg-gray-100 transition-all duration-300 cursor-pointer pointer-events-auto disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 justify-center"
+                onClick={() => handleSocialAuth(provider as ProviderEnum)}
+              >
+                {socialProvider === provider && isProcessingSocial ? (
+                  <Loader className="w-4 h-4" />
+                ) : (
+                  <>
+                    {icon}
+                    <span>{label}</span>
+                  </>
+                )}
+              </button>
+            ),
+          )}
+        </div>
+        <div className="space-y-4">
+          <form
+            key="email-form"
+            onSubmit={onSubmitEmailHandler}
+            hidden={waitingOTP}
+          >
+            <input
+              className="w-full h-14 p-3 bg-white border border-[#EBE9E6] rounded-md placeholder:text-[#CCCAC8] placeholder:text-lg mb-2"
+              type="email"
+              name="email"
+              placeholder="Enter email"
+              required
+            />
+            <Button variant="primary" type="submit">
+              {emailLoading ? <Loader className="w-4 h-4" /> : 'Continue'}
+            </Button>
+          </form>
+
+          <form
+            key="otp-form"
+            onSubmit={onSubmitOtpHandler}
+            hidden={!waitingOTP}
+          >
+            <input
+              className="w-full bg-white border border-gray-300 rounded-md p-2 placeholder:text-gray-400 mb-2"
+              type="text"
+              name="otp"
+              placeholder="OTP"
+              autoComplete="off"
+            />
+            <button
+              className="w-full py-3 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              type="submit"
+            >
+              {emailLoading ? <Loader className="w-4 h-4" /> : 'Verify'}
+            </button>
+          </form>
+        </div>
+
         <div className="flex flex-row gap-4 justify-between items-center">
           <div className="h-px w-full bg-[#0F0E0D] opacity-10" />
           <div className="text-center">or</div>
@@ -201,5 +263,93 @@ export const NotAuthenticatedView = ({
         )}
       </div>
     </div>
+  );
+};
+
+export const NotAuthenticatedView = ({
+  onSelectWallet,
+  onEmailAuth,
+  onSocialAuth,
+}: NotAuthenticatedViewProps) => {
+  const [emailLoading, setEmailLoading] = useState(false);
+  const [waitingOTP, setWaitingOTP] = useState(false);
+  const isMobile = windowService.name === 'webview';
+
+  const { connectWithEmail, verifyOneTimePassword } = useConnectWithOtp();
+  const {
+    error: errorSocial,
+    isProcessing: isProcessingSocial,
+    signInWithSocialAccount,
+  } = useSocialAccounts();
+  const [socialProvider, setSocialProvider] = useState<ProviderEnum>();
+
+  const onSubmitEmailHandler: FormEventHandler<HTMLFormElement> = async (
+    event,
+  ) => {
+    try {
+      setEmailLoading(true);
+      event.preventDefault();
+      const email = event.currentTarget.email.value;
+
+      // Use state machine if available, otherwise use original logic
+      if (onEmailAuth) {
+        await onEmailAuth(email);
+      } else {
+        await connectWithEmail(email);
+        setWaitingOTP(true);
+      }
+    } finally {
+      setEmailLoading(false);
+    }
+  };
+
+  const onSubmitOtpHandler: FormEventHandler<HTMLFormElement> = async (
+    event,
+  ) => {
+    try {
+      setEmailLoading(true);
+      event.preventDefault();
+      const otp = event.currentTarget.otp.value;
+      await verifyOneTimePassword(otp);
+    } finally {
+      setEmailLoading(false);
+      setWaitingOTP(false);
+    }
+  };
+
+  const handleSocialAuth = (provider: ProviderEnum) => {
+    setSocialProvider(provider);
+    // Use state machine if available, otherwise use original logic
+    if (onSocialAuth) {
+      onSocialAuth(provider);
+    } else {
+      signInWithSocialAccount(provider);
+    }
+  };
+
+  const { isPending } = useWalletConnection();
+  const { loading, error: createError } = useAccountCreate();
+  const { error: loginError } = useAccountLogin();
+
+  const sharedProps = {
+    emailLoading,
+    waitingOTP,
+    onSubmitEmailHandler,
+    onSubmitOtpHandler,
+    socialProvider,
+    isProcessingSocial,
+    handleSocialAuth,
+    loading,
+    isPending,
+    onSelectWallet,
+    createError,
+    loginError,
+    errorSocial,
+  };
+
+  return isMobile ? (
+    <MobileView {...sharedProps} />
+  ) : (
+    <WebView {...sharedProps} />
   );
 };
