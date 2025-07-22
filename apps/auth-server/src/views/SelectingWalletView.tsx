@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { useState } from 'react';
 import { useConnect } from 'wagmi';
 import {
@@ -12,7 +13,6 @@ export default function SelectingWalletView({
 }) {
   const { connectors } = useConnect();
   const [search, setSearch] = useState('');
-
   const handleWalletClick = (wallet: SupportedWallet) => {
     const connector = connectors.find((c) => c.name === wallet.name);
 
@@ -45,16 +45,17 @@ export default function SelectingWalletView({
           return (
             <li key={wallet.name}>
               <button
+                type="button"
                 onClick={() => handleWalletClick(wallet)}
                 className="w-full bg-white rounded-2xl p-4 flex items-center justify-between gap-2 cursor-pointer hover:bg-gray-50 transition-colors"
               >
                 <div className="flex items-center gap-4">
                   <div>
-                    <img
+                    <Image
                       src={wallet.icon}
                       alt={wallet.name}
-                      width="20"
-                      height="20"
+                      width={20}
+                      height={20}
                     />
                   </div>
                   <p className="font-medium">{wallet.name}</p>

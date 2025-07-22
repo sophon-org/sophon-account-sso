@@ -74,6 +74,7 @@ export enum AuthState {
   LOADING = 'loading',
   NOT_AUTHENTICATED = 'not_authenticated',
   SELECTING_WALLET = 'selecting_wallet',
+  WRONG_NETWORK = 'wrong_network',
   CREATING_ACCOUNT = 'creating_account',
   WAITING_OTP = 'waiting_otp',
   WAITING_PRIMARY_WALLET = 'waiting_primary_wallet',

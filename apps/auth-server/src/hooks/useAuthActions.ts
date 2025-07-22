@@ -22,7 +22,7 @@ export function useAuthActions({
   setContext,
   context,
 }: UseAuthActionsParams) {
-  const { connectWallet } = useWalletConnection(setState);
+  const { connectWallet, handleSwitchChain } = useWalletConnection(setState);
   const { connectWithEmail, verifyOneTimePassword } = useConnectWithOtp();
   const { signInWithSocialAccount } = useSocialAccounts();
 
@@ -33,6 +33,11 @@ export function useAuthActions({
     } catch (error) {
       console.error('❌ Wallet connection failed:', error);
     }
+  };
+
+  const startSwitchNetwork = async () => {
+    handleSwitchChain();
+    setState(AuthState.WRONG_NETWORK);
   };
 
   const startEmailAuthentication = async (email: string) => {
@@ -92,6 +97,7 @@ export function useAuthActions({
   return {
     startWalletConnection,
     startEmailAuthentication,
+    startSwitchNetwork,
     verifyOTP,
     startSocialAuthentication,
     startSigningRequest,

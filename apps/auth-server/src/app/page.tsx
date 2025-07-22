@@ -16,6 +16,7 @@ import { NotAuthenticatedView } from '@/views/NotAuthenticatedView';
 import SelectingWalletView from '@/views/SelectingWalletView';
 import SigningRequestView from '@/views/SigningRequestView';
 import TransactionRequestView from '@/views/TransactionRequestView';
+import WrongNetworkView from '@/views/WrongNetworkView';
 
 export default function RootPage() {
   const {
@@ -29,6 +30,7 @@ export default function RootPage() {
     startSocialAuthentication,
     startSigningRequest,
     startTransactionRequest,
+    startSwitchNetwork,
   } = useAuthState();
 
   const { incomingRequest, sessionPreferences } = useMessageHandler({
@@ -138,6 +140,25 @@ export default function RootPage() {
             startWalletConnection(connectorName)
           }
         />
+      </Dialog>
+    );
+  }
+
+  if (authState === AuthState.WRONG_NETWORK) {
+    return (
+      <Dialog
+        className="relative"
+        title="Connect to Sophon"
+        onClose={() => {
+          disconnect();
+          windowService.close();
+        }}
+        onBack={() => {
+          disconnect();
+          goToNotAuthenticated();
+        }}
+      >
+        <WrongNetworkView onSwitchNetwork={startSwitchNetwork} />
       </Dialog>
     );
   }

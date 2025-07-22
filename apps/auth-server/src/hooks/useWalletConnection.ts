@@ -1,6 +1,13 @@
 'use client';
 import { useEffect } from 'react';
-import { useAccount, useConnect, useDisconnect, useWalletClient } from 'wagmi';
+import {
+  useAccount,
+  useConnect,
+  useDisconnect,
+  useSwitchChain,
+  useWalletClient,
+} from 'wagmi';
+import { env } from '@/env';
 import { AuthState } from '@/types/auth';
 import { useAccountCreate } from './useAccountCreate';
 import { useAuthResponse } from './useAuthResponse';
@@ -14,6 +21,8 @@ export const useWalletConnection = (setState?: (state: AuthState) => void) => {
   const { createAccount, success: accountCreated } = useAccountCreate();
   const { handleAuthSuccessResponse } = useAuthResponse();
   const { incomingRequest, sessionPreferences } = useMessageHandler();
+  const { chainId } = useAccount();
+  const { switchChain, isSuccess: isSwitchingChainSuccess } = useSwitchChain();
 
   const connectWallet = async (connectorName: string) => {
     try {
@@ -36,14 +45,24 @@ export const useWalletConnection = (setState?: (state: AuthState) => void) => {
   };
 
   const handleCreateAccount = async () => {
+    if (chainId && chainId !== env.NEXT_PUBLIC_CHAIN_ID) {
+      setState?.(AuthState.WRONG_NETWORK);
+      return;
+    }
     if (isSuccess && walletClient && address) {
       await createAccount('eoa', address);
     }
   };
 
+  const handleSwitchChain = async () => {
+    if (chainId && chainId !== env.NEXT_PUBLIC_CHAIN_ID) {
+      switchChain({ chainId: env.NEXT_PUBLIC_CHAIN_ID });
+    }
+  };
+
   useEffect(() => {
     handleCreateAccount();
-  }, [isSuccess, walletClient, address]);
+  }, [isSuccess, walletClient, address, isSwitchingChainSuccess]);
 
   useEffect(() => {
     if (accountCreated && address) {
@@ -65,5 +84,6 @@ export const useWalletConnection = (setState?: (state: AuthState) => void) => {
     error,
     isPending,
     accountCreated,
+    handleSwitchChain,
   };
 };
