@@ -9,6 +9,7 @@ import { useAuthResponse } from '@/hooks/useAuthResponse';
 import { AuthState, useAuthState } from '@/hooks/useAuthState';
 import { useMessageHandler } from '@/hooks/useMessageHandler';
 import { useWalletConnection } from '@/hooks/useWalletConnection';
+import { shortenAddress } from '@/lib/formatting';
 import { windowService } from '@/service/window.service';
 import CreateSuccessView from '@/views/CreateSuccessView';
 import LoginSuccessView from '@/views/LoginSuccessView';
@@ -59,7 +60,14 @@ export default function RootPage() {
 
   if (authState === AuthState.SIGNING_REQUEST) {
     return (
-      <Dialog className="relative">
+      <Dialog
+        className="relative"
+        title={shortenAddress(account?.address ?? '')}
+        onSettings={() => {
+          window.parent.open('https://app.sophon.xyz/', '_blank');
+        }}
+        showLegalNotice={false}
+      >
         <SigningRequestView
           signingRequest={context.signingRequest!}
           account={account!}

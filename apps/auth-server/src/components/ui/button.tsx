@@ -1,7 +1,7 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary';
+  variant?: 'primary' | 'secondary' | 'transparent';
   children: ReactNode;
 }
 
@@ -21,6 +21,14 @@ export const Button = ({
     text-[#122B5C] rounded-[144px] disabled:opacity-50 disabled:cursor-not-allowed
     ${className}
   `.trim();
+
+  if (variant === 'transparent') {
+    return (
+      <button {...props} className={`${baseButtonClasses} bg-transparent`}>
+        {children}
+      </button>
+    );
+  }
 
   if (variant === 'secondary') {
     return (

@@ -70,8 +70,8 @@ export const DialogFooter = ({
   actions: React.ReactNode;
 }) => {
   return (
-    <div className="flex justify-center items-center">
-      <div className="flex flex-col items-center justify-center fixed bottom-0 w-full px-6">
+    <div className="mt-6">
+      <div className="flex flex-col items-center justify-center w-full px-6 pb-6">
         {showLegalNotice && <LegalNotice />}
         {actions}
         <div className="flex items-center justify-center gap-2 text-md mt-2">
@@ -105,20 +105,24 @@ export function Dialog({
 }: DialogProps) {
   return (
     <div
-      className={cn('bg-white h-full w-full', className)}
+      className={cn('bg-white h-full w-full overflow-auto', className)}
       style={{
         background:
           'linear-gradient(180deg, rgba(255, 255, 255, 0.00) 0%, #FFF 75%), url(/images/skybg.webp) lightgray -46.312px 0px / 395.062% 100% no-repeat',
       }}
     >
-      <div className={cn('mx-auto h-full relative w-[360px]')}>
+      <div
+        className={cn(
+          'mx-auto h-full relative w-[360px] flex flex-col min-h-full',
+        )}
+      >
         <DialogHeader
           title={title}
           onBack={onBack}
           onClose={onClose}
           onSettings={onSettings}
         />
-        <div>{children}</div>
+        <div className="flex-1">{children}</div>
         <DialogFooter showLegalNotice={showLegalNotice} actions={actions} />
       </div>
     </div>

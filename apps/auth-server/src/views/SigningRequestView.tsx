@@ -6,7 +6,10 @@ import { toAccount } from 'viem/accounts';
 import { useAccount, useWalletClient } from 'wagmi';
 import { createZksyncEcdsaClient } from 'zksync-sso/client/ecdsa';
 import { createZksyncPasskeyClient } from 'zksync-sso/client/passkey';
+import { IconSignature } from '@/components/icons/icon-signature';
 import { Loader } from '@/components/loader';
+import { Button } from '@/components/ui/button';
+import VerificationImage from '@/components/ui/verification-image';
 import { CONTRACTS, VIEM_CHAIN } from '@/lib/constants';
 import { verifyEIP1271Signature } from '@/lib/smart-contract';
 import { windowService } from '@/service/window.service';
@@ -21,22 +24,18 @@ export default function SigningRequestView({
   const { address: connectedAddress } = useAccount();
   const { data: walletClient } = useWalletClient();
   const { primaryWallet } = useDynamicContext();
-  return (
-    <div className="text-center">
-      <h2 className="text-2xl font-bold text-blue-600">Sign Message</h2>
-      <p className="mt-2 text-sm text-gray-600">
-        Please review and sign this message
-      </p>
 
-      <div className="mt-4 p-3 bg-gray-50 rounded border text-left">
-        <p className="text-xs text-gray-500 mb-2">Typed Data to sign:</p>
+  return (
+    <div className="text-center flex flex-col items-center justify-center gap-8 mt-6 px-6">
+      <VerificationImage icon={<IconSignature className="w-24 h-24" />} />
+      <div className="flex flex-col items-center justify-center">
+        <h5 className="text-2xl font-bold">Signature request</h5>
+        <p className="">https://localhost:3000</p>
+      </div>
+      <div className="mt-4 p-6 rounded-3xl h-[336px] overflow-y-auto border border-[rgba(255,255,255,0.48)] text-left bg-[rgba(255,255,255,0.48)] backdrop-blur-xs shadow-[0px_0px_2px_2px_rgba(15,14,13,0.04),0px_0px_0px_4px_rgba(15,14,13,0.04),0px_2px_24px_0px_#CCE4FF,0px_12px_36px_0px_#FFECE0] w-full">
         <div className="text-sm text-black">
           <p>
-            <strong>Domain:</strong> {signingRequest.domain.name} v
-            {signingRequest.domain.version}
-          </p>
-          <p>
-            <strong>Type:</strong> {signingRequest.primaryType}
+            {signingRequest.domain.name} v{signingRequest.domain.version}
           </p>
           <pre className="text-xs mt-2 whitespace-pre-wrap break-words">
             {JSON.stringify(signingRequest.message, null, 2)}
@@ -44,15 +43,31 @@ export default function SigningRequestView({
         </div>
       </div>
 
-      <div className="mt-4 p-3 bg-blue-50 rounded border">
-        <p className="text-xs text-gray-500">Signing Address:</p>
-        <p className="text-sm font-mono break-all text-blue-600">
-          {signingRequest.address}
-        </p>
-      </div>
+      <div className="flex items-center justify-center gap-2 w-full">
+        <Button
+          variant="transparent"
+          onClick={() => {
+            if (windowService.isManaged() && incomingRequest) {
+              const signResponse = {
+                id: crypto.randomUUID(),
+                requestId: incomingRequest.id,
+                content: {
+                  result: null,
+                  error: {
+                    message: 'User cancelled signing',
+                    code: -32002,
+                  },
+                },
+              };
 
-      <div className="mt-4 space-y-2">
-        <button
+              windowService.sendMessage(signResponse);
+            }
+            windowService.close();
+          }}
+        >
+          Cancel
+        </Button>
+        <Button
           type="button"
           onClick={async () => {
             try {
@@ -197,35 +212,9 @@ export default function SigningRequestView({
               setIsSigning(false);
             }
           }}
-          className="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
         >
-          {isSigning ? <Loader className="w-4 h-4" /> : 'Sign Message'}
-        </button>
-
-        <button
-          type="button"
-          onClick={() => {
-            if (windowService.isManaged() && incomingRequest) {
-              const signResponse = {
-                id: crypto.randomUUID(),
-                requestId: incomingRequest.id,
-                content: {
-                  result: null,
-                  error: {
-                    message: 'User cancelled signing',
-                    code: -32002,
-                  },
-                },
-              };
-
-              windowService.sendMessage(signResponse);
-            }
-            windowService.close();
-          }}
-          className="w-full px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-        >
-          Cancel
-        </button>
+          {isSigning ? <Loader className="w-4 h-4" /> : 'Sign'}
+        </Button>
       </div>
     </div>
   );
