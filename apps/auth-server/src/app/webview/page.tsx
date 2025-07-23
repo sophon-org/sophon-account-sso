@@ -4,6 +4,7 @@ import { useRNHandler } from '@sophon-labs/account-message-bridge';
 import { useState } from 'react';
 import { Dialog } from '@/components/dialog';
 import { Loader } from '@/components/loader';
+import { Drawer } from '@/components/ui/drawer';
 import {
   Sheet,
   SheetContent,
@@ -237,9 +238,8 @@ export default function RootPage() {
 
   if (account) {
     return (
-      <Sheet
+      <Drawer
         open={open}
-        modal={true}
         onOpenChange={(open) => {
           setOpen(open);
           if (!open) {
@@ -247,18 +247,11 @@ export default function RootPage() {
           }
         }}
       >
-        <SheetContent side="bottom" className="rounded-t-3xl pb-8 px-4">
-          <SheetHeader hidden={true}>
-            <SheetTitle>Sophon Preferences Modal</SheetTitle>
-          </SheetHeader>
-
-          <NotAuthenticatedView
-            onEmailAuth={startEmailAuthentication}
-            onSocialAuth={startSocialAuthentication}
-          />
-          <SheetFooter />
-        </SheetContent>
-      </Sheet>
+        <NotAuthenticatedView
+          onEmailAuth={startEmailAuthentication}
+          onSocialAuth={startSocialAuthentication}
+        />
+      </Drawer>
     );
   }
 
@@ -291,9 +284,8 @@ export default function RootPage() {
   }
 
   return (
-    <Sheet
+    <Drawer
       open={open}
-      modal={true}
       onOpenChange={(open) => {
         setOpen(open);
         if (!open) {
@@ -301,13 +293,10 @@ export default function RootPage() {
         }
       }}
     >
-      <SheetContent side="bottom" className="rounded-t-3xl">
-        <SheetHeader hidden={true}>
-          <SheetTitle>Sophon Authentication Modal</SheetTitle>
-        </SheetHeader>
-        <NotAuthenticatedView />
-        <SheetFooter />
-      </SheetContent>
-    </Sheet>
+      <NotAuthenticatedView
+        onEmailAuth={startEmailAuthentication}
+        onSocialAuth={startSocialAuthentication}
+      />
+    </Drawer>
   );
 }
