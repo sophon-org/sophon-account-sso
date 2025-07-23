@@ -4,11 +4,11 @@ import { useRNHandler } from '@sophon-labs/account-message-bridge';
 import { useState } from 'react';
 import { Dialog } from '@/components/dialog';
 import { Loader } from '@/components/loader';
+import { Button } from '@/components/ui/button';
 import { Drawer } from '@/components/ui/drawer';
 import {
   Sheet,
   SheetContent,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
@@ -18,7 +18,6 @@ import { AuthState, useAuthState } from '@/hooks/useAuthState';
 import { useMessageHandler } from '@/hooks/useMessageHandler';
 import { windowService } from '@/service/window.service';
 import CreateSuccessView from '@/views/CreateSuccessView';
-import LoginSuccessView from '@/views/LoginSuccessView';
 import { NotAuthenticatedView } from '@/views/NotAuthenticatedView';
 import SigningRequestView from '@/views/SigningRequestView';
 import TransactionRequestView from '@/views/TransactionRequestView';
@@ -29,6 +28,8 @@ export default function RootPage() {
     state: authState,
     context,
     goToNotAuthenticated,
+    goToSettings,
+    goToAuthenticated,
     startEmailAuthentication,
     verifyOTP,
     startSocialAuthentication,
@@ -163,37 +164,58 @@ export default function RootPage() {
       logout();
       goToNotAuthenticated();
     };
-
     return (
-      <Sheet
+      <Drawer
         open={open}
-        modal={true}
         onOpenChange={(open) => {
           setOpen(open);
           if (!open) {
             windowService.close();
           }
         }}
-      >
-        <SheetContent side="bottom" className="rounded-t-3xl">
-          <SheetHeader hidden={true}>
-            <SheetTitle>Sophon Authentication Modal</SheetTitle>
-          </SheetHeader>
-          <LoginSuccessView
-            accountData={account}
-            sessionPreferences={sessionPreferences}
-            onUseAccount={async () => {
-              await handleAuthSuccessResponse(
-                { address: account.address },
-                incomingRequest!,
-                sessionPreferences,
-              );
-              windowService.close();
-            }}
-            onDisconnect={handleDisconnect}
-          />
-        </SheetContent>
-      </Sheet>
+        actions={<Button onClick={handleDisconnect}>Log out</Button>}
+        showHeader={true}
+        showProfileImage={true}
+        showLegalNotice={false}
+        showLogo={false}
+        title="ramon.soph.id"
+        onSettings={() => {
+          goToSettings();
+        }}
+      />
+    );
+  }
+
+  if (authState === AuthState.SETTINGS) {
+    return (
+      <Drawer
+        open={open}
+        onOpenChange={(open) => {
+          setOpen(open);
+          if (!open) {
+            windowService.close();
+          }
+        }}
+        showHeader={true}
+        showLegalNotice={false}
+        showLogo={false}
+        title="Settings"
+        actions={
+          <div className="flex flex-col gap-2 w-full items-center">
+            <p className="text-lg">Manage your account at Sophon Home</p>
+            <Button
+              onClick={() => {
+                window.parent.open('https://app.sophon.xyz/', '_blank');
+              }}
+            >
+              Open Sophon
+            </Button>
+          </div>
+        }
+        onBack={() => {
+          goToAuthenticated();
+        }}
+      />
     );
   }
 
@@ -246,6 +268,7 @@ export default function RootPage() {
             windowService.close();
           }
         }}
+        showHeader={false}
       >
         <NotAuthenticatedView
           onEmailAuth={startEmailAuthentication}
@@ -292,6 +315,7 @@ export default function RootPage() {
           windowService.close();
         }
       }}
+      showHeader={false}
     >
       <NotAuthenticatedView
         onEmailAuth={startEmailAuthentication}

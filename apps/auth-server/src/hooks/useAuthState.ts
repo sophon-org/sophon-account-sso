@@ -17,6 +17,7 @@ function useAuthState() {
   const goToSelectingWallet = () => setState(AuthState.SELECTING_WALLET);
   const goToNotAuthenticated = () => setState(AuthState.NOT_AUTHENTICATED);
   const goToCreatingAccount = () => setState(AuthState.CREATING_ACCOUNT);
+  const goToSettings = () => setState(AuthState.SETTINGS);
   const goToLoggingIn = () => setState(AuthState.LOGGING_IN);
   const goToAuthenticated = async () => {
     await handleAuthentication();
@@ -45,6 +46,7 @@ function useAuthState() {
     goToSelectingWallet,
     goToNotAuthenticated,
     goToCreatingAccount,
+    goToSettings,
     goToLoggingIn,
     goToAuthenticated,
     goToSuccess,

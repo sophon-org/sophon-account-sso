@@ -73,6 +73,7 @@ export interface AccountData {
 export enum AuthState {
   LOADING = 'loading',
   NOT_AUTHENTICATED = 'not_authenticated',
+  SETTINGS = 'settings',
   SELECTING_WALLET = 'selecting_wallet',
   WRONG_NETWORK = 'wrong_network',
   CREATING_ACCOUNT = 'creating_account',
