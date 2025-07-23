@@ -81,6 +81,7 @@ export enum AuthState {
   WAITING_PRIMARY_WALLET = 'waiting_primary_wallet',
   LOGGING_IN = 'logging_in',
   AUTHENTICATED = 'authenticated',
+  LOGIN_REQUEST = 'login_request',
   SIGNING_REQUEST = 'signing_request',
   TRANSACTION_REQUEST = 'transaction_request',
   SUCCESS = 'success',
@@ -95,4 +96,5 @@ export interface AuthContext {
   email?: string;
   signingRequest?: SigningRequest;
   transactionRequest?: TransactionRequest;
+  providerName?: string;
 }

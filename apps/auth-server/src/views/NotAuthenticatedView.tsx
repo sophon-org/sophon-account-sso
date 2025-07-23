@@ -174,25 +174,20 @@ const WebView = ({
 
       <div className="flex flex-col gap-6 px-6">
         <div className="flex flex-row gap-2">
-          {Object.entries(SOCIAL_PROVIDERS).map(
-            ([provider, { icon, label }]) => (
-              <button
-                type="button"
-                key={provider}
-                className="p-4 h-16 w-full bg-white text-black rounded-2xl border border-[rgba(15, 14, 13, 0.08)] hover:bg-gray-100 transition-all duration-300 cursor-pointer pointer-events-auto disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 justify-center"
-                onClick={() => handleSocialAuth(provider as ProviderEnum)}
-              >
-                {socialProvider === provider && isProcessingSocial ? (
-                  <Loader className="w-4 h-4" />
-                ) : (
-                  <>
-                    {icon}
-                    <span>{label}</span>
-                  </>
-                )}
-              </button>
-            ),
-          )}
+          {Object.entries(SOCIAL_PROVIDERS).map(([provider, { icon }]) => (
+            <button
+              type="button"
+              key={provider}
+              className="p-4 h-16 w-full bg-white text-black rounded-2xl border border-[rgba(15, 14, 13, 0.08)] hover:bg-gray-100 transition-all duration-300 cursor-pointer pointer-events-auto disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 justify-center"
+              onClick={() => handleSocialAuth(provider as ProviderEnum)}
+            >
+              {socialProvider === provider && isProcessingSocial ? (
+                <Loader className="w-4 h-4" />
+              ) : (
+                <div>{icon}</div>
+              )}
+            </button>
+          ))}
         </div>
         <div className="space-y-4">
           <form

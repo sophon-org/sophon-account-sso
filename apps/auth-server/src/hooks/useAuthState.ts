@@ -18,6 +18,10 @@ function useAuthState() {
   const goToNotAuthenticated = () => setState(AuthState.NOT_AUTHENTICATED);
   const goToCreatingAccount = () => setState(AuthState.CREATING_ACCOUNT);
   const goToSettings = () => setState(AuthState.SETTINGS);
+  const goToLoginRequest = (providerName: string) => {
+    setState(AuthState.LOGIN_REQUEST);
+    setContext((prev) => ({ ...prev, providerName }));
+  };
   const goToLoggingIn = () => setState(AuthState.LOGGING_IN);
   const goToAuthenticated = async () => {
     await handleAuthentication();
@@ -47,6 +51,7 @@ function useAuthState() {
     goToNotAuthenticated,
     goToCreatingAccount,
     goToSettings,
+    goToLoginRequest,
     goToLoggingIn,
     goToAuthenticated,
     goToSuccess,

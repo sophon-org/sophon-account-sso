@@ -12,11 +12,13 @@ import { useWalletConnection } from '@/hooks/useWalletConnection';
 import { shortenAddress } from '@/lib/formatting';
 import { windowService } from '@/service/window.service';
 import CreateSuccessView from '@/views/CreateSuccessView';
+import LoginRequestView from '@/views/LoginRequestView';
 import LoginSuccessView from '@/views/LoginSuccessView';
 import { NotAuthenticatedView } from '@/views/NotAuthenticatedView';
 import SelectingWalletView from '@/views/SelectingWalletView';
 import SigningRequestView from '@/views/SigningRequestView';
 import TransactionRequestView from '@/views/TransactionRequestView';
+import WaitOtpView from '@/views/WaitOtpView';
 import WrongNetworkView from '@/views/WrongNetworkView';
 
 export default function RootPage() {
@@ -25,6 +27,7 @@ export default function RootPage() {
     context,
     goToNotAuthenticated,
     goToSelectingWallet,
+    goToLoginRequest,
     startWalletConnection,
     startEmailAuthentication,
     verifyOTP,
@@ -101,37 +104,9 @@ export default function RootPage() {
 
   if (authState === AuthState.WAITING_OTP) {
     return (
-      <div className="flex h-screen w-screen items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Check your email</h2>
-          <p className="text-gray-600 mb-6">
-            We sent a verification code to {context.email}
-          </p>
-          <form
-            onSubmit={async (e) => {
-              e.preventDefault();
-              const formData = new FormData(e.currentTarget);
-              const otp = formData.get('otp') as string;
-              await verifyOTP(otp);
-            }}
-            className="space-y-4"
-          >
-            <input
-              className="w-full bg-white border border-gray-300 rounded-md p-2 placeholder:text-gray-400 text-center"
-              type="text"
-              name="otp"
-              placeholder="Enter verification code"
-              required
-            />
-            <button
-              className="w-full py-3 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-              type="submit"
-            >
-              Verify
-            </button>
-          </form>
-        </div>
-      </div>
+      <Dialog className="relative" onBack={goToNotAuthenticated}>
+        <WaitOtpView email={context.email!} verifyOTP={verifyOTP} />
+      </Dialog>
     );
   }
 
@@ -144,8 +119,8 @@ export default function RootPage() {
         onClose={goToNotAuthenticated}
       >
         <SelectingWalletView
-          onConnectWallet={(connectorName: string) =>
-            startWalletConnection(connectorName)
+          onSelectWallet={(connectorName: string) =>
+            goToLoginRequest(connectorName)
           }
         />
       </Dialog>
@@ -167,6 +142,32 @@ export default function RootPage() {
         }}
       >
         <WrongNetworkView onSwitchNetwork={startSwitchNetwork} />
+      </Dialog>
+    );
+  }
+
+  if (authState === AuthState.LOGIN_REQUEST) {
+    return (
+      <Dialog
+        className="relative"
+        title="Sign in"
+        onBack={goToSelectingWallet}
+        showLegalNotice={false}
+        actions={
+          <div className="flex items-center justify-center gap-2 w-full">
+            <Button variant="transparent" onClick={goToSelectingWallet}>
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              onClick={() => startWalletConnection(context.providerName!)}
+            >
+              Connect
+            </Button>
+          </div>
+        }
+      >
+        <LoginRequestView />
       </Dialog>
     );
   }

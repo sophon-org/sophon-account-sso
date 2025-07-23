@@ -33,8 +33,8 @@ export const sophonSsoConnector: any = (options?: {
     communicator:
       options?.communicator ||
       new PopupCommunicator('http://localhost:3000', {
-        width: 260,
-        height: 900,
+        width: 360,
+        height: 800,
         calculatePosition(width, height) {
           return {
             left: window.screenX + (window.outerWidth - width) / 2,

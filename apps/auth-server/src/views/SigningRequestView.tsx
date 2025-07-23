@@ -9,6 +9,7 @@ import { createZksyncPasskeyClient } from 'zksync-sso/client/passkey';
 import { IconSignature } from '@/components/icons/icon-signature';
 import { Loader } from '@/components/loader';
 import { Button } from '@/components/ui/button';
+import MessageContainer from '@/components/ui/messageContainer';
 import VerificationImage from '@/components/ui/verification-image';
 import { CONTRACTS, VIEM_CHAIN } from '@/lib/constants';
 import { verifyEIP1271Signature } from '@/lib/smart-contract';
@@ -32,7 +33,7 @@ export default function SigningRequestView({
         <h5 className="text-2xl font-bold">Signature request</h5>
         <p className="">https://localhost:3000</p>
       </div>
-      <div className="mt-4 p-6 rounded-3xl h-[336px] overflow-y-auto border border-[rgba(255,255,255,0.48)] text-left bg-[rgba(255,255,255,0.48)] backdrop-blur-xs shadow-[0px_0px_2px_2px_rgba(15,14,13,0.04),0px_0px_0px_4px_rgba(15,14,13,0.04),0px_2px_24px_0px_#CCE4FF,0px_12px_36px_0px_#FFECE0] w-full">
+      <MessageContainer>
         <div className="text-sm text-black">
           <p>
             {signingRequest.domain.name} v{signingRequest.domain.version}
@@ -41,7 +42,7 @@ export default function SigningRequestView({
             {JSON.stringify(signingRequest.message, null, 2)}
           </pre>
         </div>
-      </div>
+      </MessageContainer>
 
       <div className="flex items-center justify-center gap-2 w-full">
         <Button

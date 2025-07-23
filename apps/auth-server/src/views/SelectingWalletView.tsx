@@ -7,9 +7,9 @@ import {
 } from '@/lib/supportedWallets';
 
 export default function SelectingWalletView({
-  onConnectWallet,
+  onSelectWallet,
 }: {
-  onConnectWallet: (connectorName: string) => void;
+  onSelectWallet: (connectorName: string) => void;
 }) {
   const { connectors } = useConnect();
   const [search, setSearch] = useState('');
@@ -17,7 +17,7 @@ export default function SelectingWalletView({
     const connector = connectors.find((c) => c.name === wallet.name);
 
     if (connector) {
-      onConnectWallet(connector.name);
+      onSelectWallet(connector.name);
     } else {
       // Wallet not installed - redirect to installation
       window.open(wallet.downloadUrl, '_blank');
