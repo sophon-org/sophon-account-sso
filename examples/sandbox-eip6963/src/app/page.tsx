@@ -3,22 +3,11 @@
 import { ConnectKitButton, useModal } from 'connectkit';
 import { parseEther } from 'viem';
 import { sophonTestnet } from 'viem/chains';
-import {
-  useAccount,
-  useSendTransaction,
-  useSignMessage,
-  useSignTypedData,
-} from 'wagmi';
+import { useAccount, useSendTransaction, useSignTypedData } from 'wagmi';
 
 export default function Home() {
   const { setOpen } = useModal();
   const { isConnected, address } = useAccount();
-
-  const {
-    data: signMessageData,
-    error: signErrorWagmi,
-    signMessage,
-  } = useSignMessage();
   const {
     data: transactionData,
     error: txErrorWagmi,
@@ -60,21 +49,6 @@ export default function Home() {
         <button
           className="bg-blue-500 text-white p-2 rounded-md w-80"
           onClick={() =>
-            signMessage({
-              message: 'Hello, world!',
-            })
-          }
-          type="button"
-        >
-          Sign Message
-        </button>
-        <p className="text-sm text-gray-500">{signErrorWagmi?.message}</p>
-        <p className="text-sm text-gray-500">{signMessageData}</p>
-      </div>
-      <div className="flex flex-col gap-2 mt-4">
-        <button
-          className="bg-blue-500 text-white p-2 rounded-md w-80"
-          onClick={() =>
             signTypedData({
               domain: {
                 name: 'Sophon SSO',
@@ -98,7 +72,7 @@ export default function Home() {
           }
           type="button"
         >
-          Sign Typed Data
+          Sign Message
         </button>
         <p className="text-sm text-gray-500">
           {signTypedDataErrorWagmi?.message}

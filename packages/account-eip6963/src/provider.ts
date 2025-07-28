@@ -1,36 +1,39 @@
 import { PopupCommunicator } from 'zksync-sso/communicator';
+import { AUTH_SERVER_URLS } from './constants';
 import type { EIP1193Provider } from './types';
 
 // Simple state management
 let currentAccounts: string[] = [];
 const eventListeners = new Map<string, ((...args: any[]) => void)[]>();
 
-const communicator = new PopupCommunicator('http://localhost:3000', {
-  width: 360,
-  height: 800,
-  calculatePosition(width, height) {
-    return {
-      left: window.screenX + (window.outerWidth - width) / 2,
-      top: window.screenY + (window.outerHeight - height) / 2,
-    };
-  },
-});
-
-// Helper to make requests through the existing communicator
-async function makeAuthRequest(method: string, params?: any): Promise<any> {
-  const request = {
-    id: crypto.randomUUID(),
-    content: {
-      action: { method, params: params || [] },
-    },
-  };
-
-  const response = await communicator.postRequestAndWaitForResponse(request);
-  return response;
-}
-
 // The main provider function
-export function createSophonEIP1193Provider(): EIP1193Provider {
+export function createSophonEIP1193Provider(
+  network: 'mainnet' | 'testnet' = 'testnet',
+): EIP1193Provider {
+  const communicator = new PopupCommunicator(AUTH_SERVER_URLS[network], {
+    width: 360,
+    height: 800,
+    calculatePosition(width, height) {
+      return {
+        left: window.screenX + (window.outerWidth - width) / 2,
+        top: window.screenY + (window.outerHeight - height) / 2,
+      };
+    },
+  });
+
+  // Helper to make requests through the existing communicator
+  async function makeAuthRequest(method: string, params?: any): Promise<any> {
+    const request = {
+      id: crypto.randomUUID(),
+      content: {
+        action: { method, params: params || [] },
+      },
+    };
+
+    const response = await communicator.postRequestAndWaitForResponse(request);
+    return response;
+  }
+
   return {
     async request({ method, params }) {
       console.log('EIP-1193 request 8:', method, params);
