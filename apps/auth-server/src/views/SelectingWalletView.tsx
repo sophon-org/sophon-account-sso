@@ -1,23 +1,21 @@
 import Image from 'next/image';
 import { useState } from 'react';
 import { useConnect } from 'wagmi';
+import { useAuthCallbacks } from '@/hooks/auth/useAuthActions';
 import {
   SUPPORTED_WALLETS,
   type SupportedWallet,
 } from '@/lib/supportedWallets';
 
-export default function SelectingWalletView({
-  onSelectWallet,
-}: {
-  onSelectWallet: (connectorName: string) => void;
-}) {
+export default function SelectingWalletView() {
+  const { connectEOA } = useAuthCallbacks();
   const { connectors } = useConnect();
   const [search, setSearch] = useState('');
   const handleWalletClick = (wallet: SupportedWallet) => {
     const connector = connectors.find((c) => c.name === wallet.name);
 
     if (connector) {
-      onSelectWallet(connector.name);
+      connectEOA(connector.name);
     } else {
       // Wallet not installed - redirect to installation
       window.open(wallet.downloadUrl, '_blank');

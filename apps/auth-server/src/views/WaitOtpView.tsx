@@ -1,14 +1,11 @@
 import { Button } from '@/components/ui/button';
+import { useAuthCallbacks } from '@/hooks/auth/useAuthActions';
 
-export default function WaitOtpView({
-  email,
-  verifyOTP,
-}: {
-  email: string;
-  verifyOTP: (otp: string) => Promise<void>;
-}) {
+export default function WaitOtpView({ email }: { email: string }) {
+  const { verifyOTP } = useAuthCallbacks();
+
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex items-center justify-center flex-grow">
       <div className="text-center">
         <h2 className="text-2xl font-bold mb-4">Check your email</h2>
         <p className="text-gray-600 mb-6">

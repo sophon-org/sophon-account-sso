@@ -1,8 +1,8 @@
+import type { FromWebActions } from '@sophon-labs/account-message-bridge';
 import {
   registerRNHandler,
   sendMessageToRN,
 } from '@sophon-labs/account-message-bridge';
-import type { FromWebActions } from '@sophon-labs/account-message-bridge/dist/src/messages';
 import { isSSR } from '@/lib/is-ssr';
 
 /**

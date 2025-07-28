@@ -1,7 +1,4 @@
-import {
-  useConnectWithOtp,
-  useSocialAccounts,
-} from '@dynamic-labs/sdk-react-core';
+import { useConnectWithOtp } from '@dynamic-labs/sdk-react-core';
 import { ProviderEnum } from '@dynamic-labs/types';
 import { type FormEventHandler, useState } from 'react';
 import { IconDiscord } from '@/components/icons/icon-discord';
@@ -11,26 +8,27 @@ import { IconTwitter } from '@/components/icons/icon-twitter';
 import { Loader } from '@/components/loader';
 import { LogoSophon } from '@/components/logos/logo-sophon';
 import { Button } from '@/components/ui/button';
+import { MainStateMachineContext } from '@/context/state-machine-context';
+import { useAuthCallbacks } from '@/hooks/auth/useAuthActions';
 import { useAccountCreate } from '@/hooks/useAccountCreate';
-import { useAccountLogin } from '@/hooks/useAccountLogin';
 import { useWalletConnection } from '@/hooks/useWalletConnection';
 import { windowService } from '@/service/window.service';
 
 const SOCIAL_PROVIDERS = {
   [ProviderEnum.Google]: {
-    icon: <IconGoogle />,
+    icon: IconGoogle,
     label: 'Google',
   },
   [ProviderEnum.Twitter]: {
-    icon: <IconTwitter />,
+    icon: IconTwitter,
     label: 'Twitter',
   },
   [ProviderEnum.Discord]: {
-    icon: <IconDiscord />,
+    icon: IconDiscord,
     label: 'Discord',
   },
   [ProviderEnum.Telegram]: {
-    icon: <IconTelegram />,
+    icon: IconTelegram,
     label: 'Telegram',
   },
 };
@@ -38,7 +36,7 @@ const SOCIAL_PROVIDERS = {
 interface NotAuthenticatedViewProps {
   onSelectWallet?: () => void;
   onEmailAuth?: (email: string) => Promise<void>;
-  onSocialAuth?: (provider: ProviderEnum) => Promise<void>;
+  onSocialAuth: (provider: ProviderEnum) => Promise<void>;
 }
 
 // Props type for both Mobile and Web views
@@ -48,13 +46,9 @@ interface ViewProps extends NotAuthenticatedViewProps {
   onSubmitEmailHandler: FormEventHandler<HTMLFormElement>;
   onSubmitOtpHandler: FormEventHandler<HTMLFormElement>;
   socialProvider?: ProviderEnum;
-  isProcessingSocial: boolean;
-  handleSocialAuth: (provider: ProviderEnum) => void;
   loading: boolean;
   isPending: boolean;
-  createError?: string | null;
-  loginError?: string | null;
-  errorSocial?: { message?: string };
+  error?: string | null;
 }
 
 const MobileView = ({
@@ -63,14 +57,8 @@ const MobileView = ({
   onSubmitEmailHandler,
   onSubmitOtpHandler,
   socialProvider,
-  isProcessingSocial,
-  handleSocialAuth,
-  loading,
-  isPending,
-  onSelectWallet,
-  createError,
-  loginError,
-  errorSocial,
+  onSocialAuth,
+  error,
 }: ViewProps) => {
   return (
     <div className="flex flex-col">
@@ -80,20 +68,24 @@ const MobileView = ({
 
       <div className="flex flex-col gap-6 px-6">
         <div className="flex flex-row gap-2">
-          {Object.entries(SOCIAL_PROVIDERS).map(([provider, { icon }]) => (
-            <button
-              type="button"
-              key={provider}
-              className="p-2 h-16 w-full bg-white text-black rounded-2xl border border-[rgba(15, 14, 13, 0.08)] hover:bg-gray-100 transition-all duration-300 cursor-pointer pointer-events-auto disabled:opacity-50 disabled:cursor-not-allowed justify-items-center"
-              onClick={() => handleSocialAuth(provider as ProviderEnum)}
-            >
-              {socialProvider === provider && isProcessingSocial ? (
-                <Loader className="w-4 h-4" />
-              ) : (
-                icon
-              )}
-            </button>
-          ))}
+          {Object.entries(SOCIAL_PROVIDERS).map(
+            ([provider, { icon: Icon }]) => (
+              <button
+                type="button"
+                key={provider}
+                className="p-2 h-16 w-full bg-white text-black rounded-2xl border border-[rgba(15, 14, 13, 0.08)] hover:bg-gray-100 transition-all duration-300 cursor-pointer pointer-events-auto disabled:opacity-50 disabled:cursor-not-allowed justify-items-center"
+                onClick={() => onSocialAuth(provider as ProviderEnum)}
+              >
+                {socialProvider === provider ? (
+                  <Loader className="w-4 h-4" />
+                ) : (
+                  <div className="flex items-center justify-center">
+                    <Icon />
+                  </div>
+                )}
+              </button>
+            ),
+          )}
         </div>
         <div className="space-y-4">
           <form
@@ -134,11 +126,9 @@ const MobileView = ({
           </form>
         </div>
 
-        {(createError || loginError || errorSocial) && (
+        {error && (
           <div className="p-3 bg-red-50 border border-red-200 rounded">
-            <p className="text-red-600 text-sm">
-              {createError || loginError || errorSocial?.message}
-            </p>
+            <p className="text-red-600 text-sm">{error}</p>
             <p className="text-xs text-gray-500 mt-1">
               💡 Tip: Make sure your device has Touch ID, Face ID, or a PIN set
               up
@@ -156,14 +146,11 @@ const WebView = ({
   onSubmitEmailHandler,
   onSubmitOtpHandler,
   socialProvider,
-  isProcessingSocial,
-  handleSocialAuth,
+  onSocialAuth,
   loading,
   isPending,
   onSelectWallet,
-  createError,
-  loginError,
-  errorSocial,
+  error,
 }: ViewProps) => {
   return (
     <div className="flex flex-col gap-14">
@@ -173,21 +160,32 @@ const WebView = ({
       </div>
 
       <div className="flex flex-col gap-6 px-6">
+        {error && (
+          <div className="p-3 bg-red-50 border border-red-200 rounded">
+            <p className="text-red-600 text-sm">{error}</p>
+            {/* <p className="text-xs text-gray-500 mt-1">
+              💡 Tip: Make sure your device has Touch ID, Face ID, or a PIN set
+              up
+            </p> */}
+          </div>
+        )}
         <div className="flex flex-row gap-2">
-          {Object.entries(SOCIAL_PROVIDERS).map(([provider, { icon }]) => (
-            <button
-              type="button"
-              key={provider}
-              className="p-4 h-16 w-full bg-white text-black rounded-2xl border border-[rgba(15, 14, 13, 0.08)] hover:bg-gray-100 transition-all duration-300 cursor-pointer pointer-events-auto disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 justify-center"
-              onClick={() => handleSocialAuth(provider as ProviderEnum)}
-            >
-              {socialProvider === provider && isProcessingSocial ? (
-                <Loader className="w-4 h-4" />
-              ) : (
-                <div>{icon}</div>
-              )}
-            </button>
-          ))}
+          {Object.entries(SOCIAL_PROVIDERS).map(
+            ([provider, { icon: Icon }]) => (
+              <button
+                type="button"
+                key={provider}
+                className="p-4 h-16 w-full bg-white text-black rounded-2xl border border-[rgba(15, 14, 13, 0.08)] hover:bg-gray-100 transition-all duration-300 cursor-pointer pointer-events-auto disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 justify-center"
+                onClick={() => onSocialAuth(provider as ProviderEnum)}
+              >
+                {socialProvider === provider ? (
+                  <Loader className="w-4 h-4 border-black border-r-transparent" />
+                ) : (
+                  <Icon />
+                )}
+              </button>
+            ),
+          )}
         </div>
         <div className="space-y-4">
           <form
@@ -244,39 +242,25 @@ const WebView = ({
             {loading ? <Loader className="w-4 h-4" /> : 'Continue with Wallet'}
           </Button>
         </div>
-
-        {(createError || loginError || errorSocial) && (
-          <div className="p-3 bg-red-50 border border-red-200 rounded">
-            <p className="text-red-600 text-sm">
-              {createError || loginError || errorSocial?.message}
-            </p>
-            <p className="text-xs text-gray-500 mt-1">
-              💡 Tip: Make sure your device has Touch ID, Face ID, or a PIN set
-              up
-            </p>
-          </div>
-        )}
       </div>
     </div>
   );
 };
 
-export const NotAuthenticatedView = ({
-  onSelectWallet,
-  onEmailAuth,
-  onSocialAuth,
-}: NotAuthenticatedViewProps) => {
+export const NotAuthenticatedView = () => {
+  const actorRef = MainStateMachineContext.useActorRef();
+  const { requestOTP, connectSocial } = useAuthCallbacks();
+  const [error, setError] = useState<string | null>(null);
   const [emailLoading, setEmailLoading] = useState(false);
   const [waitingOTP, setWaitingOTP] = useState(false);
   const isMobile = windowService.name === 'webview';
 
-  const { connectWithEmail, verifyOneTimePassword } = useConnectWithOtp();
-  const {
-    error: errorSocial,
-    isProcessing: isProcessingSocial,
-    signInWithSocialAccount,
-  } = useSocialAccounts();
+  const { verifyOneTimePassword } = useConnectWithOtp();
   const [socialProvider, setSocialProvider] = useState<ProviderEnum>();
+
+  const onSelectWallet = () => {
+    actorRef.send({ type: 'WALLET_SELECTION' });
+  };
 
   const onSubmitEmailHandler: FormEventHandler<HTMLFormElement> = async (
     event,
@@ -286,13 +270,7 @@ export const NotAuthenticatedView = ({
       event.preventDefault();
       const email = event.currentTarget.email.value;
 
-      // Use state machine if available, otherwise use original logic
-      if (onEmailAuth) {
-        await onEmailAuth(email);
-      } else {
-        await connectWithEmail(email);
-        setWaitingOTP(true);
-      }
+      await requestOTP(email);
     } finally {
       setEmailLoading(false);
     }
@@ -312,19 +290,20 @@ export const NotAuthenticatedView = ({
     }
   };
 
-  const handleSocialAuth = (provider: ProviderEnum) => {
+  const handleSocialAuth = async (provider: ProviderEnum) => {
     setSocialProvider(provider);
-    // Use state machine if available, otherwise use original logic
-    if (onSocialAuth) {
-      onSocialAuth(provider);
-    } else {
-      signInWithSocialAccount(provider);
+    try {
+      await connectSocial(provider);
+    } catch (error) {
+      setError(error as string);
     }
   };
 
   const { isPending } = useWalletConnection();
   const { loading, error: createError } = useAccountCreate();
-  const { error: loginError } = useAccountLogin();
+  const genericError = MainStateMachineContext.useSelector(
+    (state) => state.context.error,
+  );
 
   const sharedProps = {
     emailLoading,
@@ -332,14 +311,11 @@ export const NotAuthenticatedView = ({
     onSubmitEmailHandler,
     onSubmitOtpHandler,
     socialProvider,
-    isProcessingSocial,
-    handleSocialAuth,
+    onSocialAuth: handleSocialAuth,
     loading,
     isPending,
     onSelectWallet,
-    createError,
-    loginError,
-    errorSocial,
+    error: error ?? createError ?? genericError,
   };
 
   return isMobile ? (

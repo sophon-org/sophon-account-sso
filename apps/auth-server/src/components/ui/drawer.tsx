@@ -9,9 +9,9 @@ interface DrawerProps {
   children?: React.ReactNode;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onAnimationEnd?: (open: boolean) => void;
   onBack?: () => void;
   onSettings?: () => void;
-  onClose?: () => void;
   showLegalNotice?: boolean;
   showHeader?: boolean;
   showLogo?: boolean;
@@ -98,7 +98,7 @@ export const Drawer = ({
   onOpenChange,
   onBack,
   onSettings,
-  onClose,
+  onAnimationEnd,
   showLegalNotice = true,
   showHeader = true,
   showLogo = true,
@@ -107,10 +107,14 @@ export const Drawer = ({
   actions,
 }: DrawerProps) => {
   return (
-    <VaulDrawer.Root open={open} onOpenChange={onOpenChange}>
+    <VaulDrawer.Root
+      open={open}
+      onOpenChange={onOpenChange}
+      onAnimationEnd={onAnimationEnd}
+    >
       <VaulDrawer.Portal>
         <VaulDrawer.Overlay className="fixed inset-0 bg-black/40" />
-        <VaulDrawer.Content className="bg-white h-fit fixed bottom-0 left-0 right-0 outline-none rounded-t-3xl">
+        <VaulDrawer.Content className="bg-white h-fit fixed bottom-0 left-0 right-0 outline-none rounded-t-3xl pb-8">
           <VaulDrawer.Title hidden={true}>
             Sophon Authentication Modal
           </VaulDrawer.Title>

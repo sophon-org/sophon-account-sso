@@ -1,23 +1,22 @@
-import { http } from 'viem';
-import { sophonTestnet } from 'viem/chains';
+import { type Chain, http } from 'viem';
 import { WalletProvider } from 'zksync-sso';
 import { SophonAppStorage } from './storage';
 import { WebViewCommunicator } from './webview-communicator';
 
-export const createWalletProvider = () => {
-  return new WalletProvider({
+export const createWalletProvider = (authServerUrl: string, chain: Chain) => {
+  const provider = new WalletProvider({
     metadata: {
       name: 'Sophon SSO',
       icon: '/sophon-icon.png',
       // configData: parameters.metadata?.configData,
     },
-    authServerUrl: 'http://localhost:3000',
+    authServerUrl,
     //   session: parameters.session,
     //   transports: config.transports,
     transports: {
-      [sophonTestnet.id]: http(),
+      [chain.id]: http(),
     },
-    chains: [sophonTestnet],
+    chains: [chain],
     paymasterHandler: async () => ({
       paymaster: '0x98546B226dbbA8230cf620635a1e4ab01F6A99B2',
       paymasterInput: '0x',
@@ -25,4 +24,11 @@ export const createWalletProvider = () => {
     customCommunicator: new WebViewCommunicator(),
     storage: SophonAppStorage,
   });
+
+  provider.on('disconnect', () => {
+    console.log('disconnecting on provider');
+    SophonAppStorage.clear();
+  });
+
+  return provider;
 };

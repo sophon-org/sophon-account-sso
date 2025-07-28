@@ -12,6 +12,6 @@
     "forceConsistentCasingInFileNames": true,
     "lib": ["DOM", "ES2020"]
   },
-  "include": ["*.ts", "**/*.ts"],
+  "include": ["*.ts", "**/*.ts", "vitest.config.mts"],
   "exclude": ["node_modules", "dist"]
 }

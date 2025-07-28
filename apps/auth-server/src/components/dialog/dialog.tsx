@@ -111,18 +111,14 @@ export function Dialog({
           'linear-gradient(180deg, rgba(255, 255, 255, 0.00) 0%, #FFF 75%), url(/images/skybg.webp) lightgray -46.312px 0px / 395.062% 100% no-repeat',
       }}
     >
-      <div
-        className={cn(
-          'mx-auto h-full relative w-[360px] flex flex-col min-h-full',
-        )}
-      >
+      <div className={cn('mx-auto h-full relative w-[360px] flex flex-col')}>
         <DialogHeader
           title={title}
           onBack={onBack}
           onClose={onClose}
           onSettings={onSettings}
         />
-        <div className="flex-1">{children}</div>
+        {children}
         <DialogFooter showLegalNotice={showLegalNotice} actions={actions} />
       </div>
     </div>

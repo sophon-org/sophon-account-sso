@@ -1,18 +1,18 @@
 'use client';
 
-import { useRNHandler } from '@sophon-labs/account-message-bridge';
+import { useEffect } from 'react';
 import { Dialog } from '@/components/dialog';
-import { Loader } from '@/components/loader';
 import { Button } from '@/components/ui/button';
+import { MainStateMachineContext } from '@/context/state-machine-context';
+import { sendMessage } from '@/events';
 import { useAccountContext } from '@/hooks/useAccountContext';
-import { useAuthResponse } from '@/hooks/useAuthResponse';
-import { AuthState, useAuthState } from '@/hooks/useAuthState';
-import { useMessageHandler } from '@/hooks/useMessageHandler';
 import { useWalletConnection } from '@/hooks/useWalletConnection';
 import { shortenAddress } from '@/lib/formatting';
+import { serverLog } from '@/lib/server-log';
 import { windowService } from '@/service/window.service';
-import CreateSuccessView from '@/views/CreateSuccessView';
-import LoginRequestView from '@/views/LoginRequestView';
+import { CompletedView } from '@/views/CompletedView';
+import ConnectAuthorizationView from '@/views/ConnectAuthorizationView';
+import { LoadingView } from '@/views/LoadingView';
 import LoginSuccessView from '@/views/LoginSuccessView';
 import { NotAuthenticatedView } from '@/views/NotAuthenticatedView';
 import SelectingWalletView from '@/views/SelectingWalletView';
@@ -22,46 +22,31 @@ import WaitOtpView from '@/views/WaitOtpView';
 import WrongNetworkView from '@/views/WrongNetworkView';
 
 export default function RootPage() {
-  const {
-    state: authState,
-    context,
-    goToNotAuthenticated,
-    goToSelectingWallet,
-    goToLoginRequest,
-    startWalletConnection,
-    startEmailAuthentication,
-    verifyOTP,
-    startSocialAuthentication,
-    startSigningRequest,
-    startTransactionRequest,
-    startSwitchNetwork,
-  } = useAuthState();
+  const state = MainStateMachineContext.useSelector((state) => state);
+  const actorRef = MainStateMachineContext.useActorRef();
 
-  const { incomingRequest, sessionPreferences } = useMessageHandler({
-    onSigningRequest: startSigningRequest,
-    onTransactionRequest: startTransactionRequest,
-  });
-
-  useRNHandler('echo', (payload) => {
-    console.log('🔥 Received message from React Native:', payload);
-    alert(payload.message);
-  });
-
-  const { account, logout } = useAccountContext();
-  const { handleAuthSuccessResponse } = useAuthResponse();
+  const { account } = useAccountContext();
   const { disconnect } = useWalletConnection();
 
-  if (authState === AuthState.LOADING) {
+  useEffect(() => {
+    serverLog(JSON.stringify(state));
+  }, [state]);
+
+  /***************************
+   * LOADING RESOURCES STATE *
+   ***************************/
+  if (state.matches('loading')) {
     return (
-      <div className="flex h-screen w-screen items-center justify-center">
-        <Loader className="h-10 w-10 animate-spin block" />
-        <br />
-        <p className="ml-2">Loading SDK...</p>
-      </div>
+      <Dialog className="relative" showLegalNotice={false}>
+        <LoadingView message="Loading..." />
+      </Dialog>
     );
   }
 
-  if (authState === AuthState.SIGNING_REQUEST) {
+  /***************************
+   * INCOMING REQUESTS STATE *
+   ***************************/
+  if (state.matches('incoming-signature')) {
     return (
       <Dialog
         className="relative"
@@ -71,63 +56,72 @@ export default function RootPage() {
         }}
         showLegalNotice={false}
       >
-        <SigningRequestView
-          signingRequest={context.signingRequest!}
-          account={account!}
-          incomingRequest={incomingRequest!}
-        />
+        <SigningRequestView />
       </Dialog>
     );
   }
 
-  if (authState === AuthState.TRANSACTION_REQUEST) {
+  if (state.matches('incoming-transaction')) {
     return (
-      <TransactionRequestView
-        transactionRequest={context.transactionRequest!}
-        account={account!}
-        incomingRequest={incomingRequest!}
-      />
-    );
-  }
-
-  if (authState === AuthState.CREATING_ACCOUNT) {
-    return (
-      <div className="flex h-screen w-screen items-center justify-center">
-        <Loader className="h-10 w-10 animate-spin block" />
-        <br />
-        <p className="text-black ml-2">
-          {context.email ? 'Verifying code...' : 'Authenticating...'}
-        </p>
-      </div>
-    );
-  }
-
-  if (authState === AuthState.WAITING_OTP) {
-    return (
-      <Dialog className="relative" onBack={goToNotAuthenticated}>
-        <WaitOtpView email={context.email!} verifyOTP={verifyOTP} />
+      <Dialog className="relative" showLegalNotice={false}>
+        <TransactionRequestView />
       </Dialog>
     );
   }
 
-  if (authState === AuthState.SELECTING_WALLET) {
+  if (state.matches('incoming-authentication')) {
+    return (
+      <Dialog className="relative" showLegalNotice={false}>
+        <ConnectAuthorizationView />
+      </Dialog>
+    );
+  }
+
+  /************************
+   * GENERIC LOGIN STATES *
+   ************************/
+  if (
+    state.matches('login-required.started') ||
+    state.matches('login-required.deployment')
+  ) {
+    return (
+      <Dialog className="relative" showLegalNotice={false}>
+        <LoadingView message="Authenticating..." />
+      </Dialog>
+    );
+  }
+
+  /*************************
+   * SPECIFIC LOGIN STATES *
+   *************************/
+  if (state.matches('login-required.waitForEmailOTP')) {
+    return (
+      <Dialog
+        className="relative"
+        onBack={() => {
+          actorRef.send({ type: 'CANCEL' });
+        }}
+      >
+        <WaitOtpView email={'TODO EMAIL'} />
+      </Dialog>
+    );
+  }
+
+  if (state.matches('login-required.selectEOAWallet')) {
     return (
       <Dialog
         className="relative"
         title="Select your wallet"
-        onBack={goToNotAuthenticated}
-        onClose={goToNotAuthenticated}
+        onBack={() => {
+          actorRef.send({ type: 'CANCEL' });
+        }}
       >
-        <SelectingWalletView
-          onSelectWallet={(connectorName: string) =>
-            goToLoginRequest(connectorName)
-          }
-        />
+        <SelectingWalletView />
       </Dialog>
     );
   }
 
-  if (authState === AuthState.WRONG_NETWORK) {
+  if (state.matches('wrong-network')) {
     return (
       <Dialog
         className="relative"
@@ -138,45 +132,20 @@ export default function RootPage() {
         }}
         onBack={() => {
           disconnect();
-          goToNotAuthenticated();
+          // goToNotAuthenticated();
         }}
       >
-        <WrongNetworkView onSwitchNetwork={startSwitchNetwork} />
+        <WrongNetworkView />
       </Dialog>
     );
   }
 
-  if (authState === AuthState.LOGIN_REQUEST) {
-    return (
-      <Dialog
-        className="relative"
-        title="Sign in"
-        onBack={goToSelectingWallet}
-        showLegalNotice={false}
-        actions={
-          <div className="flex items-center justify-center gap-2 w-full">
-            <Button variant="transparent" onClick={goToSelectingWallet}>
-              Cancel
-            </Button>
-            <Button
-              type="button"
-              onClick={() => startWalletConnection(context.providerName!)}
-            >
-              Connect
-            </Button>
-          </div>
-        }
-      >
-        <LoginRequestView />
-      </Dialog>
-    );
-  }
-
-  if (authState === AuthState.AUTHENTICATED && account) {
+  /****************
+   * FINAL STATES *
+   ****************/
+  if (state.matches('profile') && account) {
     const handleDisconnect = () => {
-      disconnect();
-      logout();
-      goToNotAuthenticated();
+      sendMessage('smart-contract.logout', null);
     };
 
     return (
@@ -188,78 +157,22 @@ export default function RootPage() {
         showLegalNotice={false}
         actions={<Button onClick={handleDisconnect}>Log out</Button>}
       >
-        <LoginSuccessView
-          accountData={account}
-          sessionPreferences={sessionPreferences}
-          onUseAccount={async () => {
-            await handleAuthSuccessResponse(
-              { address: account.address },
-              incomingRequest!,
-              sessionPreferences,
-            );
-            windowService.close();
-          }}
-          onDisconnect={handleDisconnect}
-        />
+        <LoginSuccessView />
       </Dialog>
     );
   }
 
-  if (authState === AuthState.SUCCESS && account) {
-    const handleDisconnect = () => {
-      logout();
-      goToNotAuthenticated();
-    };
-
+  if (state.matches('completed')) {
     return (
-      <Dialog className="relative">
-        <CreateSuccessView
-          accountAddress={account.address}
-          sessionPreferences={sessionPreferences}
-          onUseAccount={async () => {
-            await handleAuthSuccessResponse(
-              { address: account.address },
-              incomingRequest!,
-              sessionPreferences,
-            );
-            windowService.close();
-          }}
-          onDisconnect={handleDisconnect}
-        />
-      </Dialog>
-    );
-  }
-
-  if (authState === AuthState.ERROR) {
-    return (
-      <Dialog className="relative">
-        <div className="flex h-screen w-screen items-center justify-center flex-col">
-          <div className="text-center">
-            <div className="text-6xl mb-4">❌</div>
-            <h1 className="text-2xl font-bold mb-2">Error!</h1>
-            <p className="text-gray-600 mb-4">
-              {context.error || 'Something went wrong'}
-            </p>
-            <button
-              type="button"
-              onClick={goToNotAuthenticated}
-              className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-            >
-              Try Again
-            </button>
-          </div>
-        </div>
+      <Dialog className="relative" title="Ready!">
+        <CompletedView />
       </Dialog>
     );
   }
 
   return (
     <Dialog className="relative">
-      <NotAuthenticatedView
-        onSelectWallet={goToSelectingWallet}
-        onEmailAuth={startEmailAuthentication}
-        onSocialAuth={startSocialAuthentication}
-      />
+      <NotAuthenticatedView />
     </Dialog>
   );
 }
