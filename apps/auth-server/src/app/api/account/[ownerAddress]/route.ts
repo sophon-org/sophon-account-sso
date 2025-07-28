@@ -5,7 +5,6 @@ import { type Address, isAddress } from 'viem';
 import { deployAccount } from '@/lib/account';
 
 const DATABASE_PATH = path.join(process.cwd(), 'database.json');
-console.log('database path', DATABASE_PATH);
 if (!fs.existsSync(DATABASE_PATH)) {
   fs.writeFileSync(DATABASE_PATH, JSON.stringify([]));
 }
@@ -62,7 +61,6 @@ export async function POST(
   }
 
   const deployed = await deployAccount(ownerAddress);
-  console.log('🔥 Account deployed', deployed.address);
 
   database.push({ address: deployed.address, owners: [ownerAddress] });
   fs.writeFileSync(DATABASE_PATH, JSON.stringify(database, null, 2));

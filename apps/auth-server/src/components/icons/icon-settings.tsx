@@ -7,6 +7,8 @@ export const IconSettings = ({ className }: { className?: string }) => {
       viewBox="0 0 24 24"
       fill="none"
       className={className}
+      aria-label="Settings Icon"
+      role="img"
     >
       <g filter="url(#filter0_d_2621_405)" aria-label="Settings Icon">
         <path

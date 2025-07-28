@@ -25,6 +25,8 @@ export default function Home() {
   } = useSignTypedData();
   const { sendTransaction, isPending: isSendPending } = useSendTransaction();
 
+  console.log('signature', signatureData, signError, isSignPending);
+
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -103,6 +105,22 @@ export default function Home() {
                 Address: <code>{address}</code>
               </p>
               <div style={{ margin: '10px 0' }}>
+                <a
+                  href="http://localhost:3000"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    backgroundColor: '#6161d0',
+                    color: 'white',
+                    border: 'none',
+                    padding: '8px 16px',
+                    borderRadius: '4px',
+                    cursor: isSignPending ? 'not-allowed' : 'pointer',
+                    marginRight: '10px',
+                  }}
+                >
+                  Open Profile
+                </a>
                 <button
                   type="button"
                   onClick={handleSignMessage}

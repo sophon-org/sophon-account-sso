@@ -5,9 +5,11 @@ import {
   sendUIMessage,
 } from '../messaging';
 
-const MODAL_TIMEOUT = 500000;
+const MODAL_TIMEOUT = 5000;
+const REQUEST_TIMEOUT = 5 * 60 * 1000;
 
 export class WebViewCommunicator implements Communicator {
+  private isReady = false;
   private listeners = new Map<
     (payload: SophonUIActions['incomingRpc']) => void,
     { reject: (_: Error) => void; deregister: () => void }
@@ -37,10 +39,18 @@ export class WebViewCommunicator implements Communicator {
         console.log('!!!!!!!!!!!! onMessage listener', payload);
         // only act if the message target hits the given predicate
         if (predicate(payload as Partial<M>)) {
+          console.log('!!!!!!!!!!!! onMessage resolved', payload);
           resolve(payload as M);
           deregister();
           this.listeners.delete(listener);
         }
+
+        setTimeout(() => {
+          console.log('<<>><<>><<>> onMessage timeout', payload);
+          deregister();
+          this.listeners.delete(listener);
+          reject(new Error('Request timeout'));
+        }, REQUEST_TIMEOUT);
       };
       const deregister = registerUIEventHandler('incomingRpc', listener);
       this.listeners.set(listener, { reject, deregister });
@@ -54,23 +64,28 @@ export class WebViewCommunicator implements Communicator {
     });
     this.listeners.clear();
     sendUIMessage('hideModal', {});
-    // window.close();
   };
 
   private waitContextToBeReady = async () => {
+    if (this.isReady) {
+      console.log('!!!!!!!!!!!! waitContextToBeReady already ready');
+      sendUIMessage('showModal', {});
+      return;
+    }
     console.log('!!!!!!!!!!!! waitContextToBeReady');
 
     await new Promise((resolve, reject) => {
       const unregister = registerUIEventHandler('modalReady', () => {
         unregister();
         resolve(true);
+        this.isReady = true;
       });
 
       sendUIMessage('showModal', {});
 
       setTimeout(() => {
-        reject(new Error('Modal timeout'));
         unregister();
+        reject(new Error('Modal timeout'));
       }, MODAL_TIMEOUT);
     });
   };

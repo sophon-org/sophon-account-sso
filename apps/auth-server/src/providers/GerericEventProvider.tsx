@@ -1,24 +1,18 @@
 'use client';
 
-import { useDynamicContext } from '@dynamic-labs/sdk-react-core';
-import { useCallback } from 'react';
-import { type AuthServerActions, useAuthHandler } from '../lib/events';
+import { useK1LoginHandler } from '@/hooks/handlers/useK1LoginHandler';
+import { useK1LoginInitHandler } from '@/hooks/handlers/useK1LoginInitHandler';
+import { useK1LogoutHandler } from '@/hooks/handlers/useK1LogoutHandler';
+import { useSmartContractLogoutHandler } from '@/hooks/handlers/useSmartContractLogoutHandler';
+import { useConnectEventsWithStateMachine } from '@/hooks/useConnectEventsWithStateMachine';
 
 export const GenericEventProvider = () => {
-  const { user, handleLogOut } = useDynamicContext();
+  useConnectEventsWithStateMachine();
 
-  const handleLogout = useCallback(
-    (payload: AuthServerActions['logout']) => {
-      console.log('🔥 logout', payload);
-      if (user) {
-        console.log('called dynamic logout function, user:', user);
-        handleLogOut();
-      }
-    },
-    [user, handleLogOut],
-  );
-
-  useAuthHandler('logout', handleLogout);
+  useK1LoginInitHandler();
+  useK1LoginHandler();
+  useK1LogoutHandler();
+  useSmartContractLogoutHandler();
 
   return null;
 };

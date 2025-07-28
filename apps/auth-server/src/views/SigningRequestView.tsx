@@ -11,20 +11,26 @@ import { Loader } from '@/components/loader';
 import { Button } from '@/components/ui/button';
 import MessageContainer from '@/components/ui/messageContainer';
 import VerificationImage from '@/components/ui/verification-image';
+import { MainStateMachineContext } from '@/context/state-machine-context';
+import { useAccountContext } from '@/hooks/useAccountContext';
 import { CONTRACTS, VIEM_CHAIN } from '@/lib/constants';
 import { verifyEIP1271Signature } from '@/lib/smart-contract';
 import { windowService } from '@/service/window.service';
-import type { SigningRequestProps } from '@/types/auth';
 
-export default function SigningRequestView({
-  signingRequest,
-  account,
-  incomingRequest,
-}: SigningRequestProps) {
+export default function SigningRequestView() {
+  const { account } = useAccountContext();
+  const { incoming, signing } = MainStateMachineContext.useSelector(
+    (state) => state.context.requests,
+  );
+  const actorRef = MainStateMachineContext.useActorRef();
   const [isSigning, setIsSigning] = useState(false);
   const { address: connectedAddress } = useAccount();
   const { data: walletClient } = useWalletClient();
   const { primaryWallet } = useDynamicContext();
+
+  if (!signing || !incoming || !account) {
+    return <div>No signing request or account present</div>;
+  }
 
   return (
     <div className="text-center flex flex-col items-center justify-center gap-8 mt-6 px-6">
@@ -36,10 +42,10 @@ export default function SigningRequestView({
       <MessageContainer>
         <div className="text-sm text-black">
           <p>
-            {signingRequest.domain.name} v{signingRequest.domain.version}
+            {signing.domain.name} v{signing.domain.version}
           </p>
           <pre className="text-xs mt-2 whitespace-pre-wrap break-words">
-            {JSON.stringify(signingRequest.message, null, 2)}
+            {JSON.stringify(signing.message, null, 2)}
           </pre>
         </div>
       </MessageContainer>
@@ -48,10 +54,10 @@ export default function SigningRequestView({
         <Button
           variant="transparent"
           onClick={() => {
-            if (windowService.isManaged() && incomingRequest) {
+            if (windowService.isManaged() && incoming) {
               const signResponse = {
                 id: crypto.randomUUID(),
-                requestId: incomingRequest.id,
+                requestId: incoming.id,
                 content: {
                   result: null,
                   error: {
@@ -62,8 +68,8 @@ export default function SigningRequestView({
               };
 
               windowService.sendMessage(signResponse);
+              actorRef.send({ type: 'CANCEL' });
             }
-            windowService.close();
           }}
         >
           Cancel
@@ -85,14 +91,13 @@ export default function SigningRequestView({
                 let signature: string;
 
                 if (primaryWallet && isEthereumWallet(primaryWallet)) {
-                  console.log('🔥🔥🔥🔥🔥 Signing with Ethereum wallet');
                   try {
                     const client = await primaryWallet.getWalletClient();
                     signature = await client.signTypedData({
-                      domain: signingRequest.domain,
-                      types: signingRequest.types,
-                      primaryType: signingRequest.primaryType,
-                      message: signingRequest.message,
+                      domain: signing.domain,
+                      types: signing.types,
+                      primaryType: signing.primaryType,
+                      message: signing.message,
                     });
                   } catch (error) {
                     console.error('Signing error:', error);
@@ -143,19 +148,19 @@ export default function SigningRequestView({
                   });
 
                   signature = await client.signTypedData({
-                    domain: signingRequest.domain,
-                    types: signingRequest.types,
-                    primaryType: signingRequest.primaryType,
-                    message: signingRequest.message,
+                    domain: signing.domain,
+                    types: signing.types,
+                    primaryType: signing.primaryType,
+                    message: signing.message,
                   });
 
                   await verifyEIP1271Signature({
-                    accountAddress: signingRequest.address,
+                    accountAddress: signing.address,
                     signature,
-                    domain: signingRequest.domain,
-                    types: signingRequest.types,
-                    primaryType: signingRequest.primaryType,
-                    message: signingRequest.message,
+                    domain: signing.domain,
+                    types: signing.types,
+                    primaryType: signing.primaryType,
+                    message: signing.message,
                   });
                 } else {
                   if (!account.owner.passkey) {
@@ -178,33 +183,37 @@ export default function SigningRequestView({
                   });
 
                   signature = await client.signTypedData({
-                    domain: signingRequest.domain,
-                    types: signingRequest.types,
-                    primaryType: signingRequest.primaryType,
-                    message: signingRequest.message,
+                    domain: signing.domain,
+                    types: signing.types,
+                    primaryType: signing.primaryType,
+                    message: signing.message,
                   });
 
                   await verifyEIP1271Signature({
-                    accountAddress: signingRequest.address,
+                    accountAddress: signing.address,
                     signature,
-                    domain: signingRequest.domain,
-                    types: signingRequest.types,
-                    primaryType: signingRequest.primaryType,
-                    message: signingRequest.message,
+                    domain: signing.domain,
+                    types: signing.types,
+                    primaryType: signing.primaryType,
+                    message: signing.message,
                   });
                 }
 
-                if (windowService.isManaged() && incomingRequest) {
+                if (windowService.isManaged() && incoming) {
                   const signResponse = {
                     id: crypto.randomUUID(),
-                    requestId: incomingRequest.id,
+                    requestId: incoming.id,
                     content: {
                       result: signature,
                     },
                   };
 
+                  console.log(
+                    '🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥 signResponse',
+                    signResponse,
+                  );
                   windowService.sendMessage(signResponse);
-                  windowService.close();
+                  actorRef.send({ type: 'ACCEPT' });
                 }
               } catch (error) {
                 console.error('Signing failed:', error);
@@ -214,7 +223,11 @@ export default function SigningRequestView({
             }
           }}
         >
-          {isSigning ? <Loader className="w-4 h-4" /> : 'Sign'}
+          {isSigning ? (
+            <Loader className="w-4 h-4 border-black border-r-transparent" />
+          ) : (
+            'Sign'
+          )}
         </Button>
       </div>
     </div>

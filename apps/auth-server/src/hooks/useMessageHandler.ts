@@ -12,16 +12,11 @@ interface UseMessageHandlerReturn {
   sessionPreferences: unknown;
   signingRequest: SigningRequest | null;
   transactionRequest: TransactionRequest | null;
+  handlerInitialized: boolean;
 }
 
-interface UseMessageHandlerCallbacks {
-  onSigningRequest?: (request: SigningRequest) => void;
-  onTransactionRequest?: (request: TransactionRequest) => void;
-}
-
-export const useMessageHandler = (
-  callbacks?: UseMessageHandlerCallbacks,
-): UseMessageHandlerReturn => {
+export const useMessageHandler = (): UseMessageHandlerReturn => {
+  const [handlerInitialized, setHandlerInitialized] = useState(false);
   const [incomingRequest, setIncomingRequest] =
     useState<IncomingRequest | null>(null);
   const [sessionPreferences, setSessionPreferences] = useState<unknown>(null);
@@ -32,33 +27,6 @@ export const useMessageHandler = (
     useState<TransactionRequest | null>(null);
 
   useEffect(() => {
-    // Check sessionStorage for saved request (survives OAuth redirects)
-    const savedRequest = sessionStorage.getItem('sophon-incoming-request');
-    if (savedRequest && !incomingRequest) {
-      try {
-        const parsedRequest = JSON.parse(savedRequest);
-        setIncomingRequest(parsedRequest);
-      } catch (error) {
-        console.error('Failed to parse saved request:', error);
-        sessionStorage.removeItem('sophon-incoming-request');
-      }
-    }
-
-    // Initialize popup communication
-    const urlParams = new URLSearchParams(window.location.search);
-    const origin = urlParams.get('origin');
-
-    // Send the exact PopupLoaded signal that ZKsync SSO expects
-    if (origin && windowService.isManaged()) {
-      const popupLoadedSignal = {
-        event: 'PopupLoaded',
-        id: crypto.randomUUID(),
-      };
-      windowService.sendMessage(popupLoadedSignal);
-    }
-
-    // Define the message handler
-
     // biome-ignore lint/suspicious/noExplicitAny: review that in the future  TODO
     const messageHandler = (data: any) => {
       // Store the incoming request if it's an RPC request
@@ -97,10 +65,6 @@ export const useMessageHandler = (
 
               setSigningRequest(signingRequestData);
               setSessionPreferences(null);
-
-              if (callbacks?.onSigningRequest) {
-                callbacks.onSigningRequest(signingRequestData);
-              }
             } catch (parseError) {
               console.error('Failed to parse typed data JSON:', parseError);
             }
@@ -124,10 +88,6 @@ export const useMessageHandler = (
             setTransactionRequest(transactionRequestData);
             setSigningRequest(null);
             setSessionPreferences(null);
-
-            if (callbacks?.onTransactionRequest) {
-              callbacks.onTransactionRequest(transactionRequestData);
-            }
           }
         }
 
@@ -138,17 +98,46 @@ export const useMessageHandler = (
       }
     };
 
+    // Check sessionStorage for saved request (survives OAuth redirects)
+    const savedRequest = sessionStorage.getItem('sophon-incoming-request');
+    if (savedRequest && !incomingRequest) {
+      try {
+        const parsedRequest = JSON.parse(savedRequest);
+        messageHandler(parsedRequest);
+      } catch (error) {
+        console.error('Failed to parse saved request:', error);
+        sessionStorage.removeItem('sophon-incoming-request');
+      }
+    }
+
+    // Initialize popup communication
+    const urlParams = new URLSearchParams(window.location.search);
+    const origin = urlParams.get('origin');
+
+    // Send the exact PopupLoaded signal that ZKsync SSO expects
+    if (origin && windowService.isManaged()) {
+      const popupLoadedSignal = {
+        event: 'PopupLoaded',
+        id: crypto.randomUUID(),
+      };
+      windowService.sendMessage(popupLoadedSignal);
+    }
+
+    // Define the message handler
+
     const unregister = windowService.listen(messageHandler);
+    setHandlerInitialized(true);
 
     return () => {
       unregister();
     };
-  }, [callbacks, incomingRequest]);
+  }, [incomingRequest]);
 
   return {
     incomingRequest,
     sessionPreferences,
     signingRequest,
     transactionRequest,
+    handlerInitialized,
   };
 };

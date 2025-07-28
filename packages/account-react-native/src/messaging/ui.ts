@@ -54,5 +54,6 @@ export const sendUIMessage = <T extends SophonUIActionsName>(
   action: T,
   payload: SophonUIActions[T],
 ) => {
+  console.log('🔥 sendUIMessage', action, payload);
   SophonUIEvents.emit(action, payload);
 };

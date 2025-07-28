@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { AccountContextProvider } from '@/context/account-context';
+import { MainStateMachineContextProvider } from '@/context/state-machine-context';
 import DefaultLayout from '@/layouts/default';
 import { GenericEventProvider } from '@/providers/GerericEventProvider';
 import { Web3Provider } from '@/providers/Web3Provider';
@@ -32,10 +33,12 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AccountContextProvider>
-          <Web3Provider>
-            <GenericEventProvider />
-            <DefaultLayout>{children}</DefaultLayout>
-          </Web3Provider>
+          <MainStateMachineContextProvider>
+            <Web3Provider>
+              <GenericEventProvider />
+              <DefaultLayout>{children}</DefaultLayout>
+            </Web3Provider>
+          </MainStateMachineContextProvider>
         </AccountContextProvider>
       </body>
     </html>

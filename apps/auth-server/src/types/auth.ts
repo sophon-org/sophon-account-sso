@@ -38,18 +38,6 @@ export interface AccountStore {
   isInitialized: boolean;
 }
 
-export interface SigningRequestProps {
-  signingRequest: SigningRequest;
-  account: SmartAccount;
-  incomingRequest: IncomingRequest;
-}
-
-export interface TransactionRequestProps {
-  transactionRequest: TransactionRequest;
-  account: SmartAccount;
-  incomingRequest: IncomingRequest;
-}
-
 export interface CreateSuccessProps {
   accountAddress: string;
   sessionPreferences: unknown;
@@ -61,9 +49,8 @@ export interface LoginSuccessProps {
   accountData: {
     address: string;
   };
-  sessionPreferences: unknown;
-  onUseAccount: () => Promise<void>;
-  onDisconnect: () => void;
+  // onUseAccount: () => Promise<void>;
+  // onDisconnect: () => void;
 }
 
 export interface AccountData {

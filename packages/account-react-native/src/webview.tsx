@@ -1,5 +1,5 @@
 import { postMessageToWebApp } from '@sophon-labs/account-message-bridge';
-import { useMemo, useRef } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { USER_AGENT } from './constants/user-agent';
@@ -27,14 +27,22 @@ export const SophonWebView = ({
 
   const key = useMemo(() => url.toString(), [url]);
 
-  useUIEventHandler('showModal', () => {
-    postMessageToWebApp(webViewRef, 'openModal', {});
-  });
+  useUIEventHandler(
+    'showModal',
+    useCallback(() => {
+      console.log('!!!!!!!!!!!! showModal INternal');
+      postMessageToWebApp(webViewRef, 'openModal', {});
+    }, []),
+  );
 
-  useUIEventHandler('outgoingRpc', (payload) => {
-    // biome-ignore lint/suspicious/noExplicitAny: future check
-    postMessageToWebApp(webViewRef, 'rpc', payload as any);
-  });
+  useUIEventHandler(
+    'outgoingRpc',
+    useCallback((payload) => {
+      console.log('!!!!!!!!!!!! outgoingRpc INternal');
+      // biome-ignore lint/suspicious/noExplicitAny: future check
+      postMessageToWebApp(webViewRef, 'rpc', payload as any);
+    }, []),
+  );
 
   return (
     <View style={containerStyles}>
@@ -60,7 +68,7 @@ export const SophonWebView = ({
           }
         }}
         onError={(event) => {
-          console.log('error', event);
+          console.error(event);
         }}
         onContentProcessDidTerminate={() => {
           console.log('content process did terminate');

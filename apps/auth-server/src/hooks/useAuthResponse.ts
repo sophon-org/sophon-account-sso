@@ -19,12 +19,6 @@ export function useAuthResponse() {
     }
 
     const responseAddress = account?.address || accountData.address;
-    console.log(
-      '🔥🔥🔥🔥🔥 responseAddress',
-      responseAddress,
-      accountData,
-      account,
-    );
 
     let sessionData = null;
     if (sessionPreferences) {

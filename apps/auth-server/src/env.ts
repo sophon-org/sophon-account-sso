@@ -24,6 +24,10 @@ export const env = createEnv({
     NEXT_PUBLIC_CHAIN_ID: z
       .enum(VALID_CHAIN_IDS)
       .transform((val) => Number.parseInt(val.toString(), 10)),
+    NEXT_PUBLIC_FEATURE_EOA: z.string().transform((val) => val === 'true'),
+    NEXT_PUBLIC_FEATURE_SMART_CONTRACT: z
+      .string()
+      .transform((val) => val === 'true'),
   },
 
   /**
@@ -37,6 +41,9 @@ export const env = createEnv({
       process.env.NEXT_PUBLIC_DYNAMIC_PROVIDER_ID,
     NEXT_PUBLIC_DEPLOYER_ADDRESS: process.env.NEXT_PUBLIC_DEPLOYER_ADDRESS,
     NEXT_PUBLIC_CHAIN_ID: process.env.NEXT_PUBLIC_CHAIN_ID,
+    NEXT_PUBLIC_FEATURE_EOA: process.env.NEXT_PUBLIC_FEATURE_EOA,
+    NEXT_PUBLIC_FEATURE_SMART_CONTRACT:
+      process.env.NEXT_PUBLIC_FEATURE_SMART_CONTRACT,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

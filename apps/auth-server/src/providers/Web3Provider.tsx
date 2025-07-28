@@ -7,6 +7,7 @@ import type { ReactNode } from 'react';
 import { createConfig, http, WagmiProvider } from 'wagmi';
 import { injected } from 'wagmi/connectors';
 import { env } from '@/env';
+import { sendMessage } from '@/events';
 import { VIEM_CHAIN } from '@/lib/constants';
 
 // Wagmi config with MetaMask connector - uses environment-based chain
@@ -31,8 +32,52 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
   return (
     <DynamicContextProvider
       settings={{
+        initialAuthenticationMode: 'connect-and-sign',
         environmentId: env.NEXT_PUBLIC_DYNAMIC_PROVIDER_ID!,
         walletConnectors: [EthereumWalletConnectors],
+        events: {
+          // This is called when the user clicks on the login button
+          onAuthInit(user) {
+            console.log('🔥 onAuthInit', user);
+            sendMessage('k1.login.init', null);
+          },
+          // This is called on the callback processing from social login
+          onAuthFlowOpen() {
+            console.log('🔥 onAuthFlowOpen');
+            sendMessage('k1.login.init', null);
+          },
+          onEmbeddedWalletCreated(credential, user) {
+            console.log('🔥 onEmbeddedWalletCreated', user, credential);
+            // sendMessage('k1.login', {
+            //   address: user.primaryWallet!.address as `0x${string}`,
+            //   wallet: user.primaryWallet!,
+            // });
+          },
+          onWalletAdded(user) {
+            console.log('🔥 onWalletAdded', user);
+            sendMessage('k1.login', {
+              address: user.wallet.address as `0x${string}`,
+              wallet: user.wallet,
+            });
+          },
+          // This is called after everything is validated and the user should be considered authenticated
+          onAuthSuccess(user) {
+            console.log('🔥 onAuthSuccess', user);
+
+            if (user.primaryWallet) {
+              console.log('🔥 onAuthSuccess primaryWallet', user.primaryWallet);
+              sendMessage('k1.login', {
+                address: user.primaryWallet!.address as `0x${string}`,
+                wallet: user.primaryWallet!,
+              });
+            }
+          },
+          // This is called when the user
+          onLogout(user) {
+            console.log('🔥 onLogout', user);
+            sendMessage('k1.logout', null);
+          },
+        },
       }}
     >
       <WagmiProvider config={wagmiConfig}>

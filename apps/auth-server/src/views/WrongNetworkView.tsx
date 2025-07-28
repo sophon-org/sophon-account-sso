@@ -1,12 +1,10 @@
 import Image from 'next/image';
 import { useAccount } from 'wagmi';
 import { Button } from '@/components/ui/button';
+import { useAuthCallbacks } from '@/hooks/auth/useAuthActions';
 
-export default function WrongNetworkView({
-  onSwitchNetwork,
-}: {
-  onSwitchNetwork: () => void;
-}) {
+export default function WrongNetworkView() {
+  const { switchEOANetwork } = useAuthCallbacks();
   const { connector } = useAccount();
   const walletIcon = connector?.icon;
 
@@ -25,7 +23,7 @@ export default function WrongNetworkView({
       <div className="w-[254px]">
         <Button
           variant="secondary"
-          onClick={onSwitchNetwork}
+          onClick={switchEOANetwork}
           className="w-full"
         >
           Switch network to Sophon

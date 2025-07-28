@@ -6,18 +6,24 @@ import { toAccount } from 'viem/accounts';
 import { useAccount, useWalletClient } from 'wagmi';
 import { createZksyncEcdsaClient } from 'zksync-sso/client/ecdsa';
 import { createZksyncPasskeyClient } from 'zksync-sso/client/passkey';
+import { MainStateMachineContext } from '@/context/state-machine-context';
+import { useAccountContext } from '@/hooks/useAccountContext';
 import { CONTRACTS, VIEM_CHAIN } from '@/lib/constants';
 import { windowService } from '@/service/window.service';
-import type { TransactionRequestProps } from '@/types/auth';
 
-export default function TransactionRequestView({
-  transactionRequest,
-  account,
-  incomingRequest,
-}: TransactionRequestProps) {
+export default function TransactionRequestView() {
+  const { incoming: incomingRequest, transaction: transactionRequest } =
+    MainStateMachineContext.useSelector((state) => state.context.requests);
+  const { account } = useAccountContext();
+  const actorRef = MainStateMachineContext.useActorRef();
   const { address: connectedAddress } = useAccount();
   const { data: walletClient } = useWalletClient();
   const { primaryWallet } = useDynamicContext();
+
+  if (!transactionRequest || !incomingRequest || !account) {
+    return <div>No transaction request or account present</div>;
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow">
@@ -211,7 +217,7 @@ export default function TransactionRequestView({
                     };
 
                     windowService.sendMessage(txResponse);
-                    windowService.close();
+                    actorRef.send({ type: 'ACCEPT' });
                   }
                 } catch (error) {
                   console.error('Transaction failed:', error);
@@ -225,8 +231,22 @@ export default function TransactionRequestView({
             <button
               type="button"
               onClick={() => {
-                console.log('User cancelled transaction');
-                windowService.close();
+                if (windowService.isManaged() && incomingRequest) {
+                  const signResponse = {
+                    id: crypto.randomUUID(),
+                    requestId: incomingRequest.id,
+                    content: {
+                      result: null,
+                      error: {
+                        message: 'User cancelled transaction',
+                        code: -32002,
+                      },
+                    },
+                  };
+
+                  windowService.sendMessage(signResponse);
+                  actorRef.send({ type: 'CANCEL' });
+                }
               }}
               className="w-full px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
             >
