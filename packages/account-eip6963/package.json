@@ -1,0 +1,39 @@
+{
+  "name": "@sophon-labs/account-eip6963",
+  "version": "0.0.1",
+  "description": "EIP-6963 provider for Sophon SSO",
+  "license": "MIT",
+  "author": "Sophon Team",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./testnet": {
+      "import": "./dist/testnet.js",
+      "types": "./dist/testnet.d.ts"
+    },
+    "./mainnet": {
+      "import": "./dist/mainnet.js",
+      "types": "./dist/mainnet.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "tsup": "^8.5.0"
+  },
+  "dependencies": {
+    "zksync-sso": "file:../../../zksync-sso/packages/sdk"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
