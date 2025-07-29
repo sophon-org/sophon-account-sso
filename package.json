@@ -23,7 +23,7 @@
     "------------------------- RELEASE -------------------------": "",
     "release:generate": "changeset",
     "release:version": "changeset version",
-    "release:publish": "yarn publish -r --no-git-checks",
+    "release:publish": "changeset publish",
     "release:pre:enter": "changeset pre enter next",
     "release:pre:exit": "changeset pre exit"
   },
