@@ -7,10 +7,5 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": [
-    "@sophon-labs/account-auth-server",
-    "@sophon-labs/examples-sandbox-web",
-    "@sophon-labs/examples-sandbox-eip6963",
-    "@sophon-labs/examples-sandbox-mobile"
-  ]
+  "ignore": ["@sophon-labs/account-auth-server"]
 }
