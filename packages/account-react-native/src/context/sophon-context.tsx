@@ -47,7 +47,6 @@ export const SophonContextProvider = ({
       authServerUrl ?? 'http://localhost:3000',
       chain,
     );
-    console.log('***************************** provider', provider);
     return provider;
   }, [authServerUrl, chain]);
 
@@ -55,11 +54,6 @@ export const SophonContextProvider = ({
     chain: chain,
     transport: custom({
       async request({ method, params }) {
-        console.log(
-          '***************************** request transport',
-          method,
-          params,
-        );
         return await provider?.request({ method, params });
       },
     }),

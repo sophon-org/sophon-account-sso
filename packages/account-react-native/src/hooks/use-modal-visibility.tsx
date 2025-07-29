@@ -5,7 +5,6 @@ export const useModalVisibility = () => {
   const [visible, setVisible] = useState(false);
 
   useUIEventHandler('showModal', () => {
-    console.log('showModal');
     setVisible(true);
     setTimeout(() => {
       //TODO: remove this
@@ -13,7 +12,6 @@ export const useModalVisibility = () => {
     }, 1000);
   });
   useUIEventHandler('hideModal', () => {
-    console.log('hideModal');
     setVisible(false);
   });
 

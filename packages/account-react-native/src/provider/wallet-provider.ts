@@ -26,7 +26,6 @@ export const createWalletProvider = (authServerUrl: string, chain: Chain) => {
   });
 
   provider.on('disconnect', () => {
-    console.log('disconnecting on provider');
     SophonAppStorage.clear();
   });
 

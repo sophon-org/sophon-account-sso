@@ -26,7 +26,6 @@ export const useWalletConnection = () => {
 
   useAccountEffect({
     onConnect(data: { address: Address }) {
-      console.log('🔥 sendMessage k1.login from eoa 1', address);
       sendMessage('k1.login', {
         address: data.address,
       });
@@ -39,22 +38,15 @@ export const useWalletConnection = () => {
   const connectWallet = useCallback(
     async (connectorName: string) => {
       try {
-        console.log('🔥 connectWallet', connectorName);
         if (!isConnected) {
-          console.log('not connected');
           const connector = connectors.find((c) => c.name === connectorName);
           if (connector) {
-            console.log('connector found');
             connect({ connector });
-            console.log('🔥 connector called');
           }
         } else {
-          console.log('🔥 sendMessage k1.login from eoa 2', address);
           sendMessage('k1.login', {
             address: address!,
           });
-
-          // setState?.(AuthState.AUTHENTICATED);
         }
       } catch (error) {
         console.error('❌ Wallet connection failed:', error);
@@ -69,11 +61,9 @@ export const useWalletConnection = () => {
       return;
     }
     if (isSuccess && walletClient && address) {
-      console.log('🔥 sendMessage k1.login from eoa 3', address);
       sendMessage('k1.login', {
         address: address!,
       });
-      // await createAccount("eoa", address);
     }
   }, [chainId, isSuccess, walletClient, address, actorRef]);
 

@@ -1,6 +1,7 @@
 import { postMessageToWebApp } from '@sophon-labs/account-message-bridge';
 import { useCallback, useMemo, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
 import { USER_AGENT } from './constants/user-agent';
 import { useModalVisibility } from './hooks/use-modal-visibility';
@@ -16,10 +17,10 @@ export const SophonWebView = ({
   url = defaultUrl,
   debugEnabled = false,
 }: SophonWebViewProps) => {
+  const { top, bottom } = useSafeAreaInsets();
   const webViewRef = useRef(null);
   const { visible } = useModalVisibility();
 
-  console.log('visible', visible);
   const containerStyles = {
     ...styles.container,
     ...(visible ? styles.show : styles.hide),
@@ -30,7 +31,6 @@ export const SophonWebView = ({
   useUIEventHandler(
     'showModal',
     useCallback(() => {
-      console.log('!!!!!!!!!!!! showModal INternal');
       postMessageToWebApp(webViewRef, 'openModal', {});
     }, []),
   );
@@ -38,7 +38,6 @@ export const SophonWebView = ({
   useUIEventHandler(
     'outgoingRpc',
     useCallback((payload) => {
-      console.log('!!!!!!!!!!!! outgoingRpc INternal');
       // biome-ignore lint/suspicious/noExplicitAny: future check
       postMessageToWebApp(webViewRef, 'rpc', payload as any);
     }, []),
@@ -50,8 +49,7 @@ export const SophonWebView = ({
         key={key}
         ref={webViewRef}
         source={{ uri: defaultUrl }}
-        style={styles.webview}
-        // containerStyles={containerStyles}
+        style={{ ...styles.webview, paddingTop: top, paddingBottom: bottom }}
         hideKeyboardAccessoryView={true}
         userAgent={USER_AGENT}
         webviewDebuggingEnabled={debugEnabled}
@@ -59,7 +57,6 @@ export const SophonWebView = ({
         onLoadStart={() => console.log('load start')}
         onLoad={() => console.log('load')}
         onMessage={(event) => {
-          console.log('>>>>>>>>>>>> message', event.nativeEvent.data);
           const { action, payload } = JSON.parse(event.nativeEvent.data);
           if (action === 'closeModal') {
             sendUIMessage('hideModal', payload);

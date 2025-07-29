@@ -73,7 +73,6 @@ export default function TransactionRequestView() {
             <button
               type="button"
               onClick={async () => {
-                console.log(transactionRequest);
                 const availableAddress =
                   account.address || primaryWallet?.address;
                 if (!availableAddress) {

@@ -16,14 +16,12 @@ export class WebViewCommunicator implements Communicator {
   >();
 
   postMessage = async (message: Message) => {
-    console.log('postMessage', message);
     await this.waitContextToBeReady();
     sendUIMessage('outgoingRpc', message);
   };
   postRequestAndWaitForResponse = async <M extends Message>(
     request: Message & { id: NonNullable<Message['id']> },
   ): Promise<M> => {
-    console.log('$$$$$$$$$$$$$$$$ postRequestAndWaitForResponse', request);
     const responsePromise = this.onMessage<M>(
       ({ requestId }) => requestId === request.id,
     );
@@ -33,20 +31,16 @@ export class WebViewCommunicator implements Communicator {
   onMessage = async <M extends Message>(
     predicate: (_: Partial<M>) => boolean,
   ): Promise<M> => {
-    console.log('!!!!!!!!!!!! onMessage', predicate);
     return new Promise((resolve, reject) => {
       const listener = (payload: SophonUIActions['incomingRpc']) => {
-        console.log('!!!!!!!!!!!! onMessage listener', payload);
         // only act if the message target hits the given predicate
         if (predicate(payload as Partial<M>)) {
-          console.log('!!!!!!!!!!!! onMessage resolved', payload);
           resolve(payload as M);
           deregister();
           this.listeners.delete(listener);
         }
 
         setTimeout(() => {
-          console.log('<<>><<>><<>> onMessage timeout', payload);
           deregister();
           this.listeners.delete(listener);
           reject(new Error('Request timeout'));
@@ -68,11 +62,9 @@ export class WebViewCommunicator implements Communicator {
 
   private waitContextToBeReady = async () => {
     if (this.isReady) {
-      console.log('!!!!!!!!!!!! waitContextToBeReady already ready');
       sendUIMessage('showModal', {});
       return;
     }
-    console.log('!!!!!!!!!!!! waitContextToBeReady');
 
     await new Promise((resolve, reject) => {
       const unregister = registerUIEventHandler('modalReady', () => {
@@ -90,7 +82,6 @@ export class WebViewCommunicator implements Communicator {
     });
   };
   ready = async () => {
-    console.log('!!!!!!!!!!!! ready');
     await this.waitContextToBeReady();
   };
 }

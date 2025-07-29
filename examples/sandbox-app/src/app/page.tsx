@@ -25,8 +25,6 @@ export default function Home() {
   } = useSignTypedData();
   const { sendTransaction, isPending: isSendPending } = useSendTransaction();
 
-  console.log('signature', signatureData, signError, isSignPending);
-
   useEffect(() => {
     setMounted(true);
   }, []);

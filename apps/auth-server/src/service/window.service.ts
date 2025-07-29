@@ -100,7 +100,6 @@ const webViewWindowService: WindowCommunicationService = {
   },
 
   listen: (callback: (message: unknown) => void) => {
-    console.log('listen webview');
     return registerRNHandler('rpc', callback);
   },
 };

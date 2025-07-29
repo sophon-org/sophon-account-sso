@@ -3,9 +3,9 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@sophon-labs/account-eip6963/testnet';
 import { ConnectKitProvider, getDefaultConfig } from 'connectkit';
-import React, { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { sophonTestnet } from 'viem/chains';
-import { createConfig, http, State, WagmiProvider } from 'wagmi';
+import { createConfig, http, type State, WagmiProvider } from 'wagmi';
 
 export const projectId = '760fb7a448e58431c9cfbab80743ab1c';
 

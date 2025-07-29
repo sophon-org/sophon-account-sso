@@ -219,6 +219,7 @@ export default function RootPage() {
     );
   }
 
+  // TODO: settings state
   // if (authState === AuthState.SETTINGS) {
   //   return (
   //     <Drawer
@@ -249,93 +250,6 @@ export default function RootPage() {
   //         goToAuthenticated();
   //       }}
   //     />
-  //   );
-  // }
-
-  // if (authState === AuthState.SUCCESS && account) {
-  //   const handleDisconnect = () => {
-  //     logout();
-  //     goToNotAuthenticated();
-  //   };
-
-  //   return (
-  //     <Sheet
-  //       open={open}
-  //       modal={true}
-  //       onOpenChange={(open) => {
-  //         setOpen(open);
-  //         if (!open) {
-  //           windowService.close();
-  //         }
-  //       }}
-  //     >
-  //       <SheetContent side="bottom" className="rounded-t-3xl">
-  //         <SheetHeader hidden={true}>
-  //           <SheetTitle>Sophon Create Success Modal</SheetTitle>
-  //         </SheetHeader>
-  //         <CreateSuccessView
-  //           accountAddress={account.address}
-  //           sessionPreferences={sessionPreferences}
-  //           onUseAccount={async () => {
-  //             await handleAuthSuccessResponse(
-  //               { address: account.address },
-  //               incomingRequest!,
-  //               sessionPreferences,
-  //             );
-  //             windowService.close();
-  //           }}
-  //           onDisconnect={handleDisconnect}
-  //         />
-  //       </SheetContent>
-  //     </Sheet>
-  //   );
-  // }
-
-  // if (account) {
-  //   return (
-  //     <Drawer
-  //       open={open}
-  //       onOpenChange={(open) => {
-  //         setOpen(open);
-  //         if (!open) {
-  //           windowService.close();
-  //         }
-  //       }}
-  //       showHeader={false}
-  //     >
-  //       <NotAuthenticatedView
-  //         onEmailAuth={requestOTP}
-  //         onSocialAuth={connectSocial}
-  //       />
-  //     </Drawer>
-  //   );
-  // }
-
-  // if (authState === AuthState.ERROR) {
-  //   return (
-  //     <Dialog
-  //       title="Sophon Auth"
-  //       onClose={() => console.log('close')}
-  //       onBack={() => console.log('back')}
-  //       className="relative"
-  //     >
-  //       <div className="flex h-screen w-screen items-center justify-center flex-col">
-  //         <div className="text-center">
-  //           <div className="text-6xl mb-4">❌</div>
-  //           <h1 className="text-2xl font-bold mb-2">Error!</h1>
-  //           <p className="text-gray-600 mb-4">
-  //             {context.error || 'Something went wrong'}
-  //           </p>
-  //           <button
-  //             type="button"
-  //             onClick={goToNotAuthenticated}
-  //             className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-  //           >
-  //             Try Again
-  //           </button>
-  //         </div>
-  //       </div>
-  //     </Dialog>
   //   );
   // }
 

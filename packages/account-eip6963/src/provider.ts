@@ -4,6 +4,7 @@ import type { EIP1193Provider } from './types';
 
 // Simple state management
 let currentAccounts: string[] = [];
+// biome-ignore lint/suspicious/noExplicitAny: TODO: review this
 const eventListeners = new Map<string, ((...args: any[]) => void)[]>();
 
 // The main provider function
@@ -22,6 +23,7 @@ export function createSophonEIP1193Provider(
   });
 
   // Helper to make requests through the existing communicator
+  // biome-ignore lint/suspicious/noExplicitAny: TODO: review this
   async function makeAuthRequest(method: string, params?: any): Promise<any> {
     const request = {
       id: crypto.randomUUID(),
@@ -69,6 +71,7 @@ export function createSophonEIP1193Provider(
           console.log('EIP-1193 wallet_switchEthereumChain:', method, params);
           // Handle chain switching requests - for now just return success
           // since we only support Sophon testnet
+          // biome-ignore lint/suspicious/noExplicitAny: TODO: Review this
           const targetChainId = (params as any)?.[0]?.chainId;
           if (targetChainId === '0x1fa72e78') {
             return null; // Success
@@ -99,6 +102,7 @@ export function createSophonEIP1193Provider(
       }
     },
 
+    // biome-ignore lint/suspicious/noExplicitAny: TODO: Review this
     on(eventName: string, callback: (...args: any[]) => void) {
       if (!eventListeners.has(eventName)) {
         eventListeners.set(eventName, []);

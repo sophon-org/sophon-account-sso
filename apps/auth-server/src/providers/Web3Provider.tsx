@@ -37,13 +37,11 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
         walletConnectors: [EthereumWalletConnectors],
         events: {
           // This is called when the user clicks on the login button
-          onAuthInit(user) {
-            console.log('🔥 onAuthInit', user);
+          onAuthInit() {
             sendMessage('k1.login.init', null);
           },
           // This is called on the callback processing from social login
           onAuthFlowOpen() {
-            console.log('🔥 onAuthFlowOpen');
             sendMessage('k1.login.init', null);
           },
           onEmbeddedWalletCreated(credential, user) {
@@ -54,7 +52,6 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
             // });
           },
           onWalletAdded(user) {
-            console.log('🔥 onWalletAdded', user);
             sendMessage('k1.login', {
               address: user.wallet.address as `0x${string}`,
               wallet: user.wallet,
@@ -62,10 +59,7 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
           },
           // This is called after everything is validated and the user should be considered authenticated
           onAuthSuccess(user) {
-            console.log('🔥 onAuthSuccess', user);
-
             if (user.primaryWallet) {
-              console.log('🔥 onAuthSuccess primaryWallet', user.primaryWallet);
               sendMessage('k1.login', {
                 address: user.primaryWallet!.address as `0x${string}`,
                 wallet: user.primaryWallet!,
@@ -73,8 +67,7 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
             }
           },
           // This is called when the user
-          onLogout(user) {
-            console.log('🔥 onLogout', user);
+          onLogout() {
             sendMessage('k1.logout', null);
           },
         },

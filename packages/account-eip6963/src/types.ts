@@ -10,6 +10,7 @@ export interface EIP1193Provider {
     method: string;
     params?: unknown[] | object;
   }) => Promise<unknown>;
+  // biome-ignore lint/suspicious/noExplicitAny: TODO: Review this
   on(eventName: string, callback: (...args: any[]) => void): void;
 }
 
