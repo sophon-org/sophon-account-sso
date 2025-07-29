@@ -1,9 +1,11 @@
 name: Lint
 
 on:
-  push:
   pull_request:
   workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   setup:
@@ -16,7 +18,7 @@ jobs:
         with:
           node-version: 22
 
-      - name: 📥 Monorepo install
+      - name: 📥 dependency install with cache
         uses: ./.github/actions/yarn-install
 
   lint:
