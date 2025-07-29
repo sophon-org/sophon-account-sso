@@ -16,11 +16,11 @@
     "test:e2e:dev": "npm-run-all --parallel dev test:e2e:ui"
   },
   "dependencies": {
-    "@dynamic-labs/ethereum": "4.20.17",
-    "@dynamic-labs/ethereum-aa-zksync": "4.20.17",
-    "@dynamic-labs/sdk-react-core": "4.20.17",
-    "@dynamic-labs/wagmi-connector": "4.20.17",
-    "@dynamic-labs/message-transport": "4.20.17",
+    "@dynamic-labs/ethereum": "4.25.7",
+    "@dynamic-labs/ethereum-aa-zksync": "4.25.7",
+    "@dynamic-labs/sdk-react-core": "4.25.7",
+    "@dynamic-labs/wagmi-connector": "4.25.7",
+    "@dynamic-labs/message-transport": "4.25.7",
     "@radix-ui/react-dialog": "^1.1.14",
     "@radix-ui/react-tooltip": "^1.2.7",
     "@simplewebauthn/server": "^13.1.2",
