@@ -25,6 +25,7 @@
     "@radix-ui/react-tooltip": "^1.2.7",
     "@simplewebauthn/server": "^13.1.2",
     "@sophon-labs/account-message-bridge": "2.0.0-next.0",
+    "@sophon-labs/zksync-sso": "0.0.1",
     "@t3-oss/env-nextjs": "^0.13.8",
     "@tanstack/react-query": "^5.81.2",
     "@xstate/react": "^6.0.0",
@@ -42,7 +43,6 @@
     "viem": "^2.31.3",
     "wagmi": "^2.15.6",
     "xstate": "5.20.1",
-    "zksync-sso": "^0.3.3",
     "zod": "^3.25.71"
   },
   "devDependencies": {
