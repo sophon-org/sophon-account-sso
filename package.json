@@ -1,5 +1,5 @@
 {
-  "name": "@sophon-labs/sso",
+  "name": "@sophon-labs/account-root",
   "version": "0.0.1",
   "private": true,
   "workspaces": [
@@ -22,11 +22,16 @@
     "install:all": "npm install",
     "------------------------- TESTING -------------------------": "",
     "test": "yarn workspaces run test",
-    "test:ci": "yarn workspaces run test:ci"
+    "test:ci": "yarn workspaces run test:ci",
+    "------------------------- RELEASE -------------------------": "",
+    "release:generate": "changeset",
+    "release:version": "changeset version",
+    "release:publish": "yarn publish -r --no-git-checks"
   },
   "devDependencies": {
     "typescript": "^5.0.0",
-    "@biomejs/biome": "2.1.2"
+    "@biomejs/biome": "2.1.2",
+    "@changesets/cli": "^2.29.5"
   },
   "dependencies": {},
   "resolutions": {

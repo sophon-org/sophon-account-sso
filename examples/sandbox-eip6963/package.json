@@ -1,5 +1,5 @@
 {
-  "name": "sandbox-eip6963",
+  "name": "@sophon-labs/examples-sandbox-eip6963",
   "version": "0.1.0",
   "private": true,
   "scripts": {
