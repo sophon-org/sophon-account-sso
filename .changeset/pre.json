@@ -1,0 +1,14 @@
+{
+  "mode": "pre",
+  "tag": "next",
+  "initialVersions": {
+    "@sophon-labs/account-auth-server": "0.0.1",
+    "@sophon-labs/account-connector": "1.0.0",
+    "@sophon-labs/account-eip6963": "1.0.0",
+    "@sophon-labs/account-message-bridge": "1.0.0",
+    "@sophon-labs/account-react-native": "1.0.0"
+  },
+  "changesets": [
+    "eager-readers-push"
+  ]
+}
