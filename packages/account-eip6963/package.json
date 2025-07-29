@@ -1,6 +1,6 @@
 {
   "name": "@sophon-labs/account-eip6963",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "EIP-6963 provider for Sophon SSO",
   "license": "MIT",
   "author": "Sophon Team",

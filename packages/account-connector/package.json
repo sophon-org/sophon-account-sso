@@ -1,7 +1,7 @@
 {
   "name": "@sophon-labs/account-connector",
   "description": "Web3 wallet connector with SSO features",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "license": "MIT",
   "author": "Sophon Team",
   "main": "dist/index.cjs",
