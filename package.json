@@ -6,9 +6,9 @@
     "packages/*",
     "apps/*"
   ],
-  "packageManager": "yarn@1.22.22",
+  "packageManager": "yarn@4.9.2",
   "engines": {
-    "node": ">=22.12.0"
+    "node": ">=20.9.0"
   },
   "scripts": {
     "------------------------- BUILDING ------------------------": "",
@@ -28,11 +28,10 @@
     "release:pre:exit": "changeset pre exit"
   },
   "devDependencies": {
-    "typescript": "^5.0.0",
     "@biomejs/biome": "2.1.2",
-    "@changesets/cli": "^2.29.5"
+    "@changesets/cli": "^2.29.5",
+    "typescript": "^5.0.0"
   },
-  "dependencies": {},
   "resolutions": {
     "react-native-webview": "13.15.0"
   }
