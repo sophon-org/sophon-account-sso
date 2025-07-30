@@ -1,5 +1,5 @@
 {
-  "name": "@sophon-labs/account-auth-server",
+  "name": "@sophon-labs/account-server",
   "version": "0.0.1",
   "private": true,
   "scripts": {

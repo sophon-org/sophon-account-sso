@@ -7,5 +7,5 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["@sophon-labs/account-auth-server"]
+  "ignore": ["@sophon-labs/account-server"]
 }
