@@ -31,4 +31,4 @@ jobs:
     needs: [setup]
     steps:
       - name: Biome Link
-        run: pnpm run check
+        run: yarn run check
