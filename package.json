@@ -34,6 +34,6 @@
   },
   "resolutions": {
     "react-native-webview": "13.15.0",
-    "zksync-sso": "ssh://git@github.com:sophon-org/zksync-sso-preview#main"
+    "zksync-sso": "github:sophon-org/zksync-sso-preview#main"
   }
 }
