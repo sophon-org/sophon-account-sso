@@ -1,41 +1,7 @@
-import fs from 'node:fs';
-import path from 'node:path';
 import { type NextRequest, NextResponse } from 'next/server';
 import { type Address, isAddress } from 'viem';
 import { deployAccount } from '@/lib/account';
-
-const DATABASE_PATH = path.join(process.cwd(), 'database.json');
-if (!fs.existsSync(DATABASE_PATH)) {
-  fs.writeFileSync(DATABASE_PATH, JSON.stringify([]));
-}
-
-type DatabaseSchema = {
-  address: Address;
-  owners: Address[];
-}[];
-
-export async function GET(
-  _req: NextRequest,
-  { params }: { params: Promise<{ ownerAddress: Address }> },
-) {
-  const ownerAddress = (await params).ownerAddress?.toLowerCase() as Address;
-  if (!isAddress(ownerAddress)) {
-    return NextResponse.json(
-      { message: `Invalid address: ${ownerAddress}` },
-      { status: 400 },
-    );
-  }
-
-  const database = JSON.parse(
-    fs.readFileSync(DATABASE_PATH, 'utf8'),
-  ) as DatabaseSchema;
-  const signerOf = database.filter((sa) => sa.owners.includes(ownerAddress));
-
-  return NextResponse.json(
-    { accounts: signerOf.map((sm) => sm.address) },
-    { status: 200 },
-  );
-}
+import { hyperindexService } from '@/service/hyperindex.service';
 
 export async function POST(
   _req: NextRequest,
@@ -49,11 +15,9 @@ export async function POST(
     );
   }
 
-  const database = JSON.parse(
-    fs.readFileSync(DATABASE_PATH, 'utf8'),
-  ) as DatabaseSchema;
-  const signerOf = database.filter((sa) => sa.owners.includes(ownerAddress));
-  if (signerOf.length > 0) {
+  // TODO: here we need to check if the account is deployed or not, not if the user is a signer
+  const accounts = await hyperindexService.getOwnedSmartAccounts(ownerAddress);
+  if (accounts.length > 0) {
     return NextResponse.json(
       { message: `Account already exists: ${ownerAddress}` },
       { status: 400 },
@@ -61,9 +25,5 @@ export async function POST(
   }
 
   const deployed = await deployAccount(ownerAddress);
-
-  database.push({ address: deployed.address, owners: [ownerAddress] });
-  fs.writeFileSync(DATABASE_PATH, JSON.stringify(database, null, 2));
-
   return NextResponse.json({ accounts: [deployed.address] }, { status: 200 });
 }

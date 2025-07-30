@@ -106,7 +106,7 @@ export const useAccountCreate = () => {
           );
         }
 
-        const { accounts } = await getsSmartAccounts(
+        const accounts = await getsSmartAccounts(
           connectedAddress as `0x${string}`,
         );
         if (accounts.length > 0) {

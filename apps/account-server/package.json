@@ -8,7 +8,7 @@
     "start": "next start",
     "postinstall": "npx --yes playwright install",
     "------------------------- TESTING -------------------------": "",
-    "test": "vitest --watch false --passWithNoTests",
+    "test": "dotenvx run -f .env -- vitest --watch false --passWithNoTests",
     "test:dev": "vitest --watch true --passWithNoTests",
     "test:ci": "vitest --watch false --passWithNoTests --coverage",
     "test:e2e:ci": "playwright test",
@@ -46,6 +46,7 @@
     "zod": "^3.25.71"
   },
   "devDependencies": {
+    "@dotenvx/dotenvx": "^1.48.4",
     "@playwright/test": "^1.54.1",
     "@tailwindcss/postcss": "^4",
     "@testing-library/dom": "^10.4.0",
