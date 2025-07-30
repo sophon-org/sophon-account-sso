@@ -1,3 +1,4 @@
+import { shortenAddress } from '@sophon-labs/account-core';
 import VerificationImage from '@/components/ui/verification-image';
 import { useAccountContext } from '@/hooks/useAccountContext';
 
