@@ -26,7 +26,7 @@
     "release:publish": "changeset publish",
     "release:pre:enter": "changeset pre enter next",
     "release:pre:exit": "changeset pre exit"
-  },
+  }, 
   "devDependencies": {
     "@biomejs/biome": "2.1.2",
     "@changesets/cli": "^2.29.5",
