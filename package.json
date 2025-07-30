@@ -22,7 +22,7 @@
     "test:ci": "yarn workspaces run test:ci",
     "------------------------- RELEASE -------------------------": "",
     "release:generate": "changeset",
-    "release:version": "changeset version",
+    "release:version": "changeset version && yarn",
     "release:publish": "changeset publish",
     "release:pre:enter": "changeset pre enter next",
     "release:pre:exit": "changeset pre exit"
