@@ -9,16 +9,16 @@ import { sendUIMessage, useUIEventHandler } from './messaging/ui';
 
 const defaultUrl = 'http://localhost:3000/webview';
 
-export interface SophonWebViewProps {
+export interface SophonMainViewProps {
   url?: string;
   debugEnabled?: boolean;
 }
-export const SophonWebView = ({
+export const SophonMainView = ({
   url = defaultUrl,
   debugEnabled = false,
-}: SophonWebViewProps) => {
+}: SophonMainViewProps) => {
   const { top, bottom } = useSafeAreaInsets();
-  const webViewRef = useRef(null);
+  const webViewRef = useRef<WebView>(null);
   const { visible } = useModalVisibility();
 
   const containerStyles = {

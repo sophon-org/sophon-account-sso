@@ -4,4 +4,4 @@ export * from './hooks';
 export * from './messaging';
 export * from './provider';
 export * from './utils';
-export * from './webview';
+export * from './main-view';
