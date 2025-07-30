@@ -39,7 +39,7 @@ jobs:
         with:
           commit: "release: @sophon-labs account packages"
           title: "release: @sophon-labs account packages"
-          version: pnpm release:version
-          publish: pnpm release:publish
+          version: yarn run release:version
+          publish: yarn run release:publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
