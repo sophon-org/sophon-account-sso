@@ -1,4 +1,4 @@
-# @sophon-labs/account-connector
+# @sophon-labs/account-core
 
 ## 2.0.0-next.1
 
