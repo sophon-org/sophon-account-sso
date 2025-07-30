@@ -1,6 +1,6 @@
 {
-  "name": "@sophon-labs/account-connector",
-  "description": "Web3 wallet connector with SSO features",
+  "name": "@sophon-labs/account-core",
+  "description": "Core package for the Sophon Account with common utilities",
   "version": "2.0.0-next.1",
   "license": "MIT",
   "author": "Sophon Team",
@@ -38,13 +38,5 @@
     "vite": "^7.0.5",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4"
-  },
-  "dependencies": {
-    "@sophon-labs/account-core": "2.0.0-next.1",
-    "zksync-sso": "0.3.3"
-  },
-  "peerDependencies": {
-    "@wagmi/core": "^2.17.3",
-    "viem": "^2.31.3"
   }
 }

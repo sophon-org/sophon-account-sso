@@ -10,7 +10,7 @@ export default function LoginRequestView() {
       <VerificationImage icon={<IconSophon className="w-24 h-24" />} />
       <div className="flex flex-col items-center justify-center">
         <h5 className="text-2xl font-bold">Sign in to</h5>
-        <p className="">https://localhost:3000</p>
+        <p className="hidden">https://my.staging.sophon.xyz</p>
       </div>
       <MessageContainer>
         <div className="flex flex-col gap-16 text-base text-black">

@@ -1,3 +1,7 @@
+import {
+  AccountServerURL,
+  type SophonNetworkType,
+} from '@sophon-labs/account-core';
 import { createContext, useMemo, useState } from 'react';
 import {
   type Address,
@@ -30,25 +34,25 @@ export interface SophonAccount {
 
 export const SophonContextProvider = ({
   children,
-  isMainnet,
+  network,
   authServerUrl,
 }: {
   children: React.ReactNode;
-  isMainnet?: boolean;
+  network: SophonNetworkType;
   authServerUrl?: string;
 }) => {
   const [account, setAccount] = useState<SophonAccount>();
   const chain = useMemo(
-    () => (isMainnet ? sophon : sophonTestnet),
-    [isMainnet],
+    () => (network === 'mainnet' ? sophon : sophonTestnet),
+    [network],
   );
   const provider = useMemo(() => {
     const provider = createWalletProvider(
-      authServerUrl ?? 'http://localhost:3000',
+      authServerUrl ?? AccountServerURL[network],
       chain,
     );
     return provider;
-  }, [authServerUrl, chain]);
+  }, [authServerUrl, chain, network]);
 
   const walletClient = createWalletClient({
     chain: chain,
@@ -62,14 +66,14 @@ export const SophonContextProvider = ({
 
   const contextValue = useMemo<SophonContextConfig>(
     () => ({
-      mainnet: isMainnet ?? false,
+      mainnet: network === 'mainnet',
       chain,
-      authServerUrl: authServerUrl ?? 'http://localhost:3000',
+      authServerUrl: authServerUrl ?? AccountServerURL[network],
       walletClient,
       account,
       setAccount,
     }),
-    [isMainnet, authServerUrl, walletClient, account, chain],
+    [network, authServerUrl, walletClient, account, chain],
   );
 
   return (

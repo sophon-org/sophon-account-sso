@@ -1,5 +1,8 @@
+import {
+  AccountServerURL,
+  type SophonNetworkType,
+} from '@sophon-labs/account-core';
 import { PopupCommunicator } from 'zksync-sso/communicator';
-import { AUTH_SERVER_URLS } from './constants';
 import type { EIP1193Provider } from './types';
 
 // Simple state management
@@ -9,9 +12,9 @@ const eventListeners = new Map<string, ((...args: any[]) => void)[]>();
 
 // The main provider function
 export function createSophonEIP1193Provider(
-  network: 'mainnet' | 'testnet' = 'testnet',
+  network: SophonNetworkType = 'testnet',
 ): EIP1193Provider {
-  const communicator = new PopupCommunicator(AUTH_SERVER_URLS[network], {
+  const communicator = new PopupCommunicator(AccountServerURL[network], {
     width: 360,
     height: 800,
     calculatePosition(width, height) {

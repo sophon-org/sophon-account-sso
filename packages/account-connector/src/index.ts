@@ -1,24 +1,32 @@
+import { AccountServerURL } from '@sophon-labs/account-core';
 import { type Communicator, PopupCommunicator } from 'zksync-sso/communicator';
 import { zksyncSsoConnector } from 'zksync-sso/connector';
 
-// biome-ignore lint/suspicious/noExplicitAny: TODO remove later
-export const sophonSsoConnector: any = (options?: {
-  // biome-ignore lint/suspicious/noExplicitAny: TODO remove later
-  session?: any; // TODO: type this properly later
+type NetworkType = 'mainnet' | 'testnet';
+
+interface SophonSsoConnectorOptions {
+  // biome-ignore lint/suspicious/noExplicitAny: TODO: review this
+  session?: any;
   paymaster?: `0x${string}`;
   communicator?: Communicator;
-}) => {
+}
+
+// biome-ignore lint/suspicious/noExplicitAny: TODO remove later
+export const sophonSsoConnector: any = (
+  network: NetworkType = 'testnet',
+  options?: SophonSsoConnectorOptions,
+) => {
   const connector = zksyncSsoConnector({
-    authServerUrl: 'http://localhost:3000', // auth server
+    authServerUrl: AccountServerURL[network],
     metadata: {
-      name: 'Sophon SSO',
+      name: network === 'mainnet' ? 'Sophon Wallet' : 'Sophon Testnet Wallet',
       icon: '/sophon-icon.png',
     },
-    paymasterHandler: async () => ({
-      paymaster:
-        options?.paymaster || '0x98546B226dbbA8230cf620635a1e4ab01F6A99B2',
-      paymasterInput: '0x',
-    }),
+    // paymasterHandler: async () => ({
+    //   paymaster:
+    //     options?.paymaster || '0x98546B226dbbA8230cf620635a1e4ab01F6A99B2',
+    //   paymasterInput: '0x',
+    // }),
     // Remove session config to test auth-server mode
     // session: options?.session || {
     //   expiresAt: BigInt(Math.floor(Date.now() / 1000) + 60 * 60 * 24), // 24 hours
@@ -32,7 +40,7 @@ export const sophonSsoConnector: any = (options?: {
     // },
     communicator:
       options?.communicator ||
-      new PopupCommunicator('http://localhost:3000', {
+      new PopupCommunicator(AccountServerURL[network], {
         width: 360,
         height: 800,
         calculatePosition(width, height) {

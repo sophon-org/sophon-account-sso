@@ -1,4 +1,9 @@
 'use server';
+
+const LOG_ENABLED = false;
+
 export async function serverLog(message: string) {
-  console.log('🔥 Remote Log:', message);
+  if (LOG_ENABLED) {
+    console.log('🔥 Remote Log:', message);
+  }
 }

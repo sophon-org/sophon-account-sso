@@ -6,7 +6,7 @@ import { WebViewCommunicator } from './webview-communicator';
 export const createWalletProvider = (authServerUrl: string, chain: Chain) => {
   const provider = new WalletProvider({
     metadata: {
-      name: 'Sophon SSO',
+      name: 'Sophon Wallet',
       icon: '/sophon-icon.png',
       // configData: parameters.metadata?.configData,
     },
@@ -17,10 +17,10 @@ export const createWalletProvider = (authServerUrl: string, chain: Chain) => {
       [chain.id]: http(),
     },
     chains: [chain],
-    paymasterHandler: async () => ({
-      paymaster: '0x98546B226dbbA8230cf620635a1e4ab01F6A99B2',
-      paymasterInput: '0x',
-    }),
+    // paymasterHandler: async () => ({
+    //   paymaster: '0x98546B226dbbA8230cf620635a1e4ab01F6A99B2',
+    //   paymasterInput: '0x',
+    // }),
     customCommunicator: new WebViewCommunicator(),
     storage: SophonAppStorage,
   });

@@ -3,11 +3,11 @@ import { useCallback, useMemo, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
-import { USER_AGENT } from './constants/user-agent';
-import { useModalVisibility } from './hooks/use-modal-visibility';
-import { sendUIMessage, useUIEventHandler } from './messaging/ui';
+import { USER_AGENT } from '../constants/user-agent';
+import { useModalVisibility } from '../hooks/use-modal-visibility';
+import { sendUIMessage, useUIEventHandler } from '../messaging/ui';
 
-const defaultUrl = 'http://localhost:3000/webview';
+const defaultUrl = 'https://my.staging.sophon.xyz/embedded';
 
 export interface SophonMainViewProps {
   url?: string;

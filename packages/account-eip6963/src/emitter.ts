@@ -1,9 +1,9 @@
-import { SOPHON_ICON } from './constants';
+import { SophonIcon, type SophonNetworkType } from '@sophon-labs/account-core';
 import { announceEip6963Provider } from './eip6963';
 import { createSophonEIP1193Provider } from './provider';
 
 export function createSophonEIP6963Emitter(
-  network: 'mainnet' | 'testnet' = 'testnet',
+  network: SophonNetworkType = 'testnet',
 ) {
   // Skip on server-side
   if (typeof window === 'undefined') {
@@ -17,12 +17,9 @@ export function createSophonEIP6963Emitter(
   announceEip6963Provider({
     info: {
       uuid: network === 'mainnet' ? 'sophon' : `sophon-testnet`,
-      name: 'Sophon SSO',
-      icon: SOPHON_ICON,
-      rdns:
-        network === 'mainnet'
-          ? 'xyz.sophon.account'
-          : `xyz.sophon.account-testnet`,
+      name: network === 'mainnet' ? 'Sophon Wallet' : 'Sophon Testnet Wallet',
+      icon: SophonIcon,
+      rdns: network === 'mainnet' ? 'xyz.sophon.my' : `xyz.sophon.staging.my`,
     },
     provider,
   });
