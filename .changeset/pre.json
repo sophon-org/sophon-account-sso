@@ -8,5 +8,8 @@
     "@sophon-labs/account-message-bridge": "1.0.0",
     "@sophon-labs/account-react-native": "1.0.0"
   },
-  "changesets": ["eager-readers-push"]
+  "changesets": [
+    "eager-mugs-teach",
+    "eager-readers-push"
+  ]
 }
