@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 2.0.0-next.2
+
+### Patch Changes
+
+- 77d0ab0: Updating dependencies, adding core package
+
 ## 2.0.0-next.1
 
 ### Patch Changes

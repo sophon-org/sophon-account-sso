@@ -1,6 +1,5 @@
 import VerificationImage from '@/components/ui/verification-image';
 import { useAccountContext } from '@/hooks/useAccountContext';
-import { shortenAddress } from '@/lib/formatting';
 
 export default function LoginSuccessView() {
   const { account } = useAccountContext();

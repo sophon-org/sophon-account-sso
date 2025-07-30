@@ -15,6 +15,7 @@ import type { WalletProvider } from 'zksync-sso';
 import { createWalletProvider } from '../provider';
 
 export interface SophonContextConfig {
+  serverUrl: string;
   walletClient?: WalletClient;
   account?: SophonAccount;
   setAccount: (account?: SophonAccount) => void;
@@ -24,6 +25,7 @@ export interface SophonContextConfig {
 
 export const SophonContext = createContext<SophonContextConfig>({
   chain: sophonTestnet,
+  serverUrl: 'http://localhost:3000/embedded',
   setAccount: () => {},
 });
 
@@ -41,18 +43,19 @@ export const SophonContextProvider = ({
   network: SophonNetworkType;
   authServerUrl?: string;
 }) => {
+  const serverUrl = useMemo(
+    () => authServerUrl ?? AccountServerURL[network],
+    [authServerUrl, network],
+  );
   const [account, setAccount] = useState<SophonAccount>();
   const chain = useMemo(
     () => (network === 'mainnet' ? sophon : sophonTestnet),
     [network],
   );
   const provider = useMemo(() => {
-    const provider = createWalletProvider(
-      authServerUrl ?? AccountServerURL[network],
-      chain,
-    );
+    const provider = createWalletProvider(serverUrl, chain);
     return provider;
-  }, [authServerUrl, chain, network]);
+  }, [serverUrl, chain]);
 
   const walletClient = createWalletClient({
     chain: chain,
@@ -62,18 +65,18 @@ export const SophonContextProvider = ({
       },
     }),
   });
-  // }, [provider, chain]);
 
   const contextValue = useMemo<SophonContextConfig>(
     () => ({
       mainnet: network === 'mainnet',
       chain,
-      authServerUrl: authServerUrl ?? AccountServerURL[network],
+      authServerUrl: serverUrl,
       walletClient,
       account,
       setAccount,
+      serverUrl,
     }),
-    [network, authServerUrl, walletClient, account, chain],
+    [network, serverUrl, walletClient, account, chain],
   );
 
   return (

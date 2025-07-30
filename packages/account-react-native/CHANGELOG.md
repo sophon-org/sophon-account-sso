@@ -1,5 +1,14 @@
 # @sophon-labs/account-react-native
 
+## 2.0.0-next.2
+
+### Patch Changes
+
+- 77d0ab0: Updating dependencies, adding core package
+- Updated dependencies [77d0ab0]
+  - @sophon-labs/account-core@2.0.0-next.2
+  - @sophon-labs/account-message-bridge@2.0.0-next.2
+
 ## 2.0.0-next.1
 
 ### Patch Changes

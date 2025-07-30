@@ -1,22 +1,20 @@
 import { postMessageToWebApp } from '@sophon-labs/account-message-bridge';
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
 import { USER_AGENT } from '../constants/user-agent';
 import { useModalVisibility } from '../hooks/use-modal-visibility';
+import { useSophonContext } from '../hooks/use-sophon-context';
 import { sendUIMessage, useUIEventHandler } from '../messaging/ui';
 
-const defaultUrl = 'https://my.staging.sophon.xyz/embedded';
-
 export interface SophonMainViewProps {
-  url?: string;
   debugEnabled?: boolean;
 }
 export const SophonMainView = ({
-  url = defaultUrl,
   debugEnabled = false,
 }: SophonMainViewProps) => {
+  const { serverUrl } = useSophonContext();
   const { top, bottom } = useSafeAreaInsets();
   const webViewRef = useRef<WebView>(null);
   const { visible } = useModalVisibility();
@@ -25,8 +23,6 @@ export const SophonMainView = ({
     ...styles.container,
     ...(visible ? styles.show : styles.hide),
   };
-
-  const key = useMemo(() => url.toString(), [url]);
 
   useUIEventHandler(
     'showModal',
@@ -46,9 +42,9 @@ export const SophonMainView = ({
   return (
     <View style={containerStyles}>
       <WebView
-        key={key}
+        key={serverUrl}
         ref={webViewRef}
-        source={{ uri: defaultUrl }}
+        source={{ uri: `${serverUrl}/embedded` }}
         style={{ ...styles.webview, paddingTop: top, paddingBottom: bottom }}
         hideKeyboardAccessoryView={true}
         userAgent={USER_AGENT}

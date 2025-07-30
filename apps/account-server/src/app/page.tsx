@@ -1,5 +1,6 @@
 'use client';
 
+import { shortenAddress } from '@sophon-labs/account-core';
 import { useEffect } from 'react';
 import { Dialog } from '@/components/dialog';
 import { Button } from '@/components/ui/button';
@@ -7,7 +8,6 @@ import { MainStateMachineContext } from '@/context/state-machine-context';
 import { sendMessage } from '@/events';
 import { useAccountContext } from '@/hooks/useAccountContext';
 import { useWalletConnection } from '@/hooks/useWalletConnection';
-import { shortenAddress } from '@/lib/formatting';
 import { serverLog } from '@/lib/server-log';
 import { windowService } from '@/service/window.service';
 import { CompletedView } from '@/views/CompletedView';
