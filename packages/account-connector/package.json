@@ -40,7 +40,7 @@
     "vitest": "^3.2.4"
   },
   "dependencies": {
-    "@sophon-labs/zksync-sso": "0.0.1"
+    "zksync-sso": "0.3.3"
   },
   "peerDependencies": {
     "@wagmi/core": "^2.17.3",

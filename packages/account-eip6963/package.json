@@ -31,7 +31,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@sophon-labs/zksync-sso": "0.0.1"
+    "zksync-sso": "0.3.3"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
