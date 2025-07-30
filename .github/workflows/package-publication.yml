@@ -27,7 +27,7 @@ jobs:
 
       # Build the packages
       - name: Build the packages
-        run: build:packages
+        run: yarn run build:packages
 
       # Set-up the .npmrc to authenticate with the npm registry
       - name: Setup npmrc
