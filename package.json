@@ -13,7 +13,7 @@
   "scripts": {
     "------------------------- BUILDING ------------------------": "",
     "build:all": "yarn workspaces run build",
-    "build:packages": "yarn workspace @sophon-labs/account-message-bridge run build && yarn workspace @sophon-labs/account-connector run build && yarn workspace @sophon-labs/account-eip6963 run build && yarn workspace @sophon-labs/account-react-native run build",
+    "build:packages": "yarn workspaces foreach -Apt --exclude @sophon-labs/account-server run build",
     "------------------------- LINTING -------------------------": "",
     "check": "biome check .",
     "check:fix": "biome check --write .",

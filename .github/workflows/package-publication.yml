@@ -1,0 +1,45 @@
+name: "Release @sophon-labs/* account packages"
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  publish-packages:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: 📥 dependency installation
+        uses: ./.github/actions/yarn-install
+
+      # Build the packages
+      - name: Build the packages
+        run: build:packages
+
+      # Set-up the .npmrc to authenticate with the npm registry
+      - name: Setup npmrc
+        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+
+      # Publish packages to npm
+      - name: 🚀 Create packages and publish in the npm registry
+        uses: changesets/action@v1
+        with:
+          commit: "release: @sophon-labs account packages"
+          title: "release: @sophon-labs account packages"
+          version: pnpm release:version
+          publish: pnpm release:publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
