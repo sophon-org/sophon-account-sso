@@ -1,7 +1,6 @@
 import { postMessageToWebApp } from '@sophon-labs/account-message-bridge';
 import { useCallback, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
 import { USER_AGENT } from '../constants/user-agent';
 import { useModalVisibility } from '../hooks/use-modal-visibility';
@@ -10,12 +9,18 @@ import { sendUIMessage, useUIEventHandler } from '../messaging/ui';
 
 export interface SophonMainViewProps {
   debugEnabled?: boolean;
+  insets?: {
+    top?: number;
+    bottom?: number;
+    left?: number;
+    right?: number;
+  };
 }
 export const SophonMainView = ({
   debugEnabled = false,
+  insets,
 }: SophonMainViewProps) => {
   const { serverUrl } = useSophonContext();
-  const { top, bottom } = useSafeAreaInsets();
   const webViewRef = useRef<WebView>(null);
   const { visible } = useModalVisibility();
 
@@ -39,14 +44,19 @@ export const SophonMainView = ({
     }, []),
   );
 
-  console.log('loading http', serverUrl);
   return (
     <View style={containerStyles}>
       <WebView
         key={serverUrl}
         ref={webViewRef}
         source={{ uri: `${serverUrl}/embedded` }}
-        style={{ ...styles.webview, paddingTop: top, paddingBottom: bottom }}
+        style={{
+          ...styles.webview,
+          paddingTop: insets?.top,
+          paddingBottom: insets?.bottom,
+          paddingLeft: insets?.left,
+          paddingRight: insets?.right,
+        }}
         hideKeyboardAccessoryView={true}
         userAgent={USER_AGENT}
         webviewDebuggingEnabled={debugEnabled}
