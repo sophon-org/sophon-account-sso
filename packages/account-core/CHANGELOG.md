@@ -1,5 +1,11 @@
 # @sophon-labs/account-core
 
+## 2.0.0-next.4
+
+### Patch Changes
+
+- Hook for token
+
 ## 2.0.0-next.3
 
 ### Major Changes
