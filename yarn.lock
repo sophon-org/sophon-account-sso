@@ -6665,7 +6665,7 @@ __metadata:
   resolution: "@sophon-labs/account-connector@workspace:packages/account-connector"
   dependencies:
     "@playwright/test": "npm:^1.54.1"
-    "@sophon-labs/account-core": "npm:2.0.0-next.2"
+    "@sophon-labs/account-core": "npm:2.0.0-next.3"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@types/node": "npm:^20.0.0"
@@ -6682,7 +6682,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@sophon-labs/account-core@npm:2.0.0-next.2, @sophon-labs/account-core@workspace:packages/account-core":
+"@sophon-labs/account-core@npm:2.0.0-next.3, @sophon-labs/account-core@workspace:packages/account-core":
   version: 0.0.0-use.local
   resolution: "@sophon-labs/account-core@workspace:packages/account-core"
   dependencies:
@@ -6703,7 +6703,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@sophon-labs/account-eip6963@workspace:packages/account-eip6963"
   dependencies:
-    "@sophon-labs/account-core": "npm:2.0.0-next.2"
+    "@sophon-labs/account-core": "npm:2.0.0-next.3"
     "@types/node": "npm:^20.0.0"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.0.0"
@@ -6713,7 +6713,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@sophon-labs/account-message-bridge@npm:2.0.0-next.2, @sophon-labs/account-message-bridge@workspace:packages/account-message-bridge":
+"@sophon-labs/account-message-bridge@npm:2.0.0-next.3, @sophon-labs/account-message-bridge@workspace:packages/account-message-bridge":
   version: 0.0.0-use.local
   resolution: "@sophon-labs/account-message-bridge@workspace:packages/account-message-bridge"
   dependencies:
@@ -6745,8 +6745,8 @@ __metadata:
     "@evilmartians/lefthook": "npm:^1.5.0"
     "@react-native/babel-preset": "npm:0.78.2"
     "@release-it/conventional-changelog": "npm:^9.0.2"
-    "@sophon-labs/account-core": "npm:2.0.0-next.2"
-    "@sophon-labs/account-message-bridge": "npm:2.0.0-next.2"
+    "@sophon-labs/account-core": "npm:2.0.0-next.3"
+    "@sophon-labs/account-message-bridge": "npm:2.0.0-next.3"
     "@types/jest": "npm:^29.5.5"
     "@types/react": "npm:19.1.9"
     commitlint: "npm:^19.6.1"
@@ -6796,8 +6796,8 @@ __metadata:
     "@radix-ui/react-dialog": "npm:^1.1.14"
     "@radix-ui/react-tooltip": "npm:^1.2.7"
     "@simplewebauthn/server": "npm:^13.1.2"
-    "@sophon-labs/account-core": "npm:2.0.0-next.2"
-    "@sophon-labs/account-message-bridge": "npm:2.0.0-next.2"
+    "@sophon-labs/account-core": "npm:2.0.0-next.3"
+    "@sophon-labs/account-message-bridge": "npm:2.0.0-next.3"
     "@t3-oss/env-nextjs": "npm:^0.13.8"
     "@tailwindcss/postcss": "npm:^4"
     "@tanstack/react-query": "npm:^5.81.2"

@@ -1,5 +1,16 @@
 # @sophon-labs/account-connector
 
+## 2.0.0-next.3
+
+### Major Changes
+
+- 5ed2fdc: Updating things.
+
+### Patch Changes
+
+- Updated dependencies [5ed2fdc]
+  - @sophon-labs/account-core@2.0.0-next.3
+
 ## 2.0.0-next.2
 
 ### Patch Changes

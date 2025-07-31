@@ -10,6 +10,7 @@
     "@sophon-labs/account-react-native": "1.0.0"
   },
   "changesets": [
+    "dull-ties-shout",
     "eager-mugs-teach",
     "eager-readers-push",
     "slimy-mammals-know"
