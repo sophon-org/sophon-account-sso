@@ -13,8 +13,8 @@ import {
 import { sophon, sophonTestnet } from 'viem/chains';
 import type { WalletProvider } from 'zksync-sso';
 import { SophonMainView } from '../components';
-import { createWalletProvider } from '../provider';
 import { useUIEventHandler } from '../messaging';
+import { createWalletProvider } from '../provider';
 
 export interface SophonContextConfig {
   serverUrl: string;

@@ -1,9 +1,9 @@
 import { env } from '@/env';
+import { sendMessage } from '@/events';
 import { windowService } from '@/service/window.service';
 import type { AccountData, IncomingRequest } from '@/types/auth';
 import { useAccountContext } from './useAccountContext';
 import { useCreateSession } from './useCreateSession';
-import { sendMessage } from '@/events';
 
 export function useAuthResponse() {
   const { account } = useAccountContext();

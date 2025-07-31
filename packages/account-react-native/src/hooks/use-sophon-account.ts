@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import type { Address } from 'viem';
-import { useSophonContext } from './use-sophon-context';
 import { SophonAppStorage } from '../provider';
+import { useSophonContext } from './use-sophon-context';
 
 export const useSophonAccount = () => {
   const { walletClient, setAccount, provider, account } = useSophonContext();
