@@ -1,5 +1,13 @@
 # @sophon-labs/account-eip6963
 
+## 2.0.0-next.7
+
+### Patch Changes
+
+- Uploading dist folder for react native.
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.0-next.7
+
 ## 2.0.0-next.6
 
 ### Patch Changes

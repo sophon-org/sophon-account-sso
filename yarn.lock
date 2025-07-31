@@ -3376,7 +3376,7 @@ __metadata:
   resolution: "@sophon-labs/account-connector@workspace:packages/account-connector"
   dependencies:
     "@playwright/test": "npm:^1.54.1"
-    "@sophon-labs/account-core": "npm:2.0.0-next.6"
+    "@sophon-labs/account-core": "npm:2.0.0-next.7"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@types/node": "npm:^20.0.0"
@@ -3393,7 +3393,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@sophon-labs/account-core@npm:2.0.0-next.6, @sophon-labs/account-core@workspace:packages/account-core":
+"@sophon-labs/account-core@npm:2.0.0-next.7, @sophon-labs/account-core@workspace:packages/account-core":
   version: 0.0.0-use.local
   resolution: "@sophon-labs/account-core@workspace:packages/account-core"
   dependencies:
@@ -3414,7 +3414,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@sophon-labs/account-eip6963@workspace:packages/account-eip6963"
   dependencies:
-    "@sophon-labs/account-core": "npm:2.0.0-next.6"
+    "@sophon-labs/account-core": "npm:2.0.0-next.7"
     "@types/node": "npm:^20.0.0"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.0.0"
@@ -3424,7 +3424,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@sophon-labs/account-message-bridge@npm:2.0.0-next.6, @sophon-labs/account-message-bridge@workspace:packages/account-message-bridge":
+"@sophon-labs/account-message-bridge@npm:2.0.0-next.7, @sophon-labs/account-message-bridge@workspace:packages/account-message-bridge":
   version: 0.0.0-use.local
   resolution: "@sophon-labs/account-message-bridge@workspace:packages/account-message-bridge"
   dependencies:
@@ -3456,8 +3456,8 @@ __metadata:
     "@evilmartians/lefthook": "npm:^1.5.0"
     "@react-native/babel-preset": "npm:0.78.2"
     "@release-it/conventional-changelog": "npm:^9.0.2"
-    "@sophon-labs/account-core": "npm:2.0.0-next.6"
-    "@sophon-labs/account-message-bridge": "npm:2.0.0-next.6"
+    "@sophon-labs/account-core": "npm:2.0.0-next.7"
+    "@sophon-labs/account-message-bridge": "npm:2.0.0-next.7"
     "@types/jest": "npm:^29.5.5"
     "@types/react": "npm:19.1.9"
     commitlint: "npm:^19.6.1"
@@ -3479,7 +3479,7 @@ __metadata:
     react: "*"
     react-dom: "*"
     react-modal: "*"
-    react-native: 0.80.2
+    react-native: "*"
   languageName: unknown
   linkType: soft
 
