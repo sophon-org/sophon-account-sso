@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 2.0.0-next.10
+
+### Patch Changes
+
+- Removing unecessary logs
+
 ## 2.0.0-next.9
 
 ### Patch Changes

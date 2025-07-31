@@ -60,30 +60,24 @@ export const SophonMainView = ({
         hideKeyboardAccessoryView={true}
         userAgent={USER_AGENT}
         webviewDebuggingEnabled={debugEnabled}
-        onLoadEnd={() => console.log('load end')}
-        onLoadStart={() => console.log('load start')}
-        onLoad={() => console.log('load')}
+        // onLoadEnd={() => console.log('load end')}
+        // onLoadStart={() => console.log('load start')}
+        // onLoad={() => console.log('load')}
         onMessage={(event) => {
           const { action, payload } = JSON.parse(event.nativeEvent.data);
-          console.log('message', action, payload);
           if (action === 'closeModal') {
             sendUIMessage('hideModal', payload);
           } else if (action === 'rpc') {
             sendUIMessage('incomingRpc', payload);
           } else if (action === 'account.token.emitted') {
-            console.log('baba yaga', payload);
             sendUIMessage('setToken', payload);
           }
         }}
         onError={(event) => {
           console.error(event);
         }}
-        onContentProcessDidTerminate={() => {
-          console.log('content process did terminate');
-        }}
-        onRenderProcessGone={() => {
-          console.log('render process gone');
-        }}
+        onContentProcessDidTerminate={() => {}}
+        onRenderProcessGone={() => {}}
       />
     </View>
   );
