@@ -37,16 +37,19 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
         events: {
           // This is called when the user clicks on the login button
           onAuthInit() {
+            console.log('onAuthInit');
             sendMessage('k1.login.init', null);
           },
           // This is called on the callback processing from social login
           onAuthFlowOpen() {
+            console.log('onAuthFlowOpwn');
             sendMessage('k1.login.init', null);
           },
           onEmbeddedWalletCreated(credential, user) {
             console.log('🔥 onEmbeddedWalletCreated', user, credential);
           },
           onWalletAdded(user) {
+            console.log('onWalletAdded');
             sendMessage('k1.login', {
               address: user.wallet.address as `0x${string}`,
               wallet: user.wallet,
@@ -54,6 +57,7 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
           },
           // This is called after everything is validated and the user should be considered authenticated
           onAuthSuccess(user) {
+            console.log('onAuthSuccess', user);
             if (user.primaryWallet) {
               sendMessage('k1.login', {
                 address: user.primaryWallet!.address as `0x${string}`,
@@ -63,6 +67,7 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
           },
           // This is called when the user
           onLogout() {
+            console.log('onAuthSuccess');
             sendMessage('k1.logout', null);
           },
         },

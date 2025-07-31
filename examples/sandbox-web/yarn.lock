@@ -1194,22 +1194,22 @@ __metadata:
   linkType: hard
 
 "@sophon-labs/account-connector@file:../../packages/account-connector::locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A.":
-  version: 2.0.0-next.11
-  resolution: "@sophon-labs/account-connector@file:../../packages/account-connector#../../packages/account-connector::hash=36cd83&locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A."
+  version: 2.0.0-next.12
+  resolution: "@sophon-labs/account-connector@file:../../packages/account-connector#../../packages/account-connector::hash=12fea5&locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A."
   dependencies:
-    "@sophon-labs/account-core": "npm:2.0.0-next.11"
+    "@sophon-labs/account-core": "npm:2.0.0-next.12"
     zksync-sso: "github:sophon-org/zksync-sso-preview#main"
   peerDependencies:
     "@wagmi/core": ^2.17.3
     viem: ^2.31.3
-  checksum: 10c0/ed64c89d91314e7d0fca18febfa2ba1c90783d2785f82e8561ac8708333a55de293e9c00d12df8858fe69a0d00d1b3619a67c331528e8cadcb78fc8731dc6f24
+  checksum: 10c0/9fdfb5116f240e39b897422d41b2e27147ad8ce4e4d9611834b8fb63393174e0b88daab9fa3141190107d7d617c018459911438beb97ee6ee358ba01e0892d14
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-core@npm:2.0.0-next.11":
-  version: 2.0.0-next.11
-  resolution: "@sophon-labs/account-core@npm:2.0.0-next.11"
-  checksum: 10c0/7f53612cdc84fc014ca0b439c51d90e519fe75857a31192bfbf5d2a5d68166c3a9263cc597986d2da820f10ce61937b52fb1b26944c41a5945073a80eee93c1e
+"@sophon-labs/account-core@npm:2.0.0-next.12":
+  version: 2.0.0-next.12
+  resolution: "@sophon-labs/account-core@npm:2.0.0-next.12"
+  checksum: 10c0/9a8ad823a3e454cc1bc1be787d8d829d23c2a5b6ca9730e61f43d881252d9020f49c7627b8f5543ed07d488b038509fee3f957e199b4362651072a734d50e42e
   languageName: node
   linkType: hard
 
