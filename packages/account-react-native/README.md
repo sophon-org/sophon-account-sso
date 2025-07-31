@@ -7,8 +7,11 @@ Library to handle sophon account on react native environments
 Before you start, you need these libraries:
 
 ```sh
-# Sophon Library
-npm install @sophon-labs/account-react-native
+# Passkey requirements
+npm install @simplewebauthn/browser @simplewebauthn/server
+
+# Overall native requirements
+npm install react-native-mmkv react-native-webview
 ```
 
 After that, you are ready to install our SDK:
