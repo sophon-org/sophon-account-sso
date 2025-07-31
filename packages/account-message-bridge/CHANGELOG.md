@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 2.0.0-next.6
+
+### Patch Changes
+
+- Pushing react native dist files
+
 ## 2.0.0-next.5
 
 ### Patch Changes

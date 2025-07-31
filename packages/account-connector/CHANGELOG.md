@@ -1,5 +1,13 @@
 # @sophon-labs/account-connector
 
+## 2.0.0-next.6
+
+### Patch Changes
+
+- Pushing react native dist files
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.0-next.6
+
 ## 2.0.0-next.5
 
 ### Patch Changes
