@@ -17,7 +17,7 @@ import { useUIEventHandler } from '../messaging';
 import { createWalletProvider } from '../provider';
 
 export interface SophonContextConfig {
-  serverUrl: string;
+  serverUrl?: string;
   walletClient?: WalletClient;
   account?: SophonAccount;
   setAccount: (account?: SophonAccount) => void;
@@ -28,7 +28,6 @@ export interface SophonContextConfig {
 
 export const SophonContext = createContext<SophonContextConfig>({
   chain: sophonTestnet,
-  serverUrl: 'http://localhost:3000/embedded',
   setAccount: () => {},
 });
 
@@ -38,7 +37,7 @@ export interface SophonAccount {
 
 export const SophonContextProvider = ({
   children,
-  network,
+  network = 'testnet',
   authServerUrl,
 }: {
   children: React.ReactNode;

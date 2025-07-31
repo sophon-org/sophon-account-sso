@@ -39,6 +39,7 @@ export const SophonMainView = ({
     }, []),
   );
 
+  console.log('loading http', serverUrl);
   return (
     <View style={containerStyles}>
       <WebView
