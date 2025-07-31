@@ -3,6 +3,7 @@ import { windowService } from '@/service/window.service';
 import type { AccountData, IncomingRequest } from '@/types/auth';
 import { useAccountContext } from './useAccountContext';
 import { useCreateSession } from './useCreateSession';
+import { sendMessage } from '@/events';
 
 export function useAuthResponse() {
   const { account } = useAccountContext();
@@ -29,6 +30,12 @@ export function useAuthResponse() {
       } else {
         // Session creation failed
       }
+    }
+
+    const token =
+      '4507f8a7594b1094a3a26439a0379a42a1d0caf97890dbe7ba8f8ab3c461581b';
+    if (token) {
+      sendMessage('account.token.emitted', token);
     }
 
     const rpcResponse = {

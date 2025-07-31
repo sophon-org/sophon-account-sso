@@ -20935,7 +20935,7 @@ __metadata:
 
 "zksync-sso@github:sophon-org/zksync-sso-preview#main":
   version: 0.0.0-development
-  resolution: "zksync-sso@https://github.com/sophon-org/zksync-sso-preview.git#commit=788964b41be8886b2246a30e7c616238b8ab9ec8"
+  resolution: "zksync-sso@https://github.com/sophon-org/zksync-sso-preview.git#commit=db6809bf96064469dcc0ef52b41c010c80e721d3"
   dependencies:
     "@peculiar/asn1-ecc": "npm:^2.3.13"
     "@peculiar/asn1-schema": "npm:^2.3.13"
@@ -20956,7 +20956,7 @@ __metadata:
       optional: true
     typescript:
       optional: true
-  checksum: 10c0/7929d3c66a58b4e3d7d333e0ff24d8e3a81d672ed41f274fcd5f36f9931a1ecb0189d358f2fdafb3a93ece6b8f9a428627294e15b945b44f45e1c2217730448c
+  checksum: 10c0/9c3949b863a31643c0015190f199e6cbbf230157a4d6f446f1ff2c4e62addc780c85fe29a22eb814fc2056ce425c30959b759ab278cffdf50dd706a31e757da2
   languageName: node
   linkType: hard
 

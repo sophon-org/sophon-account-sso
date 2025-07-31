@@ -4,6 +4,7 @@ import { SophonAppStorage } from './storage';
 import { WebViewCommunicator } from './webview-communicator';
 
 export const createWalletProvider = (authServerUrl: string, chain: Chain) => {
+  console.log('creatign wallet provider', authServerUrl, chain.id);
   const provider = new WalletProvider({
     metadata: {
       name: 'Sophon Wallet',
@@ -26,6 +27,7 @@ export const createWalletProvider = (authServerUrl: string, chain: Chain) => {
   });
 
   provider.on('disconnect', () => {
+    console.log('⭐️ ⭐️ ⭐️ ⭐️ ⭐️ disconnected');
     SophonAppStorage.clear();
   });
 

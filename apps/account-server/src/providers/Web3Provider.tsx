@@ -1,7 +1,6 @@
 'use client';
 import { EthereumWalletConnectors } from '@dynamic-labs/ethereum';
 import { DynamicContextProvider } from '@dynamic-labs/sdk-react-core';
-//import { DynamicWagmiConnector } from "@dynamic-labs/wagmi-connector";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
 import { createConfig, http, WagmiProvider } from 'wagmi';
@@ -33,7 +32,7 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
     <DynamicContextProvider
       settings={{
         initialAuthenticationMode: 'connect-and-sign',
-        environmentId: env.NEXT_PUBLIC_DYNAMIC_PROVIDER_ID!,
+        environmentId: env.NEXT_PUBLIC_DYNAMIC_PROVIDER_ID,
         walletConnectors: [EthereumWalletConnectors],
         events: {
           // This is called when the user clicks on the login button
@@ -46,10 +45,6 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
           },
           onEmbeddedWalletCreated(credential, user) {
             console.log('🔥 onEmbeddedWalletCreated', user, credential);
-            // sendMessage('k1.login', {
-            //   address: user.primaryWallet!.address as `0x${string}`,
-            //   wallet: user.primaryWallet!,
-            // });
           },
           onWalletAdded(user) {
             sendMessage('k1.login', {

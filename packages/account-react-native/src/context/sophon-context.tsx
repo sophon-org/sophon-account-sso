@@ -12,6 +12,7 @@ import {
 } from 'viem';
 import { sophon, sophonTestnet } from 'viem/chains';
 import type { WalletProvider } from 'zksync-sso';
+import { SophonMainView } from '../components';
 import { createWalletProvider } from '../provider';
 
 export interface SophonContextConfig {
@@ -52,6 +53,7 @@ export const SophonContextProvider = ({
     () => (network === 'mainnet' ? sophon : sophonTestnet),
     [network],
   );
+  console.log('network', network, chain.id);
   const provider = useMemo(() => {
     const provider = createWalletProvider(serverUrl, chain);
     return provider;
@@ -81,6 +83,7 @@ export const SophonContextProvider = ({
 
   return (
     <SophonContext.Provider value={contextValue}>
+      <SophonMainView />
       {children}
     </SophonContext.Provider>
   );

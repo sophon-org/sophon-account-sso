@@ -10,7 +10,7 @@ const REQUEST_TIMEOUT = 5 * 60 * 1000;
 
 export class WebViewCommunicator implements Communicator {
   private isReady = false;
-  private listeners = new Map<
+  private readonly listeners = new Map<
     (payload: SophonUIActions['incomingRpc']) => void,
     { reject: (_: Error) => void; deregister: () => void }
   >();
@@ -60,7 +60,7 @@ export class WebViewCommunicator implements Communicator {
     sendUIMessage('hideModal', {});
   };
 
-  private waitContextToBeReady = async () => {
+  private readonly waitContextToBeReady = async () => {
     if (this.isReady) {
       sendUIMessage('showModal', {});
       return;

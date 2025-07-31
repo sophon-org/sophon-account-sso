@@ -54,10 +54,14 @@ export const SophonMainView = ({
         onLoad={() => console.log('load')}
         onMessage={(event) => {
           const { action, payload } = JSON.parse(event.nativeEvent.data);
+          console.log('message', action, payload);
           if (action === 'closeModal') {
             sendUIMessage('hideModal', payload);
           } else if (action === 'rpc') {
             sendUIMessage('incomingRpc', payload);
+          } else if (action === 'account.token.emitted') {
+            console.log('baba yaga', payload);
+            sendUIMessage('setToken', payload);
           }
         }}
         onError={(event) => {

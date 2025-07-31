@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import type { Address } from 'viem';
 import { useSophonContext } from './use-sophon-context';
+import { SophonAppStorage } from '../provider';
 
 export const useSophonAccount = () => {
   const { walletClient, setAccount, provider, account } = useSophonContext();
@@ -16,6 +17,7 @@ export const useSophonAccount = () => {
 
   const disconnect = useCallback(async () => {
     await provider?.disconnect();
+    SophonAppStorage.clear();
     setAccount(undefined);
   }, [provider, setAccount]);
 

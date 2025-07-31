@@ -12,6 +12,7 @@ export type EventActions = {
   'k1.login.init': null;
   'k1.logout': null;
   'smart-contract.logout': null;
+  'account.token.emitted': string;
 };
 
 /**

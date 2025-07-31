@@ -10,6 +10,7 @@ export type SophonUIActions = {
   modalReady: unknown;
   incomingRpc: Message;
   outgoingRpc: Message;
+  setToken: string;
 };
 
 export type SophonUIActionsName = keyof SophonUIActions;
