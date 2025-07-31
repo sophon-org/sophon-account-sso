@@ -1,5 +1,14 @@
 # @sophon-labs/account-react-native
 
+## 2.0.0-next.5
+
+### Patch Changes
+
+- Bump version, stable server
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.0-next.5
+  - @sophon-labs/account-message-bridge@2.0.0-next.5
+
 ## 2.0.0-next.4
 
 ### Patch Changes
