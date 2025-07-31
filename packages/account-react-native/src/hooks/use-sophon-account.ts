@@ -10,8 +10,6 @@ export const useSophonAccount = () => {
     const addresses = await walletClient!.requestAddresses();
     setAccount({
       address: addresses[0] as Address,
-      // TODO: return proper jwt
-      jwt: '4507f8a7594b1094a3a26439a0379a42a1d0caf97890dbe7ba8f8ab3c461581b=',
     });
   }, [walletClient, setAccount]);
 

@@ -14,6 +14,7 @@ import { sophon, sophonTestnet } from 'viem/chains';
 import type { WalletProvider } from 'zksync-sso';
 import { SophonMainView } from '../components';
 import { createWalletProvider } from '../provider';
+import { useUIEventHandler } from '../messaging';
 
 export interface SophonContextConfig {
   serverUrl: string;
@@ -22,6 +23,7 @@ export interface SophonContextConfig {
   setAccount: (account?: SophonAccount) => void;
   chain: Chain;
   provider?: WalletProvider;
+  token?: string;
 }
 
 export const SophonContext = createContext<SophonContextConfig>({
@@ -32,7 +34,6 @@ export const SophonContext = createContext<SophonContextConfig>({
 
 export interface SophonAccount {
   address: Address;
-  jwt: string;
 }
 
 export const SophonContextProvider = ({
@@ -49,15 +50,19 @@ export const SophonContextProvider = ({
     [authServerUrl, network],
   );
   const [account, setAccount] = useState<SophonAccount>();
+  const [token, setToken] = useState<string>();
   const chain = useMemo(
     () => (network === 'mainnet' ? sophon : sophonTestnet),
     [network],
   );
-  console.log('network', network, chain.id);
   const provider = useMemo(() => {
     const provider = createWalletProvider(serverUrl, chain);
     return provider;
   }, [serverUrl, chain]);
+
+  useUIEventHandler('setToken', (incomingToken) => {
+    setToken(incomingToken);
+  });
 
   const walletClient = createWalletClient({
     chain: chain,
@@ -77,8 +82,9 @@ export const SophonContextProvider = ({
       account,
       setAccount,
       serverUrl,
+      token,
     }),
-    [network, serverUrl, walletClient, account, chain],
+    [network, serverUrl, walletClient, account, chain, token],
   );
 
   return (
