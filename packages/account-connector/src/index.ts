@@ -2,7 +2,7 @@ import { AccountServerURL } from '@sophon-labs/account-core';
 import { type Communicator, PopupCommunicator } from 'zksync-sso/communicator';
 import { zksyncSsoConnector } from 'zksync-sso/connector';
 
-type NetworkType = 'mainnet' | 'testnet';
+type NetworkType = 'mainnet' | 'testnet' | 'local';
 
 interface SophonSsoConnectorOptions {
   // biome-ignore lint/suspicious/noExplicitAny: TODO: review this
