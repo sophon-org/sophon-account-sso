@@ -1,5 +1,29 @@
 # @sophon-labs/account-connector
 
+## 2.0.0-next.16
+
+### Patch Changes
+
+- Testing version
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.0-next.16
+
+## 2.0.0-next.15
+
+### Patch Changes
+
+- Removing sideeffects
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.0-next.15
+
+## 2.0.0-next.14
+
+### Patch Changes
+
+- Removing sideeffects
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.0-next.14
+
 ## 2.0.0-next.13
 
 ### Patch Changes
