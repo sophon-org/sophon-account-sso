@@ -1,5 +1,11 @@
 # @sophon-labs/account-core
 
+## 2.0.0-next.20
+
+### Patch Changes
+
+- Pollyfills on react native by default
+
 ## 2.0.0-next.19
 
 ### Patch Changes
