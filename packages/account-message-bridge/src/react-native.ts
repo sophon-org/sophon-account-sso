@@ -28,7 +28,7 @@ export const postMessageToWebApp = <T extends FromNativeActionNames>(
     webViewRef.current?.injectJavaScript(
       buildMessageJavaScript(action, payload),
     );
-  } catch (e) {
+  } catch {
     console.log('Error calling:', buildMessageJavaScript(action, payload));
   }
 };
