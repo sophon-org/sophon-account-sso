@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 2.0.0-next.19
+
+### Patch Changes
+
+- General flow fixes
+
 ## 2.0.0-next.18
 
 ### Patch Changes

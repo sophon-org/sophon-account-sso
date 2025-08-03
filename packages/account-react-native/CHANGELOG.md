@@ -1,5 +1,14 @@
 # @sophon-labs/account-react-native
 
+## 2.0.0-next.19
+
+### Patch Changes
+
+- General flow fixes
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.0-next.19
+  - @sophon-labs/account-message-bridge@2.0.0-next.19
+
 ## 2.0.0-next.18
 
 ### Patch Changes
