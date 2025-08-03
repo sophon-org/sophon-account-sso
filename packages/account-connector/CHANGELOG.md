@@ -1,5 +1,21 @@
 # @sophon-labs/account-connector
 
+## 2.0.0-next.18
+
+### Patch Changes
+
+- Account server pointing to the right url
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.0-next.18
+
+## 2.0.0-next.17
+
+### Patch Changes
+
+- Updating react native base version
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.0-next.17
+
 ## 2.0.0-next.16
 
 ### Patch Changes
