@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 2.0.0-next.22
+
+### Patch Changes
+
+- Updating peerDependencies
+
 ## 2.0.0-next.21
 
 ### Patch Changes

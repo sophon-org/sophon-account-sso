@@ -1,5 +1,13 @@
 # @sophon-labs/account-eip6963
 
+## 2.0.0-next.22
+
+### Patch Changes
+
+- Updating peerDependencies
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.0-next.22
+
 ## 2.0.0-next.21
 
 ### Patch Changes

@@ -4796,15 +4796,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-message-bridge@npm:2.0.0-next.21":
-  version: 2.0.0-next.21
-  resolution: "@sophon-labs/account-message-bridge@npm:2.0.0-next.21"
+"@sophon-labs/account-message-bridge@npm:2.0.0-next.22":
+  version: 2.0.0-next.22
+  resolution: "@sophon-labs/account-message-bridge@npm:2.0.0-next.22"
   dependencies:
     eventemitter3: "npm:5.0.1"
   peerDependencies:
     react: 19.0.0
     react-native-webview: 13.15.0
-  checksum: 10c0/d90421ddc397110d7d992a10423734fe61346a763b179e1995bfaaff4e19261322a112252d52c78531263a15fbec861ecf62c52ae8229eb8942e2de74d89af4e
+  checksum: 10c0/f6465b80df249ddebe4e649bb8a448ed916c9f08686cb75be7a355fa144ca5cff35fa322de3601914eb647cc88954f870f2bbd8feb7659ad8db1eafda4771fa0
   languageName: node
   linkType: hard
 
@@ -4823,7 +4823,7 @@ __metadata:
     "@radix-ui/react-tooltip": "npm:^1.2.7"
     "@simplewebauthn/server": "npm:^13.1.2"
     "@sophon-labs/account-core": "npm:2.0.0-next.19"
-    "@sophon-labs/account-message-bridge": "npm:2.0.0-next.21"
+    "@sophon-labs/account-message-bridge": "npm:2.0.0-next.22"
     "@t3-oss/env-nextjs": "npm:^0.13.8"
     "@tailwindcss/postcss": "npm:^4"
     "@tanstack/react-query": "npm:^5.81.2"
