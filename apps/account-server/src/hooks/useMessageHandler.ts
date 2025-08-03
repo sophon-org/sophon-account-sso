@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { serverLog } from '@/lib/server-log';
 import { windowService } from '@/service/window.service';
 import type {
   AuthenticationRequest,
@@ -36,6 +37,8 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
       // Store the incoming request if it's an RPC request
       if (data?.id && data?.content) {
         const method = data.content?.action?.method;
+
+        serverLog(`😀 receiving ${method}`);
 
         if (method === 'eth_requestAccounts') {
           const params = data.content.action?.params as

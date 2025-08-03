@@ -20,7 +20,7 @@ import WaitOtpView from '@/views/WaitOtpView';
 import WrongNetworkView from '@/views/WrongNetworkView';
 
 export default function RootPage() {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const state = MainStateMachineContext.useSelector((state) => state);
   const actorRef = MainStateMachineContext.useActorRef();
 
