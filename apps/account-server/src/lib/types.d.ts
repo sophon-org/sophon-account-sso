@@ -7,4 +7,6 @@ export interface ContractAddresses {
   accountFactory: `0x${string}`;
   accountPaymaster: `0x${string}`;
   recovery: `0x${string}`;
+  oidcKeyRegistry: `0x${string}`;
+  recoveryOidc: `0x${string}`;
 }

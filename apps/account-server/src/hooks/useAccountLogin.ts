@@ -42,12 +42,7 @@ export const useAccountLogin = () => {
 
       // @ts-expect-error - fetchAccount type compatibility for testing
       const accountInfo = await fetchAccount(publicClient, {
-        contracts: {
-          accountFactory: CONTRACTS.accountFactory as `0x${string}`,
-          passkey: CONTRACTS.passkey as `0x${string}`,
-          session: CONTRACTS.session as `0x${string}`,
-          recovery: CONTRACTS.recovery as `0x${string}`,
-        },
+        contracts: CONTRACTS,
         uniqueAccountId: credential.id,
       });
 
