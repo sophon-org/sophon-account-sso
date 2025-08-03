@@ -31,10 +31,6 @@ export const verifyAuthorization = async (
   nonceToken: string,
   rememberMe: boolean,
 ) => {
-  console.log(
-    'requesting',
-    `${env.NEXT_PUBLIC_AUTH_SERVER_ENDPOINT}/auth/verify`,
-  );
   const response = await fetch(
     `${env.NEXT_PUBLIC_AUTH_SERVER_ENDPOINT}/auth/verify`,
     {
@@ -54,10 +50,10 @@ export const verifyAuthorization = async (
   );
 
   if (!response.ok) {
-    console.log(await response.text());
+    console.error(await response.text());
     throw new Error('Failed to verify authorization');
   }
 
   const result = await response.json();
-  return result;
+  return result.token;
 };

@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import MessageContainer from '@/components/ui/messageContainer';
 import VerificationImage from '@/components/ui/verification-image';
 import { MainStateMachineContext } from '@/context/state-machine-context';
+import { sendMessage } from '@/events';
 import { useAccountContext } from '@/hooks/useAccountContext';
 import { useAuthResponse } from '@/hooks/useAuthResponse';
 import { useSignature } from '@/hooks/useSignature';
@@ -53,7 +54,6 @@ export default function ConnectAuthorizationView() {
       setAuthorizing(true);
 
       const authNonce = await requestNonce(account.address);
-
       const signAuth = {
         domain: {
           name: 'Sophon SSO',
@@ -77,16 +77,17 @@ export default function ConnectAuthorizationView() {
       };
       const authSignature = await signTypeData(signAuth);
 
-      console.log('sign', authSignature);
-
-      const response = await verifyAuthorization(
+      const token = await verifyAuthorization(
         account.address,
         signAuth,
         authSignature,
         authNonce,
         true,
       );
-      console.log('verifyh', response);
+
+      // we don't store the token, we just send it during the account authorization
+      // TODO: better handling token expiration
+      sendMessage('account.token.emitted', token);
 
       if (windowService.isManaged() && incoming) {
         handleAuthSuccessResponse(

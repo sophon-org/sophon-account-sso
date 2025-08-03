@@ -1,9 +1,9 @@
 'use server';
 
-const LOG_ENABLED = false;
+import { env } from '@/env';
 
 export async function serverLog(message: string) {
-  if (LOG_ENABLED) {
+  if (env.NEXT_PUBLIC_SERVER_LOGS_ENABLED) {
     console.log('🔥 Remote Log:', message);
   }
 }
