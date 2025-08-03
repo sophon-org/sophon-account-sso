@@ -1,5 +1,6 @@
 import { assign, createMachine } from 'xstate';
 import type {
+  AuthenticationRequest,
   IncomingRequest,
   SigningRequest,
   TransactionRequest,
@@ -14,6 +15,7 @@ const defaultContext = {
     session: null as unknown | null | undefined,
     signing: null as SigningRequest | null | undefined,
     transaction: null as TransactionRequest | null | undefined,
+    authentication: null as AuthenticationRequest | null | undefined,
   },
 };
 
@@ -220,12 +222,7 @@ export const userWalletRequestStateMachine = createMachine({
         },
         {
           guard: ({ context }) => {
-            return (
-              context.isAuthenticated &&
-              !!context.requests.incoming &&
-              !context.requests.signing &&
-              !context.requests.transaction
-            );
+            return context.isAuthenticated && !!context.requests.authentication;
           },
           target: 'incoming-authentication',
         },

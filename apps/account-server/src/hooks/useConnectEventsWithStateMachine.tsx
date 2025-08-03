@@ -13,6 +13,7 @@ export const useConnectEventsWithStateMachine = () => {
     sessionPreferences,
     signingRequest,
     transactionRequest,
+    authenticationRequest,
   } = useLoadingResources();
 
   useEffect(() => {
@@ -23,6 +24,7 @@ export const useConnectEventsWithStateMachine = () => {
         session: sessionPreferences,
         signing: signingRequest,
         transaction: transactionRequest,
+        authentication: authenticationRequest,
       },
     });
   }, [
@@ -30,6 +32,7 @@ export const useConnectEventsWithStateMachine = () => {
     sessionPreferences,
     signingRequest,
     transactionRequest,
+    authenticationRequest,
     actorRef,
   ]);
 

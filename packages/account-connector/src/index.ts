@@ -10,6 +10,7 @@ interface SophonSsoConnectorOptions {
   session?: any;
   paymaster?: `0x${string}`;
   communicator?: Communicator;
+  authServerUrl: string;
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: TODO remove later
@@ -17,8 +18,15 @@ export const sophonSsoConnector: any = (
   network: SophonNetworkType = 'testnet',
   options?: SophonSsoConnectorOptions,
 ) => {
+  console.log(
+    'creating',
+    network,
+    AccountServerURL,
+    options?.authServerUrl,
+    AccountServerURL[network],
+  );
   const connector = zksyncSsoConnector({
-    authServerUrl: AccountServerURL[network],
+    authServerUrl: options?.authServerUrl ?? AccountServerURL[network],
     metadata: {
       name: network === 'mainnet' ? 'Sophon Wallet' : 'Sophon Testnet Wallet',
       icon: '/sophon-icon.png',
@@ -41,16 +49,19 @@ export const sophonSsoConnector: any = (
     // },
     communicator:
       options?.communicator ||
-      new PopupCommunicator(AccountServerURL[network], {
-        width: 360,
-        height: 800,
-        calculatePosition(width, height) {
-          return {
-            left: window.screenX + (window.outerWidth - width) / 2,
-            top: window.screenY + (window.outerHeight - height) / 2,
-          };
+      new PopupCommunicator(
+        options?.authServerUrl ?? AccountServerURL[network],
+        {
+          width: 360,
+          height: 800,
+          calculatePosition(width, height) {
+            return {
+              left: window.screenX + (window.outerWidth - width) / 2,
+              top: window.screenY + (window.outerHeight - height) / 2,
+            };
+          },
         },
-      }),
+      ),
   });
 
   return connector;

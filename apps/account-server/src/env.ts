@@ -29,6 +29,7 @@ export const env = createEnv({
       .string()
       .transform((val) => val === 'true'),
     NEXT_PUBLIC_HYPERINDEX_ENDPOINT: z.string().url(),
+    NEXT_PUBLIC_AUTH_SERVER_ENDPOINT: z.string().url(),
   },
 
   /**
@@ -47,6 +48,8 @@ export const env = createEnv({
       process.env.NEXT_PUBLIC_FEATURE_SMART_CONTRACT,
     NEXT_PUBLIC_HYPERINDEX_ENDPOINT:
       process.env.NEXT_PUBLIC_HYPERINDEX_ENDPOINT,
+    NEXT_PUBLIC_AUTH_SERVER_ENDPOINT:
+      process.env.NEXT_PUBLIC_AUTH_SERVER_ENDPOINT,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

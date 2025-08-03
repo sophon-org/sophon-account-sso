@@ -6,6 +6,7 @@ import VerificationImage from '@/components/ui/verification-image';
 import { MainStateMachineContext } from '@/context/state-machine-context';
 import { useAccountContext } from '@/hooks/useAccountContext';
 import { useSignature } from '@/hooks/useSignature';
+import { serverLog } from '@/lib/server-log';
 import { windowService } from '@/service/window.service';
 
 export default function SigningRequestView() {
@@ -14,7 +15,7 @@ export default function SigningRequestView() {
     (state) => state.context.requests,
   );
   const actorRef = MainStateMachineContext.useActorRef();
-  const { isSigning, sign } = useSignature();
+  const { isSigning, signTypeData } = useSignature();
 
   if (!signing || !incoming || !account) {
     return <div>No signing request or account present</div>;
@@ -65,7 +66,7 @@ export default function SigningRequestView() {
         <Button
           type="button"
           onClick={async () => {
-            const signature = sign(signing);
+            const signature = await signTypeData(signing);
 
             if (windowService.isManaged() && incoming) {
               const signResponse = {
@@ -76,7 +77,7 @@ export default function SigningRequestView() {
                 },
               };
 
-              console.log('🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥 signResponse', signResponse);
+              serverLog(`🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥 signResponse ${signature}`);
               windowService.sendMessage(signResponse);
               actorRef.send({ type: 'ACCEPT' });
             }

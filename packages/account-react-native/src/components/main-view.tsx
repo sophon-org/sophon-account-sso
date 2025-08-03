@@ -4,7 +4,6 @@ import { StyleSheet, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { USER_AGENT } from '../constants/user-agent';
 import { useModalVisibility } from '../hooks/use-modal-visibility';
-import { useSophonContext } from '../hooks/use-sophon-context';
 import { sendUIMessage, useUIEventHandler } from '../messaging/ui';
 
 export interface SophonMainViewProps {
@@ -15,12 +14,13 @@ export interface SophonMainViewProps {
     left?: number;
     right?: number;
   };
+  authServerUrl?: string;
 }
 export const SophonMainView = ({
   debugEnabled = false,
   insets,
+  authServerUrl,
 }: SophonMainViewProps) => {
-  const { serverUrl } = useSophonContext();
   const webViewRef = useRef<WebView>(null);
   const { visible } = useModalVisibility();
 
@@ -47,9 +47,9 @@ export const SophonMainView = ({
   return (
     <View style={containerStyles}>
       <WebView
-        key={serverUrl}
+        key={authServerUrl}
         ref={webViewRef}
-        source={{ uri: `${serverUrl}/embedded` }}
+        source={{ uri: `${authServerUrl}/embedded` }}
         style={{
           ...styles.webview,
           paddingTop: insets?.top,
@@ -71,6 +71,8 @@ export const SophonMainView = ({
             sendUIMessage('incomingRpc', payload);
           } else if (action === 'account.token.emitted') {
             sendUIMessage('setToken', payload);
+          } else if (action === 'logout') {
+            sendUIMessage('logout', payload);
           }
         }}
         onError={(event) => {

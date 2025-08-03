@@ -4,7 +4,6 @@ import { MainStateMachineContext } from '@/context/state-machine-context';
 import { useEventHandler } from '@/events/hooks';
 import { useAccountContext } from '@/hooks/useAccountContext';
 import { deployAccount, getsSmartAccounts } from '@/service/account.service';
-import { useAuthResponse } from '../useAuthResponse';
 
 /**
  * Handles every login request from k1, being possible right now
@@ -15,10 +14,10 @@ import { useAuthResponse } from '../useAuthResponse';
  */
 export const useK1LoginHandler = () => {
   const actorRef = MainStateMachineContext.useActorRef();
-  const { handleAuthSuccessResponse } = useAuthResponse();
   const { login } = useAccountContext();
-  const { incoming, session, transaction, signing } =
-    MainStateMachineContext.useSelector((state) => state.context.requests);
+  const { incoming, authentication } = MainStateMachineContext.useSelector(
+    (state) => state.context.requests,
+  );
 
   useEventHandler('k1.login', async (payload) => {
     actorRef.send({ type: 'ACCOUNT_AUTHENTICATED' });
@@ -27,9 +26,9 @@ export const useK1LoginHandler = () => {
     let smartAccountAddress: `0x${string}`;
     if (accounts.length === 0) {
       const response = await deployAccount(payload.address);
-      smartAccountAddress = response.accounts[0] as `0x${string}`;
+      smartAccountAddress = response.accounts[0];
     } else {
-      smartAccountAddress = accounts[0] as `0x${string}`;
+      smartAccountAddress = accounts[0];
     }
 
     await login(
@@ -45,12 +44,12 @@ export const useK1LoginHandler = () => {
       payload.wallet,
     );
 
-    if (incoming && !transaction && !signing) {
-      handleAuthSuccessResponse(
-        { address: smartAccountAddress },
-        incoming!,
-        session,
-      );
+    if (incoming && authentication) {
+      // handleAuthSuccessResponse(
+      //   { address: smartAccountAddress },
+      //   incoming!,
+      //   session,
+      // );
     }
 
     actorRef.send({ type: 'LOGIN_SUCCESS' });

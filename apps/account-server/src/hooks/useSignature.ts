@@ -19,7 +19,7 @@ export const useSignature = () => {
   const { data: walletClient } = useWalletClient();
   const { primaryWallet } = useDynamicContext();
 
-  const sign = async (payload: SigningRequest) => {
+  const signTypeData = async (payload: SigningRequest) => {
     try {
       setIsSigning(true);
 
@@ -122,6 +122,7 @@ export const useSignature = () => {
           transport: http(),
         });
 
+        console.log('passkey signature');
         signature = await client.signTypedData({
           domain: payload.domain,
           types: payload.types,
@@ -146,7 +147,7 @@ export const useSignature = () => {
   };
 
   return {
-    sign,
+    signTypeData,
     isSigning,
   };
 };

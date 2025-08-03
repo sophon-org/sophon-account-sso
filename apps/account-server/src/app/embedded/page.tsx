@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Drawer } from '@/components/ui/drawer';
 import { MainStateMachineContext } from '@/context/state-machine-context';
 import { sendMessage } from '@/events';
+import { useEventHandler } from '@/events/hooks';
 import { useAccountContext } from '@/hooks/useAccountContext';
 import { serverLog } from '@/lib/server-log';
 import { CompletedView } from '@/views/CompletedView';
@@ -23,12 +24,20 @@ export default function RootPage() {
   const state = MainStateMachineContext.useSelector((state) => state);
   const actorRef = MainStateMachineContext.useActorRef();
 
+  useEffect(() => {
+    serverLog(JSON.stringify(state));
+  }, [state]);
+
   useRNHandler(
     'openModal',
     useCallback(() => {
       setOpen(true);
     }, []),
   );
+
+  useEventHandler('flow.complete', () => {
+    setOpen(false);
+  });
 
   useEffect(() => {
     serverLog(`&&&& CURRENT STATE: ${JSON.stringify(state.value)}`);
@@ -38,6 +47,7 @@ export default function RootPage() {
   const { account } = useAccountContext();
 
   const handleCloseModal = (isOpen: boolean) => {
+    serverLog(`❤️ closing: ${isOpen}`);
     setOpen(isOpen);
     if (!isOpen) {
       actorRef.send({ type: 'CANCEL' });
@@ -186,6 +196,7 @@ export default function RootPage() {
   if (state.matches('profile') && account) {
     const handleDisconnect = () => {
       sendMessage('smart-contract.logout', null);
+      actorRef.send({ type: 'CANCEL' });
     };
 
     return (
