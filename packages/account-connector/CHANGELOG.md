@@ -1,5 +1,13 @@
 # @sophon-labs/account-connector
 
+## 2.0.0-next.21
+
+### Patch Changes
+
+- Updating docs, removing placeholder
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.0-next.21
+
 ## 2.0.0-next.20
 
 ### Patch Changes

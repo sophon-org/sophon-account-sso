@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 2.0.0-next.21
+
+### Patch Changes
+
+- Updating docs, removing placeholder
+
 ## 2.0.0-next.20
 
 ### Patch Changes

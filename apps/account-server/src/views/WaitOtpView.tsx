@@ -8,9 +8,7 @@ export default function WaitOtpView({ email }: { email: string }) {
     <div className="flex items-center justify-center flex-grow">
       <div className="text-center">
         <h2 className="text-2xl font-bold mb-4">Check your email</h2>
-        <p className="text-gray-600 mb-6">
-          We've sent a verification code to {email}
-        </p>
+        <p className="text-gray-600 mb-6">We've sent a verification code</p>
         <form
           onSubmit={async (e) => {
             e.preventDefault();
