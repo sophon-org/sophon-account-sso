@@ -3497,7 +3497,7 @@ __metadata:
   resolution: "@sophon-labs/account-connector@workspace:packages/account-connector"
   dependencies:
     "@playwright/test": "npm:^1.54.1"
-    "@sophon-labs/account-core": "npm:2.0.0-next.23"
+    "@sophon-labs/account-core": "npm:2.0.0-next.24"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@types/node": "npm:^20.0.0"
@@ -3510,11 +3510,11 @@ __metadata:
     zksync-sso: "github:sophon-org/zksync-sso-preview#main"
   peerDependencies:
     "@wagmi/core": ^2.17.3
-    viem: ^2.31.3
+    viem: ">=2.21.49"
   languageName: unknown
   linkType: soft
 
-"@sophon-labs/account-core@npm:2.0.0-next.23, @sophon-labs/account-core@workspace:packages/account-core":
+"@sophon-labs/account-core@npm:2.0.0-next.24, @sophon-labs/account-core@workspace:packages/account-core":
   version: 0.0.0-use.local
   resolution: "@sophon-labs/account-core@workspace:packages/account-core"
   dependencies:
@@ -3535,7 +3535,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@sophon-labs/account-eip6963@workspace:packages/account-eip6963"
   dependencies:
-    "@sophon-labs/account-core": "npm:2.0.0-next.23"
+    "@sophon-labs/account-core": "npm:2.0.0-next.24"
     "@types/node": "npm:^20.0.0"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.0.0"
@@ -3545,7 +3545,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@sophon-labs/account-message-bridge@npm:2.0.0-next.23, @sophon-labs/account-message-bridge@workspace:packages/account-message-bridge":
+"@sophon-labs/account-message-bridge@npm:2.0.0-next.24, @sophon-labs/account-message-bridge@workspace:packages/account-message-bridge":
   version: 0.0.0-use.local
   resolution: "@sophon-labs/account-message-bridge@workspace:packages/account-message-bridge"
   dependencies:
@@ -3575,8 +3575,8 @@ __metadata:
     "@evilmartians/lefthook": "npm:^1.5.0"
     "@react-native/babel-preset": "npm:0.78.2"
     "@release-it/conventional-changelog": "npm:^9.0.2"
-    "@sophon-labs/account-core": "npm:2.0.0-next.23"
-    "@sophon-labs/account-message-bridge": "npm:2.0.0-next.23"
+    "@sophon-labs/account-core": "npm:2.0.0-next.24"
+    "@sophon-labs/account-message-bridge": "npm:2.0.0-next.24"
     "@types/jest": "npm:^29.5.5"
     commitlint: "npm:^19.6.1"
     del-cli: "npm:^5.1.0"
@@ -3594,7 +3594,7 @@ __metadata:
     text-encoding-polyfill: "npm:^0.6.7"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.3"
-    viem: "npm:^2.31.3"
+    viem: "npm:^2.21.49"
     zksync-sso: "github:sophon-org/zksync-sso-preview#main"
   peerDependencies:
     expo-crypto: ">=14.1.4"
@@ -3604,6 +3604,7 @@ __metadata:
     react-native-url-polyfill: ">=2.0.0"
     react-native-webview: ">=13.12.5"
     text-encoding-polyfill: "*"
+    viem: ">=2.21.49"
   languageName: unknown
   linkType: soft
 
@@ -11934,7 +11935,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"viem@npm:^2.31.3":
+"viem@npm:^2.21.49":
   version: 2.33.2
   resolution: "viem@npm:2.33.2"
   dependencies:

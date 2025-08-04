@@ -1,7 +1,7 @@
 {
   "name": "@sophon-labs/account-connector",
   "description": "Web3 wallet connector with SSO features",
-  "version": "2.0.0-next.23",
+  "version": "2.0.0-next.24",
   "license": "MIT",
   "author": "Sophon Team",
   "type": "module",
@@ -42,11 +42,11 @@
     "vitest": "^3.2.4"
   },
   "dependencies": {
-    "@sophon-labs/account-core": "2.0.0-next.23",
+    "@sophon-labs/account-core": "2.0.0-next.24",
     "zksync-sso": "github:sophon-org/zksync-sso-preview#main"
   },
   "peerDependencies": {
     "@wagmi/core": "^2.17.3",
-    "viem": "^2.31.3"
+    "viem": ">=2.21.49"
   }
 }

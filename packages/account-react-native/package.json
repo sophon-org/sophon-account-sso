@@ -1,6 +1,6 @@
 {
   "name": "@sophon-labs/account-react-native",
-  "version": "2.0.0-next.23",
+  "version": "2.0.0-next.24",
   "description": "Library to handle sophon account on react native environments",
   "main": "./dist/module/index.js",
   "types": "./dist/typescript/src/index.d.ts",
@@ -37,10 +37,9 @@
     "dev": "nodemon -e ts,tsx -w ./src -x 'yarn build'"
   },
   "dependencies": {
-    "@sophon-labs/account-core": "2.0.0-next.23",
-    "@sophon-labs/account-message-bridge": "2.0.0-next.23",
+    "@sophon-labs/account-core": "2.0.0-next.24",
+    "@sophon-labs/account-message-bridge": "2.0.0-next.24",
     "eventemitter3": "5.0.1",
-    "viem": "^2.31.3",
     "zksync-sso": "github:sophon-org/zksync-sso-preview#main"
   },
   "devDependencies": {
@@ -63,7 +62,8 @@
     "release-it": "^17.10.0",
     "text-encoding-polyfill": "^0.6.7",
     "tsup": "^8.5.0",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "viem": "^2.21.49"
   },
   "peerDependencies": {
     "expo-crypto": ">=14.1.4",
@@ -72,7 +72,8 @@
     "react-native-mmkv": ">=3.3.0",
     "react-native-url-polyfill": ">=2.0.0",
     "react-native-webview": ">=13.12.5",
-    "text-encoding-polyfill": "*"
+    "text-encoding-polyfill": "*",
+    "viem": ">=2.21.49"
   },
   "jest": {
     "preset": "react-native",

@@ -1,5 +1,14 @@
 # @sophon-labs/account-react-native
 
+## 2.0.0-next.24
+
+### Patch Changes
+
+- Updating peer dependencies
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.0-next.24
+  - @sophon-labs/account-message-bridge@2.0.0-next.24
+
 ## 2.0.0-next.23
 
 ### Patch Changes
