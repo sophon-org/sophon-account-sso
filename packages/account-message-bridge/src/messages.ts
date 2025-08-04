@@ -9,6 +9,7 @@ export type FromWebActions = {
     address: string;
   };
   closeModal: unknown;
+  logout: unknown;
   rpc: {
     id: string;
     requestId: string;

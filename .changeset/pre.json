@@ -10,17 +10,27 @@
     "@sophon-labs/account-react-native": "1.0.0"
   },
   "changesets": [
+    "big-poems-beg",
     "clean-moments-push",
+    "cuddly-baboons-beg",
     "cuddly-dingos-build",
     "dull-ties-shout",
     "eager-mugs-teach",
     "eager-readers-push",
+    "easy-fans-melt",
     "eight-animals-reply",
+    "famous-geese-wait",
+    "few-needles-cough",
+    "free-mangos-pump",
+    "full-meals-sink",
     "nice-rules-wave",
     "puny-years-talk",
     "ready-chicken-share",
+    "shaggy-moles-draw",
     "slimy-mammals-know",
+    "smooth-adults-beam",
     "solid-tires-fetch",
+    "true-snakes-marry",
     "wicked-showers-listen",
     "wise-buses-burn"
   ]

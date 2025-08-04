@@ -1,5 +1,95 @@
 # @sophon-labs/account-react-native
 
+## 2.0.0-next.22
+
+### Patch Changes
+
+- Updating peerDependencies
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.0-next.22
+  - @sophon-labs/account-message-bridge@2.0.0-next.22
+
+## 2.0.0-next.21
+
+### Patch Changes
+
+- Updating docs, removing placeholder
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.0-next.21
+  - @sophon-labs/account-message-bridge@2.0.0-next.21
+
+## 2.0.0-next.20
+
+### Patch Changes
+
+- Pollyfills on react native by default
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.0-next.20
+  - @sophon-labs/account-message-bridge@2.0.0-next.20
+
+## 2.0.0-next.19
+
+### Patch Changes
+
+- General flow fixes
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.0-next.19
+  - @sophon-labs/account-message-bridge@2.0.0-next.19
+
+## 2.0.0-next.18
+
+### Patch Changes
+
+- Account server pointing to the right url
+- Updated dependencies
+  - @sophon-labs/account-message-bridge@2.0.0-next.18
+  - @sophon-labs/account-core@2.0.0-next.18
+
+## 2.0.0-next.17
+
+### Patch Changes
+
+- Updating react native base version
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.0-next.17
+  - @sophon-labs/account-message-bridge@2.0.0-next.17
+
+## 2.0.0-next.16
+
+### Patch Changes
+
+- Testing version
+- Updated dependencies
+  - @sophon-labs/account-message-bridge@2.0.0-next.16
+  - @sophon-labs/account-core@2.0.0-next.16
+
+## 2.0.0-next.15
+
+### Patch Changes
+
+- Removing sideeffects
+- Updated dependencies
+  - @sophon-labs/account-message-bridge@2.0.0-next.15
+  - @sophon-labs/account-core@2.0.0-next.15
+
+## 2.0.0-next.14
+
+### Patch Changes
+
+- Removing sideeffects
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.0-next.14
+  - @sophon-labs/account-message-bridge@2.0.0-next.14
+
+## 2.0.0-next.13
+
+### Patch Changes
+
+- Updating package files
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.0-next.13
+  - @sophon-labs/account-message-bridge@2.0.0-next.13
+
 ## 2.0.0-next.12
 
 ### Patch Changes

@@ -13,6 +13,7 @@ export type EventActions = {
   'k1.logout': null;
   'smart-contract.logout': null;
   'account.token.emitted': string;
+  'flow.complete': null;
 };
 
 /**

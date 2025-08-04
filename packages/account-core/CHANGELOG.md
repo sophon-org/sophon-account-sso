@@ -1,5 +1,65 @@
 # @sophon-labs/account-core
 
+## 2.0.0-next.22
+
+### Patch Changes
+
+- Updating peerDependencies
+
+## 2.0.0-next.21
+
+### Patch Changes
+
+- Updating docs, removing placeholder
+
+## 2.0.0-next.20
+
+### Patch Changes
+
+- Pollyfills on react native by default
+
+## 2.0.0-next.19
+
+### Patch Changes
+
+- General flow fixes
+
+## 2.0.0-next.18
+
+### Patch Changes
+
+- Account server pointing to the right url
+
+## 2.0.0-next.17
+
+### Patch Changes
+
+- Updating react native base version
+
+## 2.0.0-next.16
+
+### Patch Changes
+
+- Testing version
+
+## 2.0.0-next.15
+
+### Patch Changes
+
+- Removing sideeffects
+
+## 2.0.0-next.14
+
+### Patch Changes
+
+- Removing sideeffects
+
+## 2.0.0-next.13
+
+### Patch Changes
+
+- Updating package files
+
 ## 2.0.0-next.12
 
 ### Patch Changes

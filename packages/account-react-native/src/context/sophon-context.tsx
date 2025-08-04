@@ -2,7 +2,7 @@ import {
   AccountServerURL,
   type SophonNetworkType,
 } from '@sophon-labs/account-core';
-import { createContext, useMemo, useState } from 'react';
+import { createContext, useCallback, useMemo, useState } from 'react';
 import {
   type Address,
   type Chain,
@@ -14,21 +14,23 @@ import { sophon, sophonTestnet } from 'viem/chains';
 import type { WalletProvider } from 'zksync-sso';
 import { SophonMainView } from '../components';
 import { useUIEventHandler } from '../messaging';
-import { createWalletProvider } from '../provider';
+import { createWalletProvider, SophonAppStorage } from '../provider';
 
 export interface SophonContextConfig {
-  serverUrl?: string;
+  authServerUrl?: string;
   walletClient?: WalletClient;
   account?: SophonAccount;
   setAccount: (account?: SophonAccount) => void;
   chain: Chain;
   provider?: WalletProvider;
   token?: string;
+  disconnect: () => void;
 }
 
 export const SophonContext = createContext<SophonContextConfig>({
   chain: sophonTestnet,
   setAccount: () => {},
+  disconnect: () => {},
 });
 
 export interface SophonAccount {
@@ -72,6 +74,12 @@ export const SophonContextProvider = ({
     }),
   });
 
+  const disconnect = useCallback(() => {
+    provider?.disconnect();
+    SophonAppStorage.clear();
+    setAccount(undefined);
+  }, [provider]);
+
   const contextValue = useMemo<SophonContextConfig>(
     () => ({
       mainnet: network === 'mainnet',
@@ -80,15 +88,19 @@ export const SophonContextProvider = ({
       walletClient,
       account,
       setAccount,
-      serverUrl,
       token,
+      disconnect,
     }),
-    [network, serverUrl, walletClient, account, chain, token],
+    [network, serverUrl, walletClient, account, chain, token, disconnect],
   );
+
+  useUIEventHandler('logout', () => {
+    disconnect();
+  });
 
   return (
     <SophonContext.Provider value={contextValue}>
-      <SophonMainView />
+      <SophonMainView authServerUrl={serverUrl} />
       {children}
     </SophonContext.Provider>
   );

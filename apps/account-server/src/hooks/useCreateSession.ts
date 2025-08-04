@@ -30,12 +30,7 @@ export const useCreateSession = () => {
         credentialPublicKey: account.owner.passkey,
         userName: account.username || 'Sophon User',
         userDisplayName: account.username || 'Sophon User',
-        contracts: {
-          accountFactory: CONTRACTS.accountFactory,
-          passkey: CONTRACTS.passkey,
-          session: CONTRACTS.session,
-          recovery: CONTRACTS.recovery,
-        },
+        contracts: CONTRACTS,
         chain: VIEM_CHAIN,
         transport: http(),
       });

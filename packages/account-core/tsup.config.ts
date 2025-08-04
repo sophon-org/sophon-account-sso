@@ -3,11 +3,13 @@ import { defineConfig } from 'tsup';
 
 export default defineConfig((options) => {
   return {
-    entry: ['src/**/*.ts'],
-    splitting: true,
+    platform: 'node',
+    entry: ['src/**/*.ts', '!src/**/*.spec.ts'],
+    splitting: false,
+    bundle: false,
     sourcemap: !!options.watch,
     clean: true,
-    treeshake: true,
+    treeshake: false,
     minify: !options.watch,
     dts: true,
     format: ['esm', 'cjs'],

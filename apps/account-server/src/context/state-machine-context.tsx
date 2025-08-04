@@ -2,6 +2,7 @@
 
 import { createActorContext } from '@xstate/react';
 import { assign } from 'xstate';
+import { sendMessage } from '@/events';
 import { useAccountContext } from '@/hooks/useAccountContext';
 import { windowService } from '@/service/window.service';
 import { userWalletRequestStateMachine } from '@/state/state-machine';
@@ -37,7 +38,7 @@ export const MainStateMachineContextProvider = ({
                 content: {
                   result: null,
                   error: {
-                    message: 'User cancelled.',
+                    message: 'User refused the request.',
                     code: -32002,
                   },
                 },
@@ -52,11 +53,13 @@ export const MainStateMachineContextProvider = ({
                 signing: null,
                 transaction: null,
                 session: null,
+                authentication: null,
               },
             };
           }),
           finishFlow: () => {
             windowService.close();
+            sendMessage('flow.complete', null);
           },
         },
       })}

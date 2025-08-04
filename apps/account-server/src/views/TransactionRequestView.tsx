@@ -167,16 +167,11 @@ export default function TransactionRequestView() {
                     }
 
                     const client = createZksyncPasskeyClient({
-                      address: account.address as `0x${string}`,
+                      address: account.address,
                       credentialPublicKey: account.owner.passkey,
                       userName: account.username || 'Sophon User',
                       userDisplayName: account.username || 'Sophon User',
-                      contracts: {
-                        accountFactory: CONTRACTS.accountFactory,
-                        passkey: CONTRACTS.passkey,
-                        session: CONTRACTS.session,
-                        recovery: CONTRACTS.recovery,
-                      },
+                      contracts: CONTRACTS,
                       chain: VIEM_CHAIN,
                       transport: http(),
                     });

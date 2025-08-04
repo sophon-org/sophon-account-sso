@@ -22,6 +22,10 @@ export interface SigningRequest {
   address: string;
 }
 
+export interface AuthenticationRequest {
+  domain: string;
+}
+
 export interface TransactionRequest {
   to: string;
   value?: string;

@@ -1,7 +1,9 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { serverLog } from '@/lib/server-log';
 import { windowService } from '@/service/window.service';
 import type {
+  AuthenticationRequest,
   IncomingRequest,
   SigningRequest,
   TransactionRequest,
@@ -12,6 +14,7 @@ interface UseMessageHandlerReturn {
   sessionPreferences: unknown;
   signingRequest: SigningRequest | null;
   transactionRequest: TransactionRequest | null;
+  authenticationRequest: AuthenticationRequest | null;
   handlerInitialized: boolean;
 }
 
@@ -23,15 +26,19 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
   const [signingRequest, setSigningRequest] = useState<SigningRequest | null>(
     null,
   );
+  const [authenticationRequest, setAuthenticationRequest] =
+    useState<AuthenticationRequest | null>(null);
   const [transactionRequest, setTransactionRequest] =
     useState<TransactionRequest | null>(null);
 
   useEffect(() => {
-    // biome-ignore lint/suspicious/noExplicitAny: review that in the future  TODO
+    // biome-ignore lint/suspicious/noExplicitAny: review that in the future TODO
     const messageHandler = (data: any) => {
       // Store the incoming request if it's an RPC request
       if (data?.id && data?.content) {
         const method = data.content?.action?.method;
+
+        serverLog(`😀 receiving ${method}`);
 
         if (method === 'eth_requestAccounts') {
           const params = data.content.action?.params as
@@ -45,6 +52,10 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
             setSessionPreferences(null);
           }
           setSigningRequest(null);
+          setTransactionRequest(null);
+          setAuthenticationRequest({
+            domain: 'http://samplerequest.com',
+          });
         } else if (method === 'eth_signTypedData_v4') {
           const params = data.content.action?.params;
 
@@ -65,6 +76,7 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
 
               setSigningRequest(signingRequestData);
               setSessionPreferences(null);
+              setAuthenticationRequest(null);
             } catch (parseError) {
               console.error('Failed to parse typed data JSON:', parseError);
             }
@@ -88,6 +100,7 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
             setTransactionRequest(transactionRequestData);
             setSigningRequest(null);
             setSessionPreferences(null);
+            setAuthenticationRequest(null);
           }
         }
 
@@ -136,6 +149,7 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
   return {
     incomingRequest,
     sessionPreferences,
+    authenticationRequest,
     signingRequest,
     transactionRequest,
     handlerInitialized,

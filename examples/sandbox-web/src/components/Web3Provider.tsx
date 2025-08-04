@@ -8,7 +8,9 @@ import { createConfig, http, WagmiProvider } from 'wagmi';
 // Wagmi config
 const wagmiConfig = createConfig({
   chains: [sophonTestnet],
-  connectors: [sophonSsoConnector('local')],
+  connectors: [
+    sophonSsoConnector('testnet', { authServerUrl: 'http://localhost:3000' }),
+  ],
   transports: {
     [sophonTestnet.id]: http(),
   },

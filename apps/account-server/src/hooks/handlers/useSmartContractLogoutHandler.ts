@@ -1,5 +1,6 @@
 'use client';
 
+import { sendMessageToRN } from '@sophon-labs/account-message-bridge';
 import { useEventHandler } from '@/events/hooks';
 import { useAccountDisconnect } from '@/hooks/useDisconnect';
 
@@ -11,5 +12,6 @@ export const useSmartContractLogoutHandler = () => {
 
   useEventHandler('smart-contract.logout', () => {
     disconnect();
+    sendMessageToRN('logout', null);
   });
 };
