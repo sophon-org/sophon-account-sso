@@ -136,11 +136,12 @@ export default function RootPage() {
       <Drawer
         open={open}
         onOpenChange={handleCloseModal}
-        showHeader={false}
+        showHeader={true}
+        title="Authenticating"
         showLogo={false}
         showLegalNotice={false}
       >
-        <LoadingView message="Authenticating..." />
+        <LoadingView />
       </Drawer>
     );
   }

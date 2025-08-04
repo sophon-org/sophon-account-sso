@@ -32,6 +32,16 @@ interface WindowCommunicationService {
    */
   sendMessage: (message: unknown) => void;
 
+  /**
+   * Emits a token to the bridge (React Native specific)
+   */
+  emitToken: (token: string) => void;
+
+  /**
+   * Sends logout signal to the bridge
+   */
+  logout: () => void;
+
   listen: (callback: (message: unknown) => void) => () => void;
 }
 
@@ -46,6 +56,14 @@ const noopWindowService: WindowCommunicationService = {
 
   sendMessage: (message: unknown) => {
     alert(`sendMessage noop ${JSON.stringify(message)}`);
+  },
+
+  emitToken: (token: string) => {
+    console.log('Token emitted (noop):', token);
+  },
+
+  logout: () => {
+    console.log('Logout (noop)');
   },
 
   listen: () => {
@@ -69,6 +87,16 @@ const popupWindowService: WindowCommunicationService = {
   sendMessage: (message: unknown) => {
     // alert(`sendMessage webview ${JSON.stringify(message)}`);
     window.opener.postMessage(message, '*');
+  },
+
+  emitToken: (token: string) => {
+    // For popup windows, we could send a specific message format
+    window.opener.postMessage({ type: 'token', payload: token }, '*');
+  },
+
+  logout: () => {
+    // For popup windows, we could send a logout message
+    window.opener.postMessage({ type: 'logout' }, '*');
   },
 
   listen: (callback: (message: unknown) => void) => {
@@ -97,6 +125,14 @@ const webViewWindowService: WindowCommunicationService = {
   sendMessage: (message: unknown) => {
     // alert(`sendMessage webview ${JSON.stringify(message)}`);
     sendMessageToRN('rpc', message as FromWebActions['rpc']);
+  },
+
+  emitToken: (token: string) => {
+    sendMessageToRN('account.token.emitted', token);
+  },
+
+  logout: () => {
+    sendMessageToRN('logout', null);
   },
 
   listen: (callback: (message: unknown) => void) => {
@@ -128,6 +164,10 @@ class DelegateWindowService implements WindowCommunicationService {
   close = () => this.proxy.close();
 
   sendMessage = (message: unknown) => this.proxy.sendMessage(message);
+
+  emitToken = (token: string) => this.proxy.emitToken(token);
+
+  logout = () => this.proxy.logout();
 
   listen = (callback: (message: unknown) => void) =>
     this.proxy.listen(callback);

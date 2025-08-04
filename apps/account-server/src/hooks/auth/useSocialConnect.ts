@@ -2,6 +2,7 @@ import { useSocialAccounts } from '@dynamic-labs/sdk-react-core';
 import type { ProviderEnum } from '@dynamic-labs/types';
 import { useCallback, useEffect } from 'react';
 import { MainStateMachineContext } from '@/context/state-machine-context';
+import { setSocialProviderInURL } from '@/lib/social-provider';
 
 export function useSocialConnect() {
   const actorRef = MainStateMachineContext.useActorRef();
@@ -20,6 +21,9 @@ export function useSocialConnect() {
 
   return useCallback(
     async (provider: ProviderEnum) => {
+      // Store provider in URL for OAuth redirect preservation
+      setSocialProviderInURL(provider);
+
       actorRef.send({ type: 'AUTHENTICATION_STARTED' });
       await signInWithSocialAccount(provider);
     },
