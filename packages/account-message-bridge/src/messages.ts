@@ -15,6 +15,7 @@ export type FromWebActions = {
     requestId: string;
     content: unknown;
   };
+  'account.token.emitted': string;
 };
 
 export type FromWebActionNames = keyof FromWebActions;

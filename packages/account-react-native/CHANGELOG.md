@@ -1,5 +1,14 @@
 # @sophon-labs/account-react-native
 
+## 2.0.0-next.25
+
+### Patch Changes
+
+- Sending message to client for token
+- Updated dependencies
+  - @sophon-labs/account-message-bridge@2.0.0-next.25
+  - @sophon-labs/account-core@2.0.0-next.25
+
 ## 2.0.0-next.24
 
 ### Patch Changes

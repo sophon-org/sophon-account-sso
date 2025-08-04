@@ -25,7 +25,7 @@ export default function SelectingWalletView() {
     }
   };
 
-  const getAvailableWallets = () => {
+  const getAvailableWallets = useCallback(() => {
     const installedWallets = connectors.filter((c) => c.icon);
     const availableWallets = installedWallets.map((c) => ({
       name: c.name,
@@ -36,11 +36,11 @@ export default function SelectingWalletView() {
     );
     const allAvailableWallets = [...availableWallets, ...removedDuplicates];
     setAvailableWallets(allAvailableWallets);
-  };
+  }, [connectors]);
 
   useEffect(() => {
     getAvailableWallets();
-  }, []);
+  }, [getAvailableWallets]);
 
   return (
     <div>

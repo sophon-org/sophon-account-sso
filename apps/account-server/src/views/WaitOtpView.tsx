@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { useAuthCallbacks } from '@/hooks/auth/useAuthActions';
 
-export default function WaitOtpView({ email }: { email: string }) {
+export default function WaitOtpView() {
   const { verifyOTP } = useAuthCallbacks();
 
   return (
