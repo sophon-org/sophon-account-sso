@@ -1,9 +1,8 @@
-export type SophonNetworkType = 'mainnet' | 'testnet' | 'local';
+export type SophonNetworkType = 'mainnet' | 'testnet';
 
 export const AccountServerURL: Record<SophonNetworkType, string> = {
   mainnet: 'https://my.sophon.xyz',
   testnet: 'https://my.staging.sophon.xyz',
-  local: 'http://localhost:3000',
 };
 
 export const SophonIcon =

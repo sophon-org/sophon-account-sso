@@ -15,6 +15,5 @@ export default defineConfig((options) => {
     outDir: 'dist',
     tsconfig: path.resolve(__dirname, './tsconfig.json'),
     external: ['viem', '@wagmi/core'],
-    noExternal: ['@sophon-labs/account-core'],
   };
 });
