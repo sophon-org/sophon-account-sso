@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useConnect } from 'wagmi';
 import { useAuthCallbacks } from '@/hooks/auth/useAuthActions';
 import {
