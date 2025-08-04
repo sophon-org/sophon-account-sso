@@ -157,7 +157,7 @@ export default function RootPage() {
         showLogo={false}
         showLegalNotice={false}
       >
-        <WaitOtpView email={'TODO EMAIL'} />
+        <WaitOtpView />
       </Drawer>
     );
   }

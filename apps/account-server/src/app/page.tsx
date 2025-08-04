@@ -102,7 +102,7 @@ export default function RootPage() {
           actorRef.send({ type: 'CANCEL' });
         }}
       >
-        <WaitOtpView email={'TODO EMAIL'} />
+        <WaitOtpView />
       </Dialog>
     );
   }
