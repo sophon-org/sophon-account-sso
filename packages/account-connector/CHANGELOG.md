@@ -1,5 +1,13 @@
 # @sophon-labs/account-connector
 
+## 2.0.0-next.23
+
+### Patch Changes
+
+- Updating peerdependencies to solve problems with npm
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.0-next.23
+
 ## 2.0.0-next.22
 
 ### Patch Changes

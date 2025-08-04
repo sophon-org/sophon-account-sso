@@ -3497,7 +3497,7 @@ __metadata:
   resolution: "@sophon-labs/account-connector@workspace:packages/account-connector"
   dependencies:
     "@playwright/test": "npm:^1.54.1"
-    "@sophon-labs/account-core": "npm:2.0.0-next.22"
+    "@sophon-labs/account-core": "npm:2.0.0-next.23"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@types/node": "npm:^20.0.0"
@@ -3514,7 +3514,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@sophon-labs/account-core@npm:2.0.0-next.22, @sophon-labs/account-core@workspace:packages/account-core":
+"@sophon-labs/account-core@npm:2.0.0-next.23, @sophon-labs/account-core@workspace:packages/account-core":
   version: 0.0.0-use.local
   resolution: "@sophon-labs/account-core@workspace:packages/account-core"
   dependencies:
@@ -3535,7 +3535,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@sophon-labs/account-eip6963@workspace:packages/account-eip6963"
   dependencies:
-    "@sophon-labs/account-core": "npm:2.0.0-next.22"
+    "@sophon-labs/account-core": "npm:2.0.0-next.23"
     "@types/node": "npm:^20.0.0"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.0.0"
@@ -3545,7 +3545,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@sophon-labs/account-message-bridge@npm:2.0.0-next.22, @sophon-labs/account-message-bridge@workspace:packages/account-message-bridge":
+"@sophon-labs/account-message-bridge@npm:2.0.0-next.23, @sophon-labs/account-message-bridge@workspace:packages/account-message-bridge":
   version: 0.0.0-use.local
   resolution: "@sophon-labs/account-message-bridge@workspace:packages/account-message-bridge"
   dependencies:
@@ -3553,19 +3553,17 @@ __metadata:
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@types/node": "npm:^20.0.0"
-    "@types/react": "npm:^19"
+    "@types/react": "npm:^18"
     "@vitest/coverage-v8": "npm:^3.2.4"
     eventemitter3: "npm:5.0.1"
-    react: "npm:^19.0.0"
-    react-native-webview: "npm:^13.15.0"
+    react-native-webview: "npm:^13.12.5"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.0.0"
     vite: "npm:^7.0.5"
     vite-tsconfig-paths: "npm:^5.1.4"
     vitest: "npm:^3.2.4"
   peerDependencies:
-    react: 19.0.0
-    react-native-webview: 13.15.0
+    react-native-webview: ">=13.12.5"
   languageName: unknown
   linkType: soft
 
@@ -3577,13 +3575,13 @@ __metadata:
     "@evilmartians/lefthook": "npm:^1.5.0"
     "@react-native/babel-preset": "npm:0.78.2"
     "@release-it/conventional-changelog": "npm:^9.0.2"
-    "@sophon-labs/account-core": "npm:2.0.0-next.22"
-    "@sophon-labs/account-message-bridge": "npm:2.0.0-next.22"
+    "@sophon-labs/account-core": "npm:2.0.0-next.23"
+    "@sophon-labs/account-message-bridge": "npm:2.0.0-next.23"
     "@types/jest": "npm:^29.5.5"
     commitlint: "npm:^19.6.1"
     del-cli: "npm:^5.1.0"
     eventemitter3: "npm:5.0.1"
-    expo-crypto: "npm:^14.0.2"
+    expo-crypto: "npm:^14.1.4"
     expo-standard-web-crypto: "npm:^2.1.4"
     jest: "npm:^29.7.0"
     prettier: "npm:^3.0.3"
@@ -3599,7 +3597,7 @@ __metadata:
     viem: "npm:^2.31.3"
     zksync-sso: "github:sophon-org/zksync-sso-preview#main"
   peerDependencies:
-    expo-crypto: ">=14.0.2"
+    expo-crypto: ">=14.1.4"
     expo-standard-web-crypto: ">=2.1.4"
     react-native: ">=0.76.6"
     react-native-mmkv: ">=3.3.0"
@@ -3829,12 +3827,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^19":
-  version: 19.1.9
-  resolution: "@types/react@npm:19.1.9"
+"@types/prop-types@npm:*":
+  version: 15.7.15
+  resolution: "@types/prop-types@npm:15.7.15"
+  checksum: 10c0/b59aad1ad19bf1733cf524fd4e618196c6c7690f48ee70a327eb450a42aab8e8a063fbe59ca0a5701aebe2d92d582292c0fb845ea57474f6a15f6994b0e260b2
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:^18":
+  version: 18.3.23
+  resolution: "@types/react@npm:18.3.23"
   dependencies:
+    "@types/prop-types": "npm:*"
     csstype: "npm:^3.0.2"
-  checksum: 10c0/b418da4aaf18fbc6df4f1b7096dda7ee152d697cac00d729ffd855b2b44a3a9cfb2ecb017ed20979ea3a7d98a5ce5fcf01ac1a3614d4a3e4d7069a0c45e49b0f
+  checksum: 10c0/49331800b76572eb2992a5c44801dbf8c612a5f99c8f4e4200f06c7de6f3a6e9455c661784a6c5469df96fa45622cb4a9d0982c44e6a0d5719be5f2ef1f545ed
   languageName: node
   linkType: hard
 
@@ -6089,7 +6095,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expo-crypto@npm:^14.0.2":
+"expo-crypto@npm:^14.1.4":
   version: 14.1.5
   resolution: "expo-crypto@npm:14.1.5"
   dependencies:
@@ -10246,13 +10252,6 @@ __metadata:
   version: 0.14.2
   resolution: "react-refresh@npm:0.14.2"
   checksum: 10c0/875b72ef56b147a131e33f2abd6ec059d1989854b3ff438898e4f9310bfcc73acff709445b7ba843318a953cb9424bcc2c05af2b3d80011cee28f25aef3e2ebb
-  languageName: node
-  linkType: hard
-
-"react@npm:^19.0.0":
-  version: 19.1.1
-  resolution: "react@npm:19.1.1"
-  checksum: 10c0/8c9769a2dfd02e603af6445058325e6c8a24b47b185d0e461f66a6454765ddcaecb3f0a90184836c68bb509f3c38248359edbc42f0d07c23eb500a5c30c87b4e
   languageName: node
   linkType: hard
 

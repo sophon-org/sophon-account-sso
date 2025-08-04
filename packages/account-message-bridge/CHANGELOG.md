@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 2.0.0-next.23
+
+### Patch Changes
+
+- Updating peerdependencies to solve problems with npm
+
 ## 2.0.0-next.22
 
 ### Patch Changes
