@@ -1,26 +1,31 @@
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { sendMessage } from '@/events';
 import { cn } from '@/lib/cn';
 import { IconBack } from '../icons/icon-back';
 import { IconClose } from '../icons/icon-close';
 import { IconSettings } from '../icons/icon-settings';
 import { IconSophon } from '../icons/icon-sophon';
 import { LegalNotice } from '../legal';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '../ui/dropdown-menu';
 
 export const DialogHeader = ({
   title,
   onBack,
   onClose,
-  onSettings,
+  showSettings,
 }: {
   title?: string;
   onBack?: () => void;
   onClose?: () => void;
-  onSettings?: () => void;
+  showSettings?: boolean;
 }) => {
+  const handleDisconnect = () => {
+    sendMessage('smart-contract.logout', null);
+  };
   return (
     <div className="flex justify-between items-center p-2 min-h-16">
       {!!onBack && (
@@ -42,21 +47,24 @@ export const DialogHeader = ({
           <IconClose className="m-w-6 m-h-6" />
         </button>
       )}
-      {!!onSettings && (
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button
-              type="button"
-              className="text-gray-500 hover:text-gray-700 cursor-pointer"
-              onClick={onSettings}
+      {!!showSettings && (
+        <DropdownMenu>
+          <DropdownMenuTrigger className=" cursor-pointer">
+            <IconSettings className="m-w-6 m-h-6" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="mr-5">
+            <DropdownMenuItem
+              onClick={() => {
+                window.parent.open('https://app.sophon.xyz/', '_blank');
+              }}
             >
-              <IconSettings className="m-w-6 m-h-6" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Manage account at Sophon home</p>
-          </TooltipContent>
-        </Tooltip>
+              Manage account at Sophon home
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleDisconnect}>
+              Log out
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       )}
     </div>
   );
@@ -90,7 +98,7 @@ export interface DialogProps {
   onClose?: () => void;
   showLegalNotice?: boolean;
   actions?: React.ReactNode;
-  onSettings?: () => void;
+  showSettings?: boolean;
 }
 
 export function Dialog({
@@ -101,7 +109,7 @@ export function Dialog({
   onClose,
   showLegalNotice = true,
   actions,
-  onSettings,
+  showSettings = false,
 }: DialogProps) {
   return (
     <div
@@ -116,9 +124,9 @@ export function Dialog({
           title={title}
           onBack={onBack}
           onClose={onClose}
-          onSettings={onSettings}
+          showSettings={showSettings}
         />
-        {children}
+        <div className="flex-1">{children}</div>
         <DialogFooter showLegalNotice={showLegalNotice} actions={actions} />
       </div>
     </div>

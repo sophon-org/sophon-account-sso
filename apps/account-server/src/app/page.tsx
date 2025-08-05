@@ -51,9 +51,7 @@ export default function RootPage() {
       <Dialog
         className="relative"
         title={shortenAddress(account?.address ?? '')}
-        onSettings={() => {
-          window.parent.open('https://app.sophon.xyz/', '_blank');
-        }}
+        showSettings={true}
         showLegalNotice={false}
       >
         <SigningRequestView />
@@ -151,9 +149,7 @@ export default function RootPage() {
     return (
       <Dialog
         className="relative"
-        onSettings={() => {
-          window.parent.open('https://app.sophon.xyz/', '_blank');
-        }}
+        showSettings={true}
         showLegalNotice={false}
         actions={<Button onClick={handleDisconnect}>Log out</Button>}
       >
