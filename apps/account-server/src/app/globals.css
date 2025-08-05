@@ -140,3 +140,11 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Hide Dynamic's social login bottom sheet/modal */
+.dynamic-modal {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}

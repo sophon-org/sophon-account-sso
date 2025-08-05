@@ -1,6 +1,5 @@
 'use client';
 
-import { sendMessageToRN } from '@sophon-labs/account-message-bridge';
 import { useState } from 'react';
 import { sophonTestnet } from 'viem/chains';
 import { IconSignature } from '@/components/icons/icon-signature';
@@ -87,7 +86,7 @@ export default function ConnectAuthorizationView() {
 
       // we don't store the token, we just send it during the account authorization
       // TODO: better handling token expiration
-      sendMessageToRN('account.token.emitted', token);
+      windowService.emitToken(token);
 
       if (windowService.isManaged() && incoming) {
         handleAuthSuccessResponse(
