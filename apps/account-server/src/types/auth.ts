@@ -14,7 +14,12 @@ export interface IncomingRequest {
   content: unknown;
 }
 
-export interface SigningRequest {
+export interface MessageSigningRequest {
+  message: string;
+  address: string;
+}
+
+export interface TypedDataSigningRequest {
   domain: TypedDataDomain;
   types: Record<string, readonly TypedDataParameter[]>;
   primaryType: string;
@@ -85,7 +90,7 @@ export interface AuthContext {
   accountData?: unknown;
   error?: string;
   email?: string;
-  signingRequest?: SigningRequest;
+  signingRequest?: TypedDataSigningRequest;
   transactionRequest?: TransactionRequest;
   providerName?: string;
 }

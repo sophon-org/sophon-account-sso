@@ -21,6 +21,7 @@ export default function HomeScreen() {
 
   const [error, setError] = useState<string>('');
   const [signature, setSignature] = useState<string>();
+  const [typedDataSignature, setTypedDataSignature] = useState<string>();
   const [transaction, setTransaction] = useState<string>();
 
   return (
@@ -96,6 +97,32 @@ export default function HomeScreen() {
               onPress={async () => {
                 try {
                   setError('');
+                  const signature = await walletClient!.signMessage({
+                    account: account!.address,
+                    message: 'Hello from Sophon SSO!',
+                  });
+                  setSignature(signature);
+                  // biome-ignore lint/suspicious/noExplicitAny: TODO: create better types here
+                } catch (e: any) {
+                  setError(e.details ?? e.message);
+                }
+              }}
+            />
+          </View>
+
+          {signature && <Text>Signature: {signature ?? 'N/A'}</Text>}
+        </>
+      )}
+
+      {isConnected && (
+        <>
+          <View style={styles.button}>
+            <Button
+              title="✍️ Sign Typed Data"
+              color="white"
+              onPress={async () => {
+                try {
+                  setError('');
                   const signature = await walletClient!.signTypedData({
                     account: account!.address,
                     domain: {
@@ -117,7 +144,7 @@ export default function HomeScreen() {
                       timestamp: BigInt(Math.floor(Date.now() / 1000)),
                     },
                   });
-                  setSignature(signature);
+                  setTypedDataSignature(signature);
                   // biome-ignore lint/suspicious/noExplicitAny: TODO: create better types here
                 } catch (e: any) {
                   setError(e.details ?? e.message);
@@ -126,7 +153,9 @@ export default function HomeScreen() {
             />
           </View>
 
-          {signature && <Text>Signature: {signature ?? 'N/A'}</Text>}
+          {typedDataSignature && (
+            <Text>Signature: {typedDataSignature ?? 'N/A'}</Text>
+          )}
         </>
       )}
 

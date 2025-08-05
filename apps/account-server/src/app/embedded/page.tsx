@@ -86,7 +86,10 @@ export default function RootPage() {
   /***************************
    * INCOMING REQUESTS STATE *
    ***************************/
-  if (state.matches('incoming-signature')) {
+  if (
+    state.matches('incoming-typed-data-signature') ||
+    state.matches('incoming-message-signature')
+  ) {
     return (
       <Drawer
         open={open}

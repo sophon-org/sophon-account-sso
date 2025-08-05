@@ -50,7 +50,8 @@ export const MainStateMachineContextProvider = ({
               ...context,
               requests: {
                 incoming: null,
-                signing: null,
+                typedDataSigning: null,
+                messageSigning: null,
                 transaction: null,
                 session: null,
                 authentication: null,

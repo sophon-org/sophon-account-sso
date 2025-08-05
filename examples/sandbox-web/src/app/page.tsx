@@ -8,6 +8,7 @@ import {
   useConnect,
   useDisconnect,
   useSendTransaction,
+  useSignMessage,
   useSignTypedData,
 } from 'wagmi';
 
@@ -17,6 +18,12 @@ export default function Home() {
   const { connect, connectors, isPending } = useConnect();
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
+  const {
+    signMessage,
+    data: messageData,
+    isPending: isMessagePending,
+    error: messageError,
+  } = useSignMessage();
   const {
     signTypedData,
     data: signatureData,
@@ -48,6 +55,12 @@ export default function Home() {
   };
 
   const handleSignMessage = () => {
+    signMessage({
+      message: 'Hello from Sophon SSO!',
+    });
+  };
+
+  const handleSignTypedData = () => {
     signTypedData({
       domain: {
         name: 'Sophon SSO',
@@ -133,7 +146,23 @@ export default function Home() {
                     marginRight: '10px',
                   }}
                 >
-                  {isSignPending ? 'Signing...' : 'Sign Message'}
+                  {isMessagePending ? 'Signing...' : 'Sign Message'}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSignTypedData}
+                  disabled={isSignPending}
+                  style={{
+                    backgroundColor: isSignPending ? '#94a3b8' : '#059669',
+                    color: 'white',
+                    border: 'none',
+                    padding: '8px 16px',
+                    borderRadius: '4px',
+                    cursor: isSignPending ? 'not-allowed' : 'pointer',
+                    marginRight: '10px',
+                  }}
+                >
+                  {isSignPending ? 'Signing...' : 'Sign Typed Data'}
                 </button>
                 <button
                   type="button"
@@ -171,6 +200,11 @@ export default function Home() {
                   {signError.message}
                 </div>
               )}
+              {messageError && (
+                <div style={{ color: 'red', marginTop: '10px' }}>
+                  {messageError.message}
+                </div>
+              )}
               {signatureData && (
                 <div
                   style={{
@@ -193,6 +227,31 @@ export default function Home() {
                   </p>
                   <code style={{ wordBreak: 'break-all', color: '#374151' }}>
                     {signatureData}
+                  </code>
+                </div>
+              )}
+              {messageData && (
+                <div
+                  style={{
+                    marginTop: '10px',
+                    padding: '10px',
+                    backgroundColor: '#f0fdf4',
+                    border: '1px solid #059669',
+                    borderRadius: '4px',
+                    fontSize: '12px',
+                  }}
+                >
+                  <p
+                    style={{
+                      color: '#059669',
+                      fontWeight: 'bold',
+                      margin: '0 0 5px 0',
+                    }}
+                  >
+                    ✅ Message Signed!
+                  </p>
+                  <code style={{ wordBreak: 'break-all', color: '#374151' }}>
+                    {messageData}
                   </code>
                 </div>
               )}

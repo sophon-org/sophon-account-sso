@@ -12,7 +12,8 @@ export const useLoadingResources = () => {
   const {
     incomingRequest,
     sessionPreferences,
-    signingRequest,
+    typedDataSigningRequest,
+    messageSigningRequest,
     transactionRequest,
     authenticationRequest,
     handlerInitialized,
@@ -31,7 +32,8 @@ export const useLoadingResources = () => {
   return {
     incomingRequest,
     sessionPreferences,
-    signingRequest,
+    typedDataSigningRequest,
+    messageSigningRequest,
     transactionRequest,
     authenticationRequest,
   };

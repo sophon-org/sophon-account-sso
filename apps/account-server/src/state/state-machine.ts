@@ -2,8 +2,9 @@ import { assign, createMachine } from 'xstate';
 import type {
   AuthenticationRequest,
   IncomingRequest,
-  SigningRequest,
+  MessageSigningRequest,
   TransactionRequest,
+  TypedDataSigningRequest,
 } from '@/types/auth';
 
 const defaultContext = {
@@ -13,7 +14,8 @@ const defaultContext = {
   requests: {
     incoming: null as IncomingRequest | null | undefined,
     session: null as unknown | null | undefined,
-    signing: null as SigningRequest | null | undefined,
+    typedDataSigning: null as TypedDataSigningRequest | null | undefined,
+    messageSigning: null as MessageSigningRequest | null | undefined,
     transaction: null as TransactionRequest | null | undefined,
     authentication: null as AuthenticationRequest | null | undefined,
   },
@@ -210,9 +212,17 @@ export const userWalletRequestStateMachine = createMachine({
         },
         {
           guard: ({ context }) => {
-            return context.isAuthenticated && !!context.requests.signing;
+            return (
+              context.isAuthenticated && !!context.requests.typedDataSigning
+            );
           },
-          target: 'incoming-signature',
+          target: 'incoming-typed-data-signature',
+        },
+        {
+          guard: ({ context }) => {
+            return context.isAuthenticated && !!context.requests.messageSigning;
+          },
+          target: 'incoming-message-signature',
         },
         {
           guard: ({ context }) => {
@@ -240,7 +250,19 @@ export const userWalletRequestStateMachine = createMachine({
         },
       },
     },
-    'incoming-signature': {
+    'incoming-typed-data-signature': {
+      on: {
+        ACCEPT: {
+          target: 'completed',
+          actions: 'clearRequests',
+        },
+        CANCEL: {
+          target: 'completed',
+          actions: 'clearRequests',
+        },
+      },
+    },
+    'incoming-message-signature': {
       on: {
         ACCEPT: {
           target: 'completed',

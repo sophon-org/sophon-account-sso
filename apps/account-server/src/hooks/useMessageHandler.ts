@@ -1,18 +1,21 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { hexToString } from 'viem';
 import { serverLog } from '@/lib/server-log';
 import { windowService } from '@/service/window.service';
 import type {
   AuthenticationRequest,
   IncomingRequest,
-  SigningRequest,
+  MessageSigningRequest,
   TransactionRequest,
+  TypedDataSigningRequest,
 } from '@/types/auth';
 
 interface UseMessageHandlerReturn {
   incomingRequest: IncomingRequest | null;
   sessionPreferences: unknown;
-  signingRequest: SigningRequest | null;
+  typedDataSigningRequest: TypedDataSigningRequest | null;
+  messageSigningRequest: MessageSigningRequest | null;
   transactionRequest: TransactionRequest | null;
   authenticationRequest: AuthenticationRequest | null;
   handlerInitialized: boolean;
@@ -23,9 +26,10 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
   const [incomingRequest, setIncomingRequest] =
     useState<IncomingRequest | null>(null);
   const [sessionPreferences, setSessionPreferences] = useState<unknown>(null);
-  const [signingRequest, setSigningRequest] = useState<SigningRequest | null>(
-    null,
-  );
+  const [typedDataSigningRequest, setTypedDataSigningRequest] =
+    useState<TypedDataSigningRequest | null>(null);
+  const [messageSigningRequest, setMessageSigningRequest] =
+    useState<MessageSigningRequest | null>(null);
   const [authenticationRequest, setAuthenticationRequest] =
     useState<AuthenticationRequest | null>(null);
   const [transactionRequest, setTransactionRequest] =
@@ -51,11 +55,25 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
           } else {
             setSessionPreferences(null);
           }
-          setSigningRequest(null);
+          setTypedDataSigningRequest(null);
+          setMessageSigningRequest(null);
           setTransactionRequest(null);
           setAuthenticationRequest({
             domain: 'http://samplerequest.com',
           });
+        } else if (method === 'personal_sign') {
+          const params = data.content.action?.params;
+          if (params && params.length >= 2) {
+            const messageHex = params[0];
+            const address = params[1];
+            const decodedMessage = hexToString(messageHex);
+
+            setMessageSigningRequest({ message: decodedMessage, address });
+            setSessionPreferences(null);
+            setAuthenticationRequest(null);
+            setTypedDataSigningRequest(null);
+            setTransactionRequest(null);
+          }
         } else if (method === 'eth_signTypedData_v4') {
           const params = data.content.action?.params;
 
@@ -74,9 +92,11 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
                 address: address,
               };
 
-              setSigningRequest(signingRequestData);
+              setTypedDataSigningRequest(signingRequestData);
               setSessionPreferences(null);
               setAuthenticationRequest(null);
+              setMessageSigningRequest(null);
+              setTransactionRequest(null);
             } catch (parseError) {
               console.error('Failed to parse typed data JSON:', parseError);
             }
@@ -98,7 +118,8 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
             };
 
             setTransactionRequest(transactionRequestData);
-            setSigningRequest(null);
+            setTypedDataSigningRequest(null);
+            setMessageSigningRequest(null);
             setSessionPreferences(null);
             setAuthenticationRequest(null);
           }
@@ -150,7 +171,8 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
     incomingRequest,
     sessionPreferences,
     authenticationRequest,
-    signingRequest,
+    typedDataSigningRequest,
+    messageSigningRequest,
     transactionRequest,
     handlerInitialized,
   };
