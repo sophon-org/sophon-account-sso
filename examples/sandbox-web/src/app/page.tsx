@@ -104,7 +104,7 @@ export default function Home() {
               </p>
               <div style={{ margin: '10px 0' }}>
                 <a
-                  href="https://my.staging.sophon.xyz"
+                  href="http://localhost:3000"
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{
