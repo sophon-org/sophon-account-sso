@@ -11,13 +11,12 @@ import { windowService } from '@/service/window.service';
 
 export default function SigningRequestView() {
   const { account } = useAccountContext();
-  const { incoming, signing } = MainStateMachineContext.useSelector(
-    (state) => state.context.requests,
-  );
+  const { incoming, typedDataSigning, messageSigning } =
+    MainStateMachineContext.useSelector((state) => state.context.requests);
   const actorRef = MainStateMachineContext.useActorRef();
-  const { isSigning, signTypeData } = useSignature();
+  const { isSigning, signTypeData, signMessage } = useSignature();
 
-  if (!signing || !incoming || !account) {
+  if ((!typedDataSigning && !messageSigning) || !incoming || !account) {
     return <div>No signing request or account present</div>;
   }
 
@@ -28,16 +27,27 @@ export default function SigningRequestView() {
         <h5 className="text-2xl font-bold">Signature request</h5>
         <p className="hidden">https://my.staging.sophon.xyz</p>
       </div>
-      <MessageContainer>
-        <div className="text-sm text-black">
-          <p>
-            {signing.domain.name} v{signing.domain.version}
-          </p>
-          <pre className="text-xs mt-2 whitespace-pre-wrap break-words">
-            {JSON.stringify(signing.message, null, 2)}
-          </pre>
-        </div>
-      </MessageContainer>
+      {typedDataSigning && (
+        <MessageContainer>
+          <div className="text-sm text-black">
+            <p>
+              {typedDataSigning.domain.name} v{typedDataSigning.domain.version}
+            </p>
+            <pre className="text-xs mt-2 whitespace-pre-wrap break-words">
+              {JSON.stringify(typedDataSigning.message, null, 2)}
+            </pre>
+          </div>
+        </MessageContainer>
+      )}
+      {messageSigning && (
+        <MessageContainer>
+          <div className="text-sm text-black">
+            <pre className="text-xs mt-2 whitespace-pre-wrap break-words">
+              {messageSigning.message}
+            </pre>
+          </div>
+        </MessageContainer>
+      )}
 
       <div className="flex items-center justify-center gap-2 w-full">
         <Button
@@ -66,7 +76,12 @@ export default function SigningRequestView() {
         <Button
           type="button"
           onClick={async () => {
-            const signature = await signTypeData(signing);
+            let signature: string | undefined;
+            if (typedDataSigning) {
+              signature = await signTypeData(typedDataSigning);
+            } else if (messageSigning) {
+              signature = await signMessage(messageSigning);
+            }
 
             if (windowService.isManaged() && incoming) {
               const signResponse = {

@@ -9,7 +9,10 @@ import { createZksyncEcdsaClient } from 'zksync-sso/client/ecdsa';
 import { createZksyncPasskeyClient } from 'zksync-sso/client/passkey';
 import { CONTRACTS, VIEM_CHAIN } from '@/lib/constants';
 import { verifyEIP1271Signature } from '@/lib/smart-contract';
-import type { SigningRequest } from '@/types/auth';
+import type {
+  MessageSigningRequest,
+  TypedDataSigningRequest,
+} from '@/types/auth';
 import { useAccountContext } from './useAccountContext';
 
 export const useSignature = () => {
@@ -19,7 +22,7 @@ export const useSignature = () => {
   const { data: walletClient } = useWalletClient();
   const { primaryWallet } = useDynamicContext();
 
-  const signTypeData = async (payload: SigningRequest) => {
+  const signTypeData = async (payload: TypedDataSigningRequest) => {
     try {
       setIsSigning(true);
 
@@ -141,7 +144,7 @@ export const useSignature = () => {
     }
   };
 
-  const signMessage = async (message: string) => {
+  const signMessage = async (payload: MessageSigningRequest) => {
     try {
       setIsSigning(true);
 
@@ -157,7 +160,7 @@ export const useSignature = () => {
       if (primaryWallet && isEthereumWallet(primaryWallet)) {
         try {
           const client = await primaryWallet.getWalletClient();
-          signature = await client.signMessage({ message });
+          signature = await client.signMessage({ message: payload.message });
         } catch (error) {
           console.error('Signing error:', error);
           throw error;
@@ -204,7 +207,7 @@ export const useSignature = () => {
           },
         });
 
-        signature = await client.signMessage({ message });
+        signature = await client.signMessage({ message: payload.message });
       } else {
         if (!account.owner.passkey) {
           throw new Error('No passkey data available for signing');
@@ -221,7 +224,7 @@ export const useSignature = () => {
         });
 
         console.log('passkey signature');
-        signature = await client.signMessage({ message });
+        signature = await client.signMessage({ message: payload.message });
       }
 
       return signature;

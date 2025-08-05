@@ -11,7 +11,8 @@ export const useConnectEventsWithStateMachine = () => {
   const {
     incomingRequest,
     sessionPreferences,
-    signingRequest,
+    typedDataSigningRequest,
+    messageSigningRequest,
     transactionRequest,
     authenticationRequest,
   } = useLoadingResources();
@@ -22,7 +23,8 @@ export const useConnectEventsWithStateMachine = () => {
       requests: {
         incoming: incomingRequest,
         session: sessionPreferences,
-        signing: signingRequest,
+        typedDataSigning: typedDataSigningRequest,
+        messageSigning: messageSigningRequest,
         transaction: transactionRequest,
         authentication: authenticationRequest,
       },
@@ -30,7 +32,8 @@ export const useConnectEventsWithStateMachine = () => {
   }, [
     incomingRequest,
     sessionPreferences,
-    signingRequest,
+    typedDataSigningRequest,
+    messageSigningRequest,
     transactionRequest,
     authenticationRequest,
     actorRef,
