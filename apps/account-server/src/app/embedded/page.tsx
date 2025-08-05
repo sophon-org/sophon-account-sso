@@ -2,11 +2,13 @@
 
 import { useRNHandler } from '@sophon-labs/account-message-bridge';
 import { useCallback, useEffect, useState } from 'react';
+import { Loader } from '@/components/loader';
 import { Button } from '@/components/ui/button';
 import { Drawer } from '@/components/ui/drawer';
 import { MainStateMachineContext } from '@/context/state-machine-context';
 import { sendMessage } from '@/events';
 import { useEventHandler } from '@/events/hooks';
+import { useConnectionAuthorization } from '@/hooks/auth/useConnectionAuthorization';
 import { useAccountContext } from '@/hooks/useAccountContext';
 import { serverLog } from '@/lib/server-log';
 import { CompletedView } from '@/views/CompletedView';
@@ -23,6 +25,8 @@ export default function RootPage() {
   const [open, setOpen] = useState(false);
   const state = MainStateMachineContext.useSelector((state) => state);
   const actorRef = MainStateMachineContext.useActorRef();
+  const { onRefuseConnection, onAcceptConnection, isLoading } =
+    useConnectionAuthorization();
 
   useEffect(() => {
     serverLog(JSON.stringify(state));
@@ -119,6 +123,28 @@ export default function RootPage() {
         showProfileImage={true}
         showLegalNotice={false}
         showLogo={false}
+        actions={
+          <div className="flex items-center justify-center gap-2 w-full">
+            <Button
+              variant="transparent"
+              disabled={isLoading}
+              onClick={onRefuseConnection}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              disabled={isLoading}
+              onClick={onAcceptConnection}
+            >
+              {isLoading ? (
+                <Loader className="w-4 h-4 border-white border-r-transparent" />
+              ) : (
+                'Connect'
+              )}
+            </Button>
+          </div>
+        }
       >
         <ConnectAuthorizationView />
       </Drawer>
