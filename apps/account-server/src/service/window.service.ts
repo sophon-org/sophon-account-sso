@@ -33,7 +33,7 @@ interface WindowCommunicationService {
   sendMessage: (message: unknown) => void;
 
   /**
-   * Emits a token to the bridge (React Native specific)
+   * Emits a token to the bridge
    */
   emitToken: (token: string) => void;
 
@@ -90,12 +90,10 @@ const popupWindowService: WindowCommunicationService = {
   },
 
   emitToken: (token: string) => {
-    // For popup windows, we could send a specific message format
     window.opener.postMessage({ type: 'token', payload: token }, '*');
   },
 
   logout: () => {
-    // For popup windows, we could send a logout message
     window.opener.postMessage({ type: 'logout' }, '*');
   },
 
