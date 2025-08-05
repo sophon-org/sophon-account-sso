@@ -7,11 +7,13 @@ import {
   getSocialProviderFromURL,
   getSocialProviderIcon,
 } from '@/lib/social-provider';
+import { windowService } from '@/service/window.service';
 
 export const LoadingView = ({ message }: { message?: string }) => {
   const [socialProvider, setSocialProvider] = useState<ProviderEnum | null>(
     null,
   );
+  const isMobile = windowService.name === 'webview';
 
   useEffect(() => {
     const provider = getSocialProviderFromURL();
@@ -22,7 +24,11 @@ export const LoadingView = ({ message }: { message?: string }) => {
   }, []);
 
   return (
-    <div className="h-full flex flex-col items-center justify-center gap-8 mt-6 flex-grow">
+    <div
+      className={`flex flex-col items-center justify-center gap-8 mt-6 flex-grow ${
+        !isMobile ? 'h-full' : ''
+      }`}
+    >
       {socialProvider ? (
         <VerificationImage icon={getSocialProviderIcon(socialProvider)} />
       ) : (

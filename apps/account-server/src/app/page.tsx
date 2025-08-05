@@ -3,9 +3,11 @@
 import { shortenAddress } from '@sophon-labs/account-core';
 import { useEffect } from 'react';
 import { Dialog } from '@/components/dialog';
+import { Loader } from '@/components/loader';
 import { Button } from '@/components/ui/button';
 import { MainStateMachineContext } from '@/context/state-machine-context';
 import { sendMessage } from '@/events';
+import { useConnectionAuthorization } from '@/hooks/auth/useConnectionAuthorization';
 import { useAccountContext } from '@/hooks/useAccountContext';
 import { useWalletConnection } from '@/hooks/useWalletConnection';
 import { serverLog } from '@/lib/server-log';
@@ -27,6 +29,8 @@ export default function RootPage() {
 
   const { account } = useAccountContext();
   const { disconnect } = useWalletConnection();
+  const { onRefuseConnection, onAcceptConnection, isLoading } =
+    useConnectionAuthorization();
 
   useEffect(() => {
     serverLog(JSON.stringify(state));
@@ -69,7 +73,32 @@ export default function RootPage() {
 
   if (state.matches('incoming-authentication')) {
     return (
-      <Dialog className="relative" showLegalNotice={false}>
+      <Dialog
+        className="relative"
+        actions={
+          <div className="flex items-center justify-center gap-2 w-full">
+            <Button
+              variant="transparent"
+              disabled={isLoading}
+              onClick={onRefuseConnection}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              disabled={isLoading}
+              onClick={onAcceptConnection}
+            >
+              {isLoading ? (
+                <Loader className="w-4 h-4 border-white border-r-transparent" />
+              ) : (
+                'Connect'
+              )}
+            </Button>
+          </div>
+        }
+        showLegalNotice={false}
+      >
         <ConnectAuthorizationView />
       </Dialog>
     );
