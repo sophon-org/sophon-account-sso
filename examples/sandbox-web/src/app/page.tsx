@@ -15,7 +15,7 @@ import {
 export default function Home() {
   const [mounted, setMounted] = useState(false);
 
-  const { connect, connectors, isPending } = useConnect();
+  const { connect, connectors, isPending, error: connectError } = useConnect();
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
   const {
@@ -274,6 +274,11 @@ export default function Home() {
             >
               {isPending ? 'Connecting...' : 'Connect with Wagmi'}
             </button>
+          )}
+          {connectError && (
+            <div style={{ color: 'red', marginTop: '10px' }}>
+              {connectError?.message}
+            </div>
           )}
         </div>
 

@@ -1,7 +1,9 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { hexToString } from 'viem';
+import { MainStateMachineContext } from '@/context/state-machine-context';
 import { serverLog } from '@/lib/server-log';
+import { getSocialProviderFromURL } from '@/lib/social-provider';
 import { windowService } from '@/service/window.service';
 import type {
   AuthenticationRequest,
@@ -22,6 +24,7 @@ interface UseMessageHandlerReturn {
 }
 
 export const useMessageHandler = (): UseMessageHandlerReturn => {
+  const state = MainStateMachineContext.useSelector((state) => state);
   const [handlerInitialized, setHandlerInitialized] = useState(false);
   const [incomingRequest, setIncomingRequest] =
     useState<IncomingRequest | null>(null);
@@ -132,6 +135,14 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
       }
     };
 
+    const handleBeforeUnload = () => {
+      const popupUnloadSignal = {
+        event: 'PopupUnload',
+        id: crypto.randomUUID(),
+      };
+      windowService.sendMessage(popupUnloadSignal);
+    };
+
     // Check sessionStorage for saved request (survives OAuth redirects)
     const savedRequest = sessionStorage.getItem('sophon-incoming-request');
     if (savedRequest && !incomingRequest) {
@@ -155,17 +166,30 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
         id: crypto.randomUUID(),
       };
       windowService.sendMessage(popupLoadedSignal);
+
+      // Add beforeunload listener to send PopupUnload event
+      // Skip if we're doing social login to prevent interrupting OAuth flow
+      const isSocialLogin =
+        getSocialProviderFromURL() !== null ||
+        state.matches('login-required.started');
+
+      if (!state.matches('login.init') && !isSocialLogin) {
+        window.addEventListener('beforeunload', handleBeforeUnload);
+      }
     }
 
     // Define the message handler
-
     const unregister = windowService.listen(messageHandler);
     setHandlerInitialized(true);
 
     return () => {
       unregister();
+      // Clean up the beforeunload listener
+      if (origin && windowService.isManaged()) {
+        window.removeEventListener('beforeunload', handleBeforeUnload);
+      }
     };
-  }, [incomingRequest]);
+  }, [incomingRequest, state]);
 
   return {
     incomingRequest,
