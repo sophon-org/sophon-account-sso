@@ -15,12 +15,12 @@ import { sendMessage } from '@/events';
 import { useAccountCreate } from './useAccountCreate';
 
 export const useWalletConnection = () => {
-  const { address, isConnected, isConnecting } = useAccount();
-  const { connect, connectors, error, isPending, isSuccess } = useConnect();
+  const { address, isConnected, isConnecting, chainId } = useAccount();
+  const { connectAsync, connectors, error, isPending, isSuccess } =
+    useConnect();
   const { disconnect } = useDisconnect();
   const { data: walletClient } = useWalletClient();
   const { success: accountCreated } = useAccountCreate();
-  const { chainId } = useAccount();
   const { switchChain } = useSwitchChain();
   const actorRef = MainStateMachineContext.useActorRef();
 
@@ -41,7 +41,7 @@ export const useWalletConnection = () => {
         if (!isConnected) {
           const connector = connectors.find((c) => c.name === connectorName);
           if (connector) {
-            connect({ connector });
+            await connectAsync({ connector });
           }
         } else {
           sendMessage('k1.login', {
@@ -49,10 +49,18 @@ export const useWalletConnection = () => {
           });
         }
       } catch (error) {
-        console.error('❌ Wallet connection failed:', error);
+        if (
+          error instanceof Error &&
+          error.message.includes('User rejected the request')
+        ) {
+          actorRef.send({ type: 'ACCOUNT_ERROR' });
+          actorRef.send({ type: 'WALLET_SELECTION' });
+        } else {
+          console.error('❌ Wallet connection failed:', error);
+        }
       }
     },
-    [connectors, isConnected, address, connect],
+    [connectors, isConnected, address, connectAsync, actorRef],
   );
 
   const handleCreateAccount = useCallback(async () => {
