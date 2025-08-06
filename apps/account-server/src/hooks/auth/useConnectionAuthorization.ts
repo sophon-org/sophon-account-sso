@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { sophonTestnet } from 'viem/chains';
 import { MainStateMachineContext } from '@/context/state-machine-context';
+import { sendMessage } from '@/events';
 import { useAccountContext } from '@/hooks/useAccountContext';
 import { useAuthResponse } from '@/hooks/useAuthResponse';
 import { useSignature } from '@/hooks/useSignature';
@@ -17,7 +18,7 @@ export function useConnectionAuthorization() {
   const { isSigning, signTypeData } = useSignature();
   const [authorizing, setAuthorizing] = useState(false);
 
-  const onRefuseConnection = () => {
+  const onRefuseConnection = async () => {
     if (windowService.isManaged() && incoming) {
       const signResponse = {
         id: crypto.randomUUID(),
@@ -31,8 +32,14 @@ export function useConnectionAuthorization() {
         },
       };
 
-      windowService.sendMessage(signResponse);
-      actorRef.send({ type: 'CANCEL' });
+      sendMessage('smart-contract.logout', null);
+
+      // TODO: find a better way to handle this
+      // this is a workaround to avoid the logout message being sent after the window is closed
+      setTimeout(() => {
+        windowService.sendMessage(signResponse);
+        actorRef.send({ type: 'CANCEL' });
+      }, 10);
     }
   };
 
