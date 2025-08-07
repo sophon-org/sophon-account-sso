@@ -1,5 +1,13 @@
 # @sophon-labs/account-connector
 
+## 2.0.0-next.26
+
+### Patch Changes
+
+- Storing user data on mobile storage
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.0-next.26
+
 ## 2.0.0-next.25
 
 ### Patch Changes

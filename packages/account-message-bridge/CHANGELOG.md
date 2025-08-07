@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 2.0.0-next.26
+
+### Patch Changes
+
+- Storing user data on mobile storage
+
 ## 2.0.0-next.25
 
 ### Patch Changes
