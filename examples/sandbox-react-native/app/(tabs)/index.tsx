@@ -1,25 +1,16 @@
-import { shortenAddress } from '@sophon-labs/account-core';
-import {
-  useSophonAccount,
-  useSophonToken,
-} from '@sophon-labs/account-react-native';
-import { useState } from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
-import { parseEther } from 'viem';
-import { sophonTestnet } from 'viem/chains';
+import { shortenAddress } from "@sophon-labs/account-core";
+import { useSophonAccount, useSophonToken } from "@sophon-labs/account-react-native";
+import { useState } from "react";
+import { Button, StyleSheet, Text, View } from "react-native";
+import { parseEther } from "viem";
+import { sophonTestnet } from "viem/chains";
 
 export default function HomeScreen() {
-  const {
-    account,
-    connect,
-    isConnected,
-    disconnect,
-    walletClient,
-    showProfile,
-  } = useSophonAccount();
+  const { account, connect, isConnected, disconnect, walletClient, showProfile } =
+    useSophonAccount();
   const { token } = useSophonToken();
 
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState<string>("");
   const [signature, setSignature] = useState<string>();
   const [typedDataSignature, setTypedDataSignature] = useState<string>();
   const [transaction, setTransaction] = useState<string>();
@@ -29,36 +20,36 @@ export default function HomeScreen() {
       {error && (
         <View
           style={{
-            backgroundColor: 'rgba(250, 82, 82, .1)',
-            borderColor: 'red',
+            backgroundColor: "rgba(250, 82, 82, .1)",
+            borderColor: "red",
             borderRadius: 6,
             borderWidth: 1,
             margin: 16,
             padding: 8,
           }}
         >
-          <Text style={{ fontWeight: 'bold', color: 'red' }}>Warning</Text>
-          <Text style={{ color: 'black' }}>{error}</Text>
+          <Text style={{ fontWeight: "bold", color: "red" }}>Warning</Text>
+          <Text style={{ color: "black" }}>{error}</Text>
         </View>
       )}
       {isConnected && (
         <Text
           style={{
-            color: 'white',
-            borderColor: 'green',
+            color: "white",
+            borderColor: "green",
             borderRadius: 5,
-            backgroundColor: 'green',
+            backgroundColor: "green",
             padding: 10,
             marginLeft: 10,
             marginRight: 10,
             marginTop: 10,
             marginBottom: 10,
-            textAlign: 'center',
+            textAlign: "center",
             fontSize: 20,
-            fontWeight: 'bold',
+            fontWeight: "bold",
           }}
         >
-          Hello, {shortenAddress(account!.address)}, token: {token}
+          Hello, {shortenAddress(account!.address)}, token: {`${!!token}`}
         </Text>
       )}
 
@@ -68,7 +59,7 @@ export default function HomeScreen() {
             title={`✨ Authenticate`}
             color="white"
             onPress={() => {
-              setError('');
+              setError("");
               connect().catch((e) => setError(e.details ?? e.message));
             }}
           />
@@ -81,7 +72,7 @@ export default function HomeScreen() {
             title={`✨ Open Profile`}
             color="white"
             onPress={() => {
-              setError('');
+              setError("");
               showProfile();
             }}
           />
@@ -96,10 +87,10 @@ export default function HomeScreen() {
               color="white"
               onPress={async () => {
                 try {
-                  setError('');
+                  setError("");
                   const signature = await walletClient!.signMessage({
                     account: account!.address,
-                    message: 'Hello from Sophon SSO!',
+                    message: "Hello from Sophon SSO!",
                   });
                   setSignature(signature);
                   // biome-ignore lint/suspicious/noExplicitAny: TODO: create better types here
@@ -110,7 +101,7 @@ export default function HomeScreen() {
             />
           </View>
 
-          {signature && <Text>Signature: {signature ?? 'N/A'}</Text>}
+          {signature && <Text>Signature: {signature ?? "N/A"}</Text>}
         </>
       )}
 
@@ -122,22 +113,22 @@ export default function HomeScreen() {
               color="white"
               onPress={async () => {
                 try {
-                  setError('');
+                  setError("");
                   const signature = await walletClient!.signTypedData({
                     account: account!.address,
                     domain: {
-                      name: 'Sophon SSO',
-                      version: '1',
+                      name: "Sophon SSO",
+                      version: "1",
                       chainId: sophonTestnet.id,
                     },
                     types: {
                       Message: [
-                        { name: 'content', type: 'string' },
-                        { name: 'from', type: 'address' },
-                        { name: 'timestamp', type: 'uint256' },
+                        { name: "content", type: "string" },
+                        { name: "from", type: "address" },
+                        { name: "timestamp", type: "uint256" },
                       ],
                     },
-                    primaryType: 'Message',
+                    primaryType: "Message",
                     message: {
                       content: `Hello from Sophon SSO!\n\nThis message confirms you control this wallet.`,
                       from: account!.address,
@@ -153,25 +144,23 @@ export default function HomeScreen() {
             />
           </View>
 
-          {typedDataSignature && (
-            <Text>Signature: {typedDataSignature ?? 'N/A'}</Text>
-          )}
+          {typedDataSignature && <Text>Signature: {typedDataSignature ?? "N/A"}</Text>}
         </>
       )}
 
       {isConnected && (
         <>
-          <View style={{ ...styles.button, backgroundColor: 'blue' }}>
+          <View style={{ ...styles.button, backgroundColor: "blue" }}>
             <Button
               title="👑 Transaction"
               color="white"
               onPress={async () => {
                 try {
-                  setError('');
+                  setError("");
                   const tx = await walletClient!.sendTransaction({
-                    to: '0x0d94c4DBE58f6FE1566A7302b4E4C3cD03744626',
-                    value: parseEther('0.006'),
-                    data: '0x',
+                    to: "0x0d94c4DBE58f6FE1566A7302b4E4C3cD03744626",
+                    value: parseEther("0.006"),
+                    data: "0x",
                     account: account!.address,
                     // biome-ignore lint/suspicious/noExplicitAny: TODO: review this
                     chain: sophonTestnet as any,
@@ -185,12 +174,12 @@ export default function HomeScreen() {
             />
           </View>
 
-          {transaction && <Text>Transaction: {transaction ?? 'N/A'}</Text>}
+          {transaction && <Text>Transaction: {transaction ?? "N/A"}</Text>}
         </>
       )}
 
       {isConnected && (
-        <View style={{ ...styles.button, backgroundColor: 'red' }}>
+        <View style={{ ...styles.button, backgroundColor: "red" }}>
           <Button
             title="🥹 Disconnect"
             color="white"
@@ -209,13 +198,13 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   button: {
     padding: 10,
-    color: 'white',
-    backgroundColor: 'black',
+    color: "white",
+    backgroundColor: "black",
     borderRadius: 5,
     margin: 10,
   },

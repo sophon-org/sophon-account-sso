@@ -15,3 +15,7 @@ export const SophonAppStorage: StorageLike = {
   removeItem: (key: string) => storage.delete(key),
   clear: () => storage.clearAll(),
 };
+
+export enum StorageKeys {
+  USER_TOKEN = 'user_token',
+}

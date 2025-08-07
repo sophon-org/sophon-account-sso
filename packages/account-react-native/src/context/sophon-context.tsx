@@ -1,20 +1,11 @@
-import {
-  AccountServerURL,
-  type SophonNetworkType,
-} from '@sophon-labs/account-core';
-import { createContext, useCallback, useMemo, useState } from 'react';
-import {
-  type Address,
-  type Chain,
-  createWalletClient,
-  custom,
-  type WalletClient,
-} from 'viem';
-import { sophon, sophonTestnet } from 'viem/chains';
-import type { WalletProvider } from 'zksync-sso';
-import { SophonMainView } from '../components';
-import { useUIEventHandler } from '../messaging';
-import { createWalletProvider, SophonAppStorage } from '../provider';
+import { AccountServerURL, type SophonNetworkType } from "@sophon-labs/account-core";
+import { createContext, useCallback, useMemo, useState } from "react";
+import { type Address, type Chain, createWalletClient, custom, type WalletClient } from "viem";
+import { sophon, sophonTestnet } from "viem/chains";
+import type { WalletProvider } from "zksync-sso";
+import { SophonMainView } from "../components";
+import { useUIEventHandler } from "../messaging";
+import { createWalletProvider, SophonAppStorage, StorageKeys } from "../provider";
 
 export interface SophonContextConfig {
   authServerUrl?: string;
@@ -23,7 +14,7 @@ export interface SophonContextConfig {
   setAccount: (account?: SophonAccount) => void;
   chain: Chain;
   provider?: WalletProvider;
-  token?: string;
+  token?: string | null;
   disconnect: () => void;
 }
 
@@ -39,7 +30,7 @@ export interface SophonAccount {
 
 export const SophonContextProvider = ({
   children,
-  network = 'testnet',
+  network = "testnet",
   authServerUrl,
 }: {
   children: React.ReactNode;
@@ -51,18 +42,17 @@ export const SophonContextProvider = ({
     [authServerUrl, network],
   );
   const [account, setAccount] = useState<SophonAccount>();
-  const [token, setToken] = useState<string>();
-  const chain = useMemo(
-    () => (network === 'mainnet' ? sophon : sophonTestnet),
-    [network],
-  );
+  // const [token, setToken] = useState<string>();
+  const chain = useMemo(() => (network === "mainnet" ? sophon : sophonTestnet), [network]);
   const provider = useMemo(() => {
     const provider = createWalletProvider(serverUrl, chain);
     return provider;
   }, [serverUrl, chain]);
 
-  useUIEventHandler('setToken', (incomingToken) => {
-    setToken(incomingToken);
+  const token = useMemo(() => SophonAppStorage.getItem(StorageKeys.USER_TOKEN), [SophonAppStorage]);
+
+  useUIEventHandler("setToken", (incomingToken) => {
+    SophonAppStorage.setItem(StorageKeys.USER_TOKEN, incomingToken);
   });
 
   const walletClient = createWalletClient({
@@ -82,7 +72,7 @@ export const SophonContextProvider = ({
 
   const contextValue = useMemo<SophonContextConfig>(
     () => ({
-      mainnet: network === 'mainnet',
+      mainnet: network === "mainnet",
       chain,
       authServerUrl: serverUrl,
       walletClient,
@@ -94,7 +84,7 @@ export const SophonContextProvider = ({
     [network, serverUrl, walletClient, account, chain, token, disconnect],
   );
 
-  useUIEventHandler('logout', () => {
+  useUIEventHandler("logout", () => {
     disconnect();
   });
 
