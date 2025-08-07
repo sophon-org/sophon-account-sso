@@ -128,6 +128,7 @@ export default function RootPage() {
     return (
       <Dialog
         className="relative"
+        title="Insert 6-digit code"
         onBack={() => {
           actorRef.send({ type: 'CANCEL' });
         }}

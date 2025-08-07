@@ -11,3 +11,10 @@ export function formatNumberWithCommas(number: number): string {
 
   return integerPart;
 }
+
+export function maskEmail(email: string) {
+  if (!email || !email.includes('@')) return 'your email';
+  const [localPart, domain] = email.split('@');
+  if (localPart.length <= 2) return `${localPart}...@${domain}`;
+  return `${localPart.slice(0, 2)}...${localPart.slice(-1)}@${domain}`;
+}

@@ -1,14 +1,32 @@
+import { REGEXP_ONLY_DIGITS_AND_CHARS } from 'input-otp';
 import { Button } from '@/components/ui/button';
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from '@/components/ui/input-otp';
+import { MainStateMachineContext } from '@/context/state-machine-context';
 import { useAuthCallbacks } from '@/hooks/auth/useAuthActions';
+import { maskEmail } from '@/lib/formatting';
+import { windowService } from '@/service/window.service';
 
 export default function WaitOtpView() {
-  const { verifyOTP } = useAuthCallbacks();
+  const email = MainStateMachineContext.useSelector(
+    (state) => state.context.email,
+  );
+  const { verifyOTP, resendOTP } = useAuthCallbacks();
+  const isMobile = windowService.name === 'webview';
 
   return (
-    <div className="flex items-center justify-center flex-grow">
+    <div
+      className={`flex items-center justify-center flex-grow ${
+        !isMobile ? 'h-full' : ''
+      }`}
+    >
       <div className="text-center">
-        <h2 className="text-2xl font-bold mb-4">Check your email</h2>
-        <p className="text-gray-600 mb-6">We've sent a verification code</p>
+        <p className="text-gray-600 mb-6">
+          Check {email ? maskEmail(email) : 'your email'} for the code
+        </p>
         <form
           onSubmit={async (e) => {
             e.preventDefault();
@@ -16,16 +34,36 @@ export default function WaitOtpView() {
             const otp = formData.get('otp') as string;
             await verifyOTP(otp);
           }}
-          className="space-y-4"
+          className="space-y-6"
         >
-          <input
-            className="w-full bg-white border border-gray-300 rounded-md p-2 placeholder:text-gray-400 text-center"
-            type="text"
+          <InputOTP
             name="otp"
-            placeholder="Enter verification code"
             required
-          />
+            maxLength={6}
+            pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
+            autoFocus
+          >
+            <InputOTPGroup>
+              <InputOTPSlot index={0} />
+              <InputOTPSlot index={1} />
+              <InputOTPSlot index={2} />
+              <InputOTPSlot index={3} />
+              <InputOTPSlot index={4} />
+              <InputOTPSlot index={5} />
+            </InputOTPGroup>
+          </InputOTP>
+
           <Button type="submit">Verify</Button>
+          <p className="text-gray-600">
+            Did not receive a code? Check spam or{' '}
+            <button
+              type="button"
+              className="text-blue-500 underline"
+              onClick={resendOTP}
+            >
+              re-send
+            </button>
+          </p>
         </form>
       </div>
     </div>

@@ -11,6 +11,7 @@ const defaultContext = {
   error: undefined as string | undefined,
   isLoadingResources: true as boolean,
   isAuthenticated: false as boolean,
+  email: undefined as string | undefined,
   requests: {
     incoming: null as IncomingRequest | null | undefined,
     session: null as unknown | null | undefined,
@@ -115,6 +116,9 @@ export const userWalletRequestStateMachine = createMachine({
             },
             OTP_SENT: {
               target: 'waitForEmailOTP',
+              actions: assign({
+                email: ({ event }) => event.email,
+              }),
             },
           },
         },
