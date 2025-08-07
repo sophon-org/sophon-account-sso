@@ -5,13 +5,14 @@ import { MainStateMachineContext } from '@/context/state-machine-context';
 export function useOTPConnect() {
   const actorRef = MainStateMachineContext.useActorRef();
 
-  const { connectWithEmail, verifyOneTimePassword } = useConnectWithOtp();
+  const { connectWithEmail, verifyOneTimePassword, retryOneTimePassword } =
+    useConnectWithOtp();
 
   const requestOTP = useCallback(
     async (email: string) => {
       try {
         await connectWithEmail(email);
-        actorRef.send({ type: 'OTP_SENT' });
+        actorRef.send({ type: 'OTP_SENT', email });
       } catch (error) {
         console.error('❌ Email authentication failed:', error);
         actorRef.send({
@@ -36,8 +37,18 @@ export function useOTPConnect() {
     [actorRef, verifyOneTimePassword],
   );
 
+  const resendOTP = useCallback(async () => {
+    try {
+      await retryOneTimePassword();
+    } catch (error) {
+      console.error('❌ OTP resend failed:', error);
+      actorRef.send({ type: 'SET_ERROR', error: 'OTP resend failed' });
+    }
+  }, [retryOneTimePassword, actorRef]);
+
   return {
     requestOTP,
     verifyOTP,
+    resendOTP,
   };
 }

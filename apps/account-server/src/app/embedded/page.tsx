@@ -187,8 +187,9 @@ export default function RootPage() {
       <Drawer
         open={open}
         onOpenChange={handleCloseModal}
-        showHeader={false}
-        showLogo={false}
+        showHeader={true}
+        title="Insert 6-digit code"
+        showLogo={true}
         showLegalNotice={false}
       >
         <WaitOtpView />

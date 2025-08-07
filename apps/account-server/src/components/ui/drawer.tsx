@@ -34,7 +34,7 @@ const DrawerHeader = ({
   onSettings,
 }: DrawerHeaderProps) => {
   return (
-    <div className="relative flex justify-between items-center p-4 gap-2">
+    <div className="relative flex justify-between items-center p-8 gap-2">
       <div className="flex items-center gap-2 z-10">
         {showProfileImage && (
           <Image
@@ -50,7 +50,7 @@ const DrawerHeader = ({
           </button>
         )}
       </div>
-      <h5 className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-2xl font-bold">
+      <h5 className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-2xl font-bold w-full text-center">
         {title}
       </h5>
       <div className="flex justify-end z-10">
