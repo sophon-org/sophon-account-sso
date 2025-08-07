@@ -65,6 +65,7 @@ export const SophonMainView = ({
         // onLoad={() => console.log('load')}
         onMessage={(event) => {
           const { action, payload } = JSON.parse(event.nativeEvent.data);
+          console.log('❤️ ❤️ ❤️ ❤️ receiving message', action, payload);
           if (action === 'closeModal') {
             sendUIMessage('hideModal', payload);
           } else if (action === 'rpc') {

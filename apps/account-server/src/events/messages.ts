@@ -14,6 +14,7 @@ export type EventActions = {
   'smart-contract.logout': null;
   'account.token.emitted': string;
   'flow.complete': null;
+  'modal.open': null;
 };
 
 /**

@@ -43,6 +43,10 @@ export default function RootPage() {
     setOpen(false);
   });
 
+  useEventHandler('modal.open', () => {
+    setOpen(true);
+  });
+
   useEffect(() => {
     serverLog(`&&&& CURRENT STATE: ${JSON.stringify(state.value)}`);
     serverLog(`&&&& CURRENT CONTEXT: ${JSON.stringify(state.context)}`);
