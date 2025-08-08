@@ -6,9 +6,11 @@ import {
   concat,
   createPublicClient,
   encodePacked,
+  hashMessage,
   hashTypedData,
   http,
   keccak256,
+  type SignableMessage,
   toBytes,
   toHex,
 } from 'viem';
@@ -124,26 +126,28 @@ export const checkAccountOwnership = async (
   }
 };
 
-export const verifyEIP1271Signature = async ({
+export const verifySignature = async ({
   accountAddress,
   signature,
+  message,
+  signatureType,
   domain,
   types,
   primaryType,
-  message,
 }: {
   accountAddress: string;
   signature: string;
-  domain: {
+  message: Record<string, unknown> | SignableMessage;
+  signatureType: 'EIP1271' | 'EIP-191';
+  domain?: {
     name?: string;
     version?: string;
     chainId?: number | bigint;
     verifyingContract?: `0x${string}`;
     salt?: `0x${string}`;
   };
-  types: Record<string, readonly unknown[]>;
-  primaryType: string;
-  message: Record<string, unknown>;
+  types?: Record<string, readonly unknown[]>;
+  primaryType?: string;
 }) => {
   try {
     const publicClient = createPublicClient({
@@ -151,12 +155,24 @@ export const verifyEIP1271Signature = async ({
       transport: http(),
     });
 
-    const messageHash = hashTypedData({
-      domain,
-      types,
-      primaryType,
-      message,
-    });
+    let messageHash: `0x${string}`;
+
+    if (signatureType === 'EIP-191') {
+      messageHash = hashMessage(message as SignableMessage);
+    } else {
+      if (!domain || !types || !primaryType) {
+        throw new Error(
+          'Missing required parameters for EIP-1271 verification',
+        );
+      }
+
+      messageHash = hashTypedData({
+        domain,
+        types,
+        primaryType,
+        message: message as Record<string, unknown>,
+      });
+    }
 
     // Call isValidSignature on the SsoAccount contract
     const result = await publicClient.readContract({
@@ -180,8 +196,6 @@ export const verifyEIP1271Signature = async ({
     // EIP-1271 magic value for valid signature
     const EIP1271_MAGIC_VALUE = '0x1626ba7e';
     const isValid = result === EIP1271_MAGIC_VALUE;
-    console.log('🔍 EIP-1271 result:', result);
-    console.log('🔍 Is valid signature:', isValid);
 
     return isValid;
   } catch (error) {

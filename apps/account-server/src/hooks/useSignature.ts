@@ -3,12 +3,13 @@
 import { isEthereumWallet } from '@dynamic-labs/ethereum';
 import { useDynamicContext } from '@dynamic-labs/sdk-react-core';
 import { useState } from 'react';
+import type { SignableMessage } from 'viem';
 import { toAccount } from 'viem/accounts';
 import { http, useAccount, useWalletClient } from 'wagmi';
 import { createZksyncEcdsaClient } from 'zksync-sso/client/ecdsa';
 import { createZksyncPasskeyClient } from 'zksync-sso/client/passkey';
 import { CONTRACTS, VIEM_CHAIN } from '@/lib/constants';
-import { verifyEIP1271Signature } from '@/lib/smart-contract';
+import { verifySignature } from '@/lib/smart-contract';
 import type {
   MessageSigningRequest,
   TypedDataSigningRequest,
@@ -44,6 +45,17 @@ export const useSignature = () => {
             primaryType: payload.primaryType,
             message: payload.message,
           });
+
+          const verified = await verifySignature({
+            accountAddress: payload.address,
+            signature,
+            domain: payload.domain,
+            types: payload.types,
+            primaryType: payload.primaryType,
+            message: payload.message,
+            signatureType: 'EIP1271',
+          });
+          if (!verified) throw new Error('Failed to verify message');
         } catch (error) {
           console.error('Signing error:', error);
           throw error;
@@ -97,14 +109,17 @@ export const useSignature = () => {
           message: payload.message,
         });
 
-        await verifyEIP1271Signature({
+        const verified = await verifySignature({
           accountAddress: payload.address,
           signature,
           domain: payload.domain,
           types: payload.types,
           primaryType: payload.primaryType,
           message: payload.message,
+          signatureType: 'EIP1271',
         });
+
+        if (!verified) throw new Error('Failed to verify message');
       } else {
         if (!account.owner.passkey) {
           throw new Error('No passkey data available for signing');
@@ -128,14 +143,16 @@ export const useSignature = () => {
           message: payload.message,
         });
 
-        await verifyEIP1271Signature({
+        const verified = await verifySignature({
           accountAddress: payload.address,
           signature,
           domain: payload.domain,
           types: payload.types,
           primaryType: payload.primaryType,
           message: payload.message,
+          signatureType: 'EIP1271',
         });
+        if (!verified) throw new Error('Failed to verify message');
       }
 
       return signature;
@@ -161,6 +178,14 @@ export const useSignature = () => {
         try {
           const client = await primaryWallet.getWalletClient();
           signature = await client.signMessage({ message: payload.message });
+
+          const verified = await verifySignature({
+            accountAddress: payload.address,
+            signature,
+            message: payload.message,
+            signatureType: 'EIP-191',
+          });
+          if (!verified) throw new Error('Failed to verify message');
         } catch (error) {
           console.error('Signing error:', error);
           throw error;
@@ -177,6 +202,13 @@ export const useSignature = () => {
               message,
             });
             if (!signature) throw new Error('Failed to sign message');
+            const verified = await verifySignature({
+              accountAddress: payload.address,
+              signature,
+              message: payload.message,
+              signatureType: 'EIP-191',
+            });
+            if (!verified) throw new Error('Failed to verify message');
             return signature;
           },
           async signTransaction(transaction) {
@@ -225,6 +257,13 @@ export const useSignature = () => {
 
         console.log('passkey signature');
         signature = await client.signMessage({ message: payload.message });
+        const verified = await verifySignature({
+          accountAddress: payload.address,
+          signature,
+          message: payload.message as SignableMessage,
+          signatureType: 'EIP-191',
+        });
+        if (!verified) throw new Error('Failed to verify message');
       }
 
       return signature;
