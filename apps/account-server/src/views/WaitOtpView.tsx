@@ -1,4 +1,6 @@
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from 'input-otp';
+import { useState } from 'react';
+import { Loader } from '@/components/loader';
 import { Button } from '@/components/ui/button';
 import {
   InputOTP,
@@ -16,6 +18,7 @@ export default function WaitOtpView() {
   );
   const { verifyOTP, resendOTP } = useAuthCallbacks();
   const isMobile = windowService.name === 'webview';
+  const [otpLoading, setOtpLoading] = useState(false);
 
   return (
     <div
@@ -30,9 +33,14 @@ export default function WaitOtpView() {
         <form
           onSubmit={async (e) => {
             e.preventDefault();
-            const formData = new FormData(e.currentTarget);
-            const otp = formData.get('otp') as string;
-            await verifyOTP(otp);
+            try {
+              setOtpLoading(true);
+              const formData = new FormData(e.currentTarget);
+              const otp = formData.get('otp') as string;
+              await verifyOTP(otp);
+            } finally {
+              setOtpLoading(false);
+            }
           }}
           className="space-y-6"
         >
@@ -53,7 +61,13 @@ export default function WaitOtpView() {
             </InputOTPGroup>
           </InputOTP>
 
-          <Button type="submit">Verify</Button>
+          <Button type="submit" disabled={otpLoading}>
+            {otpLoading ? (
+              <Loader className="w-4 h-4 border-white border-r-transparent" />
+            ) : (
+              'Verify'
+            )}
+          </Button>
           <p className="text-gray-600">
             Did not receive a code? Check spam or{' '}
             <button

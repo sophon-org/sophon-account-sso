@@ -52,6 +52,7 @@ export default function SigningRequestView() {
       <div className="flex items-center justify-center gap-2 w-full">
         <Button
           variant="transparent"
+          disabled={isSigning}
           onClick={() => {
             if (windowService.isManaged() && incoming) {
               const signResponse = {
@@ -75,6 +76,7 @@ export default function SigningRequestView() {
         </Button>
         <Button
           type="button"
+          disabled={isSigning}
           onClick={async () => {
             let signature: string | undefined;
             if (typedDataSigning) {
@@ -99,7 +101,7 @@ export default function SigningRequestView() {
           }}
         >
           {isSigning ? (
-            <Loader className="w-4 h-4 border-black border-r-transparent" />
+            <Loader className="w-4 h-4 border-white border-r-transparent" />
           ) : (
             'Sign'
           )}

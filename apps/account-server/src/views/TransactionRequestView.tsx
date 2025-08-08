@@ -1,11 +1,13 @@
 import { isEthereumWallet } from '@dynamic-labs/ethereum';
 import { isZKsyncConnector } from '@dynamic-labs/ethereum-aa-zksync';
 import { useDynamicContext } from '@dynamic-labs/sdk-react-core';
+import { useState } from 'react';
 import { formatEther, http } from 'viem';
 import { toAccount } from 'viem/accounts';
 import { useAccount, useWalletClient } from 'wagmi';
 import { createZksyncEcdsaClient } from 'zksync-sso/client/ecdsa';
 import { createZksyncPasskeyClient } from 'zksync-sso/client/passkey';
+import { Loader } from '@/components/loader';
 import { MainStateMachineContext } from '@/context/state-machine-context';
 import { useAccountContext } from '@/hooks/useAccountContext';
 import { CONTRACTS, VIEM_CHAIN } from '@/lib/constants';
@@ -19,7 +21,7 @@ export default function TransactionRequestView() {
   const { address: connectedAddress } = useAccount();
   const { data: walletClient } = useWalletClient();
   const { primaryWallet } = useDynamicContext();
-
+  const [isSending, setIsSending] = useState(false);
   if (!transactionRequest || !incomingRequest || !account) {
     return <div>No transaction request or account present</div>;
   }
@@ -71,8 +73,10 @@ export default function TransactionRequestView() {
 
           <div className="mt-4 space-y-2">
             <button
+              disabled={isSending}
               type="button"
               onClick={async () => {
+                setIsSending(true);
                 const availableAddress =
                   account.address || primaryWallet?.address;
                 if (!availableAddress) {
@@ -215,15 +219,22 @@ export default function TransactionRequestView() {
                   }
                 } catch (error) {
                   console.error('Transaction failed:', error);
+                } finally {
+                  setIsSending(false);
                 }
               }}
               className="w-full px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
             >
-              Send Transaction
+              {isSending ? (
+                <Loader className="w-4 h-4 border-white border-r-transparent" />
+              ) : (
+                'Send Transaction'
+              )}
             </button>
 
             <button
               type="button"
+              disabled={isSending}
               onClick={() => {
                 if (windowService.isManaged() && incomingRequest) {
                   const signResponse = {

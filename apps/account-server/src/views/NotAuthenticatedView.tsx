@@ -1,4 +1,3 @@
-import { useConnectWithOtp } from '@dynamic-labs/sdk-react-core';
 import { ProviderEnum } from '@dynamic-labs/types';
 import { type FormEventHandler, useState } from 'react';
 import { IconDiscord } from '@/components/icons/icon-discord';
@@ -42,9 +41,7 @@ interface NotAuthenticatedViewProps {
 // Props type for both Mobile and Web views
 interface ViewProps extends NotAuthenticatedViewProps {
   emailLoading: boolean;
-  waitingOTP: boolean;
   onSubmitEmailHandler: FormEventHandler<HTMLFormElement>;
-  onSubmitOtpHandler: FormEventHandler<HTMLFormElement>;
   socialProvider?: ProviderEnum;
   loading: boolean;
   isPending: boolean;
@@ -53,9 +50,7 @@ interface ViewProps extends NotAuthenticatedViewProps {
 
 const MobileView = ({
   emailLoading,
-  waitingOTP,
   onSubmitEmailHandler,
-  onSubmitOtpHandler,
   socialProvider,
   onSocialAuth,
   error,
@@ -77,7 +72,7 @@ const MobileView = ({
                 onClick={() => onSocialAuth(provider as ProviderEnum)}
               >
                 {socialProvider === provider ? (
-                  <Loader className="w-4 h-4" />
+                  <Loader className="w-4 h-4 border-white border-r-transparent" />
                 ) : (
                   <div className="flex items-center justify-center">
                     <Icon />
@@ -88,11 +83,7 @@ const MobileView = ({
           )}
         </div>
         <div className="space-y-4">
-          <form
-            key="email-form"
-            onSubmit={onSubmitEmailHandler}
-            hidden={waitingOTP}
-          >
+          <form key="email-form" onSubmit={onSubmitEmailHandler}>
             <input
               className="w-full h-14 p-3 bg-white border border-[#EBE9E6] rounded-md placeholder:text-[#CCCAC8] placeholder:text-lg mb-2"
               type="email"
@@ -100,29 +91,13 @@ const MobileView = ({
               placeholder="Enter email"
               required
             />
-            <Button variant="primary" type="submit">
-              {emailLoading ? <Loader className="w-4 h-4" /> : 'Continue'}
+            <Button variant="primary" type="submit" disabled={emailLoading}>
+              {emailLoading ? (
+                <Loader className="w-4 h-4 border-white border-r-transparent" />
+              ) : (
+                'Continue'
+              )}
             </Button>
-          </form>
-
-          <form
-            key="otp-form"
-            onSubmit={onSubmitOtpHandler}
-            hidden={!waitingOTP}
-          >
-            <input
-              className="w-full bg-white border border-gray-300 rounded-md p-2 placeholder:text-gray-400 mb-2"
-              type="text"
-              name="otp"
-              placeholder="OTP"
-              autoComplete="off"
-            />
-            <button
-              className="w-full py-3 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-              type="submit"
-            >
-              {emailLoading ? <Loader className="w-4 h-4" /> : 'Verify'}
-            </button>
           </form>
         </div>
 
@@ -142,9 +117,7 @@ const MobileView = ({
 
 const WebView = ({
   emailLoading,
-  waitingOTP,
   onSubmitEmailHandler,
-  onSubmitOtpHandler,
   socialProvider,
   onSocialAuth,
   loading,
@@ -179,7 +152,7 @@ const WebView = ({
                 onClick={() => onSocialAuth(provider as ProviderEnum)}
               >
                 {socialProvider === provider ? (
-                  <Loader className="w-4 h-4 border-black border-r-transparent" />
+                  <Loader className="w-4 h-4 border-white border-r-transparent" />
                 ) : (
                   <Icon />
                 )}
@@ -188,11 +161,7 @@ const WebView = ({
           )}
         </div>
         <div className="space-y-4">
-          <form
-            key="email-form"
-            onSubmit={onSubmitEmailHandler}
-            hidden={waitingOTP}
-          >
+          <form key="email-form" onSubmit={onSubmitEmailHandler}>
             <input
               className="w-full h-14 p-3 bg-white border border-[#EBE9E6] rounded-md placeholder:text-[#CCCAC8] placeholder:text-lg mb-2"
               type="email"
@@ -200,29 +169,13 @@ const WebView = ({
               placeholder="Enter email"
               required
             />
-            <Button variant="primary" type="submit">
-              {emailLoading ? <Loader className="w-4 h-4" /> : 'Continue'}
+            <Button variant="primary" type="submit" disabled={emailLoading}>
+              {emailLoading ? (
+                <Loader className="w-4 h-4 border-white border-r-transparent" />
+              ) : (
+                'Continue'
+              )}
             </Button>
-          </form>
-
-          <form
-            key="otp-form"
-            onSubmit={onSubmitOtpHandler}
-            hidden={!waitingOTP}
-          >
-            <input
-              className="w-full bg-white border border-gray-300 rounded-md p-2 placeholder:text-gray-400 mb-2"
-              type="text"
-              name="otp"
-              placeholder="OTP"
-              autoComplete="off"
-            />
-            <button
-              className="w-full py-3 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-              type="submit"
-            >
-              {emailLoading ? <Loader className="w-4 h-4" /> : 'Verify'}
-            </button>
           </form>
         </div>
 
@@ -239,7 +192,11 @@ const WebView = ({
             onClick={onSelectWallet}
             disabled={loading || isPending}
           >
-            {loading ? <Loader className="w-4 h-4" /> : 'Continue with Wallet'}
+            {loading ? (
+              <Loader className="w-4 h-4 border-white border-r-transparent" />
+            ) : (
+              'Continue with Wallet'
+            )}
           </Button>
         </div>
       </div>
@@ -252,10 +209,8 @@ export const NotAuthenticatedView = () => {
   const { requestOTP, connectSocial } = useAuthCallbacks();
   const [error, setError] = useState<string | null>(null);
   const [emailLoading, setEmailLoading] = useState(false);
-  const [waitingOTP, setWaitingOTP] = useState(false);
   const isMobile = windowService.name === 'webview';
 
-  const { verifyOneTimePassword } = useConnectWithOtp();
   const [socialProvider, setSocialProvider] = useState<ProviderEnum>();
 
   const onSelectWallet = () => {
@@ -276,20 +231,6 @@ export const NotAuthenticatedView = () => {
     }
   };
 
-  const onSubmitOtpHandler: FormEventHandler<HTMLFormElement> = async (
-    event,
-  ) => {
-    try {
-      setEmailLoading(true);
-      event.preventDefault();
-      const otp = event.currentTarget.otp.value;
-      await verifyOneTimePassword(otp);
-    } finally {
-      setEmailLoading(false);
-      setWaitingOTP(false);
-    }
-  };
-
   const handleSocialAuth = async (provider: ProviderEnum) => {
     setSocialProvider(provider);
     try {
@@ -307,9 +248,7 @@ export const NotAuthenticatedView = () => {
 
   const sharedProps = {
     emailLoading,
-    waitingOTP,
     onSubmitEmailHandler,
-    onSubmitOtpHandler,
     socialProvider,
     onSocialAuth: handleSocialAuth,
     loading,
