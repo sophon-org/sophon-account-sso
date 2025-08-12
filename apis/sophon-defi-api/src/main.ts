@@ -37,7 +37,7 @@ async function bootstrap() {
   );
 
   app.enableCors({
-    origin: process.env.DAPP_URL || '*',
+    origin: process.env.CORS_ORIGIN || '*',
     methods: ['GET', 'POST', 'HEAD'],
     credentials: true,
   });
