@@ -34,12 +34,7 @@ export const deployAccount = async (ownerAddress: `0x${string}`) => {
     uniqueAccountId: getSmartAccountUniqueId(ownerAddress),
     owners: [ownerAddress],
     installNoDataModules: [],
-  })
-    // TODO: this shouldnt me here, adding just to unblock partner while we solve the indexer issue
-    .catch((error) => {
-      console.error(error);
-      return { address: getSmartAccountUniqueId(ownerAddress) };
-    });
+  });
 
   return deployedAccount;
 };
