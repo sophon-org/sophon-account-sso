@@ -16,38 +16,56 @@ The Sophon SDK addresses several key challenges in blockchain application develo
 
 1. **Seamless Wallet Integration**: Provides a standardized way to integrate with the Sophon wallet without complex configuration
 2. **EIP Standards Compliance**: Follows Ethereum Improvement Proposals (EIPs) to ensure compatibility with the ecosystem
-3. **Multi-Wallet Support**: Implements EIP-6963 for better multi-wallet discovery and interaction
+3. **Multi-Wallet Support**: Implements [EIP-6963](https://eips.ethereum.org/EIPS/eip-6963) for better multi-wallet discovery and interaction
 4. **Developer Experience**: Simplifies the wallet connection process to let developers focus on building their applications
 
 ## Packages
 
-The SDK is organized into the following packages:
+The SDK is organized into a bunch of packages you are free to explore but these are the most important ones:
 
-### @sophon/wallet
+### @sophon-labs/account-connector
 
-Core wallet functionality that implements the Ethereum Provider API (EIP-1193). This package provides the basic wallet interface for interacting with the Sophon ecosystem.
+Core wallet functionality that implements the Ethereum Provider API ([EIP-6963](https://eips.ethereum.org/EIPS/eip-6963)). This package provides the basic wallet interface for interacting with the Sophon ecosystem.
 
-### @sophon/eip6963
+### @sophon-labs/account-eip6963
 
-Implementation of the EIP-6963 standard (Multi Injected Provider Discovery) for Sophon wallet. This enables applications to discover the Sophon wallet alongside other wallets in a standardized way.
+Implementation of the [EIP-6963](https://eips.ethereum.org/EIPS/eip-6963) standard (Multi Injected Provider Discovery) for Sophon wallet. This enables applications to discover the Sophon wallet alongside other wallets in a standardized way.
+
+This is your good-to-go package if you are building web experiences.
+
+### @sophon-labs/account-react-native
+
+Implementation of the bridge between your smart wallet and our Account Server, with this you can add support to the Sophon Account in your react native wallet without having to relay on external apps or other integrations.
+
+## Documentation
+
+- [Getting Started](#getting-started)
+- [Architecture Overview](./docs/architecture.md)
+- [Web Integration](./docs/web.md)
+- [React Native Integration](./docs/react-native.md)
+- [JWT Integration](./docs/jwt.md)
+- [DeFi API](./docs/de-fi.md)
+- [Modular Accounts](./docs/modular-accounts.md)
+- [zksync-sso](./docs/zksync-sso.md)
+- [Embedded Wallets](./docs/embedded-wallets.md)
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js (v14+)
+- Node.js (v20+)
 - npm or yarn
 
 ### Installation
 
-To integrate the Sophon wallet with EIP-6963 support in your project:
+To integrate the Sophon wallet with [EIP-6963](https://eips.ethereum.org/EIPS/eip-6963) support in your project:
 
 ```bash
 # Using npm
-npm install @sophon/eip6963
+npm install @sophon-labs/account-eip6963
 
 # Using yarn
-yarn add @sophon/eip6963
+yarn add @sophon-labs/account-eip6963
 ```
 
 ## Using the EIP-6963 Package
@@ -58,8 +76,29 @@ EIP-6963 is a standard that allows multiple Ethereum wallet providers to be disc
 
 1. Import and initialize the EIP-6963 emitter in your application entry point:
 
+If you are statically using testnet
+
 ```javascript
-import "@sophon/eip6963";
+import "@sophon-labs/account-eip6963/testnet";
+
+// The Sophon wallet will now announce itself via the EIP-6963 protocol
+// No additional setup is required
+```
+
+Otherwise, if you are statically using mainnet
+
+```javascript
+import "@sophon-labs/account-eip6963/mainnet";
+
+// The Sophon wallet will now announce itself via the EIP-6963 protocol
+// No additional setup is required
+```
+
+If you prefer a more dynamic way
+
+```javascript
+import { createSophonEIP6963Emitter } from "@sophon-labs/account-eip6963";
+createSophonEIP6963Emitter(process.env.NETWORK_KEY);
 
 // The Sophon wallet will now announce itself via the EIP-6963 protocol
 // No additional setup is required
@@ -68,17 +107,19 @@ import "@sophon/eip6963";
 This will automatically:
 
 - Register the Sophon wallet provider
-- Announce it through the EIP-6963 events
-- Make it available to EIP-6963 compatible applications
+- Announce it through the [EIP-6963](https://eips.ethereum.org/EIPS/eip-6963) events
+- Make it available to [EIP-6963](https://eips.ethereum.org/EIPS/eip-6963) compatible applications
 
 ### Working with Wallet Connection Libraries
 
-Most modern wallet connection libraries, like RainbowKit, wagmi, or Reown Appkit, support EIP-6963. Here's how to connect with wagmi:
+Most modern wallet connection libraries, like RainbowKit, wagmi, or Reown Appkit, support [EIP-6963](https://eips.ethereum.org/EIPS/eip-6963). Here's how to connect with wagmi:
 
 ```javascript
 import { getDefaultConfig } from "@rainbow-me/rainbowkit";
 import { sophonTestnet, sophon } from "wagmi/chains";
-import "@sophon/eip6963"; // Import to announce the Sophon provider
+import { createSophonEIP6963Emitter } from "@sophon-labs/account-eip6963";
+
+createSophonEIP6963Emitter("testnet");
 
 export const config = getDefaultConfig({
   appName: "Your Application",
@@ -90,48 +131,15 @@ export const config = getDefaultConfig({
 
 With this setup, the Sophon wallet will appear in the wallet selection UI provided by RainbowKit.
 
-### Manual EIP-6963 Integration
-
-If you're building your own wallet connection UI or need more control, you can manually interact with the EIP-6963 protocol:
-
-```javascript
-// Import the EIP-6963 package to announce the Sophon provider
-import "@sophon/eip6963";
-
-// Request all available providers
-const providers = [];
-
-// Listen for provider announcements
-window.addEventListener("eip6963:announceProvider", (event) => {
-  const providerDetail = event.detail;
-  providers.push(providerDetail);
-
-  // Check if this is the Sophon wallet
-  if (providerDetail.info.rdns === "com.sophon.wallet") {
-    // Use the Sophon wallet provider
-    const sophonProvider = providerDetail.provider;
-
-    // Now you can use the provider for transactions, signing, etc.
-    // Example: Request accounts
-    sophonProvider.request({ method: "eth_requestAccounts" }).then((accounts) => {
-      console.log("Connected accounts:", accounts);
-    });
-  }
-});
-
-// Request providers to announce themselves
-window.dispatchEvent(new Event("eip6963:requestProvider"));
-```
-
 ## Technical Details
 
 ### EIP-1193 Compliance
 
-The Sophon wallet implements the Ethereum Provider JavaScript API (EIP-1193), which defines a standard interface for Ethereum providers. This ensures compatibility with existing tools and libraries in the Ethereum ecosystem.
+The Sophon wallet implements the Ethereum Provider JavaScript API ([EIP-1193](https://eips.ethereum.org/EIPS/eip-1193)), which defines a standard interface for Ethereum providers. This ensures compatibility with existing tools and libraries in the Ethereum ecosystem.
 
 ### EIP-6963 Implementation
 
-The `@sophon/eip6963` package implements the Multi Injected Provider Discovery specification, which:
+The `@sophon-labs/account-eip6963` package implements the Multi Injected Provider Discovery [specification](https://eips.ethereum.org/EIPS/eip-6963), which:
 
 1. Announces the Sophon wallet provider through window events
 2. Provides wallet metadata (name, icon, RDNS identifier)
@@ -140,7 +148,7 @@ The `@sophon/eip6963` package implements the Multi Injected Provider Discovery s
 
 ## Examples
 
-See the `examples/rainbow-wagmi` directory for a complete example of integrating the Sophon wallet with RainbowKit and wagmi.
+See the `examples/sandbox-eip6963` directory for a complete example of integrating the `Sophon Account` with `ConnectKit` and `wagmi`.
 
 ## License
 
