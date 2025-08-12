@@ -1,7 +1,7 @@
 'use client';
 
 import { shortenAddress } from '@sophon-labs/account-core';
-import { useEffect } from 'react';
+
 import { Dialog } from '@/components/dialog';
 import { Loader } from '@/components/loader';
 import { Button } from '@/components/ui/button';
@@ -9,8 +9,8 @@ import { MainStateMachineContext } from '@/context/state-machine-context';
 import { sendMessage } from '@/events';
 import { useConnectionAuthorization } from '@/hooks/auth/useConnectionAuthorization';
 import { useAccountContext } from '@/hooks/useAccountContext';
+import { useUserIdentification } from '@/hooks/useUserIdentification';
 import { useWalletConnection } from '@/hooks/useWalletConnection';
-import { serverLog } from '@/lib/server-log';
 import { windowService } from '@/service/window.service';
 import { CompletedView } from '@/views/CompletedView';
 import ConnectAuthorizationView from '@/views/ConnectAuthorizationView';
@@ -31,17 +31,14 @@ export default function RootPage() {
   const { disconnect } = useWalletConnection();
   const { onRefuseConnection, onAcceptConnection, isLoading } =
     useConnectionAuthorization();
-
-  useEffect(() => {
-    serverLog(JSON.stringify(state));
-  }, [state]);
+  useUserIdentification();
 
   /***************************
    * LOADING RESOURCES STATE *
    ***************************/
   if (state.matches('loading')) {
     return (
-      <Dialog className="relative" showLegalNotice={false}>
+      <Dialog className="relative" showLegalNotice={false} dialogType="loading">
         <LoadingView message="Loading..." />
       </Dialog>
     );
@@ -60,6 +57,7 @@ export default function RootPage() {
         title={shortenAddress(account?.address ?? '')}
         showSettings={true}
         showLegalNotice={false}
+        dialogType="signing_request"
       >
         <SigningRequestView />
       </Dialog>
@@ -68,7 +66,11 @@ export default function RootPage() {
 
   if (state.matches('incoming-transaction')) {
     return (
-      <Dialog className="relative" showLegalNotice={false}>
+      <Dialog
+        className="relative"
+        showLegalNotice={false}
+        dialogType="transaction_request"
+      >
         <TransactionRequestView />
       </Dialog>
     );
@@ -78,6 +80,7 @@ export default function RootPage() {
     return (
       <Dialog
         className="relative"
+        dialogType="connection_authorization"
         actions={
           <div className="flex items-center justify-center gap-2 w-full">
             <Button
@@ -115,7 +118,11 @@ export default function RootPage() {
     state.matches('login-required.deployment')
   ) {
     return (
-      <Dialog className="relative" showLegalNotice={false}>
+      <Dialog
+        className="relative"
+        showLegalNotice={false}
+        dialogType="authenticating"
+      >
         <LoadingView message="Authenticating..." />
       </Dialog>
     );
@@ -129,6 +136,7 @@ export default function RootPage() {
       <Dialog
         className="relative"
         title="Insert 6-digit code"
+        dialogType="otp_verification"
         onBack={() => {
           actorRef.send({ type: 'CANCEL' });
         }}
@@ -143,6 +151,7 @@ export default function RootPage() {
       <Dialog
         className="relative"
         title="Select your wallet"
+        dialogType="wallet_selection"
         onBack={() => {
           actorRef.send({ type: 'CANCEL' });
         }}
@@ -157,6 +166,7 @@ export default function RootPage() {
       <Dialog
         className="relative"
         title="Connect to Sophon"
+        dialogType="wrong_network"
         onClose={() => {
           disconnect();
           windowService.close();
@@ -184,6 +194,7 @@ export default function RootPage() {
         className="relative"
         showSettings={true}
         showLegalNotice={false}
+        dialogType="user_profile"
         actions={<Button onClick={handleDisconnect}>Log out</Button>}
       >
         <LoginSuccessView />
@@ -193,14 +204,14 @@ export default function RootPage() {
 
   if (state.matches('completed')) {
     return (
-      <Dialog className="relative" title="Ready!">
+      <Dialog className="relative" title="Ready!" dialogType="completed">
         <CompletedView />
       </Dialog>
     );
   }
 
   return (
-    <Dialog className="relative">
+    <Dialog className="relative" dialogType="authentication">
       <NotAuthenticatedView />
     </Dialog>
   );

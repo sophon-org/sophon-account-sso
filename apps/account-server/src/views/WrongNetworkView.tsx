@@ -1,12 +1,19 @@
 import Image from 'next/image';
+import { useEffect } from 'react';
 import { useAccount } from 'wagmi';
 import { Button } from '@/components/ui/button';
 import { useAuthCallbacks } from '@/hooks/auth/useAuthActions';
+import { trackNetworkEvent } from '@/lib/analytics';
 
 export default function WrongNetworkView() {
   const { switchEOANetwork } = useAuthCallbacks();
-  const { connector } = useAccount();
+  const { connector, chainId } = useAccount();
   const walletIcon = connector?.icon;
+
+  // Track wrong network detection
+  useEffect(() => {
+    trackNetworkEvent('wrong_network_detected', chainId);
+  }, [chainId]);
 
   return (
     <div className="mt-6 flex flex-col gap-8 items-center justify-center text-center">
@@ -23,7 +30,10 @@ export default function WrongNetworkView() {
       <div className="w-[254px]">
         <Button
           variant="secondary"
-          onClick={switchEOANetwork}
+          onClick={() => {
+            trackNetworkEvent('network_switch_started', chainId);
+            switchEOANetwork();
+          }}
           className="w-full"
         >
           Switch network to Sophon

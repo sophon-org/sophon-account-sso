@@ -11,6 +11,7 @@ import { MainStateMachineContext } from '@/context/state-machine-context';
 import { useAuthCallbacks } from '@/hooks/auth/useAuthActions';
 import { useAccountCreate } from '@/hooks/useAccountCreate';
 import { useWalletConnection } from '@/hooks/useWalletConnection';
+import { trackAuthMethodSelected, trackAuthStarted } from '@/lib/analytics';
 import { windowService } from '@/service/window.service';
 
 const SOCIAL_PROVIDERS = {
@@ -214,6 +215,7 @@ export const NotAuthenticatedView = () => {
   const [socialProvider, setSocialProvider] = useState<ProviderEnum>();
 
   const onSelectWallet = () => {
+    trackAuthMethodSelected('wallet');
     actorRef.send({ type: 'WALLET_SELECTION' });
   };
 
@@ -225,6 +227,8 @@ export const NotAuthenticatedView = () => {
       event.preventDefault();
       const email = event.currentTarget.email.value;
 
+      trackAuthMethodSelected('email');
+      trackAuthStarted('email');
       await requestOTP(email);
     } finally {
       setEmailLoading(false);
@@ -234,6 +238,8 @@ export const NotAuthenticatedView = () => {
   const handleSocialAuth = async (provider: ProviderEnum) => {
     setSocialProvider(provider);
     try {
+      trackAuthMethodSelected('social', provider);
+      trackAuthStarted('social', provider);
       await connectSocial(provider);
     } catch (error) {
       setError(error as string);

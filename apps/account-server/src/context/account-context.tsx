@@ -7,6 +7,7 @@ import {
   useMemo,
   useState,
 } from 'react';
+import { LOCAL_STORAGE_KEY } from '@/lib/constants';
 import { sendAuthMessage } from '@/lib/events';
 import type { SmartAccount } from '@/types/smart-account';
 
@@ -18,8 +19,6 @@ interface AccountContextProps {
   dynamicWallet: Wallet | null;
   setDynamicWallet: (wallet: Wallet | null) => void;
 }
-
-const LOCAL_STORAGE_KEY = 'sophon-account';
 
 const AccountContext = createContext<AccountContextProps | null>(null);
 

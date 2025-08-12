@@ -10,6 +10,7 @@ import { sendMessage } from '@/events';
 import { useEventHandler } from '@/events/hooks';
 import { useConnectionAuthorization } from '@/hooks/auth/useConnectionAuthorization';
 import { useAccountContext } from '@/hooks/useAccountContext';
+import { useUserIdentification } from '@/hooks/useUserIdentification';
 import { serverLog } from '@/lib/server-log';
 import { CompletedView } from '@/views/CompletedView';
 import ConnectAuthorizationView from '@/views/ConnectAuthorizationView';
@@ -27,6 +28,7 @@ export default function RootPage() {
   const actorRef = MainStateMachineContext.useActorRef();
   const { onRefuseConnection, onAcceptConnection, isLoading } =
     useConnectionAuthorization();
+  useUserIdentification();
 
   useEffect(() => {
     serverLog(JSON.stringify(state));
@@ -81,6 +83,7 @@ export default function RootPage() {
         showHeader={false}
         showLogo={false}
         showLegalNotice={false}
+        drawerType="loading"
       >
         <LoadingView message="Loading..." />
       </Drawer>
@@ -101,6 +104,7 @@ export default function RootPage() {
         showHeader={false}
         showLogo={false}
         showLegalNotice={false}
+        drawerType="signing_request"
       >
         <SigningRequestView />
       </Drawer>
@@ -115,6 +119,7 @@ export default function RootPage() {
         showHeader={false}
         showLogo={false}
         showLegalNotice={false}
+        drawerType="transaction_request"
       >
         <TransactionRequestView />
       </Drawer>
@@ -130,6 +135,7 @@ export default function RootPage() {
         showProfileImage={true}
         showLegalNotice={false}
         showLogo={false}
+        drawerType="connection_authorization"
         actions={
           <div className="flex items-center justify-center gap-2 w-full">
             <Button
@@ -173,6 +179,7 @@ export default function RootPage() {
         title="Authenticating"
         showLogo={false}
         showLegalNotice={false}
+        drawerType="authenticating"
       >
         <LoadingView />
       </Drawer>
@@ -191,6 +198,7 @@ export default function RootPage() {
         title="Insert 6-digit code"
         showLogo={true}
         showLegalNotice={false}
+        drawerType="otp_verification"
       >
         <WaitOtpView />
       </Drawer>
@@ -205,6 +213,7 @@ export default function RootPage() {
         showHeader={false}
         showLogo={false}
         showLegalNotice={false}
+        drawerType="wallet_selection"
       >
         <SelectingWalletView />
       </Drawer>
@@ -219,6 +228,7 @@ export default function RootPage() {
         showHeader={false}
         showLogo={false}
         showLegalNotice={false}
+        drawerType="wrong_network"
       >
         <WrongNetworkView />
       </Drawer>
@@ -244,6 +254,7 @@ export default function RootPage() {
         showLegalNotice={false}
         showLogo={false}
         title="falleco.soph.id"
+        drawerType="user_profile"
         // onSettings={() => {
         //   // goToSettings();
         // }}
@@ -259,6 +270,7 @@ export default function RootPage() {
         showHeader={false}
         showLogo={false}
         showLegalNotice={false}
+        drawerType="completed"
       >
         <CompletedView />
       </Drawer>
@@ -300,7 +312,12 @@ export default function RootPage() {
   // }
 
   return (
-    <Drawer open={open} onOpenChange={handleCloseModal} showHeader={false}>
+    <Drawer
+      open={open}
+      onOpenChange={handleCloseModal}
+      showHeader={false}
+      drawerType="authentication"
+    >
       <NotAuthenticatedView />
     </Drawer>
   );
