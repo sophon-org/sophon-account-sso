@@ -1,8 +1,8 @@
 import {
-	Address,
-	Chain,
+	type Address,
+	type Chain,
 	createPublicClient,
-	Hash,
+	type Hash,
 	hashTypedData,
 	http,
 } from "viem";

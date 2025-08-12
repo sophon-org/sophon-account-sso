@@ -1,5 +1,5 @@
-import { Controller, Get, OnModuleInit } from "@nestjs/common";
-import { exportJWK, JWK } from "jose";
+import { Controller, Get, type OnModuleInit } from "@nestjs/common";
+import { exportJWK, type JWK } from "jose";
 import { getPublicKey } from "../utils/jwt.js";
 
 @Controller("/.well-known")

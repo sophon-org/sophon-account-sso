@@ -1,10 +1,10 @@
 import { Body, Controller, Post, Req, Res } from "@nestjs/common";
 import { ApiResponse, ApiTags } from "@nestjs/swagger";
-import { Request as ExpressRequest, Response } from "express";
-import { AuthService } from "./auth.service.js";
-import { NonceRequestDto } from "./dto/nonce-request.dto.js";
-import { VerifySiweDto } from "./dto/verify-siwe.dto.js";
-import { TypedDataDefinition } from "viem";
+import type { Request as ExpressRequest, Response } from "express";
+import type { TypedDataDefinition } from "viem";
+import type { AuthService } from "./auth.service.js";
+import type { NonceRequestDto } from "./dto/nonce-request.dto.js";
+import type { VerifySiweDto } from "./dto/verify-siwe.dto.js";
 
 @ApiTags("Auth")
 @Controller("auth")

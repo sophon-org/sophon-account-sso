@@ -1,4 +1,4 @@
-import { Test, TestingModule } from "@nestjs/testing";
+import { Test, type TestingModule } from "@nestjs/testing";
 import { jwtVerify } from "jose";
 import { SiweMessage } from "siwe";
 import { AuthService } from "./auth.service.js";

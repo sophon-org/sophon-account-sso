@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsBoolean, IsOptional, IsString } from "class-validator";
-import { Address, Hash } from "viem";
+import type { Address, Hash } from "viem";
 
 export class VerifySiweDto {
 	@ApiProperty()

@@ -1,11 +1,10 @@
 import { randomUUID } from "node:crypto";
 import { Injectable } from "@nestjs/common";
-import { JWTPayload, jwtVerify, SignJWT } from "jose";
-import { getJwtKid, JWT_AUDIENCE, JWT_ISSUER } from "../config/env.js";
-
-import { getPrivateKey, getPublicKey } from "../utils/jwt.js";
-import { TypedDataDefinition } from "viem";
+import { type JWTPayload, jwtVerify, SignJWT } from "jose";
+import type { TypedDataDefinition } from "viem";
 import { sophonTestnet } from "viem/chains";
+import { getJwtKid, JWT_AUDIENCE, JWT_ISSUER } from "../config/env.js";
+import { getPrivateKey, getPublicKey } from "../utils/jwt.js";
 import { verifyEIP1271Signature } from "../utils/signature.js";
 
 @Injectable()
