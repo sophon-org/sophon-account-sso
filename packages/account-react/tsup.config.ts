@@ -4,12 +4,13 @@ import { defineConfig } from 'tsup';
 export default defineConfig((options) => {
   return {
     entry: ['src/*', 'src/hooks/*', 'src/components/*'],
-    splitting: true,
+    splitting: false,
     sourcemap: !!options.watch,
     clean: true,
     minify: !options.watch,
     external: ['react', 'wagmi'],
     treeshake: false,
+    bundle: false,
     dts: true,
     format: ['esm', 'cjs'],
     outDir: 'dist',
