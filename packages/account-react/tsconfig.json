@@ -9,6 +9,6 @@
     "sourceMap": true,
     "jsx": "react-jsx"
   },
-  "include": [".", "../account-core/src/utils.ts", "../account-core/src/formatters.ts"],
+  "include": ["."],
   "exclude": ["dist", "node_modules", "**/*.spec.ts"]
 }
