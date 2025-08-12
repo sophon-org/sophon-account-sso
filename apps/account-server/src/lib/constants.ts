@@ -59,3 +59,8 @@ export const BLOCK_EXPLORER_URL_BY_CHAIN: Record<ChainId, string> = {
  */
 export const BLOCK_EXPLORER_URL =
   BLOCK_EXPLORER_URL_BY_CHAIN[env.NEXT_PUBLIC_CHAIN_ID.toString() as ChainId];
+
+/**
+ * Helper to get the local storage key for the account.
+ */
+export const LOCAL_STORAGE_KEY = 'sophon-account';

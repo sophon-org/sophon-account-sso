@@ -1,4 +1,6 @@
+import React from 'react';
 import { sendMessage } from '@/events';
+import { trackDialogInteraction } from '@/lib/analytics';
 import { cn } from '@/lib/cn';
 import { IconBack } from '../icons/icon-back';
 import { IconClose } from '../icons/icon-close';
@@ -17,11 +19,13 @@ export const DialogHeader = ({
   onBack,
   onClose,
   showSettings,
+  dialogType = 'dialog',
 }: {
   title?: string;
   onBack?: () => void;
   onClose?: () => void;
   showSettings?: boolean;
+  dialogType?: string;
 }) => {
   const handleDisconnect = () => {
     sendMessage('smart-contract.logout', null);
@@ -32,7 +36,10 @@ export const DialogHeader = ({
         <button
           type="button"
           className="text-gray-500 hover:text-gray-700 cursor-pointer"
-          onClick={onBack}
+          onClick={() => {
+            trackDialogInteraction(dialogType, 'back');
+            onBack();
+          }}
         >
           <IconBack className="m-w-6 m-h-6" />
         </button>
@@ -42,7 +49,10 @@ export const DialogHeader = ({
         <button
           type="button"
           className="text-gray-500 hover:text-gray-700 cursor-pointer"
-          onClick={onClose}
+          onClick={() => {
+            trackDialogInteraction(dialogType, 'closed');
+            onClose();
+          }}
         >
           <IconClose className="m-w-6 m-h-6" />
         </button>
@@ -99,6 +109,7 @@ export interface DialogProps {
   showLegalNotice?: boolean;
   actions?: React.ReactNode;
   showSettings?: boolean;
+  dialogType?: string;
 }
 
 export function Dialog({
@@ -110,7 +121,13 @@ export function Dialog({
   showLegalNotice = true,
   actions,
   showSettings = false,
+  dialogType = 'dialog',
 }: DialogProps) {
+  // Track dialog opened
+  React.useEffect(() => {
+    trackDialogInteraction(dialogType, 'opened');
+  }, [dialogType]);
+
   return (
     <div
       className={cn('bg-white h-full w-full overflow-auto', className)}
@@ -125,6 +142,7 @@ export function Dialog({
           onBack={onBack}
           onClose={onClose}
           showSettings={showSettings}
+          dialogType={dialogType}
         />
         <div className="flex-1">{children}</div>
         <DialogFooter showLegalNotice={showLegalNotice} actions={actions} />

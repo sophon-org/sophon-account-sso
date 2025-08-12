@@ -1,5 +1,7 @@
 import Image from 'next/image';
+import React from 'react';
 import { Drawer as VaulDrawer } from 'vaul';
+import { trackDialogInteraction } from '@/lib/analytics';
 import { IconBack } from '../icons/icon-back';
 import { IconSettings } from '../icons/icon-settings';
 import { IconSophon } from '../icons/icon-sophon';
@@ -18,6 +20,7 @@ interface DrawerProps {
   showProfileImage?: boolean;
   title?: string;
   actions?: React.ReactNode;
+  drawerType?: string;
 }
 
 interface DrawerHeaderProps {
@@ -25,6 +28,7 @@ interface DrawerHeaderProps {
   showProfileImage?: boolean;
   onBack?: () => void;
   onSettings?: () => void;
+  drawerType?: string;
 }
 
 const DrawerHeader = ({
@@ -32,6 +36,7 @@ const DrawerHeader = ({
   showProfileImage,
   onBack,
   onSettings,
+  drawerType = 'drawer',
 }: DrawerHeaderProps) => {
   return (
     <div className="relative flex justify-between items-center p-8 gap-2">
@@ -45,7 +50,13 @@ const DrawerHeader = ({
           />
         )}
         {onBack && (
-          <button type="button" onClick={onBack}>
+          <button
+            type="button"
+            onClick={() => {
+              trackDialogInteraction(drawerType, 'back');
+              onBack();
+            }}
+          >
             <IconBack className="w-5 h-5" />
           </button>
         )}
@@ -105,11 +116,28 @@ export const Drawer = ({
   showProfileImage = false,
   title,
   actions,
+  drawerType = 'drawer',
 }: DrawerProps) => {
+  // Track drawer opened/closed
+  React.useEffect(() => {
+    if (open) {
+      trackDialogInteraction(drawerType, 'opened');
+    } else {
+      trackDialogInteraction(drawerType, 'closed');
+    }
+  }, [open, drawerType]);
+
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen) {
+      trackDialogInteraction(drawerType, 'closed');
+    }
+    onOpenChange(isOpen);
+  };
+
   return (
     <VaulDrawer.Root
       open={open}
-      onOpenChange={onOpenChange}
+      onOpenChange={handleOpenChange}
       onAnimationEnd={onAnimationEnd}
     >
       <VaulDrawer.Portal>
@@ -126,6 +154,7 @@ export const Drawer = ({
               showProfileImage={showProfileImage}
               onBack={onBack}
               onSettings={onSettings}
+              drawerType={drawerType}
             />
           )}
           {children}

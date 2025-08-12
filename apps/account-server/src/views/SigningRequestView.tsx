@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { IconSignature } from '@/components/icons/icon-signature';
 import { Loader } from '@/components/loader';
 import { Button } from '@/components/ui/button';
@@ -6,6 +7,11 @@ import VerificationImage from '@/components/ui/verification-image';
 import { MainStateMachineContext } from '@/context/state-machine-context';
 import { useAccountContext } from '@/hooks/useAccountContext';
 import { useSignature } from '@/hooks/useSignature';
+import {
+  trackDialogInteraction,
+  trackSigningRequestReceived,
+  trackSigningRequestResult,
+} from '@/lib/analytics';
 import { serverLog } from '@/lib/server-log';
 import { windowService } from '@/service/window.service';
 
@@ -15,6 +21,15 @@ export default function SigningRequestView() {
     MainStateMachineContext.useSelector((state) => state.context.requests);
   const actorRef = MainStateMachineContext.useActorRef();
   const { isSigning, signTypeData, signMessage } = useSignature();
+
+  // Track signing request received
+  useEffect(() => {
+    if (typedDataSigning) {
+      trackSigningRequestReceived('typed_data', windowService.name);
+    } else if (messageSigning) {
+      trackSigningRequestReceived('message', windowService.name);
+    }
+  }, [typedDataSigning, messageSigning]);
 
   if ((!typedDataSigning && !messageSigning) || !incoming || !account) {
     return <div>No signing request or account present</div>;
@@ -54,6 +69,11 @@ export default function SigningRequestView() {
           variant="transparent"
           disabled={isSigning}
           onClick={() => {
+            // Track signing request rejection
+            const requestType = typedDataSigning ? 'typed_data' : 'message';
+            trackSigningRequestResult(requestType, false);
+            trackDialogInteraction('signing_request', 'cancel');
+
             if (windowService.isManaged() && incoming) {
               const signResponse = {
                 id: crypto.randomUUID(),
@@ -78,25 +98,37 @@ export default function SigningRequestView() {
           type="button"
           disabled={isSigning}
           onClick={async () => {
-            let signature: string | undefined;
-            if (typedDataSigning) {
-              signature = await signTypeData(typedDataSigning);
-            } else if (messageSigning) {
-              signature = await signMessage(messageSigning);
-            }
+            const requestType = typedDataSigning ? 'typed_data' : 'message';
 
-            if (windowService.isManaged() && incoming) {
-              const signResponse = {
-                id: crypto.randomUUID(),
-                requestId: incoming.id,
-                content: {
-                  result: signature,
-                },
-              };
+            try {
+              let signature: string | undefined;
+              if (typedDataSigning) {
+                signature = await signTypeData(typedDataSigning);
+              } else if (messageSigning) {
+                signature = await signMessage(messageSigning);
+              }
 
-              serverLog(`🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥 signResponse ${signature}`);
-              windowService.sendMessage(signResponse);
-              actorRef.send({ type: 'ACCEPT' });
+              // Track successful signing
+              trackSigningRequestResult(requestType, true);
+
+              if (windowService.isManaged() && incoming) {
+                const signResponse = {
+                  id: crypto.randomUUID(),
+                  requestId: incoming.id,
+                  content: {
+                    result: signature,
+                  },
+                };
+
+                serverLog(`🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥 signResponse ${signature}`);
+                windowService.sendMessage(signResponse);
+                actorRef.send({ type: 'ACCEPT' });
+              }
+            } catch (error) {
+              // Track signing error
+              const errorMessage =
+                error instanceof Error ? error.message : 'Signing failed';
+              trackSigningRequestResult(requestType, false, errorMessage);
             }
           }}
         >

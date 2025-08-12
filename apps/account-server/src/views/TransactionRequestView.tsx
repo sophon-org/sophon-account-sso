@@ -1,7 +1,7 @@
 import { isEthereumWallet } from '@dynamic-labs/ethereum';
 import { isZKsyncConnector } from '@dynamic-labs/ethereum-aa-zksync';
 import { useDynamicContext } from '@dynamic-labs/sdk-react-core';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { formatEther, http } from 'viem';
 import { toAccount } from 'viem/accounts';
 import { useAccount, useWalletClient } from 'wagmi';
@@ -10,6 +10,11 @@ import { createZksyncPasskeyClient } from 'zksync-sso/client/passkey';
 import { Loader } from '@/components/loader';
 import { MainStateMachineContext } from '@/context/state-machine-context';
 import { useAccountContext } from '@/hooks/useAccountContext';
+import {
+  trackDialogInteraction,
+  trackTransactionRequest,
+  trackTransactionResult,
+} from '@/lib/analytics';
 import { CONTRACTS, VIEM_CHAIN } from '@/lib/constants';
 import { windowService } from '@/service/window.service';
 
@@ -22,6 +27,18 @@ export default function TransactionRequestView() {
   const { data: walletClient } = useWalletClient();
   const { primaryWallet } = useDynamicContext();
   const [isSending, setIsSending] = useState(false);
+
+  // Track transaction request received
+  useEffect(() => {
+    if (transactionRequest) {
+      trackTransactionRequest(
+        windowService.name,
+        transactionRequest.value,
+        transactionRequest.paymaster,
+      );
+    }
+  }, [transactionRequest]);
+
   if (!transactionRequest || !incomingRequest || !account) {
     return <div>No transaction request or account present</div>;
   }
@@ -203,7 +220,7 @@ export default function TransactionRequestView() {
                     });
                   }
 
-                  console.log('Transaction sent:', txHash);
+                  trackTransactionResult(true, txHash);
 
                   if (windowService.isManaged() && incomingRequest) {
                     const txResponse = {
@@ -219,6 +236,13 @@ export default function TransactionRequestView() {
                   }
                 } catch (error) {
                   console.error('Transaction failed:', error);
+
+                  // Track failed transaction
+                  const errorMessage =
+                    error instanceof Error
+                      ? error.message
+                      : 'Transaction failed';
+                  trackTransactionResult(false, undefined, errorMessage);
                 } finally {
                   setIsSending(false);
                 }
@@ -236,6 +260,13 @@ export default function TransactionRequestView() {
               type="button"
               disabled={isSending}
               onClick={() => {
+                trackTransactionResult(
+                  false,
+                  undefined,
+                  'User cancelled transaction',
+                );
+                trackDialogInteraction('transaction_request', 'cancel');
+
                 if (windowService.isManaged() && incomingRequest) {
                   const signResponse = {
                     id: crypto.randomUUID(),
