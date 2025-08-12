@@ -1,0 +1,60 @@
+{
+  "name": "@sophon-labs/account-react",
+  "version": "2.0.0-next.26",
+  "description": "",
+  "type": "module",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup",
+    "dev": "pnpm run build --watch"
+  },
+  "dependencies": {
+    "@sophon-labs/account-core": "2.0.0-next.26",
+    "clsx": "^2.1.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.0",
+    "tsup": "^8.4.0"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "viem": "*"
+  },
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "require": "./dist/index.cjs"
+      }
+    },
+    "./hooks": {
+      "import": {
+        "types": "./dist/hooks/index.d.ts",
+        "import": "./dist/hooks/index.js"
+      },
+      "require": {
+        "types": "./dist/hooks/index.d.cts",
+        "require": "./dist/hooks/index.cjs"
+      }
+    },
+    "./components": {
+      "import": {
+        "types": "./dist/components/index.d.ts",
+        "import": "./dist/components/index.js"
+      },
+      "require": {
+        "types": "./dist/components/index.d.cts",
+        "require": "./dist/components/index.cjs"
+      }
+    }
+  }
+}

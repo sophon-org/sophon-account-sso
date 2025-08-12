@@ -3608,6 +3608,20 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@sophon-labs/account-react@workspace:packages/account-react":
+  version: 0.0.0-use.local
+  resolution: "@sophon-labs/account-react@workspace:packages/account-react"
+  dependencies:
+    "@sophon-labs/account-core": "npm:2.0.0-next.26"
+    "@types/react": "npm:^19.1.0"
+    clsx: "npm:^2.1.1"
+    tsup: "npm:^8.4.0"
+  peerDependencies:
+    react: "*"
+    viem: "*"
+  languageName: unknown
+  linkType: soft
+
 "@sophon-labs/account-root@workspace:.":
   version: 0.0.0-use.local
   resolution: "@sophon-labs/account-root@workspace:."
@@ -3842,6 +3856,15 @@ __metadata:
     "@types/prop-types": "npm:*"
     csstype: "npm:^3.0.2"
   checksum: 10c0/49331800b76572eb2992a5c44801dbf8c612a5f99c8f4e4200f06c7de6f3a6e9455c661784a6c5469df96fa45622cb4a9d0982c44e6a0d5719be5f2ef1f545ed
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:^19.1.0":
+  version: 19.1.10
+  resolution: "@types/react@npm:19.1.10"
+  dependencies:
+    csstype: "npm:^3.0.2"
+  checksum: 10c0/fb583deacd0a815e2775dc1b9f764532d8cacb748ddd2c2914805a46c257ce6c237b4078f44009692074db212ab61a390301c6470f07f5aa5bfdeb78a2acfda1
   languageName: node
   linkType: hard
 
@@ -4965,6 +4988,13 @@ __metadata:
   version: 1.0.4
   resolution: "clone@npm:1.0.4"
   checksum: 10c0/2176952b3649293473999a95d7bebfc9dc96410f6cbd3d2595cf12fd401f63a4bf41a7adbfd3ab2ff09ed60cb9870c58c6acdd18b87767366fabfc163700f13b
+  languageName: node
+  linkType: hard
+
+"clsx@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "clsx@npm:2.1.1"
+  checksum: 10c0/c4c8eb865f8c82baab07e71bfa8897c73454881c4f99d6bc81585aecd7c441746c1399d08363dc096c550cceaf97bd4ce1e8854e1771e9998d9f94c4fe075839
   languageName: node
   linkType: hard
 
@@ -11629,7 +11659,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tsup@npm:^8.5.0":
+"tsup@npm:^8.4.0, tsup@npm:^8.5.0":
   version: 8.5.0
   resolution: "tsup@npm:8.5.0"
   dependencies:
