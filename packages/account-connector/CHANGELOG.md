@@ -1,5 +1,13 @@
 # @sophon-labs/account-connector
 
+## 2.0.0-next.27
+
+### Patch Changes
+
+- Adding react package
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.0-next.27
+
 ## 2.0.0-next.26
 
 ### Patch Changes
