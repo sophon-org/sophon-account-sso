@@ -1,14 +1,14 @@
 {
-  "name": "auth-api",
+  "name": "@sophon-labs/auth-api",
   "version": "0.0.1",
   "description": "",
   "author": "",
   "private": true,
   "license": "UNLICENSED",
   "type": "module",
-  "packageManager": "yarn@1.22.22",
+  "packageManager": "yarn@4.9.2",
   "engines": {
-    "node": "22"
+    "node": ">=20.9.0"
   },
   "scripts": {
     "build": "nest build",
