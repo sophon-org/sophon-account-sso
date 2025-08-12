@@ -1,0 +1,19 @@
+{
+  "moduleFileExtensions": ["ts", "tsx", "js", "json"],
+  "transform": {
+    "^.+\\.tsx?$": "ts-jest"
+  },
+  "testRegex": ".+\\.e2e-spec\\.ts$",
+  "collectCoverageFrom": [
+    "src/**/*.{js,jsx,tsx,ts}",
+    "!**/node_modules/**",
+    "!**/vendor/**"
+  ],
+  "moduleNameMapper": {
+    "^@/(.*)$": "<rootDir>/src/$1",
+    "^@auth/(.*)$": "<rootDir>/src/auth/$1",
+    "^@users/(.*)$": "<rootDir>/src/users/$1",
+    "^@hyperindex/(.*)$": "<rootDir>/src/hyperindex/$1"
+  },
+  "coverageReporters": ["json", "lcov"]
+}
