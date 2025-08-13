@@ -43,7 +43,7 @@ export default function SelectingWalletView() {
   }, [getAvailableWallets]);
 
   return (
-    <div>
+    <div className="px-6">
       <input
         className="w-full h-14 p-3 bg-white border border-[#EBE9E6] rounded-md placeholder:text-[#CCCAC8] placeholder:text-lg mt-4 mb-8"
         type="text"

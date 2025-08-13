@@ -31,12 +31,42 @@ export interface AuthenticationRequest {
   domain: string;
 }
 
+export interface Token {
+  contractAddress: string;
+  tokenName: string;
+  symbol: string;
+  tokenDecimal: string;
+  tokenPriceUSD: string;
+  liquidity: string;
+  l1Address: string;
+  iconURL: string;
+}
+
+export interface DecodedData {
+  functionName: string;
+  functionSignature: string;
+  parameters: { name: string; value: string; type: string }[];
+}
+
 export interface TransactionRequest {
+  from: string;
   to: string;
   value?: string;
   data?: string;
+}
+
+export interface EnrichedTransactionRequest extends TransactionRequest {
   from: string;
-  paymaster?: `0x${string}`;
+  to: string;
+  transactionType: TransactionType;
+  recipient?: string;
+  value?: string;
+  displayValue?: string;
+  token?: Token;
+  data?: string;
+  usePaymaster?: boolean;
+  fee?: string;
+  decodedData?: DecodedData;
 }
 
 export interface AccountStore {
@@ -82,6 +112,13 @@ export enum AuthState {
   TRANSACTION_REQUEST = 'transaction_request',
   SUCCESS = 'success',
   ERROR = 'error',
+}
+
+export enum TransactionType {
+  SOPH = 'soph',
+  ERC20 = 'erc20',
+  CONTRACT = 'contract',
+  UNKNOWN = 'unknown',
 }
 
 export interface AuthContext {
