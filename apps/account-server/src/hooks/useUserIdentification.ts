@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs';
 import { useEffect, useRef } from 'react';
 import { useAccountContext } from '@/hooks/useAccountContext';
 import { identifyUser, updateUserProperties } from '@/lib/analytics';
@@ -22,6 +23,8 @@ export const useUserIdentification = () => {
       lastLoginAt: new Date().toISOString(),
     });
 
+    Sentry.setUser({ id: account.address });
+
     hasIdentifiedRef.current = true;
   }, [account]);
 
@@ -34,7 +37,16 @@ export const useUserIdentification = () => {
       username: account.username,
       account_type: 'smart_contract',
     });
+
+    Sentry.setUser({ id: account.address });
   }, [account?.username, account?.address]);
+
+  // Add cleanup effect for Sentry
+  useEffect(() => {
+    if (!account?.address) {
+      Sentry.setUser(null); // Clear Sentry user when no account
+    }
+  }, [account?.address]);
 
   return {
     isIdentified: !!account?.address,
