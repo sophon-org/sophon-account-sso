@@ -15,7 +15,7 @@ const defaultContext = {
   email: undefined as string | undefined,
   requests: {
     incoming: null as IncomingRequest | null | undefined,
-    session: null as unknown | null | undefined,
+    session: null as undefined | null,
     typedDataSigning: null as TypedDataSigningRequest | null | undefined,
     messageSigning: null as MessageSigningRequest | null | undefined,
     transaction: null as TransactionRequest | null | undefined,
@@ -67,7 +67,6 @@ export const userWalletRequestStateMachine = createMachine({
     },
     SET_ACCEPTED_SCOPES: {
       actions: assign(({ context, event }) => {
-        console.log('>>> SET_ACCEPTED_SCOPES', event.scopes, event.partnerId);
         return {
           ...context,
           scopes: {
@@ -148,7 +147,8 @@ export const userWalletRequestStateMachine = createMachine({
         selectEOAWallet: {
           on: {
             CANCEL: {
-              target: 'idle',
+              target: '#userWalletRequestStateMachine.completed',
+              actions: 'clearRequests',
             },
             WALLET_SELECTED: {
               target: 'started',
@@ -158,7 +158,8 @@ export const userWalletRequestStateMachine = createMachine({
         waitForEmailOTP: {
           on: {
             CANCEL: {
-              target: 'idle',
+              target: '#userWalletRequestStateMachine.completed',
+              actions: 'clearRequests',
             },
             OTP_VERIFIED: {
               target: 'started',

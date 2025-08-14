@@ -6,7 +6,6 @@ import { VIEW_VERSION } from '../constants';
 import { USER_AGENT } from '../constants/user-agent';
 import { useModalVisibility } from '../hooks/use-modal-visibility';
 import { sendUIMessage, useUIEventHandler } from '../messaging/ui';
-import { LoadingState } from './loading-state';
 
 export interface SophonMainViewProps {
   debugEnabled?: boolean;
@@ -74,21 +73,19 @@ export const SophonMainView = ({
           paddingRight: insets?.right,
         }}
         javaScriptEnabled={true}
-        startInLoadingState={true}
-        renderLoading={() => <LoadingState />}
+        // startInLoadingState={true}
+        // renderLoading={() => <LoadingState />}
         scrollEnabled={false}
-        textZoom={0}
+        // textZoom={0}
         automaticallyAdjustContentInsets={false}
         contentInsetAdjustmentBehavior="never"
         nestedScrollEnabled={false}
         overScrollMode="never"
         bounces={false}
-        cacheEnabled={false}
-        cacheMode="LOAD_NO_CACHE"
+        // cacheEnabled={false}
+        // cacheMode="LOAD_NO_CACHE"
         hideKeyboardAccessoryView={true}
         allowsLinkPreview={false}
-        // injectedJavaScriptObject={}
-        // textInteractionEnabled={false}
         userAgent={USER_AGENT}
         webviewDebuggingEnabled={debugEnabled}
         onShouldStartLoadWithRequest={(request) => {
