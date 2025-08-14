@@ -17,12 +17,10 @@ describe("PartnerRegistryService", () => {
   });
 
   beforeEach(() => {
-    // Force non-bypass mode (your service bypasses when NODE_ENV === "test")
     process.env.NODE_ENV = "production";
     process.env.PARTNER_CDN = CDN;
     delete process.env.BYPASS_PARTNER_CDN_CHECK;
 
-    // Mock global fetch
     fetchMock = jest.fn();
     (global as any).fetch = fetchMock;
 
