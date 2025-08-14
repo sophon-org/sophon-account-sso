@@ -80,34 +80,36 @@ export default function ConnectAuthorizationView({
               </span>
               Ask for transactions to be approved
             </p>
-            {userScopes.map((key) => {
-              const scope = availableScopes[key];
-              return (
-                <p key={key} className="flex items-start gap-2">
-                  <span>
-                    <Checkbox
-                      checked={selectedScopes[key]}
-                      onCheckedChange={(checked) => {
-                        setSelectedScopes((prev) => {
-                          const newScopes = {
-                            ...prev,
-                            [key]:
-                              checked === 'indeterminate' ? false : checked,
-                          };
+            <div className="flex flex-col mt-4 gap-4">
+              {userScopes.map((key) => {
+                const scope = availableScopes[key];
+                return (
+                  <p key={key} className="flex items-start gap-2">
+                    <span>
+                      <Checkbox
+                        checked={selectedScopes[key]}
+                        onCheckedChange={(checked) => {
+                          setSelectedScopes((prev) => {
+                            const newScopes = {
+                              ...prev,
+                              [key]:
+                                checked === 'indeterminate' ? false : checked,
+                            };
 
-                          return newScopes;
-                        });
-                      }}
-                      color="green"
-                      className="mx-1"
-                    />
-                  </span>
-                  {scope.label}
-                </p>
-              );
-            })}
+                            return newScopes;
+                          });
+                        }}
+                        color="green"
+                        className="mx-1"
+                      />
+                    </span>
+                    See your {scope.label} account
+                  </p>
+                );
+              })}
+            </div>
           </div>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 mb-8">
             <p className="font-bold ">It can't</p>
             <p className="flex items-start gap-2">
               <span>
