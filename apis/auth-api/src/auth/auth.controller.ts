@@ -2,9 +2,9 @@ import { Body, Controller, Post, Req, Res } from "@nestjs/common";
 import { ApiResponse, ApiTags } from "@nestjs/swagger";
 import type { Request as ExpressRequest, Response } from "express";
 import type { TypedDataDefinition } from "viem";
-import type { AuthService } from "./auth.service.js";
-import type { NonceRequestDto } from "./dto/nonce-request.dto.js";
-import type { VerifySiweDto } from "./dto/verify-siwe.dto.js";
+import { AuthService } from "./auth.service";
+import type { NonceRequestDto } from "./dto/nonce-request.dto";
+import type { VerifySiweDto } from "./dto/verify-siwe.dto";
 
 @ApiTags("Auth")
 @Controller("auth")
@@ -16,6 +16,7 @@ export class AuthController {
 	async getNonce(@Body() body: NonceRequestDto, @Res() res: Response) {
 		const token = await this.authService.generateNonceTokenForAddress(
 			body.address,
+			body.audience
 		);
 		res.json({ nonce: token });
 	}

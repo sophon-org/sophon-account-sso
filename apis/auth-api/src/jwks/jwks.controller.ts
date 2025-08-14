@@ -1,6 +1,6 @@
 import { Controller, Get, type OnModuleInit } from "@nestjs/common";
 import { exportJWK, type JWK } from "jose";
-import { getPublicKey } from "../utils/jwt.js";
+import { getPublicKey } from "../utils/jwt";
 
 @Controller("/.well-known")
 export class JwksController implements OnModuleInit {
