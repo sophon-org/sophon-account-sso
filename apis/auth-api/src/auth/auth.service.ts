@@ -3,17 +3,26 @@ import { Injectable } from "@nestjs/common";
 import { type JWTPayload, jwtVerify, SignJWT } from "jose";
 import type { TypedDataDefinition } from "viem";
 import { sophonTestnet } from "viem/chains";
-import { getJwtKid, JWT_AUDIENCE, JWT_ISSUER } from "../config/env.js";
-import { getPrivateKey, getPublicKey } from "../utils/jwt.js";
-import { verifyEIP1271Signature } from "../utils/signature.js";
+import { getJwtKid, JWT_AUDIENCE, JWT_ISSUER } from "../config/env";
+import { getPrivateKey, getPublicKey } from "../utils/jwt";
+import { verifyEIP1271Signature } from "../utils/signature";
+import { PartnerRegistryService } from "../partners/partner-registry.service";
 
 @Injectable()
 export class AuthService {
-	async generateNonceTokenForAddress(address: string): Promise<string> {
+	constructor(private readonly partnerRegistry: PartnerRegistryService) {}
+	async generateNonceTokenForAddress(
+		address: string,
+		audience: string,
+	): Promise<string> {
+		await this.partnerRegistry.assertExists(audience);
 		const nonce = randomUUID();
 		return await new SignJWT({ nonce, address })
 			.setProtectedHeader({ alg: "RS256", kid: getJwtKid() })
 			.setIssuedAt()
+			.setSubject(address)
+			.setIssuer(JWT_ISSUER)
+			.setAudience(audience)
 			.setExpirationTime("10m") // TODO here
 			.sign(await getPrivateKey());
 	}
@@ -25,11 +34,27 @@ export class AuthService {
 		nonceToken: string,
 		rememberMe = false,
 	): Promise<string> {
-		const { payload } = (await jwtVerify(nonceToken, getPublicKey, {
-			algorithms: ["RS256"],
-		})) as {
-			payload: { address: string; nonce: string };
+		type NoncePayload = JWTPayload & {
+			address: string;
+			nonce: string;
+			aud: string;
+			iss: string;
+			sub?: string;
 		};
+
+		const expectedAud = String(typedData.message.audience);
+		await this.partnerRegistry.assertExists(expectedAud);
+		const expectedIss = process.env.NONCE_ISSUER;
+
+		const { payload } = await jwtVerify<NoncePayload>(
+			nonceToken,
+			await getPublicKey(),
+			{
+				algorithms: ["RS256"],
+				audience: expectedAud,
+				issuer: expectedIss,
+			},
+		);
 
 		if (
 			nonceToken !== typedData.message.nonce ||
@@ -37,6 +62,10 @@ export class AuthService {
 				(typedData.message.from as string).toLowerCase()
 		) {
 			throw new Error("Nonce or address mismatch");
+		}
+
+		if (String(typedData.message.audience) !== payload.aud) {
+			throw new Error("Audience mismatch");
 		}
 
 		const isValid = await verifyEIP1271Signature({
@@ -65,8 +94,8 @@ export class AuthService {
 			sub: address,
 			iat,
 			exp,
-			iss: JWT_AUDIENCE,
-			aud: JWT_ISSUER,
+			iss: payload.iss,
+			aud: payload.aud,
 		})
 			.setProtectedHeader({ alg: "RS256", kid: getJwtKid() })
 			.sign(await getPrivateKey());

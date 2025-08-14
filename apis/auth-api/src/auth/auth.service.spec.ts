@@ -1,8 +1,9 @@
 import { Test, type TestingModule } from "@nestjs/testing";
-import { jwtVerify } from "jose";
-import { SiweMessage } from "siwe";
-import { AuthService } from "./auth.service.js";
+import { jwtVerify, SignJWT } from "jose";
+import { AuthService } from "./auth.service";
+import { PartnerRegistryService } from "../partners/partner-registry.service";
 
+// --- jose mocks ---
 jest.mock("jose", () => {
 	const original = jest.requireActual("jose");
 	return {
@@ -13,6 +14,10 @@ jest.mock("jose", () => {
 				setProtectedHeader: jest.fn().mockReturnThis(),
 				setIssuedAt: jest.fn().mockReturnThis(),
 				setExpirationTime: jest.fn().mockReturnThis(),
+				// ADDED
+				setSubject: jest.fn().mockReturnThis(),
+				setIssuer: jest.fn().mockReturnThis(),
+				setAudience: jest.fn().mockReturnThis(),
 				sign: jest.fn().mockResolvedValue("mocked.token"),
 			};
 			return jwt;
@@ -20,19 +25,12 @@ jest.mock("jose", () => {
 	};
 });
 
-jest.mock("siwe", () => {
-	return {
-		SiweMessage: jest.fn().mockImplementation(() => ({
-			verify: jest.fn().mockResolvedValue({
-				data: {
-					nonce: "expected-nonce",
-					address: "0x1234567890abcdef",
-				},
-			}),
-		})),
-	};
-});
+// --- signature verifier mock (you call verifyEIP1271Signature) ---
+jest.mock("../utils/signature", () => ({
+	verifyEIP1271Signature: jest.fn().mockResolvedValue(true),
+}));
 
+// --- key/env mocks ---
 jest.mock("../utils/jwt", () => ({
 	getPrivateKey: jest.fn().mockResolvedValue("PRIVATE_KEY"),
 	getPublicKey: jest.fn().mockReturnValue("PUBLIC_KEY"),
@@ -42,17 +40,26 @@ jest.mock("../config/env", () => ({
 	getJwtKid: jest.fn().mockReturnValue("test-kid"),
 	JWT_ISSUER: "https://auth.example.com",
 	JWT_AUDIENCE: "example-client",
+	ALLOWED_AUDIENCES: ["sophon-web", "sophon-admin", "partner-x"],
 }));
 
 describe("AuthService", () => {
 	let service: AuthService;
 
-	beforeEach(async () => {
-		const module: TestingModule = await Test.createTestingModule({
-			providers: [AuthService],
-		}).compile();
+	const partnerRegistryMock = {
+		assertExists: jest.fn().mockResolvedValue(undefined),
+		exists: jest.fn().mockResolvedValue(true),
+	};
 
-		service = module.get<AuthService>(AuthService);
+	beforeEach(async () => {
+	const module = await Test.createTestingModule({
+		providers: [
+		AuthService,
+		{ provide: PartnerRegistryService, useValue: partnerRegistryMock },
+		],
+	}).compile();
+
+	service = module.get(AuthService);
 	});
 
 	it("should be defined", () => {
@@ -60,42 +67,75 @@ describe("AuthService", () => {
 	});
 
 	it("should generate a nonce token", async () => {
-		const token = await service.generateNonceTokenForAddress("0x123");
+		const token = await service.generateNonceTokenForAddress(
+			"0x1234567890abcdef1234567890abcdef12345678",
+			"sophon-web",
+		);
 		expect(token).toBe("mocked.token");
+		// Optional: assert SignJWT was built with expected methods
+		expect(SignJWT as unknown as jest.Mock).toHaveBeenCalled();
 	});
 
-	it("should verify SIWE signature and return JWT", async () => {
+	it("should verify signature and return JWT", async () => {
+		// jwtVerify returns the decoded/verified payload for the nonce token
 		(jwtVerify as jest.Mock).mockResolvedValueOnce({
 			payload: {
 				nonce: "expected-nonce",
-				address: "0x1234567890abcdef",
+				address: "0x1234567890abcdef1234567890abcdef12345678",
+				aud: "sophon-web",
+				iss: process.env.NONCE_ISSUER,
 			},
 		});
 
+		const typedData: any = {
+			domain: { name: "Sophon SSO", version: "1", chainId: 300 },
+			types: {},
+			primaryType: "Login",
+			message: {
+				from: "0x1234567890abcdef1234567890abcdef12345678",
+				nonce: "mocked-nonce-token",
+				audience: "sophon-web",
+			},
+		};
+
 		const token = await service.verifySignatureWithSiwe(
-			"mocked-message",
-			"mocked-signature",
+			"0x1234567890abcdef1234567890abcdef12345678", // address param
+			typedData,
+			"0xsignature",
 			"mocked-nonce-token",
 			true, // rememberMe
 		);
 
 		expect(token).toBe("mocked.token");
-		expect(SiweMessage).toHaveBeenCalledWith("mocked-message");
 	});
 
 	it("should throw on nonce mismatch", async () => {
 		(jwtVerify as jest.Mock).mockResolvedValueOnce({
 			payload: {
-				nonce: "wrong-nonce",
-				address: "0x1234567890abcdef",
+				nonce: "anything-here", // not used for mismatch in your code
+				address: "0x1234567890abcdef1234567890abcdef12345678",
+				aud: "sophon-web",
+				iss: process.env.NONCE_ISSUER,
 			},
 		});
 
+		const typedData: any = {
+			domain: { name: "Sophon SSO", version: "1", chainId: 300 },
+			types: {},
+			primaryType: "Login",
+			message: {
+				from: "0x1234567890abcdef1234567890abcdef12345678",
+				nonce: "DIFFERENT-NONCE",
+				audience: "sophon-web",
+			},
+		};
+
 		await expect(() =>
 			service.verifySignatureWithSiwe(
-				"mocked-message",
-				"mocked-signature",
-				"mocked-nonce-token",
+				"0x1234567890abcdef1234567890abcdef12345678",
+				typedData,
+				"0xsignature",
+				"mocked-nonce-token", // <- different from message.nonce above
 			),
 		).rejects.toThrow("Nonce or address mismatch");
 	});
