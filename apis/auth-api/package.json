@@ -5,7 +5,7 @@
 	"author": "",
 	"private": true,
 	"license": "UNLICENSED",
-	"type": "module",
+	"type": "commonjs",
 	"packageManager": "yarn@4.9.2",
 	"engines": {
 		"node": ">=20.9.0"

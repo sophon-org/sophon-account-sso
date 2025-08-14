@@ -3,8 +3,8 @@ import { ApiResponse, ApiTags } from "@nestjs/swagger";
 import type { Request as ExpressRequest, Response } from "express";
 import type { TypedDataDefinition } from "viem";
 import { AuthService } from "./auth.service";
-import type { NonceRequestDto } from "./dto/nonce-request.dto";
-import type { VerifySiweDto } from "./dto/verify-siwe.dto";
+import type { NonceRequestDto } from "./dto/nonce-request.dto.js";
+import type { VerifySiweDto } from "./dto/verify-siwe.dto.js";
 
 @ApiTags("Auth")
 @Controller("auth")
