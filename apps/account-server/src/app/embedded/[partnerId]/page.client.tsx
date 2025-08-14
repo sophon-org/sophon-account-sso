@@ -1,5 +1,6 @@
 'use client';
 
+import { shortenAddress } from '@sophon-labs/account-core';
 import { useRNHandler } from '@sophon-labs/account-message-bridge';
 import { useParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
@@ -241,7 +242,7 @@ export default function EmbeddedPage() {
         showProfileImage={true}
         showLegalNotice={false}
         showLogo={false}
-        title="falleco.soph.id"
+        title={shortenAddress(account.address)}
         drawerType="user_profile"
         // onSettings={() => {
         //   // goToSettings();

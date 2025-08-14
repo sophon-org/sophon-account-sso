@@ -1,5 +1,5 @@
 import { postMessageToWebApp } from '@sophon-labs/account-message-bridge';
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { Linking, Platform, StyleSheet, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { VIEW_VERSION } from '../constants';
@@ -27,6 +27,7 @@ export const SophonMainView = ({
 }: SophonMainViewProps) => {
   const webViewRef = useRef<WebView>(null);
   const { visible } = useModalVisibility();
+  const [isReady, setIsReady] = useState(false);
 
   const containerStyles = {
     ...styles.container,
@@ -42,10 +43,13 @@ export const SophonMainView = ({
 
   useUIEventHandler(
     'outgoingRpc',
-    useCallback((payload) => {
-      // biome-ignore lint/suspicious/noExplicitAny: future check
-      postMessageToWebApp(webViewRef, 'rpc', payload as any);
-    }, []),
+    useCallback(
+      (payload) => {
+        // biome-ignore lint/suspicious/noExplicitAny: future check
+        postMessageToWebApp(webViewRef, 'rpc', payload as any);
+      },
+      [isReady],
+    ),
   );
 
   const params = new URLSearchParams();
@@ -73,8 +77,12 @@ export const SophonMainView = ({
           paddingRight: insets?.right,
         }}
         javaScriptEnabled={true}
-        // startInLoadingState={true}
-        // renderLoading={() => <LoadingState />}
+        startInLoadingState={true}
+        renderLoading={() => <></>}
+        onLoadEnd={() => {
+          setIsReady(true);
+          sendUIMessage('hideModal', null);
+        }}
         scrollEnabled={false}
         // textZoom={0}
         automaticallyAdjustContentInsets={false}
@@ -115,6 +123,7 @@ export const SophonMainView = ({
         }}
         onError={(event) => {
           console.error(event);
+          sendUIMessage('hideModal', null);
         }}
         onContentProcessDidTerminate={() => {}}
         onRenderProcessGone={() => {}}
