@@ -109,11 +109,10 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
             const txData = params[0];
 
             const transactionRequestData = {
+              from: txData.from,
               to: txData.to,
               value: txData.value || '0x0',
               data: txData.data || '0x',
-              from: txData.from,
-              paymaster: txData.paymaster,
             };
 
             setTransactionRequest(transactionRequestData);
