@@ -1,6 +1,6 @@
 import {
-	Injectable,
 	BadRequestException,
+	Injectable,
 	InternalServerErrorException,
 } from "@nestjs/common";
 import { PARTNER_CDN } from "../config/env";
@@ -61,7 +61,7 @@ export class PartnerRegistryService {
 	}
 
 	private buildUrl(partnerId: string): string {
-		return `${PARTNER_CDN!.replace(/\/+$/, "")}/${encodeURIComponent(
+		return `${PARTNER_CDN.replace(/\/+$/, "")}/${encodeURIComponent(
 			partnerId,
 		)}.json`;
 	}

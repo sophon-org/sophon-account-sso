@@ -1,16 +1,16 @@
 import { randomUUID } from "node:crypto";
 import {
-	Injectable,
-	UnauthorizedException,
 	BadRequestException,
 	ForbiddenException,
+	Injectable,
+	UnauthorizedException,
 } from "@nestjs/common";
 
 import jwt, {
-	type JwtPayload,
-	TokenExpiredError,
-	NotBeforeError,
 	JsonWebTokenError,
+	type JwtPayload,
+	NotBeforeError,
+	TokenExpiredError,
 } from "jsonwebtoken";
 import type { TypedDataDefinition } from "viem";
 import { sophonTestnet } from "viem/chains";
