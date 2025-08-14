@@ -39,6 +39,7 @@ jest.mock("../config/env", () => ({
   getJwtKid: jest.fn().mockReturnValue("test-kid"),
   JWT_ISSUER: "https://auth.example.com",
   JWT_AUDIENCE: "example-client",
+  ALLOWED_AUDIENCES: ["sophon-web", "sophon-admin", "partner-x"],
 }));
 
 describe("AuthService", () => {
@@ -62,7 +63,7 @@ describe("AuthService", () => {
   it("should generate a nonce token", async () => {
     const token = await service.generateNonceTokenForAddress(
       "0x1234567890abcdef1234567890abcdef12345678",
-      "example-aud"
+      "sophon-web"
     );
     expect(token).toBe("mocked.token");
     // Optional: assert SignJWT was built with expected methods
@@ -75,7 +76,7 @@ describe("AuthService", () => {
       payload: {
         nonce: "expected-nonce",
         address: "0x1234567890abcdef1234567890abcdef12345678",
-        aud: "example-aud",
+        aud: "sophon-web",
         iss: process.env.NONCE_ISSUER,
       },
     });
@@ -87,7 +88,7 @@ describe("AuthService", () => {
       message: {
         from: "0x1234567890abcdef1234567890abcdef12345678",
         nonce: "mocked-nonce-token",
-        audience: "example-aud",
+        audience: "sophon-web",
       },
     };
 
@@ -107,7 +108,7 @@ describe("AuthService", () => {
       payload: {
         nonce: "anything-here", // not used for mismatch in your code
         address: "0x1234567890abcdef1234567890abcdef12345678",
-        aud: "example-aud",
+        aud: "sophon-web",
         iss: process.env.NONCE_ISSUER,
       },
     });
@@ -119,7 +120,7 @@ describe("AuthService", () => {
       message: {
         from: "0x1234567890abcdef1234567890abcdef12345678",
         nonce: "DIFFERENT-NONCE",
-        audience: "example-aud",
+        audience: "sophon-web",
       },
     };
 

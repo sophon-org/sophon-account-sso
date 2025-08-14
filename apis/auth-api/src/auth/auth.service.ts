@@ -6,10 +6,13 @@ import { sophonTestnet } from "viem/chains";
 import { getJwtKid, JWT_AUDIENCE, JWT_ISSUER } from "../config/env";
 import { getPrivateKey, getPublicKey } from "../utils/jwt";
 import { verifyEIP1271Signature } from "../utils/signature";
+import { assertAllowedAudience } from "../config/audience";
 
 @Injectable()
 export class AuthService {
 	async generateNonceTokenForAddress(address: string, audience: string): Promise<string> {
+
+		assertAllowedAudience(audience);
 		const nonce = randomUUID();
 		return await new SignJWT({ nonce, address })
 			.setProtectedHeader({ alg: "RS256", kid: getJwtKid() })
@@ -38,6 +41,7 @@ export class AuthService {
 		};
 
 		const expectedAud = String(typedData.message.audience);
+		assertAllowedAudience(expectedAud);
 		const expectedIss = process.env.NONCE_ISSUER;
 
 		const { payload } = await jwtVerify<NoncePayload>(
