@@ -1,4 +1,8 @@
-import { Injectable } from "@nestjs/common";
+import {
+	Injectable,
+	BadRequestException,
+	InternalServerErrorException,
+} from "@nestjs/common";
 import { PARTNER_CDN } from "../config/env";
 
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
@@ -6,7 +10,7 @@ const REQUEST_TIMEOUT_MS = 2500; // 2.5s
 
 @Injectable()
 export class PartnerRegistryService {
-	private cache = new Map<string, number>(); // partnerId -> expiresAt (ms)
+	private cache = new Map<string, number>();
 
 	/**
 	 * Returns true if <PARTNER_CDN>/<partnerId>.json exists.
@@ -21,10 +25,12 @@ export class PartnerRegistryService {
 		}
 
 		if (!PARTNER_CDN) {
-			throw new Error("Server misconfiguration: PARTNER_CDN is not set");
+			throw new InternalServerErrorException(
+				"Server misconfiguration: PARTNER_CDN is not set",
+			);
 		}
 
-		const id = String(partnerId).trim();
+		const id = String(partnerId ?? "").trim();
 		if (!id) return false;
 
 		const exp = this.cache.get(id);
@@ -41,17 +47,23 @@ export class PartnerRegistryService {
 	}
 
 	/**
-	 * Throws if the partner does not exist.
+	 * Throws a 4xx HttpException if the partner does not exist or input is invalid.
 	 */
 	async assertExists(partnerId: string): Promise<void> {
-		const ok = await this.exists(partnerId);
+		const id = String(partnerId ?? "").trim();
+		if (!id) {
+			throw new BadRequestException("audience is required");
+		}
+		const ok = await this.exists(id);
 		if (!ok) {
-			throw new Error(`Audience not allowed: ${partnerId}`);
+			throw new BadRequestException(`Audience not allowed: ${id}`);
 		}
 	}
 
 	private buildUrl(partnerId: string): string {
-		return `${PARTNER_CDN.replace(/\/+$/, "")}/${encodeURIComponent(partnerId)}.json`;
+		return `${PARTNER_CDN!.replace(/\/+$/, "")}/${encodeURIComponent(
+			partnerId,
+		)}.json`;
 	}
 
 	private async probe(url: string, method: "HEAD" | "GET"): Promise<boolean> {

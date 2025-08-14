@@ -1,34 +1,74 @@
 import { randomUUID } from "node:crypto";
-import { Injectable } from "@nestjs/common";
+import {
+	Injectable,
+	UnauthorizedException,
+	BadRequestException,
+	ForbiddenException,
+} from "@nestjs/common";
 
-const joseP = import("jose");
-
-import type { JWTPayload } from "jose";
+import jwt, {
+	type JwtPayload,
+	TokenExpiredError,
+	NotBeforeError,
+	JsonWebTokenError,
+} from "jsonwebtoken";
 import type { TypedDataDefinition } from "viem";
 import { sophonTestnet } from "viem/chains";
+
 import { getJwtKid, JWT_AUDIENCE, JWT_ISSUER } from "../config/env";
 import { PartnerRegistryService } from "../partners/partner-registry.service";
-import { getPrivateKey, getPublicKey } from "../utils/jwt";
+import { getPrivateKey, getPublicKey } from "../utils/jwt"; // returns PEM or KeyObject
 import { verifyEIP1271Signature } from "../utils/signature";
+
+type NoncePayload = JwtPayload & {
+	address: string;
+	nonce: string;
+	aud: string;
+	iss: string;
+	sub?: string;
+};
 
 @Injectable()
 export class AuthService {
 	constructor(private readonly partnerRegistry: PartnerRegistryService) {}
+
+	private mapJwtError(e: unknown, ctx: "nonce" | "access"): never {
+		if (e instanceof TokenExpiredError) {
+			throw new UnauthorizedException(`${ctx} token expired`);
+		}
+		if (e instanceof NotBeforeError) {
+			throw new UnauthorizedException(`${ctx} token not active yet`);
+		}
+		if (e instanceof JsonWebTokenError) {
+			throw new UnauthorizedException(`invalid ${ctx} token`);
+		}
+		throw new BadRequestException(
+			e instanceof Error ? e.message : `invalid ${ctx} token`,
+		);
+	}
+
 	async generateNonceTokenForAddress(
 		address: string,
 		audience: string,
 	): Promise<string> {
+		// Validate audience via registry; throws BadRequest on unknown audience
 		await this.partnerRegistry.assertExists(audience);
-		const nonce = randomUUID();
-		const { SignJWT } = await joseP;
-		return await new SignJWT({ nonce, address })
-			.setProtectedHeader({ alg: "RS256", kid: getJwtKid() })
-			.setIssuedAt()
-			.setSubject(address)
-			.setIssuer(JWT_ISSUER)
-			.setAudience(audience)
-			.setExpirationTime("10m") // TODO here
-			.sign(await getPrivateKey());
+
+		try {
+			const nonce = randomUUID();
+			return jwt.sign({ nonce, address }, await getPrivateKey(), {
+				algorithm: "RS256",
+				keyid: getJwtKid(),
+				issuer: JWT_ISSUER,
+				audience,
+				subject: address,
+				expiresIn: "10m",
+			});
+		} catch (e) {
+			throw new BadRequestException(
+				e instanceof Error ? e.message : "failed to sign nonce token",
+			);
+		}
 	}
 
 	async verifySignatureWithSiwe(
@@ -38,38 +78,31 @@ export class AuthService {
 		nonceToken: string,
 		rememberMe = false,
 	): Promise<string> {
-		type NoncePayload = JWTPayload & {
-			address: string;
-			nonce: string;
-			aud: string;
-			iss: string;
-			sub?: string;
-		};
-
 		const expectedAud = String(typedData.message.audience);
 		await this.partnerRegistry.assertExists(expectedAud);
 		const expectedIss = process.env.NONCE_ISSUER;
-		const { jwtVerify } = await joseP;
-		const { payload } = await jwtVerify<NoncePayload>(
-			nonceToken,
-			await getPublicKey(),
-			{
+
+		let payload!: NoncePayload;
+		try {
+			payload = jwt.verify(nonceToken, await getPublicKey(), {
 				algorithms: ["RS256"],
 				audience: expectedAud,
 				issuer: expectedIss,
-			},
-		);
+			}) as NoncePayload;
+		} catch (e) {
+			this.mapJwtError(e, "nonce");
+		}
 
 		if (
-			nonceToken !== typedData.message.nonce ||
+			payload.nonce !== typedData.message.nonce ||
 			payload.address.toLowerCase() !==
 				(typedData.message.from as string).toLowerCase()
 		) {
-			throw new Error("Nonce or address mismatch");
+			throw new UnauthorizedException("nonce or address mismatch");
 		}
 
 		if (String(typedData.message.audience) !== payload.aud) {
-			throw new Error("Audience mismatch");
+			throw new ForbiddenException("audience mismatch");
 		}
 
 		const isValid = await verifyEIP1271Signature({
@@ -87,22 +120,26 @@ export class AuthService {
 		});
 
 		if (!isValid) {
-			throw new Error("Signature is invalid, cannot proceed");
+			throw new UnauthorizedException("signature is invalid");
 		}
 
 		const iat = Math.floor(Date.now() / 1000);
-		// ideally, user should have a 'remember me' checkbox, if set, then  1 week is ok, maybe more. If not set, then 3 hours?
-		const exp = iat + (rememberMe ? 60 * 60 * 24 * 7 : 60 * 60 * 3); // 7d or 3h
-		const { SignJWT } = await joseP;
-		return await new SignJWT({
-			sub: address,
-			iat,
-			exp,
-			iss: payload.iss,
-			aud: payload.aud,
-		})
-			.setProtectedHeader({ alg: "RS256", kid: getJwtKid() })
-			.sign(await getPrivateKey());
+		const expiresInSeconds = rememberMe ? 60 * 60 * 24 * 7 : 60 * 60 * 3;
+
+		try {
+			return jwt.sign({ sub: address, iat }, await getPrivateKey(), {
+				algorithm: "RS256",
+				keyid: getJwtKid(),
+				issuer: payload.iss,
+				audience: payload.aud,
+				subject: address,
+				expiresIn: expiresInSeconds,
+			});
+		} catch (e) {
+			throw new BadRequestException(
+				e instanceof Error ? e.message : "failed to sign access token",
+			);
+		}
 	}
 
 	cookieOptions(rememberMe = false) {
@@ -115,16 +152,20 @@ export class AuthService {
 		};
 	}
 
-	async verifyAccessToken(token: string): Promise<JWTPayload> {
-		const { jwtVerify } = await joseP;
-		const { payload } = await jwtVerify(token, await getPublicKey(), {
-			algorithms: ["RS256"],
-		});
-
-		if (payload.aud !== JWT_ISSUER || payload.iss !== JWT_AUDIENCE) {
-			throw new Error("Invalid token audience or issuer");
+	async verifyAccessToken(token: string): Promise<JwtPayload> {
+		let payload!: JwtPayload;
+		try {
+			payload = jwt.verify(token, await getPublicKey(), {
+				algorithms: ["RS256"],
+			}) as JwtPayload;
+		} catch (e) {
+			this.mapJwtError(e, "access");
 		}
 
-		return payload as JWTPayload;
+		if (payload.aud !== JWT_AUDIENCE || payload.iss !== JWT_ISSUER) {
+			throw new UnauthorizedException("invalid token audience or issuer");
+		}
+
+		return payload;
 	}
 }
