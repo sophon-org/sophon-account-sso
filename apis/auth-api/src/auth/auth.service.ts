@@ -1,6 +1,5 @@
 import { randomUUID } from "node:crypto";
 import { Injectable } from "@nestjs/common";
-// import { type JWTPayload, jwtVerify, SignJWT } from "jose";
 const joseP = import("jose");
 import type { JWTPayload } from "jose"; 
 import type { TypedDataDefinition } from "viem";
