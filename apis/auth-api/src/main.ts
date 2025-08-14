@@ -2,14 +2,22 @@ import "dotenv/config";
 import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { useContainer } from "class-validator"; // ✅ add this
 import cookieParser from "cookie-parser";
 import { AppModule } from "./app.module.js";
 import { AllExceptionsFilter } from "./common/all-exceptions.filter.js";
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
+
+	useContainer(app.select(AppModule), { fallbackOnErrors: true });
+
 	app.useGlobalPipes(
-		new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
+		new ValidationPipe({
+			whitelist: true,
+			forbidNonWhitelisted: true,
+			transform: true,
+		}),
 	);
 
 	app.use(cookieParser());
