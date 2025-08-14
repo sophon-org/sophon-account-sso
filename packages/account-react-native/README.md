@@ -14,7 +14,7 @@ npm install @simplewebauthn/browser @simplewebauthn/server
 npm install expo-crypto expo-standard-web-crypto react-native-url-polyfill text-encoding-polyfill
 
 # Overall native requirements
-npm install react-native-mmkv react-native-webview
+npm install expo-network react-native-mmkv react-native-webview
 ```
 
 After that, you are ready to install our SDK:

@@ -2259,6 +2259,7 @@ __metadata:
     expo-haptics: "npm:~14.1.4"
     expo-image: "npm:~2.3.2"
     expo-linking: "npm:~7.1.6"
+    expo-network: "npm:^7.1.5"
     expo-router: "npm:~5.1.2"
     expo-secure-store: "npm:~14.2.3"
     expo-splash-screen: "npm:~0.30.9"
@@ -2272,7 +2273,7 @@ __metadata:
     react-native: "npm:0.80.1"
     react-native-gesture-handler: "npm:~2.24.0"
     react-native-mmkv: "npm:^3.3.0"
-    react-native-reanimated: "npm:~3.18.0"
+    react-native-reanimated: "npm:3.18.0"
     react-native-safe-area-context: "npm:5.4.0"
     react-native-screens: "npm:~4.11.1"
     react-native-url-polyfill: "npm:^2.0.0"
@@ -3801,6 +3802,16 @@ __metadata:
   dependencies:
     invariant: "npm:^2.2.4"
   checksum: 10c0/9586d80644278fa4c15cc1e85f403934a07936574c050623b26a0dec8d8cbc8776ed68e988510621495d1227f52a127938a2aad2c997d05a449d0f1fd009da86
+  languageName: node
+  linkType: hard
+
+"expo-network@npm:^7.1.5":
+  version: 7.1.5
+  resolution: "expo-network@npm:7.1.5"
+  peerDependencies:
+    expo: "*"
+    react: "*"
+  checksum: 10c0/c2e02c337e0d0e3e7bf01334e4730bd2e5a5cb822c0b33146a64a1ac3b7e95384c6558359260a5b1aa6e504a874a9f7feefc99aee7a7a0590a5d8fad8b1b4106
   languageName: node
   linkType: hard
 
@@ -6190,7 +6201,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-reanimated@npm:~3.18.0":
+"react-native-reanimated@npm:3.18.0":
   version: 3.18.0
   resolution: "react-native-reanimated@npm:3.18.0"
   dependencies:

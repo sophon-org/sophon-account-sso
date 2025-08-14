@@ -3,7 +3,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
   const insets = useSafeAreaInsets();
-  console.log('insets', insets);
   return (
     <SophonContextProvider
       network="testnet"

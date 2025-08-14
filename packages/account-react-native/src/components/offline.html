@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Sophon Account - Offline</title>
+    <style>
+      body {
+        background: transparent;
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .sheet {
+        border-top-left-radius: 24px;
+        border-top-right-radius: 24px;
+        background-color: white;
+        padding: 24px;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .backdrop {
+        background-color: oklab(0 0 0 / 0.4);
+        pointer-events: auto;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 0;
+        width: 100%;
+        height: 100vh;
+      }
+
+      .spinner {
+        animation: spin 10s linear infinite;
+        width: 48px;
+        height: 48px;
+      }
+
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .root {
+        background: transparent;
+        border: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .icon-container {
+        position: relative;
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .icon-inner {
+        position: absolute;
+        left: 8px;
+        top: 8px;
+      }
+
+      .text {
+        font-size: 16px;
+        font-weight: 500;
+        color: #292929;
+        text-align: center;
+        margin-top: 16px;
+      }
+    </style>
+    <script>
+      const onMessageFromRN = (message) => {
+        const { action, payload } = JSON.parse(message);
+
+        if (action === "rpc" && window.ReactNativeWebView) {
+          window.ReactNativeWebView.postMessage(
+            JSON.stringify({
+              action: "rpc",
+              payload: {
+                id: "offline-if",
+                requestId: payload.id,
+                content: {
+                  result: null,
+                  error: {
+                    message: "No internet connection.",
+                    code: -32002,
+                  },
+                },
+              },
+            }),
+          );
+        }
+      };
+      window.onMessageFromRN = onMessageFromRN;
+    </script>
+    <script>
+      function closeModal() {
+        window.ReactNativeWebView &&
+          window.ReactNativeWebView.postMessage(
+            JSON.stringify({ action: "closeModal", payload: {} }),
+          );
+      }
+    </script>
+  </head>
+  <body>
+    <button class="root" onclick="closeModal()">
+      <div class="backdrop"></div>
+      <div class="sheet">
+        <div class="icon-container">
+          <div class="spinner">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="48"
+              height="48"
+              fill="#000000"
+              viewBox="0 0 256 256"
+            >
+              <path
+                d="M232,128a104,104,0,0,1-208,0c0-41,23.81-78.36,60.66-95.27a8,8,0,0,1,6.68,14.54C60.15,61.59,40,93.27,40,128a88,88,0,0,0,176,0c0-34.73-20.15-66.41-51.34-80.73a8,8,0,0,1,6.68-14.54C208.19,49.64,232,87,232,128Z"
+              ></path>
+            </svg>
+          </div>
+          <div class="icon-inner">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="32"
+              height="32"
+              fill="#000000"
+              viewBox="0 0 256 256"
+            >
+              <path
+                d="M128,24A104,104,0,1,0,232,128,104.13,104.13,0,0,0,128,24Zm-18.34,98.34a8,8,0,0,1-11.32,11.32L88,123.31,77.66,133.66a8,8,0,0,1-11.32-11.32L76.69,112,66.34,101.66A8,8,0,0,1,77.66,90.34L88,100.69,98.34,90.34a8,8,0,0,1,11.32,11.32L99.31,112ZM128,192a12,12,0,1,1,12-12A12,12,0,0,1,128,192Zm61.66-69.66a8,8,0,0,1-11.32,11.32L168,123.31l-10.34,10.35a8,8,0,0,1-11.32-11.32L156.69,112l-10.35-10.34a8,8,0,0,1,11.32-11.32L168,100.69l10.34-10.35a8,8,0,0,1,11.32,11.32L179.31,112Z"
+              ></path>
+            </svg>
+          </div>
+        </div>
+        <span class="text">You are offline, please try again later.</span>
+      </div>
+    </button>
+  </body>
+</html>

@@ -2,7 +2,14 @@ import {
   AccountServerURL,
   type SophonNetworkType,
 } from '@sophon-labs/account-core';
-import { createContext, useCallback, useMemo, useState } from 'react';
+import { addNetworkStateListener, getNetworkStateAsync } from 'expo-network';
+import {
+  createContext,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import {
   type Address,
   type Chain,
@@ -30,6 +37,7 @@ export interface SophonContextConfig {
   provider?: WalletProvider;
   token?: string | null;
   disconnect: () => void;
+  hasInternet: boolean;
 }
 
 export const SophonContext = createContext<SophonContextConfig>({
@@ -37,6 +45,7 @@ export const SophonContext = createContext<SophonContextConfig>({
   chain: sophonTestnet,
   setAccount: () => {},
   disconnect: () => {},
+  hasInternet: false,
 });
 
 export interface SophonAccount {
@@ -56,6 +65,22 @@ export const SophonContextProvider = ({
   partnerId: string;
   insets?: SophonMainViewProps['insets'];
 }) => {
+  const [isConnected, setIsConnected] = useState(false);
+
+  useEffect(() => {
+    const listener = addNetworkStateListener(() => {
+      setTimeout(async () => {
+        const { isConnected, isInternetReachable } =
+          await getNetworkStateAsync();
+        setIsConnected(!!isConnected && !!isInternetReachable);
+      }, 500);
+    });
+
+    return () => {
+      listener.remove();
+    };
+  }, []);
+
   const serverUrl = useMemo(
     () => authServerUrl ?? AccountServerURL[network],
     [authServerUrl, network],
@@ -65,7 +90,6 @@ export const SophonContextProvider = ({
       ? JSON.parse(SophonAppStorage.getItem(StorageKeys.USER_ACCOUNT)!)
       : undefined,
   );
-  // const [token, setToken] = useState<string>();
   const chain = useMemo(
     () => (network === 'mainnet' ? sophon : sophonTestnet),
     [network],
@@ -122,6 +146,7 @@ export const SophonContextProvider = ({
       token,
       disconnect,
       partnerId,
+      hasInternet: isConnected,
     }),
     [
       network,
@@ -132,6 +157,7 @@ export const SophonContextProvider = ({
       token,
       disconnect,
       partnerId,
+      isConnected,
     ],
   );
 
@@ -145,6 +171,7 @@ export const SophonContextProvider = ({
         insets={insets}
         authServerUrl={serverUrl}
         partnerId={partnerId}
+        hasInternet={isConnected}
       />
       {children}
     </SophonContext.Provider>

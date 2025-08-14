@@ -15,9 +15,10 @@ export class WebViewCommunicator implements Communicator {
     { reject: (_: Error) => void; deregister: () => void }
   >();
 
-  postMessage = async (message: Message) => {
-    await this.waitContextToBeReady();
-    sendUIMessage('outgoingRpc', message);
+  postMessage = (message: Message) => {
+    this.waitContextToBeReady().then(() => {
+      sendUIMessage('outgoingRpc', message);
+    });
   };
   postRequestAndWaitForResponse = async <M extends Message>(
     request: Message & { id: NonNullable<Message['id']> },
@@ -81,7 +82,5 @@ export class WebViewCommunicator implements Communicator {
       }, MODAL_TIMEOUT);
     });
   };
-  ready = async () => {
-    await this.waitContextToBeReady();
-  };
+  ready = async () => {};
 }
