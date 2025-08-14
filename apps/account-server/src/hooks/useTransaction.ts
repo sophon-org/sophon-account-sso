@@ -79,10 +79,16 @@ export function useTransaction() {
             to: transactionRequest.to as `0x${string}`,
             value: BigInt(transactionRequest.value || '0'),
             data: (transactionRequest.data as `0x${string}`) || '0x',
-            paymaster: CONTRACTS.accountPaymaster,
-            paymasterInput: getGeneralPaymasterInput({
-              innerInput: '0x',
-            }),
+            paymaster:
+              transactionRequest.data === '0x'
+                ? undefined
+                : CONTRACTS.accountPaymaster,
+            paymasterInput:
+              transactionRequest.data === '0x'
+                ? undefined
+                : getGeneralPaymasterInput({
+                    innerInput: '0x',
+                  }),
           });
         } catch (error) {
           console.error('Transaction error:', error);
@@ -142,10 +148,16 @@ export function useTransaction() {
           to: transactionRequest.to as `0x${string}`,
           value: BigInt(transactionRequest.value || '0'),
           data: (transactionRequest.data as `0x${string}`) || '0x',
-          paymaster: CONTRACTS.accountPaymaster,
-          paymasterInput: getGeneralPaymasterInput({
-            innerInput: '0x',
-          }),
+          paymaster:
+            transactionRequest.data === '0x'
+              ? undefined
+              : CONTRACTS.accountPaymaster,
+          paymasterInput:
+            transactionRequest.data === '0x'
+              ? undefined
+              : getGeneralPaymasterInput({
+                  innerInput: '0x',
+                }),
         });
       } else {
         console.log('Sending transaction with Passkey...');
@@ -179,10 +191,15 @@ export function useTransaction() {
           value: BigInt(transactionRequest.value || '0'),
           data: (transactionRequest.data as `0x${string}`) || '0x',
           paymaster:
-            '0x98546B226dbbA8230cf620635a1e4ab01F6A99B2' as `0x${string}`,
-          paymasterInput: getGeneralPaymasterInput({
-            innerInput: '0x',
-          }),
+            transactionRequest.data === '0x'
+              ? undefined
+              : CONTRACTS.accountPaymaster,
+          paymasterInput:
+            transactionRequest.data === '0x'
+              ? undefined
+              : getGeneralPaymasterInput({
+                  innerInput: '0x',
+                }),
         });
       }
 
