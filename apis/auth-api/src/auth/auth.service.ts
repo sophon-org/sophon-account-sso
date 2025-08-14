@@ -16,8 +16,13 @@ import type { TypedDataDefinition } from "viem";
 import { sophonTestnet } from "viem/chains";
 
 import { getJwtKid, JWT_AUDIENCE, JWT_ISSUER } from "../config/env";
+import {
+	packScope,
+	unpackScope,
+	type PermissionAllowedField,
+} from "../config/permission-allowed-fields";
 import { PartnerRegistryService } from "../partners/partner-registry.service";
-import { getPrivateKey, getPublicKey } from "../utils/jwt"; // returns PEM or KeyObject
+import { getPrivateKey, getPublicKey } from "../utils/jwt";
 import { verifyEIP1271Signature } from "../utils/signature";
 
 type NoncePayload = JwtPayload & {
@@ -25,6 +30,7 @@ type NoncePayload = JwtPayload & {
 	nonce: string;
 	aud: string;
 	iss: string;
+	scope?: string;
 	sub?: string;
 };
 
@@ -50,20 +56,28 @@ export class AuthService {
 	async generateNonceTokenForAddress(
 		address: string,
 		audience: string,
+		fields: PermissionAllowedField[],
 	): Promise<string> {
-		// Validate audience via registry; throws BadRequest on unknown audience
 		await this.partnerRegistry.assertExists(audience);
 
 		try {
 			const nonce = randomUUID();
-			return jwt.sign({ nonce, address }, await getPrivateKey(), {
-				algorithm: "RS256",
-				keyid: getJwtKid(),
-				issuer: JWT_ISSUER,
-				audience,
-				subject: address,
-				expiresIn: "10m",
-			});
+			return jwt.sign(
+				{
+					nonce,
+					address,
+					scope: packScope(fields),
+				},
+				await getPrivateKey(),
+				{
+					algorithm: "RS256",
+					keyid: getJwtKid(),
+					issuer: JWT_ISSUER,
+					audience,
+					subject: address,
+					expiresIn: "10m",
+				},
+			);
 		} catch (e) {
 			throw new BadRequestException(
 				e instanceof Error ? e.message : "failed to sign nonce token",
@@ -98,7 +112,7 @@ export class AuthService {
 			payload.address.toLowerCase() !==
 				(typedData.message.from as string).toLowerCase()
 		) {
-			throw new UnauthorizedException("nonce or address mismatch");
+			throw new UnauthorizedException("Nonce or address mismatch");
 		}
 
 		if (String(typedData.message.audience) !== payload.aud) {
@@ -122,19 +136,28 @@ export class AuthService {
 		if (!isValid) {
 			throw new UnauthorizedException("signature is invalid");
 		}
+		const scope = packScope(unpackScope(payload.scope ?? ""));
 
 		const iat = Math.floor(Date.now() / 1000);
 		const expiresInSeconds = rememberMe ? 60 * 60 * 24 * 7 : 60 * 60 * 3;
 
 		try {
-			return jwt.sign({ sub: address, iat }, await getPrivateKey(), {
-				algorithm: "RS256",
-				keyid: getJwtKid(),
-				issuer: payload.iss,
-				audience: payload.aud,
-				subject: address,
-				expiresIn: expiresInSeconds,
-			});
+			return jwt.sign(
+				{
+					sub: address,
+					iat,
+					scope,
+				},
+				await getPrivateKey(),
+				{
+					algorithm: "RS256",
+					keyid: getJwtKid(),
+					issuer: payload.iss,
+					audience: payload.aud,
+					subject: address,
+					expiresIn: expiresInSeconds,
+				},
+			);
 		} catch (e) {
 			throw new BadRequestException(
 				e instanceof Error ? e.message : "failed to sign access token",

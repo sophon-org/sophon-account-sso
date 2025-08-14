@@ -51,10 +51,11 @@ describe("AuthService", () => {
 		expect(service).toBeDefined();
 	});
 
-	it("should generate a nonce token", async () => {
+	it("should generate a nonce token (stores fields in scope)", async () => {
 		const token = await service.generateNonceTokenForAddress(
 			"0x1234567890abcdef1234567890abcdef12345678",
 			"sophon-web",
+			["email", "x"],
 		);
 
 		expect(token).toBe("mocked.token");
@@ -62,6 +63,7 @@ describe("AuthService", () => {
 			expect.objectContaining({
 				nonce: expect.any(String),
 				address: "0x1234567890abcdef1234567890abcdef12345678",
+				scope: "email x",
 			}),
 			"PRIVATE_KEY",
 			expect.objectContaining({
@@ -81,6 +83,7 @@ describe("AuthService", () => {
 			address: "0x1234567890abcdef1234567890abcdef12345678",
 			aud: "sophon-web",
 			iss: process.env.NONCE_ISSUER,
+			scope: "email x",
 		});
 
 		const typedData: TypedDataDefinition = {
@@ -111,6 +114,7 @@ describe("AuthService", () => {
 			address: "0x1234567890abcdef1234567890abcdef12345678",
 			aud: "sophon-web",
 			iss: process.env.NONCE_ISSUER,
+			scope: "email x",
 		});
 
 		const typedData: TypedDataDefinition = {
