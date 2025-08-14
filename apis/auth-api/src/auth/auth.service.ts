@@ -1,6 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { Injectable } from "@nestjs/common";
-import { type JWTPayload, jwtVerify, SignJWT } from "jose";
+// import { type JWTPayload, jwtVerify, SignJWT } from "jose";
+const joseP = import("jose");
+import type { JWTPayload } from "jose"; 
 import type { TypedDataDefinition } from "viem";
 import { sophonTestnet } from "viem/chains";
 import { getJwtKid, JWT_AUDIENCE, JWT_ISSUER } from "../config/env";
@@ -17,6 +19,7 @@ export class AuthService {
 	): Promise<string> {
 		await this.partnerRegistry.assertExists(audience);
 		const nonce = randomUUID();
+		const { SignJWT } = await joseP;
 		return await new SignJWT({ nonce, address })
 			.setProtectedHeader({ alg: "RS256", kid: getJwtKid() })
 			.setIssuedAt()
@@ -45,7 +48,7 @@ export class AuthService {
 		const expectedAud = String(typedData.message.audience);
 		await this.partnerRegistry.assertExists(expectedAud);
 		const expectedIss = process.env.NONCE_ISSUER;
-
+		const { jwtVerify } = await joseP;
 		const { payload } = await jwtVerify<NoncePayload>(
 			nonceToken,
 			await getPublicKey(),
@@ -89,7 +92,7 @@ export class AuthService {
 		const iat = Math.floor(Date.now() / 1000);
 		// ideally, user should have a 'remember me' checkbox, if set, then  1 week is ok, maybe more. If not set, then 3 hours?
 		const exp = iat + (rememberMe ? 60 * 60 * 24 * 7 : 60 * 60 * 3); // 7d or 3h
-
+		const { SignJWT } = await joseP;
 		return await new SignJWT({
 			sub: address,
 			iat,
@@ -112,6 +115,7 @@ export class AuthService {
 	}
 
 	async verifyAccessToken(token: string): Promise<JWTPayload> {
+		const { jwtVerify } = await joseP;
 		const { payload } = await jwtVerify(token, await getPublicKey(), {
 			algorithms: ["RS256"],
 		});
