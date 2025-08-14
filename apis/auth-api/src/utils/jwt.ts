@@ -1,9 +1,10 @@
-import { importPKCS8, importSPKI } from "jose";
+const joseP = import("jose");
 
 let privateKeyCache: CryptoKey | null = null;
 let publicKeyCache: CryptoKey | null = null;
 
 export async function getPrivateKey(): Promise<CryptoKey> {
+	const { importPKCS8 } = await joseP;
 	if (privateKeyCache) return privateKeyCache;
 
 	const pem = process.env.PRIVATE_KEY?.replace(/\\n/g, "\n");
@@ -14,6 +15,7 @@ export async function getPrivateKey(): Promise<CryptoKey> {
 }
 
 export async function getPublicKey(): Promise<CryptoKey> {
+	const { importSPKI } = await joseP;
 	if (publicKeyCache) return publicKeyCache;
 
 	const pem = process.env.PUBLIC_KEY?.replace(/\\n/g, "\n");

@@ -1,5 +1,6 @@
 import { Controller, Get, type OnModuleInit } from "@nestjs/common";
 import type { JWK } from "jose";
+
 import { getPublicKey } from "../utils/jwt"; // or .ts in dev
 
 @Controller("/.well-known")

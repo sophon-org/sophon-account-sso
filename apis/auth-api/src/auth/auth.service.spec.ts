@@ -1,6 +1,7 @@
 import { Test } from "@nestjs/testing";
-import { jwtVerify, SignJWT } from "jose";
-import { TypedDataDefinition } from "viem";
+
+const joseP = import("jose");
+
 import { PartnerRegistryService } from "../partners/partner-registry.service";
 import { AuthService } from "./auth.service";
 
@@ -73,12 +74,14 @@ describe("AuthService", () => {
 			"sophon-web",
 		);
 		expect(token).toBe("mocked.token");
+		const { SignJWT } = await joseP;
 		// Optional: assert SignJWT was built with expected methods
 		expect(SignJWT as unknown as jest.Mock).toHaveBeenCalled();
 	});
 
 	it("should verify signature and return JWT", async () => {
 		// jwtVerify returns the decoded/verified payload for the nonce token
+		const { jwtVerify } = await joseP;
 		(jwtVerify as jest.Mock).mockResolvedValueOnce({
 			payload: {
 				nonce: "expected-nonce",
@@ -111,6 +114,7 @@ describe("AuthService", () => {
 	});
 
 	it("should throw on nonce mismatch", async () => {
+		const { jwtVerify } = await joseP;
 		(jwtVerify as jest.Mock).mockResolvedValueOnce({
 			payload: {
 				nonce: "anything-here", // not used for mismatch in your code
