@@ -17,9 +17,9 @@ import { sophonTestnet } from "viem/chains";
 
 import { getJwtKid, JWT_AUDIENCE, JWT_ISSUER } from "../config/env";
 import {
+	type PermissionAllowedField,
 	packScope,
 	unpackScope,
-	type PermissionAllowedField,
 } from "../config/permission-allowed-fields";
 import { PartnerRegistryService } from "../partners/partner-registry.service";
 import { getPrivateKey, getPublicKey } from "../utils/jwt";
