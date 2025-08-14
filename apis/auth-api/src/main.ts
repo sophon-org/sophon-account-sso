@@ -2,7 +2,7 @@ import "dotenv/config";
 import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
-import { useContainer } from "class-validator"; // ✅ add this
+import { useContainer } from "class-validator";
 import cookieParser from "cookie-parser";
 import { AppModule } from "./app.module.js";
 import { AllExceptionsFilter } from "./common/all-exceptions.filter.js";

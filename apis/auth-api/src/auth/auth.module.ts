@@ -7,7 +7,7 @@ import { AuthService } from "./auth.service";
 @Module({
 	imports: [PartnerRegistryModule],
 	controllers: [AuthController],
-	providers: [AuthService], // Make sure AuthService is here
-	exports: [AuthService], // Add this if other modules need AuthService
+	providers: [AuthService],
+	exports: [AuthService],
 })
 export class AuthModule {}

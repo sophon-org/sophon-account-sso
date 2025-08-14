@@ -22,8 +22,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
 			? (exception as HttpException).getResponse()
 			: { message: "Internal server error" };
 
-		// Centralized logging
-		// eslint-disable-next-line no-console
 		console.error({
 			path: req?.url,
 			method: req?.method,

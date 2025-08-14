@@ -93,7 +93,6 @@ export class AuthService {
 			this.mapJwtError(e, "nonce");
 		}
 
-		// Business-rule checks → 4xx
 		if (
 			payload.nonce !== typedData.message.nonce ||
 			payload.address.toLowerCase() !==
