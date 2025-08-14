@@ -6,7 +6,6 @@ import {
   formatUnits,
   parseAbi,
 } from 'viem';
-import { nftAbi } from '@/abi/nft';
 import { BLOCK_EXPLORER_API_URL } from '@/lib/constants';
 import {
   type EnrichedTransactionRequest,
@@ -58,14 +57,18 @@ const decodeWithABI = (abi: string, data: string) => {
     const abiArray = JSON.parse(abi);
 
     // Filter only functions (exclude events, errors, etc.)
+
     const functionAbi = abiArray.filter(
+      // biome-ignore lint/suspicious/noExplicitAny: review that in the future TODO
       (item: any) => item.type === 'function',
     );
 
     // Convert ABI objects to function signature strings that viem can parse
+    // biome-ignore lint/suspicious/noExplicitAny: review that in the future TODO
     const functionSignatures = functionAbi.map((func: any) => {
       const inputs =
         func.inputs
+          // biome-ignore lint/suspicious/noExplicitAny: review that in the future TODO
           ?.map((input: any) => {
             const name = input.name || `param${input.internalType}`;
             return `${input.type} ${name}`;
@@ -139,7 +142,7 @@ export const useEnrichTransactionRequest = (
           : await getTokenFromAddress(transactionRequest.to);
 
         if (isSophTransfer) {
-          const fee = await estimateFee(transactionRequest);
+          const fee = await estimateFee();
           setEnrichedTransactionRequest({
             ...transactionRequest,
             transactionType: TransactionType.SOPH,
@@ -169,15 +172,13 @@ export const useEnrichTransactionRequest = (
             });
           } else {
             // Not an ERC20 transfer, try to get the actual contract ABI
-            //const contractABI = await getContractABI(transactionRequest.to);
-            // Convert nftAbi to the same format as blockchain explorer API (JSON string)
-            const contractABI = JSON.stringify(nftAbi);
+            const contractABI = await getContractABI(transactionRequest.to);
 
             let decodedData = null;
 
             if (contractABI) {
               decodedData = decodeWithABI(
-                contractABI,
+                JSON.stringify(contractABI),
                 transactionRequest.data || '',
               );
             }
