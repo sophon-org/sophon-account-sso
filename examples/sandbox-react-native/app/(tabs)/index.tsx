@@ -5,7 +5,7 @@ import {
 } from '@sophon-labs/account-react-native';
 import { useState } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
-import { parseEther } from 'viem';
+import { erc20Abi, parseEther, parseUnits } from 'viem';
 import { sophonTestnet } from 'viem/chains';
 
 export default function HomeScreen() {
@@ -172,6 +172,40 @@ export default function HomeScreen() {
                     to: '0x0d94c4DBE58f6FE1566A7302b4E4C3cD03744626',
                     value: parseEther('0.006'),
                     data: '0x',
+                    account: account!.address,
+                    // biome-ignore lint/suspicious/noExplicitAny: TODO: review this
+                    chain: sophonTestnet as any,
+                  });
+                  setTransaction(tx);
+                  // biome-ignore lint/suspicious/noExplicitAny: TODO: create better types here
+                } catch (e: any) {
+                  setError(e.details ?? e.message);
+                }
+              }}
+            />
+          </View>
+
+          {transaction && <Text>Transaction: {transaction ?? 'N/A'}</Text>}
+        </>
+      )}
+
+      {isConnected && (
+        <>
+          <View style={{ ...styles.button, backgroundColor: 'blue' }}>
+            <Button
+              title="ERC20 Transaction"
+              color="white"
+              onPress={async () => {
+                try {
+                  setError('');
+                  const tx = await walletClient!.writeContract({
+                    address: '0xE70a7d8563074D6510F550Ba547874C3C2a6F81F', // MOCK DAI contract
+                    abi: erc20Abi,
+                    functionName: 'transfer',
+                    args: [
+                      '0x0d94c4DBE58f6FE1566A7302b4E4C3cD03744626' as `0x${string}`,
+                      parseUnits('1', 18),
+                    ],
                     account: account!.address,
                     // biome-ignore lint/suspicious/noExplicitAny: TODO: review this
                     chain: sophonTestnet as any,

@@ -99,7 +99,7 @@ export default function RootPage() {
         open={open}
         onOpenChange={handleCloseModal}
         showHeader={false}
-        showLogo={false}
+        showLogo={true}
         showLegalNotice={false}
         drawerType="transaction_request"
       >
@@ -116,7 +116,7 @@ export default function RootPage() {
         showHeader={true}
         showProfileImage={true}
         showLegalNotice={false}
-        showLogo={false}
+        showLogo={true}
         drawerType="connection_authorization"
         actions={
           <div className="flex items-center justify-center gap-2 w-full">
