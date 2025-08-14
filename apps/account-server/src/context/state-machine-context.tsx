@@ -58,6 +58,20 @@ export const MainStateMachineContextProvider = ({
               },
             };
           }),
+          clearScopes: assign(({ context }) => {
+            return {
+              ...context,
+              scopes: {
+                profile: false,
+                email: false,
+                google: false,
+                discord: false,
+                telegram: false,
+                x: false,
+              },
+              partnerId: undefined,
+            };
+          }),
           finishFlow: () => {
             windowService.close();
             sendMessage('flow.complete', null);

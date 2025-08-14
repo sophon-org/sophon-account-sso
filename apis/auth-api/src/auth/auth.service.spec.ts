@@ -1,7 +1,8 @@
-import { Test, type TestingModule } from "@nestjs/testing";
+import { Test } from "@nestjs/testing";
 import { jwtVerify, SignJWT } from "jose";
-import { AuthService } from "./auth.service";
+import { TypedDataDefinition } from "viem";
 import { PartnerRegistryService } from "../partners/partner-registry.service";
+import { AuthService } from "./auth.service";
 
 // --- jose mocks ---
 jest.mock("jose", () => {
@@ -52,14 +53,14 @@ describe("AuthService", () => {
 	};
 
 	beforeEach(async () => {
-	const module = await Test.createTestingModule({
-		providers: [
-		AuthService,
-		{ provide: PartnerRegistryService, useValue: partnerRegistryMock },
-		],
-	}).compile();
+		const module = await Test.createTestingModule({
+			providers: [
+				AuthService,
+				{ provide: PartnerRegistryService, useValue: partnerRegistryMock },
+			],
+		}).compile();
 
-	service = module.get(AuthService);
+		service = module.get(AuthService);
 	});
 
 	it("should be defined", () => {
@@ -87,7 +88,7 @@ describe("AuthService", () => {
 			},
 		});
 
-		const typedData: any = {
+		const typedData: TypedDataDefinition = {
 			domain: { name: "Sophon SSO", version: "1", chainId: 300 },
 			types: {},
 			primaryType: "Login",
@@ -119,7 +120,7 @@ describe("AuthService", () => {
 			},
 		});
 
-		const typedData: any = {
+		const typedData: TypedDataDefinition = {
 			domain: { name: "Sophon SSO", version: "1", chainId: 300 },
 			types: {},
 			primaryType: "Login",

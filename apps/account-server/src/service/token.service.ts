@@ -1,7 +1,12 @@
 import type { Address, TypedDataDefinition } from 'viem';
 import { env } from '@/env';
+import { serverLog } from '@/lib/server-log';
 
-export const requestNonce = async (address: string) => {
+export const requestNonce = async (address: string, partnerId: string) => {
+  serverLog(
+    `>>> requestNonce Url: ${env.NEXT_PUBLIC_AUTH_SERVER_ENDPOINT}/auth/nonce`,
+  );
+  serverLog(`Payload > ${JSON.stringify({ address, partnerId })}`);
   const response = await fetch(
     `${env.NEXT_PUBLIC_AUTH_SERVER_ENDPOINT}/auth/nonce`,
     {
@@ -10,14 +15,19 @@ export const requestNonce = async (address: string) => {
         // Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ address }),
+      body: JSON.stringify({ address, partnerId }),
     },
   );
 
   if (!response.ok) {
+    serverLog(
+      `>>> requestNonce ${response.statusText} - ${await response.text()}`,
+    );
     console.error(response.statusText);
     throw new Error('Failed to request authentication nonce');
   }
+
+  serverLog(`>>> requestNonce complete`);
 
   const result = await response.json();
 
@@ -36,7 +46,6 @@ export const verifyAuthorization = async (
     {
       method: 'POST',
       headers: {
-        // Accept: 'application/json',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({

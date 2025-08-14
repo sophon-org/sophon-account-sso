@@ -11,4 +11,5 @@ export const SSOConfig = {
     privateKeyHex:
       '0x69edcbbbf2bfaf8fa4d41ab5652332fea7b1e458f02f84cfe77419cd0165c9ce',
   },
+  version: '1.0.0',
 };

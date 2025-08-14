@@ -8,8 +8,8 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
-import { SophonContextProvider } from '@sophon-labs/account-react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { Web3Provider } from '@/components/Web3Provider';
 import { useColorScheme } from '@/hooks/useColorScheme';
 
 export default function RootLayout() {
@@ -25,10 +25,7 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
-      <SophonContextProvider
-        network="testnet"
-        authServerUrl="http://localhost:3000"
-      >
+      <Web3Provider>
         <ThemeProvider
           value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
         >
@@ -38,7 +35,7 @@ export default function RootLayout() {
           </Stack>
           <StatusBar style="auto" />
         </ThemeProvider>
-      </SophonContextProvider>
+      </Web3Provider>
     </SafeAreaProvider>
   );
 }

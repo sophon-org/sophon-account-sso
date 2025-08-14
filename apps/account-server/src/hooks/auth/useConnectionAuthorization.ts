@@ -13,6 +13,12 @@ export function useConnectionAuthorization() {
   const { incoming, session } = MainStateMachineContext.useSelector(
     (state) => state.context.requests,
   );
+  const _scopes = MainStateMachineContext.useSelector(
+    (state) => state.context.scopes,
+  );
+  const partnerId = MainStateMachineContext.useSelector(
+    (state) => state.context.partnerId,
+  );
   const { account } = useAccountContext();
   const actorRef = MainStateMachineContext.useActorRef();
   const { isSigning, signTypeData } = useSignature();
@@ -49,41 +55,46 @@ export function useConnectionAuthorization() {
     try {
       setAuthorizing(true);
 
-      const authNonce = await requestNonce(account.address);
-      const signAuth = {
-        domain: {
-          name: 'Sophon SSO',
-          version: '1',
-          chainId: sophonTestnet.id,
-        },
-        types: {
-          Message: [
-            { name: 'content', type: 'string' },
-            { name: 'from', type: 'address' },
-            { name: 'nonce', type: 'string' },
-          ],
-        },
-        primaryType: 'Message',
-        address: account.address,
-        message: {
-          content: `Do you authorize this website to connect?!\n\nThis message confirms you control this wallet.`,
-          from: account.address,
-          nonce: authNonce,
-        },
-      };
-      const authSignature = await signTypeData(signAuth);
+      // We just generate tokens if the partnerId is available,
+      // otherwise the partner is using EIP-6963 and don't need that
+      if (partnerId) {
+        const authNonce = await requestNonce(account.address, partnerId);
+        const signAuth = {
+          domain: {
+            name: 'Sophon SSO',
+            version: '1',
+            chainId: sophonTestnet.id,
+          },
+          types: {
+            Message: [
+              { name: 'content', type: 'string' },
+              { name: 'from', type: 'address' },
+              { name: 'nonce', type: 'string' },
+            ],
+          },
+          primaryType: 'Message',
+          address: account.address,
+          message: {
+            content: `Do you authorize this website to connect?!\n\nThis message confirms you control this wallet.`,
+            from: account.address,
+            nonce: authNonce,
+          },
+        };
 
-      const token = await verifyAuthorization(
-        account.address,
-        signAuth,
-        authSignature,
-        authNonce,
-        true,
-      );
+        const authSignature = await signTypeData(signAuth);
 
-      // we don't store the token, we just send it during the account authorization
-      // TODO: better handling token expiration
-      windowService.emitToken(token);
+        const token = await verifyAuthorization(
+          account.address,
+          signAuth,
+          authSignature,
+          authNonce,
+          true,
+        );
+
+        // we don't store the token, we just send it during the account authorization
+        // TODO: better handling token expiration
+        windowService.emitToken(token);
+      }
 
       if (windowService.isManaged() && incoming) {
         handleAuthSuccessResponse(

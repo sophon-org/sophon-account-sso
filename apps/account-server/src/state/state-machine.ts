@@ -6,6 +6,7 @@ import type {
   TransactionRequest,
   TypedDataSigningRequest,
 } from '@/types/auth';
+import type { Scopes } from '@/types/data-scopes';
 
 const defaultContext = {
   error: undefined as string | undefined,
@@ -20,6 +21,15 @@ const defaultContext = {
     transaction: null as TransactionRequest | null | undefined,
     authentication: null as AuthenticationRequest | null | undefined,
   },
+  scopes: {
+    profile: false,
+    email: false,
+    google: false,
+    discord: false,
+    telegram: false,
+    x: false,
+  } as Record<Scopes, boolean>,
+  partnerId: undefined as string | undefined,
 };
 
 export const userWalletRequestStateMachine = createMachine({
@@ -52,6 +62,19 @@ export const userWalletRequestStateMachine = createMachine({
         return {
           ...context,
           error: event.error,
+        };
+      }),
+    },
+    SET_ACCEPTED_SCOPES: {
+      actions: assign(({ context, event }) => {
+        console.log('>>> SET_ACCEPTED_SCOPES', event.scopes, event.partnerId);
+        return {
+          ...context,
+          scopes: {
+            ...context.scopes,
+            ...event.scopes,
+          },
+          partnerId: event.partnerId,
         };
       }),
     },
@@ -239,6 +262,7 @@ export const userWalletRequestStateMachine = createMachine({
             return context.isAuthenticated && !!context.requests.authentication;
           },
           target: 'incoming-authentication',
+          actions: ['clearScopes'],
         },
       ],
     },

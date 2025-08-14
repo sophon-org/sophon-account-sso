@@ -12,7 +12,6 @@ import {
   trackSigningRequestReceived,
   trackSigningRequestResult,
 } from '@/lib/analytics';
-import { serverLog } from '@/lib/server-log';
 import { windowService } from '@/service/window.service';
 
 export default function SigningRequestView() {
@@ -120,7 +119,6 @@ export default function SigningRequestView() {
                   },
                 };
 
-                serverLog(`🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥 signResponse ${signature}`);
                 windowService.sendMessage(signResponse);
                 actorRef.send({ type: 'ACCEPT' });
               }

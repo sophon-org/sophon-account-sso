@@ -1,6 +1,7 @@
 'use client';
 
 import { useRNHandler } from '@sophon-labs/account-message-bridge';
+import { useParams } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { Loader } from '@/components/loader';
 import { Button } from '@/components/ui/button';
@@ -21,8 +22,8 @@ import TransactionRequestView from '@/views/TransactionRequestView';
 import WaitOtpView from '@/views/WaitOtpView';
 import WrongNetworkView from '@/views/WrongNetworkView';
 
-// TODO: remove after clubs.xyz update their version
-export default function RootPage() {
+export default function EmbeddedPage() {
+  const { partnerId } = useParams<{ partnerId: string }>();
   const [open, setOpen] = useState(false);
   const state = MainStateMachineContext.useSelector((state) => state);
   const actorRef = MainStateMachineContext.useActorRef();
@@ -141,7 +142,7 @@ export default function RootPage() {
           </div>
         }
       >
-        <ConnectAuthorizationView />
+        <ConnectAuthorizationView partnerId={partnerId} />
       </Drawer>
     );
   }

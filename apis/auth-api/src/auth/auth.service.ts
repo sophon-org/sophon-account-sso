@@ -4,9 +4,9 @@ import { type JWTPayload, jwtVerify, SignJWT } from "jose";
 import type { TypedDataDefinition } from "viem";
 import { sophonTestnet } from "viem/chains";
 import { getJwtKid, JWT_AUDIENCE, JWT_ISSUER } from "../config/env";
+import { PartnerRegistryService } from "../partners/partner-registry.service";
 import { getPrivateKey, getPublicKey } from "../utils/jwt";
 import { verifyEIP1271Signature } from "../utils/signature";
-import { PartnerRegistryService } from "../partners/partner-registry.service";
 
 @Injectable()
 export class AuthService {

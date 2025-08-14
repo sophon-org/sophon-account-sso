@@ -9,7 +9,7 @@ const buildMessageJavaScript = <T extends FromNativeActionNames>(
   const message = JSON.stringify({ action, payload });
   // Stringify the message a second time to escape quotes etc.
   const safeString = JSON.stringify(message);
-  return `window.onMessageFromRN(${safeString});`;
+  return `window.onMessageFromRN(${safeString}); true;`;
 };
 
 /**
