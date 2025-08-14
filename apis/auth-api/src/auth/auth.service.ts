@@ -108,7 +108,7 @@ export class AuthService {
 		}
 
 		if (
-			payload.nonce !== typedData.message.nonce ||
+			nonceToken !== typedData.message.nonce ||
 			payload.address.toLowerCase() !==
 				(typedData.message.from as string).toLowerCase()
 		) {
@@ -154,7 +154,7 @@ export class AuthService {
 					keyid: getJwtKid(),
 					issuer: payload.iss,
 					audience: payload.aud,
-					subject: address,
+					// subject: address,
 					expiresIn: expiresInSeconds,
 				},
 			);

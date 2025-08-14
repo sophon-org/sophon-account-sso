@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { sophonTestnet } from 'viem/chains';
 import { MainStateMachineContext } from '@/context/state-machine-context';
 import { sendMessage } from '@/events';
 import { useAccountContext } from '@/hooks/useAccountContext';
 import { useAuthResponse } from '@/hooks/useAuthResponse';
 import { useSignature } from '@/hooks/useSignature';
+import { VIEM_CHAIN } from '@/lib/constants';
 import { requestNonce, verifyAuthorization } from '@/service/token.service';
 import { windowService } from '@/service/window.service';
 
@@ -13,7 +13,7 @@ export function useConnectionAuthorization() {
   const { incoming, session } = MainStateMachineContext.useSelector(
     (state) => state.context.requests,
   );
-  const _scopes = MainStateMachineContext.useSelector(
+  const scopes = MainStateMachineContext.useSelector(
     (state) => state.context.scopes,
   );
   const partnerId = MainStateMachineContext.useSelector(
@@ -58,18 +58,26 @@ export function useConnectionAuthorization() {
       // We just generate tokens if the partnerId is available,
       // otherwise the partner is using EIP-6963 and don't need that
       if (partnerId) {
-        const authNonce = await requestNonce(account.address, partnerId);
+        const authNonce = await requestNonce(
+          account.address,
+          partnerId,
+          Object.keys(scopes)
+            .filter((it) => scopes[it as keyof typeof scopes])
+            .map((it) => it.toString()),
+        );
+
         const signAuth = {
           domain: {
             name: 'Sophon SSO',
             version: '1',
-            chainId: sophonTestnet.id,
+            chainId: VIEM_CHAIN.id,
           },
           types: {
             Message: [
               { name: 'content', type: 'string' },
               { name: 'from', type: 'address' },
               { name: 'nonce', type: 'string' },
+              { name: 'audience', type: 'string' },
             ],
           },
           primaryType: 'Message',
@@ -78,6 +86,7 @@ export function useConnectionAuthorization() {
             content: `Do you authorize this website to connect?!\n\nThis message confirms you control this wallet.`,
             from: account.address,
             nonce: authNonce,
+            audience: partnerId,
           },
         };
 

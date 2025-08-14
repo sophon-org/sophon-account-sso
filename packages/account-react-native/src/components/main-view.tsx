@@ -7,7 +7,6 @@ import { USER_AGENT } from '../constants/user-agent';
 import { useModalVisibility } from '../hooks/use-modal-visibility';
 import { sendUIMessage, useUIEventHandler } from '../messaging/ui';
 import { LoadingState } from './loading-state';
-import { OFFLINE_HTML } from './offline';
 
 export interface SophonMainViewProps {
   debugEnabled?: boolean;
@@ -26,7 +25,6 @@ export const SophonMainView = ({
   insets,
   authServerUrl,
   partnerId,
-  hasInternet,
 }: SophonMainViewProps) => {
   const webViewRef = useRef<WebView>(null);
   const { visible } = useModalVisibility();
@@ -65,15 +63,9 @@ export const SophonMainView = ({
       <WebView
         key={authServerUrl}
         ref={webViewRef}
-        source={
-          hasInternet
-            ? {
-                uri,
-              }
-            : {
-                html: OFFLINE_HTML,
-              }
-        }
+        source={{
+          uri,
+        }}
         style={{
           ...styles.webview,
           paddingTop: insets?.top,

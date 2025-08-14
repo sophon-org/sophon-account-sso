@@ -3507,7 +3507,7 @@ __metadata:
     vite: "npm:^7.0.5"
     vite-tsconfig-paths: "npm:^5.1.4"
     vitest: "npm:^3.2.4"
-    zksync-sso: "github:sophon-org/zksync-sso-preview#main"
+    zksync-sso: "npm:0.4.1"
   peerDependencies:
     "@wagmi/core": ^2.17.3
     viem: ">=2.21.49"
@@ -3539,7 +3539,7 @@ __metadata:
     "@types/node": "npm:^20.0.0"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.0.0"
-    zksync-sso: "github:sophon-org/zksync-sso-preview#main"
+    zksync-sso: "npm:0.4.1"
   peerDependencies:
     typescript: ^5.0.0
   languageName: unknown
@@ -3596,7 +3596,7 @@ __metadata:
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.3"
     viem: "npm:^2.21.49"
-    zksync-sso: "github:sophon-org/zksync-sso-preview#main"
+    zksync-sso: "npm:0.4.1"
   peerDependencies:
     expo-crypto: ">=14.1.4"
     expo-network: "*"
@@ -12504,9 +12504,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zksync-sso@github:sophon-org/zksync-sso-preview#main":
-  version: 0.0.0-development
-  resolution: "zksync-sso@https://github.com/sophon-org/zksync-sso-preview.git#commit=db6809bf96064469dcc0ef52b41c010c80e721d3"
+"zksync-sso@npm:0.4.1":
+  version: 0.4.1
+  resolution: "zksync-sso@npm:0.4.1"
   dependencies:
     "@peculiar/asn1-ecc": "npm:^2.3.13"
     "@peculiar/asn1-schema": "npm:^2.3.13"
@@ -12527,6 +12527,6 @@ __metadata:
       optional: true
     typescript:
       optional: true
-  checksum: 10c0/9c3949b863a31643c0015190f199e6cbbf230157a4d6f446f1ff2c4e62addc780c85fe29a22eb814fc2056ce425c30959b759ab278cffdf50dd706a31e757da2
+  checksum: 10c0/2a7446a7e5af2acb12e5e7ec8ee01fd0461d804c06de18497a7c1c9327a52df89ca09442c39ac83e1d1f2d6af862dbcf7fc7e1043b4c6d3066dedf986a93c8a7
   languageName: node
   linkType: hard

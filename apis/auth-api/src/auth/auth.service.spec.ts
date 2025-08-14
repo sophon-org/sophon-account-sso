@@ -101,7 +101,7 @@ describe("AuthService", () => {
 			"0x1234567890abcdef1234567890abcdef12345678",
 			typedData,
 			"0xsignature",
-			"mocked-nonce-token",
+			"expected-nonce",
 			true,
 		);
 

@@ -4,7 +4,7 @@ import type { Request as ExpressRequest, Response } from "express";
 import type { TypedDataDefinition } from "viem";
 import { AuthService } from "./auth.service";
 import { NonceRequestDto } from "./dto/nonce-request.dto";
-import type { VerifySiweDto } from "./dto/verify-siwe.dto.js";
+import { VerifySiweDto } from "./dto/verify-siwe.dto";
 
 @ApiTags("Auth")
 @Controller("auth")
@@ -24,6 +24,7 @@ export class AuthController {
 	}
 
 	@Post("verify")
+	@ApiBody({ type: VerifySiweDto, required: true })
 	@ApiResponse({ status: 200, description: "Sets JWT cookie if verified" })
 	async verifySignature(@Body() body: VerifySiweDto, @Res() res: Response) {
 		const accessToken = await this.authService.verifySignatureWithSiwe(

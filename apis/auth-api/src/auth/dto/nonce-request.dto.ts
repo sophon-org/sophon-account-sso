@@ -1,7 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import {
 	ArrayMaxSize,
-	ArrayNotEmpty,
 	IsArray,
 	IsEthereumAddress,
 	IsIn,
@@ -35,7 +34,6 @@ export class NonceRequestDto {
 		example: ["email", "x"],
 	})
 	@IsArray()
-	@ArrayNotEmpty()
 	@ArrayMaxSize(16)
 	@IsIn(PERMISSION_ALLOWED_FIELDS as unknown as string[], { each: true })
 	fields!: PermissionAllowedField[];

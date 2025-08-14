@@ -50,7 +50,7 @@
     "react-native-webview": "13.15.0",
     "text-encoding-polyfill": "^0.6.7",
     "viem": "2.31.7",
-    "zksync-sso": "github:sophon-org/zksync-sso-preview#main"
+    "zksync-sso": "0.4.1"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
