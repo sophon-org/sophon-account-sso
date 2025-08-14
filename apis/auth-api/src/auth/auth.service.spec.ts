@@ -131,7 +131,7 @@ describe("AuthService", () => {
 				"0xsignature",
 				"mocked-nonce-token",
 			),
-		).rejects.toThrow("Nonce or address mismatch");
+		).rejects.toThrow(/nonce or address mismatch/i);
 	});
 
 	it("should return correct cookie options (rememberMe=false)", () => {

@@ -4,6 +4,7 @@ import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import cookieParser from "cookie-parser";
 import { AppModule } from "./app.module.js";
+import { AllExceptionsFilter } from "./common/all-exceptions.filter.js";
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
@@ -17,6 +18,7 @@ async function bootstrap() {
 		methods: ["GET", "POST", "HEAD", "OPTIONS"],
 		credentials: true,
 	});
+	app.useGlobalFilters(new AllExceptionsFilter());
 
 	const config = new DocumentBuilder()
 		.setTitle("Sophon Auth API")
