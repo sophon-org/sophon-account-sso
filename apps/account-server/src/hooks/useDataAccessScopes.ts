@@ -9,9 +9,20 @@ export const useDataAccessScopes = () => {
   useEffect(() => {
     if (user) {
       const contextScopes: Scopes[] = [];
-      if (user.email) {
+
+      // Collect all OAuth emails first
+      const oauthEmails = new Set<string>();
+      user.verifiedCredentials.forEach((cred) => {
+        if (cred.oauthEmails?.length) {
+          cred.oauthEmails.forEach((email) => oauthEmails.add(email));
+        }
+      });
+
+      // Only add 'email' scope if user.email is not covered by OAuth
+      if (user.email && !oauthEmails.has(user.email)) {
         contextScopes.push('email');
       }
+
       user.verifiedCredentials.forEach((cred) => {
         if (cred.oauthProvider === 'google') {
           contextScopes.push('google');
