@@ -12,5 +12,5 @@ export class NonceRequestDto {
 		description: "Optional audience for the nonce JWT"
 	})
 	@IsString()
-	audience: string;
+	partnerId: string;
 }
