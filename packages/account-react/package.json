@@ -1,6 +1,6 @@
 {
   "name": "@sophon-labs/account-react",
-  "version": "2.0.0-next.27",
+  "version": "2.0.0-next.28",
   "description": "",
   "type": "module",
   "keywords": [],
@@ -14,7 +14,7 @@
     "dev": "pnpm run build --watch"
   },
   "dependencies": {
-    "@sophon-labs/account-core": "2.0.0-next.27",
+    "@sophon-labs/account-core": "2.0.0-next.28",
     "clsx": "^2.1.1"
   },
   "devDependencies": {

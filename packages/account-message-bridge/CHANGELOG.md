@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 2.0.0-next.28
+
+### Patch Changes
+
+- Visual and flows changes + version updates
+
 ## 2.0.0-next.27
 
 ### Patch Changes
