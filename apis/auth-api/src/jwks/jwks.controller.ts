@@ -1,34 +1,29 @@
-import { Controller, Get, type OnModuleInit } from "@nestjs/common";
-import type { JWK } from "jose";
-
-import { getPublicKey } from "../utils/jwt"; // or .ts in dev
+import { Controller, Get } from "@nestjs/common";
+import { createPublicKey } from "node:crypto";
+import { getPublicKey } from "../utils/jwt"; // returns PEM string
 
 @Controller("/.well-known")
-export class JwksController implements OnModuleInit {
-	private jwk: JWK | null = null;
+export class JwksController {
+  @Get("jwks.json")
+  async getJwks() {
+    try {
+      const publicKeyPem = await getPublicKey();
+      const keyObj = createPublicKey(publicKeyPem);
+      const exported = keyObj.export({ format: "jwk" }) as any;
 
-	async onModuleInit(): Promise<void> {
-		try {
-			// Dynamic import of ESM-only package
-			const { exportJWK } = await import("jose");
-			const key = await getPublicKey();
-			const jwk = await exportJWK(key);
-
-			this.jwk = {
-				...jwk,
-				alg: "RS256",
-				use: "sig",
-				kid: process.env.JWT_KID || "default-key",
-			};
-		} catch (err) {
-			console.error("[JWKS] Failed to load public key:", err);
-		}
-	}
-
-	@Get("jwks.json")
-	getJwks() {
-		return {
-			keys: this.jwk ? [this.jwk] : [],
-		};
-	}
+      return {
+        keys: [
+          {
+            ...exported,
+            alg: "RS256",
+            use: "sig",
+            kid: process.env.JWT_KID || "default-key",
+          },
+        ],
+      };
+    } catch (err) {
+      console.error("[JWKS] Failed to load public key:", err);
+      return { keys: [] };
+    }
+  }
 }
