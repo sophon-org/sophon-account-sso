@@ -6,19 +6,22 @@ import { sophonTestnet } from "viem/chains";
 import { getJwtKid, JWT_AUDIENCE, JWT_ISSUER } from "../config/env";
 import { getPrivateKey, getPublicKey } from "../utils/jwt";
 import { verifyEIP1271Signature } from "../utils/signature";
-import { assertAllowedAudience } from "../config/audience";
+import { PartnerRegistryService } from "../partners/partner-registry.service";
 
 @Injectable()
 export class AuthService {
-	async generateNonceTokenForAddress(address: string, audience: string): Promise<string> {
-
-		assertAllowedAudience(audience);
+	constructor(private readonly partnerRegistry: PartnerRegistryService) {}
+	async generateNonceTokenForAddress(
+		address: string,
+		audience: string,
+	): Promise<string> {
+		await this.partnerRegistry.assertExists(audience);
 		const nonce = randomUUID();
 		return await new SignJWT({ nonce, address })
 			.setProtectedHeader({ alg: "RS256", kid: getJwtKid() })
 			.setIssuedAt()
 			.setSubject(address)
-			.setIssuer(JWT_ISSUER)  
+			.setIssuer(JWT_ISSUER)
 			.setAudience(audience)
 			.setExpirationTime("10m") // TODO here
 			.sign(await getPrivateKey());
@@ -31,27 +34,26 @@ export class AuthService {
 		nonceToken: string,
 		rememberMe = false,
 	): Promise<string> {
-
 		type NoncePayload = JWTPayload & {
 			address: string;
 			nonce: string;
 			aud: string;
-			iss: string; 
+			iss: string;
 			sub?: string;
 		};
 
 		const expectedAud = String(typedData.message.audience);
-		assertAllowedAudience(expectedAud);
+		await this.partnerRegistry.assertExists(expectedAud);
 		const expectedIss = process.env.NONCE_ISSUER;
 
 		const { payload } = await jwtVerify<NoncePayload>(
 			nonceToken,
 			await getPublicKey(),
 			{
-			algorithms: ["RS256"],
-			audience: expectedAud,
-			issuer: expectedIss,
-			}
+				algorithms: ["RS256"],
+				audience: expectedAud,
+				issuer: expectedIss,
+			},
 		);
 
 		if (
@@ -65,7 +67,6 @@ export class AuthService {
 		if (String(typedData.message.audience) !== payload.aud) {
 			throw new Error("Audience mismatch");
 		}
-
 
 		const isValid = await verifyEIP1271Signature({
 			accountAddress: address,

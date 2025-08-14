@@ -16,7 +16,7 @@ export class AuthController {
 	async getNonce(@Body() body: NonceRequestDto, @Res() res: Response) {
 		const token = await this.authService.generateNonceTokenForAddress(
 			body.address,
-			body.partnerId
+			body.partnerId,
 		);
 		res.json({ nonce: token });
 	}

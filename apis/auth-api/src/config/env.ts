@@ -7,4 +7,6 @@ export function getJwtKid(): string {
 export const COOKIE_DOMAIN = process.env.COOKIE_DOMAIN || "localhost";
 export const JWT_ISSUER = process.env.JWT_ISSUER || "https://auth.sophon.xyz";
 export const JWT_AUDIENCE = process.env.JWT_AUDIENCE || "auth-api";
-export const ALLOWED_AUDIENCES = ["sophon-web", "sophon-admin", "partner-x"];
+
+export const PARTNER_CDN =
+	process.env.PARTNER_CDN || "https://cdn.sophon.xyz/partners/sdk";

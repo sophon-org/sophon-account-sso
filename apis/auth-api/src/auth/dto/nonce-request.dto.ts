@@ -9,7 +9,7 @@ export class NonceRequestDto {
 
 	@ApiProperty({
 		example: "my-service",
-		description: "Optional audience for the nonce JWT"
+		description: "Optional audience for the nonce JWT",
 	})
 	@IsString()
 	partnerId: string;
