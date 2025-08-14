@@ -2,6 +2,7 @@ import { Test } from "@nestjs/testing";
 
 const joseP = import("jose");
 
+import { TypedDataDefinition } from "viem";
 import { PartnerRegistryService } from "../partners/partner-registry.service";
 import { AuthService } from "./auth.service";
 
