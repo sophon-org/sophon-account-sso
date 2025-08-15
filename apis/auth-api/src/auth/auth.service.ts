@@ -32,6 +32,7 @@ type NoncePayload = JwtPayload & {
 	iss: string;
 	scope?: string;
 	sub?: string;
+	userId?: string;
 };
 
 @Injectable()
@@ -57,6 +58,7 @@ export class AuthService {
 		address: string,
 		audience: string,
 		fields: PermissionAllowedField[],
+		userId?: string,
 	): Promise<string> {
 		await this.partnerRegistry.assertExists(audience);
 
@@ -67,6 +69,7 @@ export class AuthService {
 					nonce,
 					address,
 					scope: packScope(fields),
+					...(userId?.trim() ? { userId: userId.trim() } : {}),
 				},
 				await getPrivateKey(),
 				{
@@ -147,6 +150,7 @@ export class AuthService {
 					sub: address,
 					iat,
 					scope,
+					userId: payload.userId,
 				},
 				await getPrivateKey(),
 				{

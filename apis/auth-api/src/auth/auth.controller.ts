@@ -1,14 +1,27 @@
-import { Body, Controller, Post, Req, Res } from "@nestjs/common";
-import { ApiBody, ApiResponse, ApiTags } from "@nestjs/swagger";
+import {
+	Body,
+	Controller,
+	Get,
+	Post,
+	Req,
+	Res,
+	UseGuards,
+} from "@nestjs/common";
+import { ApiBody, ApiCookieAuth, ApiResponse, ApiTags } from "@nestjs/swagger";
 import type { Request as ExpressRequest, Response } from "express";
 import { AuthService } from "./auth.service";
 import { NonceRequestDto } from "./dto/nonce-request.dto";
 import { VerifySiweDto } from "./dto/verify-siwe.dto";
+import { AccessTokenGuard } from "./guards/access-token.guard";
+import { MeService } from "./me.service";
 
 @ApiTags("Auth")
 @Controller("auth")
 export class AuthController {
-	constructor(private readonly authService: AuthService) {}
+	constructor(
+		private readonly authService: AuthService,
+		private readonly meService: MeService,
+	) {}
 
 	@Post("nonce")
 	@ApiBody({ type: NonceRequestDto, required: true })
@@ -18,6 +31,7 @@ export class AuthController {
 			body.address,
 			body.partnerId,
 			body.fields,
+			body.userId,
 		);
 		res.json({ nonce: token });
 	}
@@ -51,16 +65,15 @@ export class AuthController {
 		res.status(200).json({ ok: true });
 	}
 
-	@Post("me")
-	async me(@Req() req: ExpressRequest, @Res() res: Response) {
-		const token = req.cookies?.access_token;
-		if (!token) return res.status(401).json({ error: "Unauthorized" });
-
-		try {
-			const payload = await this.authService.verifyAccessToken(token);
-			res.json(payload);
-		} catch {
-			res.status(401).json({ error: "Invalid or expired token" });
-		}
+	@Get("me")
+	@UseGuards(AccessTokenGuard)
+	@ApiCookieAuth("access_token")
+	@ApiResponse({
+		status: 200,
+		description: "Returns identity and requested fields",
+	})
+	async me(@Req() req: Request) {
+		const payload = (req as any).user;
+		return this.meService.buildMeResponse(payload);
 	}
 }
