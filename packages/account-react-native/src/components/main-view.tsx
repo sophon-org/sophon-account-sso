@@ -81,7 +81,6 @@ export const SophonMainView = ({
         renderLoading={() => <></>}
         onLoadEnd={() => {
           setIsReady(true);
-          sendUIMessage('hideModal', null);
         }}
         scrollEnabled={false}
         // textZoom={0}
