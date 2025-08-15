@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 2.0.0-next.29
+
+### Patch Changes
+
+- Social login fix
+
 ## 2.0.0-next.28
 
 ### Patch Changes

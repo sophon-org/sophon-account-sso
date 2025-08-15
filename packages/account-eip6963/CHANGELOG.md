@@ -1,5 +1,13 @@
 # @sophon-labs/account-eip6963
 
+## 2.0.0-next.29
+
+### Patch Changes
+
+- Social login fix
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.0-next.29
+
 ## 2.0.0-next.28
 
 ### Patch Changes
