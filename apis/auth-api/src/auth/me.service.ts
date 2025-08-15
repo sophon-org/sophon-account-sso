@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import type { JwtPayload } from "jsonwebtoken";
 import {
-	unpackScope,
 	type PermissionAllowedField,
+	unpackScope,
 } from "../config/permission-allowed-fields";
 import { MeFieldsDto, MeResponseDto } from "./dto/me-response.dto";
 

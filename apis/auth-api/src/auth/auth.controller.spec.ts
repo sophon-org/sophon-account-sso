@@ -1,8 +1,8 @@
 import { Test, type TestingModule } from "@nestjs/testing";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
-import { MeService } from "./me.service"; // ✅ add
 import { AccessTokenGuard } from "./guards/access-token.guard"; // ✅ add if used via @UseGuards
+import { MeService } from "./me.service"; // ✅ add
 
 describe("AuthController", () => {
 	let controller: AuthController;
