@@ -1,21 +1,59 @@
-import { Injectable } from "@nestjs/common";
+import {
+	Injectable,
+	BadRequestException,
+	InternalServerErrorException,
+	ServiceUnavailableException,
+} from "@nestjs/common";
 import type { JwtPayload } from "jsonwebtoken";
 import {
-	type PermissionAllowedField,
 	unpackScope,
+	type PermissionAllowedField,
 } from "../config/permission-allowed-fields";
 import { MeFieldsDto, MeResponseDto } from "./dto/me-response.dto";
 
+/** Minimal shape of what we read from DynamicAuth */
+type DynamicAuthUser = {
+	user?: {
+		id?: string;
+		email?: string | null;
+		oauthAccounts?: Array<{
+			provider?: string;
+			accountUsername?: string | null;
+		}>;
+		verifiedCredentials?: Array<{
+			email?: string | null;
+			oauth_emails?: string[] | undefined;
+		}>;
+	};
+};
+
+const REQ_TIMEOUT_MS = 3000;
+
 @Injectable()
 export class MeService {
+	private readonly baseUrl =
+		process.env.DYNAMICAUTH_BASE_URL ?? "https://app.dynamicauth.com";
+	private readonly envId = process.env.DYNAMICAUTH_ENV_ID;
+	private readonly apiToken = process.env.DYNAMICAUTH_API_TOKEN;
+
+	/**
+	 * Build /auth/me response using:
+	 * - access token claims (sub/aud/iss/scope, userId REQUIRED)
+	 * - DynamicAuth user profile (optional fields gated by scope)
+	 */
 	async buildMeResponse(payload: JwtPayload): Promise<MeResponseDto> {
+		this.ensureConfigured();
+
+		const userId = this.pickUserId(payload);
+		const user = await this.fetchDynamicAuthUser(userId);
+
 		const scopeArr = unpackScope(
 			(payload as any).scope ?? "",
 		) as PermissionAllowedField[];
 
 		const fields: MeFieldsDto = {};
 		for (const f of scopeArr) {
-			fields[f] = await this.resolveField(f, payload.sub as string);
+			fields[f] = this.resolveFieldValue(f, user);
 		}
 
 		return {
@@ -29,21 +67,136 @@ export class MeService {
 		};
 	}
 
-	private async resolveField(
+	private ensureConfigured(): void {
+		if (!this.envId || !this.apiToken) {
+			throw new InternalServerErrorException(
+				"DynamicAuth is not configured (DYNAMICAUTH_ENV_ID / DYNAMICAUTH_API_TOKEN).",
+			);
+		}
+	}
+
+	private pickUserId(payload: JwtPayload): string {
+		const tokenUserId = (payload as any).userId;
+		if (typeof tokenUserId !== "string" || tokenUserId.trim() === "") {
+			throw new BadRequestException("userId is missing in access token.");
+		}
+		return tokenUserId.trim();
+	}
+
+	private async fetchDynamicAuthUser(
+		userId: string,
+	): Promise<DynamicAuthUser["user"]> {
+		const url = `${this.baseUrl.replace(/\/+$/, "")}/api/v0/environments/${encodeURIComponent(
+			this.envId!,
+		)}/users/${encodeURIComponent(userId)}`;
+
+		const ac = new AbortController();
+		const timer = setTimeout(() => ac.abort(), REQ_TIMEOUT_MS);
+
+		try {
+			const res = await fetch(url, {
+				method: "GET",
+				signal: ac.signal,
+				headers: {
+					Authorization: `Bearer ${this.apiToken}`,
+					Accept: "application/json",
+				},
+			});
+
+			if (!res.ok) {
+				const text = await safeText(res);
+				throw new ServiceUnavailableException(
+					`DynamicAuth request failed (${res.status}): ${truncate(text)}`,
+				);
+			}
+
+			const data = (await res.json()) as DynamicAuthUser;
+			return data.user ?? {};
+		} catch (err) {
+			if ((err as any)?.name === "AbortError") {
+				throw new ServiceUnavailableException("DynamicAuth request timed out.");
+			}
+			if (err instanceof ServiceUnavailableException) throw err;
+			throw new ServiceUnavailableException("DynamicAuth request failed.");
+		} finally {
+			clearTimeout(timer);
+		}
+	}
+
+	private resolveFieldValue(
 		field: PermissionAllowedField,
-		subject: string,
-	): Promise<string | null> {
-		// TODO: wire up your data sources. For now, return nulls.
+		user: DynamicAuthUser["user"],
+	): string | null {
 		switch (field) {
 			case "email":
-				// return await this.users.getEmailBySub(subject);
-				return null;
+				return this.resolveEmail(user);
+
 			case "discord":
+				return this.getOauthUsername(user, ["discord"]);
+
 			case "google":
+				return this.getOauthUsername(user, ["google"]);
+
 			case "telegram":
+				return this.getOauthUsername(user, ["telegram"]);
+
 			case "x":
+				// Sometimes providers use "twitter"
+				return this.getOauthUsername(user, ["x", "twitter"]);
+
 			default:
 				return null;
 		}
 	}
+
+	private resolveEmail(user: DynamicAuthUser["user"]): string | null {
+		// 1) top-level email
+		const topLevel = typeof user?.email === "string" ? user.email : undefined;
+
+		// 2) emails from verified credentials
+		const vcEmails: Array<string | null | undefined> = (
+			user?.verifiedCredentials ?? []
+		).map((vc) => vc.email);
+
+		// 3) oauth_emails from verified credentials
+		const vcOauthEmails: string[] = (user?.verifiedCredentials ?? []).flatMap(
+			(vc) => vc.oauth_emails ?? [],
+		);
+
+		const first = firstNonEmptyString(topLevel, ...vcEmails, ...vcOauthEmails);
+		return first ?? null;
+	}
+
+	private getOauthUsername(
+		user: DynamicAuthUser["user"],
+		providerNames: string[],
+	): string | null {
+		const accounts = user?.oauthAccounts ?? [];
+		const match = accounts.find((a) =>
+			providerNames.includes((a.provider ?? "").toLowerCase()),
+		);
+		return (match?.accountUsername ?? null) || null;
+	}
+}
+
+
+function firstNonEmptyString(
+	...vals: Array<string | null | undefined>
+): string | undefined {
+	for (const v of vals) {
+		if (typeof v === "string" && v.trim() !== "") return v;
+	}
+	return undefined;
+}
+
+async function safeText(res: any): Promise<string> {
+	try {
+		return await res.text();
+	} catch {
+		return "";
+	}
+}
+
+function truncate(s: string, n = 200): string {
+	return s.length > n ? s.slice(0, n) + "…" : s;
 }
