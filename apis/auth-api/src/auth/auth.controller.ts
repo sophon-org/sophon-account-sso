@@ -1,7 +1,6 @@
 import { Body, Controller, Post, Req, Res } from "@nestjs/common";
 import { ApiBody, ApiResponse, ApiTags } from "@nestjs/swagger";
 import type { Request as ExpressRequest, Response } from "express";
-import type { TypedDataDefinition } from "viem";
 import { AuthService } from "./auth.service";
 import { NonceRequestDto } from "./dto/nonce-request.dto";
 import { VerifySiweDto } from "./dto/verify-siwe.dto";

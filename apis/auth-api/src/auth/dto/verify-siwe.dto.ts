@@ -1,6 +1,4 @@
-import { BadRequestException } from "@nestjs/common";
 import { ApiProperty } from "@nestjs/swagger";
-import { Transform } from "class-transformer";
 import { IsBoolean, IsObject, IsOptional, IsString } from "class-validator";
 import type { Address, Hash, TypedDataDefinition } from "viem";
 
