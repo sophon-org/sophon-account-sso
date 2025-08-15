@@ -189,8 +189,8 @@ export class AuthService {
 			this.mapJwtError(e, "access");
 		}
 
-		if (payload.aud !== JWT_AUDIENCE || payload.iss !== JWT_ISSUER) {
-			throw new UnauthorizedException("invalid token audience or issuer");
+		if (payload.iss !== JWT_ISSUER) {
+			throw new UnauthorizedException("invalid token issuer");
 		}
 
 		return payload;

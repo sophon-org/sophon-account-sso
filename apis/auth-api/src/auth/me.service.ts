@@ -1,13 +1,13 @@
 import {
-	Injectable,
 	BadRequestException,
+	Injectable,
 	InternalServerErrorException,
 	ServiceUnavailableException,
 } from "@nestjs/common";
 import type { JwtPayload } from "jsonwebtoken";
 import {
-	unpackScope,
 	type PermissionAllowedField,
+	unpackScope,
 } from "../config/permission-allowed-fields";
 import { MeFieldsDto, MeResponseDto } from "./dto/me-response.dto";
 
@@ -33,8 +33,8 @@ const REQ_TIMEOUT_MS = 3000;
 export class MeService {
 	private readonly baseUrl =
 		process.env.DYNAMICAUTH_BASE_URL ?? "https://app.dynamicauth.com";
-	private readonly envId = process.env.DYNAMICAUTH_ENV_ID;
-	private readonly apiToken = process.env.DYNAMICAUTH_API_TOKEN;
+	private readonly envId = process.env.DYNAMICAUTH_ENV_ID as string;
+	private readonly apiToken = process.env.DYNAMICAUTH_API_TOKEN as string;
 
 	/**
 	 * Build /auth/me response using:
@@ -47,9 +47,8 @@ export class MeService {
 		const userId = this.pickUserId(payload);
 		const user = await this.fetchDynamicAuthUser(userId);
 
-		const scopeArr = unpackScope(
-			(payload as any).scope ?? "",
-		) as PermissionAllowedField[];
+		const scope = (payload as unknown as { scope?: string }).scope ?? "";
+		const scopeArr = unpackScope(scope);
 
 		const fields: MeFieldsDto = {};
 		for (const f of scopeArr) {
@@ -87,7 +86,7 @@ export class MeService {
 		userId: string,
 	): Promise<DynamicAuthUser["user"]> {
 		const url = `${this.baseUrl.replace(/\/+$/, "")}/api/v0/environments/${encodeURIComponent(
-			this.envId!,
+			this.envId,
 		)}/users/${encodeURIComponent(userId)}`;
 
 		const ac = new AbortController();
@@ -113,7 +112,7 @@ export class MeService {
 			const data = (await res.json()) as DynamicAuthUser;
 			return data.user ?? {};
 		} catch (err) {
-			if ((err as any)?.name === "AbortError") {
+			if (err instanceof Error && err.name === "AbortError") {
 				throw new ServiceUnavailableException("DynamicAuth request timed out.");
 			}
 			if (err instanceof ServiceUnavailableException) throw err;
@@ -179,7 +178,6 @@ export class MeService {
 	}
 }
 
-
 function firstNonEmptyString(
 	...vals: Array<string | null | undefined>
 ): string | undefined {
@@ -189,7 +187,7 @@ function firstNonEmptyString(
 	return undefined;
 }
 
-async function safeText(res: any): Promise<string> {
+async function safeText(res: Response): Promise<string> {
 	try {
 		return await res.text();
 	} catch {
@@ -198,5 +196,5 @@ async function safeText(res: any): Promise<string> {
 }
 
 function truncate(s: string, n = 200): string {
-	return s.length > n ? s.slice(0, n) + "…" : s;
+	return s.length > n ? `${s.slice(0, n)}…` : s;
 }

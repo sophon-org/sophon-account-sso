@@ -1,3 +1,4 @@
+import { useDynamicContext } from '@dynamic-labs/sdk-react-core';
 import { useState } from 'react';
 import { MainStateMachineContext } from '@/context/state-machine-context';
 import { sendMessage } from '@/events';
@@ -23,6 +24,7 @@ export function useConnectionAuthorization() {
   const actorRef = MainStateMachineContext.useActorRef();
   const { isSigning, signTypeData } = useSignature();
   const [authorizing, setAuthorizing] = useState(false);
+  const { user } = useDynamicContext();
 
   const onRefuseConnection = async () => {
     if (windowService.isManaged() && incoming) {
@@ -64,6 +66,7 @@ export function useConnectionAuthorization() {
           Object.keys(scopes)
             .filter((it) => scopes[it as keyof typeof scopes])
             .map((it) => it.toString()),
+          user?.userId,
         );
 
         const signAuth = {
@@ -78,6 +81,7 @@ export function useConnectionAuthorization() {
               { name: 'from', type: 'address' },
               { name: 'nonce', type: 'string' },
               { name: 'audience', type: 'string' },
+              { name: 'userId', type: 'string' },
             ],
           },
           primaryType: 'Message',
@@ -87,6 +91,7 @@ export function useConnectionAuthorization() {
             from: account.address,
             nonce: authNonce,
             audience: partnerId,
+            userId: user?.userId,
           },
         };
 
