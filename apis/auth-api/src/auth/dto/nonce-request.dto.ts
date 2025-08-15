@@ -1,9 +1,11 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import {
 	ArrayMaxSize,
 	IsArray,
 	IsEthereumAddress,
 	IsIn,
+	IsNotEmpty,
+	IsOptional,
 	IsString,
 } from "class-validator";
 import {
@@ -37,4 +39,13 @@ export class NonceRequestDto {
 	@ArrayMaxSize(16)
 	@IsIn(PERMISSION_ALLOWED_FIELDS as unknown as string[], { each: true })
 	fields!: PermissionAllowedField[];
+
+	@ApiPropertyOptional({
+		description: "Optional external user identifier",
+		example: "user_abc_123",
+	})
+	@IsOptional()
+	@IsString()
+	@IsNotEmpty()
+	userId?: string; // ← optional
 }
