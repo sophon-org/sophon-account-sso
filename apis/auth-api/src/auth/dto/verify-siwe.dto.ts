@@ -1,11 +1,18 @@
+import { BadRequestException } from "@nestjs/common";
 import { ApiProperty } from "@nestjs/swagger";
-import { IsBoolean, IsOptional, IsString } from "class-validator";
-import type { Address, Hash } from "viem";
+import { Transform } from "class-transformer";
+import { IsBoolean, IsObject, IsOptional, IsString } from "class-validator";
+import type { Address, Hash, TypedDataDefinition } from "viem";
 
 export class VerifySiweDto {
-	@ApiProperty()
+	@ApiProperty({
+		type: "object",
+		description: "EIP-712 typed data",
+		additionalProperties: true,
+	})
 	@IsString()
-	typedData: string;
+	@IsObject()
+	typedData: TypedDataDefinition;
 
 	@ApiProperty()
 	@IsString()
