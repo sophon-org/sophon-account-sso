@@ -29,7 +29,7 @@ export class AuthController {
 	async verifySignature(@Body() body: VerifySiweDto, @Res() res: Response) {
 		const accessToken = await this.authService.verifySignatureWithSiwe(
 			body.address,
-			JSON.parse(body.typedData) as TypedDataDefinition,
+			body.typedData,
 			body.signature,
 			body.nonceToken,
 			body.rememberMe ?? false,
