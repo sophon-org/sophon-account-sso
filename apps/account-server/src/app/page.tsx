@@ -54,7 +54,7 @@ export default function RootPage() {
     return (
       <Dialog
         className="relative"
-        title={shortenAddress(account?.address ?? '')}
+        title={shortenAddress(account?.address)}
         showSettings={true}
         showLegalNotice={false}
         dialogType="signing_request"
