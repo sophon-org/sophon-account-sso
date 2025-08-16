@@ -1,7 +1,7 @@
 import type { JwtPayload } from "jsonwebtoken";
 
 export type AccessTokenPayload = JwtPayload & {
-    aud: string;
+	aud: string;
 	userId: string;
 	scope: string; // space-separated
 };
