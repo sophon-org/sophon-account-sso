@@ -180,11 +180,11 @@ export class AuthService {
 	}
 
 	async verifyAccessToken(token: string): Promise<AccessTokenPayload> {
-		let payload!: JwtPayload;
+		let payload!: AccessTokenPayload;
 		try {
 			payload = jwt.verify(token, await getPublicKey(), {
 				algorithms: ["RS256"],
-			}) as JwtPayload;
+			}) as AccessTokenPayload;
 		} catch (e) {
 			this.mapJwtError(e, "access");
 		}
@@ -192,6 +192,8 @@ export class AuthService {
 		if (payload.iss !== JWT_ISSUER) {
 			throw new UnauthorizedException("invalid token issuer");
 		}
+
+		await this.partnerRegistry.assertExists(payload.aud);
 
 		return payload as AccessTokenPayload;
 	}
