@@ -32,11 +32,17 @@ async function bootstrap() {
 		.setTitle("Sophon Auth API")
 		.setDescription("SIWE + JWT authentication backend for Sophon")
 		.setVersion("1.0")
-		.addCookieAuth("access_token")
+		.addBearerAuth()
+		.addCookieAuth("access_token", { type: "apiKey", in: "cookie" })
 		.build();
 
 	const document = SwaggerModule.createDocument(app, config);
-	SwaggerModule.setup("docs", app, document);
+	SwaggerModule.setup("docs", app, document, {
+		swaggerOptions: {
+			withCredentials: true,
+			persistAuthorization: true,
+		},
+	});
 
 	await app.listen(process.env.PORT || 3000);
 }
