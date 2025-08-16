@@ -15,7 +15,7 @@ import jwt, {
 import type { TypedDataDefinition } from "viem";
 import { sophonTestnet } from "viem/chains";
 
-import { getJwtKid, JWT_AUDIENCE, JWT_ISSUER } from "../config/env";
+import { getJwtKid, JWT_ISSUER } from "../config/env";
 import {
 	type PermissionAllowedField,
 	packScope,
@@ -24,6 +24,7 @@ import {
 import { PartnerRegistryService } from "../partners/partner-registry.service";
 import { getPrivateKey, getPublicKey } from "../utils/jwt";
 import { verifyEIP1271Signature } from "../utils/signature";
+import type { AccessTokenPayload } from "./types";
 
 type NoncePayload = JwtPayload & {
 	address: string;
@@ -158,7 +159,6 @@ export class AuthService {
 					keyid: getJwtKid(),
 					issuer: payload.iss,
 					audience: payload.aud,
-					// subject: address,
 					expiresIn: expiresInSeconds,
 				},
 			);
@@ -179,7 +179,7 @@ export class AuthService {
 		};
 	}
 
-	async verifyAccessToken(token: string): Promise<JwtPayload> {
+	async verifyAccessToken(token: string): Promise<AccessTokenPayload> {
 		let payload!: JwtPayload;
 		try {
 			payload = jwt.verify(token, await getPublicKey(), {
@@ -193,6 +193,6 @@ export class AuthService {
 			throw new UnauthorizedException("invalid token issuer");
 		}
 
-		return payload;
+		return payload as AccessTokenPayload;
 	}
 }

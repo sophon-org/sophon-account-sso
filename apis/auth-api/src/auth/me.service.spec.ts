@@ -19,7 +19,11 @@ describe("MeService", () => {
 
 		fetchMock = jest.fn();
 
-		global.fetch = fetchMock;
+		Object.defineProperty(globalThis, "fetch", {
+			value: fetchMock as unknown as typeof fetch,
+			configurable: true,
+			writable: true,
+		});
 	});
 
 	afterEach(() => {
@@ -93,8 +97,10 @@ describe("MeService", () => {
 				x: "jsmith",
 			}),
 		);
-		// And ensure non-granted fields aren't added
-		expect((result.fields as any).google).toBeUndefined();
-		expect((result.fields as any).telegram).toBeUndefined();
+
+		// And ensure non-granted fields aren't added (avoid `any`)
+		const fields = result.fields as Record<string, unknown>;
+		expect(fields.google).toBeUndefined();
+		expect(fields.telegram).toBeUndefined();
 	});
 });

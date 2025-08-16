@@ -75,11 +75,11 @@ export class MeService {
 	}
 
 	private pickUserId(payload: JwtPayload): string {
-		const tokenUserId = (payload as any).userId;
+		const tokenUserId = (payload as JwtPayload & { userId?: unknown }).userId;
 		if (typeof tokenUserId !== "string" || tokenUserId.trim() === "") {
 			throw new BadRequestException("userId is missing in access token.");
 		}
-		return tokenUserId.trim();
+		return tokenUserId;
 	}
 
 	private async fetchDynamicAuthUser(
