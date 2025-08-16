@@ -27,6 +27,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
 			method: req?.method,
 			status,
 			error: exception instanceof Error ? exception.stack : exception,
+			body,
 		});
 
 		res.status(status).json({

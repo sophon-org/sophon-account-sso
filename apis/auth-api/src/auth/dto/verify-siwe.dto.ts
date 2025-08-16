@@ -8,7 +8,6 @@ export class VerifySiweDto {
 		description: "EIP-712 typed data",
 		additionalProperties: true,
 	})
-	@IsString()
 	@IsObject()
 	typedData: TypedDataDefinition;
 

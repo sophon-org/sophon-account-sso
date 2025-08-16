@@ -5,6 +5,7 @@ export const requestNonce = async (
   address: string,
   partnerId: string,
   fields: string[],
+  userId?: string,
 ) => {
   const response = await fetch(
     `${env.NEXT_PUBLIC_AUTH_SERVER_ENDPOINT}/auth/nonce`,
@@ -14,7 +15,7 @@ export const requestNonce = async (
         // Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ address, partnerId, fields }),
+      body: JSON.stringify({ address, partnerId, fields, userId }),
     },
   );
 
@@ -43,7 +44,7 @@ export const verifyAuthorization = async (
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        typedData: JSON.stringify(typedData),
+        typedData,
         signature,
         nonceToken,
         rememberMe,

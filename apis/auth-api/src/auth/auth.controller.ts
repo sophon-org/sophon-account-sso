@@ -8,12 +8,13 @@ import {
 	UseGuards,
 } from "@nestjs/common";
 import { ApiBody, ApiCookieAuth, ApiResponse, ApiTags } from "@nestjs/swagger";
-import type { Request as ExpressRequest, Response } from "express";
+import type { Response } from "express";
 import { AuthService } from "./auth.service";
 import { NonceRequestDto } from "./dto/nonce-request.dto";
 import { VerifySiweDto } from "./dto/verify-siwe.dto";
 import { AccessTokenGuard } from "./guards/access-token.guard";
 import { MeService } from "./me.service";
+import { AccessTokenPayload } from "./types";
 
 @ApiTags("Auth")
 @Controller("auth")
@@ -73,7 +74,7 @@ export class AuthController {
 		description: "Returns identity and requested fields",
 	})
 	async me(@Req() req: Request) {
-		const payload = (req as any).user;
-		return this.meService.buildMeResponse(payload);
+		const { user } = req as Request & { user: AccessTokenPayload };
+		return this.meService.buildMeResponse(user);
 	}
 }
