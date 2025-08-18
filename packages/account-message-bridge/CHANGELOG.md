@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 2.0.0-next.30
+
+### Patch Changes
+
+- Releasing API SDK
+
 ## 2.0.0-next.29
 
 ### Patch Changes
