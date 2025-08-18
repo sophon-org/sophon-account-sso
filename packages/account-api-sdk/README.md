@@ -23,6 +23,8 @@ const result = await sdk.jwt.getUser(token);
 // ...
 ```
 
+You can get the token by using our `react-native` or `web` sdks.
+
 ## Modules
 
 ## Auth
@@ -30,5 +32,5 @@ const result = await sdk.jwt.getUser(token);
 Module specialised on calling Auth related endpoints.
 
 - `async decodeJWT(token: string) => Promise<AuthDecodedJWT>`: helper function that gets Sophon's public key and decodes the JWT token for basic information.
-- `publicKeyUrl() => string`: returns the public key url
+- `publicKeyUrl: string`: contains the public key url
 - `async getUser(token: string)`: fetches user public information with specific shared fields
