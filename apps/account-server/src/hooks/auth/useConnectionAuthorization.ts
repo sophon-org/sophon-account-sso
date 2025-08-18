@@ -6,6 +6,7 @@ import { useAccountContext } from '@/hooks/useAccountContext';
 import { useAuthResponse } from '@/hooks/useAuthResponse';
 import { useSignature } from '@/hooks/useSignature';
 import { VIEM_CHAIN } from '@/lib/constants';
+import { serverLog } from '@/lib/server-log';
 import { requestNonce, verifyAuthorization } from '@/service/token.service';
 import { windowService } from '@/service/window.service';
 
@@ -104,6 +105,8 @@ export function useConnectionAuthorization() {
           authNonce,
           true,
         );
+
+        serverLog(`Token: ${token}`);
 
         // we don't store the token, we just send it during the account authorization
         // TODO: better handling token expiration
