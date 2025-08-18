@@ -3,6 +3,7 @@ import axios from 'axios';
 import jwt, { type JwtPayload } from 'jsonwebtoken';
 import { JwksClient } from 'jwks-rsa';
 import { AccountServerAPI } from './constants';
+import type { AuthDecodedJWT } from './types';
 
 export class AuthAPIWrapper {
   private readonly apiUrl: string;
@@ -22,7 +23,7 @@ export class AuthAPIWrapper {
     });
   }
 
-  public async decodeJWT(token: string) {
+  public async decodeJWT(token: string): Promise<AuthDecodedJWT> {
     const rawPk = await this.getPublicKey();
     const signingKey = await this.jwksClient.getSigningKey(rawPk.keys[0].kid);
     const publicKey = signingKey.getPublicKey();
