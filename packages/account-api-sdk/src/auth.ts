@@ -55,11 +55,11 @@ export class AuthAPIWrapper {
     return response.data;
   }
 
-  public publicKeyUrl() {
+  public publicKeyUrl(): string {
     return `${this.apiUrl}/.well-known/jwks.json`;
   }
 
-  public async getPublicKey() {
+  private async getPublicKey() {
     if (this.publicKey) {
       return this.publicKey;
     }
