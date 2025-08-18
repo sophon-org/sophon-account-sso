@@ -7,7 +7,13 @@ import {
 	Res,
 	UseGuards,
 } from "@nestjs/common";
-import { ApiBody, ApiCookieAuth, ApiResponse, ApiTags } from "@nestjs/swagger";
+import {
+	ApiBearerAuth,
+	ApiBody,
+	ApiCookieAuth,
+	ApiResponse,
+	ApiTags,
+} from "@nestjs/swagger";
 import type { Response } from "express";
 import { AuthService } from "./auth.service";
 import { NonceRequestDto } from "./dto/nonce-request.dto";
@@ -69,6 +75,7 @@ export class AuthController {
 	@Get("me")
 	@UseGuards(AccessTokenGuard)
 	@ApiCookieAuth("access_token")
+	@ApiBearerAuth()
 	@ApiResponse({
 		status: 200,
 		description: "Returns identity and requested fields",
