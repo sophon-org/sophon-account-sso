@@ -1,4 +1,3 @@
-// import "expo-crypto-polyfills";
 // import 'react-native-url-polyfill/auto';
 // import { polyfillWebCrypto } from 'expo-standard-web-crypto';
 import 'text-encoding-polyfill';

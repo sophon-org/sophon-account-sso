@@ -3,6 +3,8 @@ PODS:
   - DoubleConversion (1.1.6)
   - EXConstants (17.1.7):
     - ExpoModulesCore
+  - EXFileSystem (13.1.4):
+    - ExpoModulesCore
   - Expo (53.0.20):
     - DoubleConversion
     - ExpoModulesCore
@@ -32,10 +34,6 @@ PODS:
   - ExpoAsset (11.1.7):
     - ExpoModulesCore
   - ExpoBlur (14.1.5):
-    - ExpoModulesCore
-  - ExpoCrypto (14.1.5):
-    - ExpoModulesCore
-  - ExpoFileSystem (18.1.11):
     - ExpoModulesCore
   - ExpoFont (13.3.2):
     - ExpoModulesCore
@@ -1986,11 +1984,10 @@ DEPENDENCIES:
   - boost (from `../node_modules/react-native/third-party-podspecs/boost.podspec`)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - EXConstants (from `../node_modules/expo-constants/ios`)
+  - EXFileSystem (from `../node_modules/expo-file-system/ios`)
   - Expo (from `../node_modules/expo`)
   - ExpoAsset (from `../node_modules/expo-asset/ios`)
   - ExpoBlur (from `../node_modules/expo-blur/ios`)
-  - ExpoCrypto (from `../node_modules/expo-crypto/ios`)
-  - ExpoFileSystem (from `../node_modules/expo-file-system/ios`)
   - ExpoFont (from `../node_modules/expo-font/ios`)
   - ExpoHaptics (from `../node_modules/expo-haptics/ios`)
   - ExpoHead (from `../node_modules/expo-router/ios`)
@@ -2098,16 +2095,14 @@ EXTERNAL SOURCES:
     :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
   EXConstants:
     :path: "../node_modules/expo-constants/ios"
+  EXFileSystem:
+    :path: "../node_modules/expo-file-system/ios"
   Expo:
     :path: "../node_modules/expo"
   ExpoAsset:
     :path: "../node_modules/expo-asset/ios"
   ExpoBlur:
     :path: "../node_modules/expo-blur/ios"
-  ExpoCrypto:
-    :path: "../node_modules/expo-crypto/ios"
-  ExpoFileSystem:
-    :path: "../node_modules/expo-file-system/ios"
   ExpoFont:
     :path: "../node_modules/expo-font/ios"
   ExpoHaptics:
@@ -2283,11 +2278,10 @@ SPEC CHECKSUMS:
   boost: 7e761d76ca2ce687f7cc98e698152abd03a18f90
   DoubleConversion: cb417026b2400c8f53ae97020b2be961b59470cb
   EXConstants: 9d62a46a36eae6d28cb978efcbc68aef354d1704
+  EXFileSystem: 08a3033ac372b6346becf07839e1ccef26fb1058
   Expo: cd1f97ccf500334cc9a8dc7a14d08de9bc638dcb
   ExpoAsset: 7bdbbacf4e6752ae6e3cf70555cee076f6229e6e
   ExpoBlur: 846780b2c90f59e964b9a50385d4deb67174ebfb
-  ExpoCrypto: fcb6a8a08d1929f346cb95eb05a8f7818627177a
-  ExpoFileSystem: 9681caebda23fa1b38a12a9c68b2bade7072ce20
   ExpoFont: 091a47eeaa1b30b0b760aa1d0a2e7814e8bf6fe6
   ExpoHaptics: 68c215e070f660e0a29c45dcda4f60eeff08aefb
   ExpoHead: 7c1893efc8dc79570bdcbdadce175723f4c037ec
