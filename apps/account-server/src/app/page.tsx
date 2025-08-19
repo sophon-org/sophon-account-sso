@@ -147,13 +147,18 @@ export default function RootPage() {
   }
 
   if (state.matches('login-required.selectEOAWallet')) {
+    const isWalletConnectActive = state.context.isWalletConnectActive;
     return (
       <Dialog
         className="relative"
-        title="Select your wallet"
+        title={isWalletConnectActive ? 'WalletConnect' : 'Select your wallet'}
         dialogType="wallet_selection"
         onBack={() => {
-          actorRef.send({ type: 'CANCEL' });
+          if (isWalletConnectActive) {
+            actorRef.send({ type: 'WALLET_CONNECT_CANCELLED' });
+          } else {
+            actorRef.send({ type: 'CANCEL' });
+          }
         }}
       >
         <SelectingWalletView />

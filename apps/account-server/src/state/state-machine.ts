@@ -30,6 +30,7 @@ const defaultContext = {
     x: false,
   } as Record<Scopes, boolean>,
   partnerId: undefined as string | undefined,
+  isWalletConnectActive: false as boolean,
 };
 
 export const userWalletRequestStateMachine = createMachine({
@@ -152,6 +153,12 @@ export const userWalletRequestStateMachine = createMachine({
             },
             WALLET_SELECTED: {
               target: 'started',
+            },
+            WALLET_CONNECT_SELECTED: {
+              actions: assign({ isWalletConnectActive: true }),
+            },
+            WALLET_CONNECT_CANCELLED: {
+              actions: assign({ isWalletConnectActive: false }),
             },
           },
         },

@@ -7,15 +7,24 @@ import {
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
 import { createConfig, http, WagmiProvider } from 'wagmi';
-import { injected } from 'wagmi/connectors';
+import { injected, walletConnect } from 'wagmi/connectors';
 import { env } from '@/env';
 import { sendMessage } from '@/events';
 import { VIEM_CHAIN } from '@/lib/constants';
 
+const walletConnectProjectId =
+  process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || '';
+
 // Wagmi config with MetaMask connector - uses environment-based chain
 const wagmiConfig = createConfig({
   chains: [VIEM_CHAIN],
-  connectors: [injected()],
+  connectors: [
+    injected(),
+    walletConnect({
+      projectId: walletConnectProjectId,
+      showQrModal: false,
+    }),
+  ],
   transports: {
     [VIEM_CHAIN.id]: http(),
   },
