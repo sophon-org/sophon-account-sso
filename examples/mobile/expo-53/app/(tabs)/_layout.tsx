@@ -1,5 +1,3 @@
-import '../../pollyfills';
-
 import { Tabs } from 'expo-router';
 import { Platform } from 'react-native';
 
