@@ -14,7 +14,6 @@ import type { AuthDecodedJWT } from './types';
 export class AuthAPIWrapper {
   private readonly apiUrl: string;
   private readonly partnerId: string;
-  private publicKey: unknown;
   private readonly jwksClient: JwksClient;
 
   constructor(network: SophonNetworkType, partnerId: string) {
@@ -36,8 +35,7 @@ export class AuthAPIWrapper {
    * @returns The decoded token data.
    */
   public async decodeJWT(token: string): Promise<AuthDecodedJWT> {
-    const rawPk = await this.fetchPublicKey();
-    const signingKey = await this.jwksClient.getSigningKey(rawPk.keys[0].kid);
+    const signingKey = await this.jwksClient.getSigningKey();
     const publicKey = signingKey.getPublicKey();
 
     const decodedToken: JwtPayload = jwt.verify(token, publicKey, {
@@ -81,20 +79,5 @@ export class AuthAPIWrapper {
    */
   public get publicKeyUrl(): string {
     return `${this.apiUrl}/.well-known/jwks.json`;
-  }
-
-  private async fetchPublicKey() {
-    if (this.publicKey) {
-      return this.publicKey;
-    }
-
-    const response = await axios.get(this.publicKeyUrl);
-    if (response.status !== 200) {
-      throw new Error('Failed to get public key');
-    }
-
-    this.publicKey = response.data;
-
-    return response.data;
   }
 }
