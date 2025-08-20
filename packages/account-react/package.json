@@ -1,8 +1,7 @@
 {
   "name": "@sophon-labs/account-react",
   "version": "2.0.0-next.27",
-  "description": "",
-  "type": "module",
+  "description": "React components for Sophon Account",
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -11,19 +10,32 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsup",
-    "dev": "pnpm run build --watch"
+    "dev": "npm run build -- --watch",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:ci": "vitest run --coverage"
   },
   "dependencies": {
-    "@sophon-labs/account-core": "2.0.0-next.27",
+    "axios": "^1.11.0",
     "clsx": "^2.1.1"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.1.0",
+    "@testing-library/react": "^14.1.0",
+    "@types/node": "^20.0.0",
     "@types/react": "^19.1.0",
-    "tsup": "^8.4.0"
+    "@vitest/coverage-v8": "^1.0.0",
+    "jsdom": "^23.0.0",
+    "tsup": "^8.4.0",
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0"
   },
   "peerDependencies": {
-    "react": "*",
-    "viem": "*"
+    "@tanstack/react-query": "^5.85.3",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "viem": "^2.34.0",
+    "wagmi": "^2.16.4"
   },
   "exports": {
     ".": {
