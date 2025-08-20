@@ -1409,22 +1409,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-core@npm:2.0.0-next.28":
-  version: 2.0.0-next.28
-  resolution: "@sophon-labs/account-core@npm:2.0.0-next.28"
-  checksum: 10c0/d88d64e1b63adbbfe0cdda19ec7b9720dca9682bda6285551dc4ae596f33718751d4c11052630a8ad6a08296a8ac65b85f2550852a48ac727546397af93334ea
+"@sophon-labs/account-core@file:../account-core::locator=%40sophon-labs%2Faccount-eip6963%40file%3A..%2F..%2Fpackages%2Faccount-eip6963%23..%2F..%2Fpackages%2Faccount-eip6963%3A%3Ahash%3D96e6a7%26locator%3D%2540sophon-labs%252Fexamples-sandbox-eip6963%2540workspace%253A.":
+  version: 2.0.0-next.30
+  resolution: "@sophon-labs/account-core@file:../account-core#../account-core::hash=ed2503&locator=%40sophon-labs%2Faccount-eip6963%40file%3A..%2F..%2Fpackages%2Faccount-eip6963%23..%2F..%2Fpackages%2Faccount-eip6963%3A%3Ahash%3D96e6a7%26locator%3D%2540sophon-labs%252Fexamples-sandbox-eip6963%2540workspace%253A."
+  checksum: 10c0/c35305a049bb2a5f636e443166253fba014fa8c4bb4acc890a288295b3a5ffcea36d0af8c8e1caf6b7bf5e75de8b0c9cbaf760d402a37508ce286c74c474f92f
   languageName: node
   linkType: hard
 
 "@sophon-labs/account-eip6963@file:../../packages/account-eip6963::locator=%40sophon-labs%2Fexamples-sandbox-eip6963%40workspace%3A.":
-  version: 2.0.0-next.28
-  resolution: "@sophon-labs/account-eip6963@file:../../packages/account-eip6963#../../packages/account-eip6963::hash=d41a2a&locator=%40sophon-labs%2Fexamples-sandbox-eip6963%40workspace%3A."
+  version: 2.0.0-next.30
+  resolution: "@sophon-labs/account-eip6963@file:../../packages/account-eip6963#../../packages/account-eip6963::hash=96e6a7&locator=%40sophon-labs%2Fexamples-sandbox-eip6963%40workspace%3A."
   dependencies:
-    "@sophon-labs/account-core": "npm:2.0.0-next.28"
+    "@sophon-labs/account-core": "file:../account-core"
     zksync-sso: "npm:0.4.1"
   peerDependencies:
     typescript: ^5.0.0
-  checksum: 10c0/228f3087ed3c2815571f86bf708a177d4d803cf678f95bf206e836a38799d8a70f6b0084dd8d647a012f4dc637b42efd0175eb5a63f23f2d0aee06d7eceecb19
+  checksum: 10c0/5d4ad89fb9d43c7306b7f61c6492d03a18a9447af980e8232614ecb61ce3995cd9256684499f194718182a617df12c4af9394bf6459b14f4ce8b68dc78ba6e58
   languageName: node
   linkType: hard
 

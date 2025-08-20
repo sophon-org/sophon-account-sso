@@ -55,6 +55,7 @@ export const MainStateMachineContextProvider = ({
                 transaction: null,
                 session: null,
                 authentication: null,
+                logout: null,
               },
             };
           }),

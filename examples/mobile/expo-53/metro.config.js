@@ -15,16 +15,16 @@ const accountCoreDir = path.resolve(__dirname, "../../../packages/account-core")
 // );
 
 const extraNodeModules = {
-  // "@sophon-labs/account-message-bridge": accountMessageBridgeDir,
-  // "@sophon-labs/account-react-native": accountReactNativeDir,
-  // "@sophon-labs/account-core": accountCoreDir,
+  "@sophon-labs/account-message-bridge": accountMessageBridgeDir,
+  "@sophon-labs/account-react-native": accountReactNativeDir,
+  "@sophon-labs/account-core": accountCoreDir,
   // "@sophon-labs/account-connector": accountConnectorDir,
   // "zksync-sso": zksyncSsoDir,
 };
 const watchFolders = [
-  // accountMessageBridgeDir,
-  // accountReactNativeDir,
-  // accountCoreDir,
+  accountMessageBridgeDir,
+  accountReactNativeDir,
+  accountCoreDir,
   // accountConnectorDir,
   // zksyncSsoDir,
 ];
