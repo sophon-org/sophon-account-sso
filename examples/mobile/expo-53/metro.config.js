@@ -1,10 +1,19 @@
 // Learn more https://docs.expo.io/guides/customizing-metro
-const { getDefaultConfig } = require("expo/metro-config");
-const path = require("node:path");
+const { getDefaultConfig } = require('expo/metro-config');
+const path = require('node:path');
 
-const accountMessageBridgeDir = path.resolve(__dirname, "../../../packages/account-message-bridge");
-const accountReactNativeDir = path.resolve(__dirname, "../../../packages/account-react-native");
-const accountCoreDir = path.resolve(__dirname, "../../../packages/account-core");
+const accountMessageBridgeDir = path.resolve(
+  __dirname,
+  '../../../packages/account-message-bridge',
+);
+const accountReactNativeDir = path.resolve(
+  __dirname,
+  '../../../packages/account-react-native',
+);
+const accountCoreDir = path.resolve(
+  __dirname,
+  '../../../packages/account-core',
+);
 // const accountConnectorDir = path.resolve(
 //   __dirname,
 //   "../../packages/account-connector"
@@ -15,9 +24,9 @@ const accountCoreDir = path.resolve(__dirname, "../../../packages/account-core")
 // );
 
 const extraNodeModules = {
-  "@sophon-labs/account-message-bridge": accountMessageBridgeDir,
-  "@sophon-labs/account-react-native": accountReactNativeDir,
-  "@sophon-labs/account-core": accountCoreDir,
+  '@sophon-labs/account-message-bridge': accountMessageBridgeDir,
+  '@sophon-labs/account-react-native': accountReactNativeDir,
+  '@sophon-labs/account-core': accountCoreDir,
   // "@sophon-labs/account-connector": accountConnectorDir,
   // "zksync-sso": zksyncSsoDir,
 };
@@ -34,19 +43,19 @@ const developConfig = {
   resolver: {
     extraNodeModules: new Proxy(extraNodeModules, {
       get: (target, name) => {
-        console.log("requestion", name);
+        console.log('requestion', name);
         // if its one of the local packages, return the mapped path
         if (name in target) {
           return target[name];
         }
-        
+
         // default node_modules path
         return path.join(process.cwd(), `node_modules/${name}`);
       },
     }),
     // @see https://github.com/pmndrs/zustand/discussions/1967
     resolveRequest: (context, moduleName, platform) => {
-      if (moduleName.includes("zustand")) {
+      if (moduleName.includes('zustand')) {
         const result = require.resolve(moduleName); // gets CommonJS version
         return context.resolveRequest(context, result, platform);
       }

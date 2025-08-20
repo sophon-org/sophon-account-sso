@@ -1,6 +1,6 @@
-import { polyfillWebCrypto } from "expo-standard-web-crypto";
-import "text-encoding-polyfill";
-import { randomUUID } from "expo-crypto";
+import { polyfillWebCrypto } from 'expo-standard-web-crypto';
+import 'text-encoding-polyfill';
+import { randomUUID } from 'expo-crypto';
 
 polyfillWebCrypto();
 crypto.randomUUID = randomUUID;

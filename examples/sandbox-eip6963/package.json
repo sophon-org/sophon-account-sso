@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@sophon-labs/account-eip6963": "file:../../packages/account-eip6963",
+    "@sophon-labs/account-core": "link:../../packages/account-core",
     "@tanstack/react-query": "^5.83.0",
     "connectkit": "^1.9.1",
     "next": "15.4.3",
