@@ -16,6 +16,7 @@ import { CompletedView } from '@/views/CompletedView';
 import ConnectAuthorizationView from '@/views/ConnectAuthorizationView';
 import { LoadingView } from '@/views/LoadingView';
 import LoginSuccessView from '@/views/LoginSuccessView';
+import { LogoutView } from '@/views/LogoutView';
 import { NotAuthenticatedView } from '@/views/NotAuthenticatedView';
 import SelectingWalletView from '@/views/SelectingWalletView';
 import SigningRequestView from '@/views/SigningRequestView';
@@ -189,6 +190,20 @@ export default function RootPage() {
   /****************
    * FINAL STATES *
    ****************/
+
+  if (state.matches('incoming-logout')) {
+    return (
+      <Dialog
+        className="relative"
+        title="Logging out"
+        dialogType="logout"
+        showLegalNotice={false}
+      >
+        <LogoutView />
+      </Dialog>
+    );
+  }
+
   if (state.matches('profile') && account) {
     const handleDisconnect = () => {
       sendMessage('smart-contract.logout', null);

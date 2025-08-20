@@ -1,6 +1,6 @@
 'use client';
 
-import { ConnectKitButton, useModal } from 'connectkit';
+import { ConnectKitButton } from 'connectkit';
 import { erc20Abi, parseEther, parseUnits } from 'viem';
 import { sophonTestnet } from 'viem/chains';
 import {
@@ -20,7 +20,6 @@ type WriteContractResponse = {
 };
 
 export default function Home() {
-  const { setOpen } = useModal();
   const { isConnected, address } = useAccount();
   const {
     data: transactionData,
@@ -112,9 +111,6 @@ export default function Home() {
   return (
     <div>
       <ConnectKitButton />
-      <button onClick={() => setOpen(true)} type="button">
-        Open
-      </button>
       <p className="text-sm text-gray-500">
         {isConnected ? 'Connected' : 'Not connected'}
       </p>

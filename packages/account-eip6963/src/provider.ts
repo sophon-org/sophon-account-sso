@@ -25,6 +25,13 @@ export function createSophonEIP1193Provider(
     },
   });
 
+  // Hydrate from storage (silent) so eth_accounts can return without UI.
+  const storageKey = `sophon.accounts.${network}`;
+  try {
+    const saved = localStorage.getItem(storageKey);
+    if (saved) currentAccounts = JSON.parse(saved);
+  } catch {}
+
   // Helper to make requests through the existing communicator
   // biome-ignore lint/suspicious/noExplicitAny: TODO: review this
   async function makeAuthRequest(method: string, params?: any): Promise<any> {
@@ -41,7 +48,7 @@ export function createSophonEIP1193Provider(
 
   return {
     async request({ method, params }) {
-      console.log('EIP-1193 request 8:', method, params);
+      console.log('EIP-1193 request:', method, params);
 
       switch (method) {
         case 'eth_requestAccounts':
@@ -53,6 +60,11 @@ export function createSophonEIP1193Provider(
 
             const listeners = eventListeners.get('accountsChanged') || [];
             listeners.forEach((listener) => listener(currentAccounts));
+
+            // Persist for silent restore on refresh
+            try {
+              localStorage.setItem(storageKey, JSON.stringify(currentAccounts));
+            } catch {}
 
             return currentAccounts;
           } catch (error) {
@@ -98,6 +110,30 @@ export function createSophonEIP1193Provider(
         case 'eth_sendTransaction': {
           console.log('EIP-1193 eth_sendTransaction:', method, params);
           return await makeAuthRequest('eth_sendTransaction', params);
+        }
+
+        case 'wallet_revokePermissions': {
+          console.log('EIP-1193 wallet_revokePermissions:', method, params);
+
+          try {
+            // Clear local provider state
+            localStorage.removeItem(`sophon.accounts.${network}`);
+            currentAccounts = [];
+
+            // Send logout request to the account server popup
+            await makeAuthRequest('wallet_revokePermissions');
+          } catch (error) {
+            console.warn(
+              'Failed to send logout request to account server:',
+              error,
+            );
+          }
+
+          // Notify listeners about the account change
+          const listeners = eventListeners.get('accountsChanged') || [];
+          listeners.forEach((listener) => listener(currentAccounts));
+
+          return currentAccounts;
         }
 
         default:

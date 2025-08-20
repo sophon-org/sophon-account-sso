@@ -2,6 +2,7 @@ import { assign, createMachine } from 'xstate';
 import type {
   AuthenticationRequest,
   IncomingRequest,
+  LogoutRequest,
   MessageSigningRequest,
   TransactionRequest,
   TypedDataSigningRequest,
@@ -20,6 +21,7 @@ const defaultContext = {
     messageSigning: null as MessageSigningRequest | null | undefined,
     transaction: null as TransactionRequest | null | undefined,
     authentication: null as AuthenticationRequest | null | undefined,
+    logout: null as LogoutRequest | null | undefined,
   },
   scopes: {
     profile: false,
@@ -272,6 +274,12 @@ export const userWalletRequestStateMachine = createMachine({
           target: 'incoming-authentication',
           actions: ['clearScopes'],
         },
+        {
+          guard: ({ context }) => {
+            return !!context.requests.logout;
+          },
+          target: 'incoming-logout',
+        },
       ],
     },
     'incoming-authentication': {
@@ -319,6 +327,29 @@ export const userWalletRequestStateMachine = createMachine({
         CANCEL: {
           target: 'completed',
           actions: 'clearRequests',
+        },
+      },
+    },
+    'incoming-logout': {
+      on: {
+        ACCEPT: {
+          target: 'completed',
+          actions: 'clearRequests',
+        },
+        CANCEL: {
+          target: 'completed',
+          actions: 'clearRequests',
+        },
+        LOGOUT: {
+          target: 'login-required',
+          actions: [
+            'clearRequests',
+            assign(({ context }) => ({
+              ...context,
+              isAuthenticated: false,
+              isLoadingResources: false,
+            })),
+          ],
         },
       },
     },

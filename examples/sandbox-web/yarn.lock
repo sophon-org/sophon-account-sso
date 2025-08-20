@@ -1189,22 +1189,22 @@ __metadata:
   linkType: hard
 
 "@sophon-labs/account-connector@file:../../packages/account-connector::locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A.":
-  version: 2.0.0-next.27
-  resolution: "@sophon-labs/account-connector@file:../../packages/account-connector#../../packages/account-connector::hash=a38c64&locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A."
+  version: 2.0.0-next.30
+  resolution: "@sophon-labs/account-connector@file:../../packages/account-connector#../../packages/account-connector::hash=8471d4&locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A."
   dependencies:
-    "@sophon-labs/account-core": "npm:2.0.0-next.27"
-    zksync-sso: "github:sophon-org/zksync-sso-preview#main"
+    "@sophon-labs/account-core": "npm:2.0.0-next.30"
+    zksync-sso: "npm:0.4.1"
   peerDependencies:
     "@wagmi/core": ^2.17.3
     viem: ">=2.21.49"
-  checksum: 10c0/712903a0883fa0d58a95c27910900fab92bddf9b5b74e6e9242b2835a5b8b288a145574f2811be49341721d7d9fdaa3f0bae77c27f3babe6d26e095c2775857a
+  checksum: 10c0/208130b99c4280afd1d34777941b352dc1ab4474446e2b731c037bdef9192041577253ce9b8d62415e585c3bf96340feec5afb74dbf6b4a5e563916832a6f08c
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-core@npm:2.0.0-next.27":
-  version: 2.0.0-next.27
-  resolution: "@sophon-labs/account-core@npm:2.0.0-next.27"
-  checksum: 10c0/7ebc86bf490435cc0e07e3628937c225176bb04714fbc1720a34fc36c5b0dfb02d3917ccd1ced2034d99ccfb4becb4711fe40f46a99910f0f537f012d23a3eb9
+"@sophon-labs/account-core@npm:2.0.0-next.30":
+  version: 2.0.0-next.30
+  resolution: "@sophon-labs/account-core@npm:2.0.0-next.30"
+  checksum: 10c0/0141e415315081b7e3317b05b72779d1adea89f9503df9b8b0d94d31f9c8a6c21d5c6b5f51f83a29fff26c296fcdd92789ebf3750bc124e11c6f4cf09de1b362
   languageName: node
   linkType: hard
 
@@ -5211,9 +5211,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zksync-sso@github:sophon-org/zksync-sso-preview#main":
-  version: 0.0.0-development
-  resolution: "zksync-sso@https://github.com/sophon-org/zksync-sso-preview.git#commit=db6809bf96064469dcc0ef52b41c010c80e721d3"
+"zksync-sso@npm:0.4.1":
+  version: 0.4.1
+  resolution: "zksync-sso@npm:0.4.1"
   dependencies:
     "@peculiar/asn1-ecc": "npm:^2.3.13"
     "@peculiar/asn1-schema": "npm:^2.3.13"
@@ -5234,7 +5234,7 @@ __metadata:
       optional: true
     typescript:
       optional: true
-  checksum: 10c0/9c3949b863a31643c0015190f199e6cbbf230157a4d6f446f1ff2c4e62addc780c85fe29a22eb814fc2056ce425c30959b759ab278cffdf50dd706a31e757da2
+  checksum: 10c0/2a7446a7e5af2acb12e5e7ec8ee01fd0461d804c06de18497a7c1c9327a52df89ca09442c39ac83e1d1f2d6af862dbcf7fc7e1043b4c6d3066dedf986a93c8a7
   languageName: node
   linkType: hard
 

@@ -31,6 +31,10 @@ export interface AuthenticationRequest {
   domain: string;
 }
 
+export interface LogoutRequest {
+  reason?: string;
+}
+
 export interface Token {
   contractAddress: string;
   tokenName: string;

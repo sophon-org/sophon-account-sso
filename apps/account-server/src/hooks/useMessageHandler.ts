@@ -2,11 +2,13 @@
 import { useEffect, useState } from 'react';
 import { hexToString } from 'viem';
 import { MainStateMachineContext } from '@/context/state-machine-context';
+
 import { getSocialProviderFromURL } from '@/lib/social-provider';
 import { windowService } from '@/service/window.service';
 import type {
   AuthenticationRequest,
   IncomingRequest,
+  LogoutRequest,
   MessageSigningRequest,
   TransactionRequest,
   TypedDataSigningRequest,
@@ -19,6 +21,7 @@ interface UseMessageHandlerReturn {
   messageSigningRequest: MessageSigningRequest | null;
   transactionRequest: TransactionRequest | null;
   authenticationRequest: AuthenticationRequest | null;
+  logoutRequest: LogoutRequest | null;
   handlerInitialized: boolean;
 }
 
@@ -36,6 +39,9 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
     useState<AuthenticationRequest | null>(null);
   const [transactionRequest, setTransactionRequest] =
     useState<TransactionRequest | null>(null);
+  const [logoutRequest, setLogoutRequest] = useState<LogoutRequest | null>(
+    null,
+  );
 
   useEffect(() => {
     // biome-ignore lint/suspicious/noExplicitAny: review that in the future TODO
@@ -73,6 +79,16 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
             setTypedDataSigningRequest(null);
             setTransactionRequest(null);
           }
+        } else if (method === 'wallet_revokePermissions') {
+          setLogoutRequest({
+            reason: 'wallet_revoke_permissions',
+          });
+
+          setSessionPreferences(null);
+          setAuthenticationRequest(null);
+          setTypedDataSigningRequest(null);
+          setMessageSigningRequest(null);
+          setTransactionRequest(null);
         } else if (method === 'eth_signTypedData_v4') {
           const params = data.content.action?.params;
 
@@ -194,5 +210,6 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
     messageSigningRequest,
     transactionRequest,
     handlerInitialized,
+    logoutRequest,
   };
 };
