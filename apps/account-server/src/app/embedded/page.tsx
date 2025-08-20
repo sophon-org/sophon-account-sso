@@ -21,6 +21,7 @@ import SigningRequestView from '@/views/SigningRequestView';
 import TransactionRequestView from '@/views/TransactionRequestView';
 import WaitOtpView from '@/views/WaitOtpView';
 import WrongNetworkView from '@/views/WrongNetworkView';
+import { LogoutView } from '@/views/LogoutView';
 
 // TODO: remove after clubs.xyz update their version
 export default function RootPage() {
@@ -221,6 +222,22 @@ export default function RootPage() {
   /****************
    * FINAL STATES *
    ****************/
+  if (state.matches('incoming-logout')) {
+    return (
+      <Drawer
+        open={open}
+        onOpenChange={() => {}}
+        showHeader={true}
+        showProfileImage={true}
+        showLegalNotice={false}
+        showLogo={true}
+        drawerType="incomming_logout"
+      >
+        <LogoutView />
+      </Drawer>
+    );
+  }
+
   if (state.matches('profile') && account) {
     const handleDisconnect = () => {
       sendMessage('smart-contract.logout', null);

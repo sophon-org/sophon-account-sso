@@ -17,7 +17,6 @@
   },
   "dependencies": {
     "@dynamic-labs/ethereum": "4.29.0",
-    "@dynamic-labs/ethereum-aa-zksync": "4.29.0",
     "@dynamic-labs/message-transport": "4.29.0",
     "@dynamic-labs/sdk-react-core": "4.29.0",
     "@dynamic-labs/wagmi-connector": "4.29.0",
