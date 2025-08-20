@@ -15,13 +15,13 @@ import { useUserIdentification } from '@/hooks/useUserIdentification';
 import { CompletedView } from '@/views/CompletedView';
 import ConnectAuthorizationView from '@/views/ConnectAuthorizationView';
 import { LoadingView } from '@/views/LoadingView';
+import { LogoutView } from '@/views/LogoutView';
 import { NotAuthenticatedView } from '@/views/NotAuthenticatedView';
 import SelectingWalletView from '@/views/SelectingWalletView';
 import SigningRequestView from '@/views/SigningRequestView';
 import TransactionRequestView from '@/views/TransactionRequestView';
 import WaitOtpView from '@/views/WaitOtpView';
 import WrongNetworkView from '@/views/WrongNetworkView';
-import { LogoutView } from '@/views/LogoutView';
 
 // TODO: remove after clubs.xyz update their version
 export default function RootPage() {
