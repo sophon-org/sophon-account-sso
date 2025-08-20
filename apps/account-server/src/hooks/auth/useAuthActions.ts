@@ -4,7 +4,7 @@ import { useOTPConnect } from './useOTPConnect';
 import { useSocialConnect } from './useSocialConnect';
 
 export function useAuthCallbacks() {
-  const { requestOTP, verifyOTP, resendOTP } = useOTPConnect();
+  const { requestOTP, verifyOTP, resendOTP, otpError } = useOTPConnect();
 
   return {
     connectEOA: useEOAConnect(),
@@ -13,5 +13,6 @@ export function useAuthCallbacks() {
     verifyOTP,
     resendOTP,
     connectSocial: useSocialConnect(),
+    otpError,
   };
 }
