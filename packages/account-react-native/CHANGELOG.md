@@ -1,5 +1,14 @@
 # @sophon-labs/account-react-native
 
+## 2.0.0-next.32
+
+### Patch Changes
+
+- Updating polyfills
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.0-next.32
+  - @sophon-labs/account-message-bridge@2.0.0-next.32
+
 ## 2.0.0-next.31
 
 ### Patch Changes

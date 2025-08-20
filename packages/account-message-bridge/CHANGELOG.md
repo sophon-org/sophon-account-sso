@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 2.0.0-next.32
+
+### Patch Changes
+
+- Updating polyfills
+
 ## 2.0.0-next.31
 
 ### Patch Changes
