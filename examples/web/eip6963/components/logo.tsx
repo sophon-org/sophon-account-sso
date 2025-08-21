@@ -7,7 +7,6 @@ export const Logo = ({ className }: { className?: string }) => {
       viewBox="0 0 96 48"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      alt="Sophon Logo"
       role="img"
       aria-label="Sophon Logo"
     >
