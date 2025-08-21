@@ -38,7 +38,7 @@ export const sophonSsoConnector = (
   const connector = zksyncSsoConnector({
     authServerUrl: finalAuthServerUrl,
     metadata: {
-      name: network === 'mainnet' ? 'Sophon Wallet' : 'Sophon Testnet Wallet',
+      name: network === 'mainnet' ? 'Sophon Account' : 'Sophon Testnet Wallet',
       icon: '/sophon-icon.png',
     },
     // paymasterHandler: async () => ({

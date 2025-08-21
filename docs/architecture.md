@@ -38,7 +38,7 @@ The account server is a special component that serves as middleware between you 
 The account server can be used in three different ways:
 
 - You can access it directly to manage your profile, and in the future execute transactions like bridges or swaps
-- You can use our SDK thats compatible with [EIP-6963](https://eips.ethereum.org/EIPS/eip-6963) that allows you to add Sophon Wallet as a valid wallet that your users can use to authenticate and use your system
+- You can use our SDK thats compatible with [EIP-6963](https://eips.ethereum.org/EIPS/eip-6963) that allows you to add Sophon Account as a valid wallet that your users can use to authenticate and use your system
 - You can use our react native SDK to interact directly with the Account Server and have a great flow for the users, without having to switch between apps of installing extra ones
 
 The Account Server exists to make the user's life easier. You obviously have total control over the smart account, you can always use your EOA, or export your private key and use it to interact directly with the smart contract.

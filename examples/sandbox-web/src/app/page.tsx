@@ -1,5 +1,6 @@
 'use client';
 
+import { useSophonToken } from '@sophon-labs/account-react';
 import { useEffect, useState } from 'react';
 import { erc20Abi, parseEther, parseUnits } from 'viem';
 import { sophonTestnet } from 'viem/chains';
@@ -43,17 +44,7 @@ export default function Home() {
     setMounted(true);
   }, []);
 
-  useEffect(() => {
-    window.addEventListener('message', (event) => {
-      if (event.origin !== 'http://localhost:3000') {
-        return;
-      }
-
-      if (event.data.type === 'token') {
-        console.log('token', event.data.payload);
-      }
-    });
-  }, []);
+  const { token } = useSophonToken();
 
   // Prevent hydration mismatch
   if (!mounted) {
@@ -148,6 +139,8 @@ export default function Home() {
           <h3 style={{ color: '#3b82f6', marginTop: 0 }}>
             Wagmi Connector Test
           </h3>
+
+          <p>Token: {token}</p>
 
           {isConnected ? (
             <div>

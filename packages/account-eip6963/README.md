@@ -1,6 +1,6 @@
 # @sophon-labs/account-eip6963
 
-Implementation of the [EIP-6963](https://eips.ethereum.org/EIPS/eip-6963) standard (Multi Injected Provider Discovery) for Sophon wallet. This enables applications to discover the Sophon wallet alongside other wallets providers like Metamask, RainbowKit etc... in a standardized way.
+Implementation of the [EIP-6963](https://eips.ethereum.org/EIPS/eip-6963) standard (Multi Injected Provider Discovery) for Sophon Account. This enables applications to discover the Sophon Account alongside other wallets providers like Metamask, RainbowKit etc... in a standardized way.
 
 ## Features
 
@@ -34,13 +34,13 @@ import "@sophon-labs/account-eip6963/testnet";
 
 import "@sophon-labs/account-eip6963/mainnet";
 
-// The Sophon wallet will now announce itself via the EIP-6963 protocol
+// The Sophon Account will now announce itself via the EIP-6963 protocol
 // No additional setup is required
 ```
 
 This will automatically:
 
-- Register the Sophon wallet provider
+- Register the Sophon Account provider
 - Announce it through the EIP-6963 events
 - Make it available to EIP-6963 compatible applications
 
@@ -67,7 +67,7 @@ export const config = getDefaultConfig({
 
 ### Functions
 
-- `createSophonEIP6963Emitter`: Creates and announces a Sophon wallet provider
+- `createSophonEIP6963Emitter`: Creates and announces a Sophon Account provider
   - Parameters:
     - `network`: 'mainnet' | 'testnet'
     - `uuidOverride?`: Optional custom UUID for the provider

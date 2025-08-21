@@ -6,7 +6,7 @@ import { WebViewCommunicator } from './webview-communicator';
 export const createWalletProvider = (authServerUrl: string, chain: Chain) => {
   const provider = new WalletProvider({
     metadata: {
-      name: 'Sophon Wallet',
+      name: 'Sophon Account',
       icon: '/sophon-icon.png',
       // configData: parameters.metadata?.configData,
     },
