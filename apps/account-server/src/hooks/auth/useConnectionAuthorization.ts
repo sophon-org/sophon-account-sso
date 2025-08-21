@@ -70,6 +70,20 @@ export function useConnectionAuthorization() {
           user?.userId,
         );
 
+        const messageFields = [
+          { name: 'content', type: 'string' },
+          { name: 'from', type: 'address' },
+          { name: 'nonce', type: 'string' },
+          { name: 'audience', type: 'string' },
+        ];
+
+        const message = {
+          content: `Do you authorize this website to connect?!\n\nThis message confirms you control this wallet.`,
+          from: account.address,
+          nonce: authNonce,
+          audience: partnerId,
+        };
+
         const signAuth = {
           domain: {
             name: 'Sophon SSO',
@@ -77,23 +91,13 @@ export function useConnectionAuthorization() {
             chainId: VIEM_CHAIN.id,
           },
           types: {
-            Message: [
-              { name: 'content', type: 'string' },
-              { name: 'from', type: 'address' },
-              { name: 'nonce', type: 'string' },
-              { name: 'audience', type: 'string' },
-              { name: 'userId', type: 'string' },
-            ],
+            Message: user?.userId
+              ? [...messageFields, { name: 'userId', type: 'string' }]
+              : messageFields,
           },
           primaryType: 'Message',
           address: account.address,
-          message: {
-            content: `Do you authorize this website to connect?!\n\nThis message confirms you control this wallet.`,
-            from: account.address,
-            nonce: authNonce,
-            audience: partnerId,
-            userId: user?.userId,
-          },
+          message: user?.userId ? { ...message, userId: user.userId } : message,
         };
 
         const authSignature = await signTypeData(signAuth);

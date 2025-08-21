@@ -11,12 +11,14 @@ import {
   useSendTransaction,
   useSignMessage,
   useSignTypedData,
+  useWalletClient,
   useWriteContract,
 } from 'wagmi';
 import { nftAbi } from '@/abi/nft';
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
+  const { data: walletClient } = useWalletClient();
 
   const { connect, connectors, isPending, error: connectError } = useConnect();
   const { address, isConnected } = useAccount();
@@ -44,6 +46,15 @@ export default function Home() {
     setMounted(true);
   }, []);
 
+  useEffect(() => {
+    // Handle logout from popup
+    window.addEventListener('message', (event) => {
+      if (event.data.type === 'logout') {
+        disconnect();
+      }
+    });
+  }, [disconnect]);
+
   const { token } = useSophonToken();
 
   // Prevent hydration mismatch
@@ -61,6 +72,43 @@ export default function Home() {
       });
     } else {
       console.error('Sophon connector not found!');
+    }
+  };
+
+  const handleWagmiDisconnect = async () => {
+    if (walletClient) {
+      // disconnect wagmi
+      disconnect();
+      // disconnect sophon
+      walletClient.request({ method: 'wallet_disconnect' });
+
+      // experimental ERC-7846 approach to explore later
+      /* try {
+        const extendedWalletClient = walletClient.extend(erc7846Actions());
+        // Use ERC-7846 standardized disconnect
+        const result = await extendedWalletClient.disconnect();
+        console.log('ERC-7846 disconnect result:', result);
+      } catch (error) {
+        console.warn('ERC-7846 disconnect failed:', error);
+        // Fallback to regular wagmi disconnect
+        disconnect();
+      } */
+    } else {
+      // Fallback to regular wagmi disconnect
+      disconnect();
+    }
+  };
+
+  const handleOpenProfile = () => {
+    if (walletClient) {
+      walletClient.request({
+        method: 'wallet_requestPermissions',
+        params: [
+          {
+            eth_accounts: {},
+          },
+        ],
+      });
     }
   };
 
@@ -149,12 +197,11 @@ export default function Home() {
                 Address: <code>{address}</code>
               </p>
               <div style={{ margin: '10px 0' }}>
-                <a
-                  href="http://localhost:3000"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  type="button"
+                  onClick={handleOpenProfile}
                   style={{
-                    backgroundColor: '#6161d0',
+                    backgroundColor: '#059669',
                     color: 'white',
                     border: 'none',
                     padding: '8px 16px',
@@ -164,7 +211,7 @@ export default function Home() {
                   }}
                 >
                   Open Profile
-                </a>
+                </button>
                 <button
                   type="button"
                   onClick={handleSignMessage}
@@ -247,7 +294,7 @@ export default function Home() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => disconnect()}
+                  onClick={handleWagmiDisconnect}
                   style={{
                     backgroundColor: '#dc2626',
                     color: 'white',

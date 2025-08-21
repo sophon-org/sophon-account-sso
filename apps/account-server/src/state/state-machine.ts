@@ -272,7 +272,22 @@ export const userWalletRequestStateMachine = createMachine({
         },
         {
           guard: ({ context }) => {
-            return context.isAuthenticated && !!context.requests.authentication;
+            return (
+              context.isAuthenticated &&
+              !!context.requests.authentication &&
+              context.requests.authentication.type === 'profile_view'
+            );
+          },
+          target: 'profile',
+          actions: ['clearProfileRequests'],
+        },
+        {
+          guard: ({ context }) => {
+            return (
+              context.isAuthenticated &&
+              !!context.requests.authentication &&
+              context.requests.authentication.type !== 'profile_view'
+            );
           },
           target: 'incoming-authentication',
           actions: ['clearScopes'],
