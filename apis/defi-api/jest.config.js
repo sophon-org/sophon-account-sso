@@ -1,6 +1,4 @@
-import type { Config } from 'jest';
-
-const config: Config = {
+const config = {
   verbose: true,
   coveragePathIgnorePatterns: [
     'app.module.ts',
@@ -42,4 +40,4 @@ const config: Config = {
   testEnvironment: 'node',
 };
 
-export default config;
+module.exports = config;
