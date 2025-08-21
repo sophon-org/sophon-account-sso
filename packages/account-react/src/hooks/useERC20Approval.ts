@@ -1,6 +1,6 @@
-import { ethers } from 'ethers';
 import { useCallback, useState } from 'react';
-import { erc20Abi } from 'viem';
+import { erc20Abi, maxUint256 } from 'viem';
+import { sophonTestnet } from 'viem/chains';
 import {
   useAccount,
   useReadContract,
@@ -48,10 +48,12 @@ export function useERC20Approval(args: UseERC20ApprovalArgs) {
   // Read current allowance (use context automatically)
   const { data: currentAllowance, refetch: refetchAllowance } = useReadContract(
     {
-      address: tokenAddress,
+      address: tokenAddress as `0x${string}`,
       abi: erc20Abi,
       functionName: 'allowance',
-      args: userAddress ? [userAddress, spender] : undefined,
+      args: userAddress
+        ? [userAddress as `0x${string}`, spender as `0x${string}`]
+        : undefined,
       chainId,
       query: {
         enabled: !!userAddress && !!tokenAddress && !!spender,
@@ -98,8 +100,10 @@ export function useERC20Approval(args: UseERC20ApprovalArgs) {
         abi: ERC20_APPROVE_ABI,
         functionName: 'approve',
         args: [spender as `0x${string}`, amount],
-        chainId,
-      });
+        // TODO: review this
+        chain: sophonTestnet,
+        account: userAddress as `0x${string}`,
+      } as const);
     } catch (err) {
       const error = err instanceof Error ? err : new Error('Approval failed');
       setError(error);
@@ -107,7 +111,7 @@ export function useERC20Approval(args: UseERC20ApprovalArgs) {
     } finally {
       setIsLoading(false);
     }
-  }, [userAddress, tokenAddress, spender, amount, chainId, writeContract]);
+  }, [userAddress, tokenAddress, spender, amount, writeContract]);
 
   // Refresh allowance after successful approval
   if (isConfirmed) {
@@ -132,7 +136,7 @@ export function useERC20Approval(args: UseERC20ApprovalArgs) {
 export function useERC20InfiniteApproval(
   args: Omit<UseERC20ApprovalArgs, 'amount'>,
 ) {
-  const maxAmount = ethers.MaxUint256;
+  const maxAmount = maxUint256;
 
   return useERC20Approval({
     ...args,
