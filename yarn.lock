@@ -4526,7 +4526,7 @@ __metadata:
   resolution: "@sophon-labs/account-api-sdk@workspace:packages/account-api-sdk"
   dependencies:
     "@playwright/test": "npm:^1.54.1"
-    "@sophon-labs/account-core": "npm:2.0.0-next.33"
+    "@sophon-labs/account-core": "npm:2.0.0-next.34"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@types/jsonwebtoken": "npm:^9"
@@ -4544,12 +4544,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@sophon-labs/account-connector@npm:2.0.0-next.33, @sophon-labs/account-connector@workspace:packages/account-connector":
+"@sophon-labs/account-connector@npm:2.0.0-next.34, @sophon-labs/account-connector@workspace:packages/account-connector":
   version: 0.0.0-use.local
   resolution: "@sophon-labs/account-connector@workspace:packages/account-connector"
   dependencies:
     "@playwright/test": "npm:^1.54.1"
-    "@sophon-labs/account-core": "npm:2.0.0-next.33"
+    "@sophon-labs/account-core": "npm:2.0.0-next.34"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@types/node": "npm:^20.0.0"
@@ -4566,7 +4566,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@sophon-labs/account-core@npm:2.0.0-next.33, @sophon-labs/account-core@workspace:packages/account-core":
+"@sophon-labs/account-core@npm:2.0.0-next.34, @sophon-labs/account-core@workspace:packages/account-core":
   version: 0.0.0-use.local
   resolution: "@sophon-labs/account-core@workspace:packages/account-core"
   dependencies:
@@ -4587,7 +4587,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@sophon-labs/account-eip6963@workspace:packages/account-eip6963"
   dependencies:
-    "@sophon-labs/account-core": "npm:2.0.0-next.33"
+    "@sophon-labs/account-core": "npm:2.0.0-next.34"
     "@types/node": "npm:^20.0.0"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.0.0"
@@ -4597,7 +4597,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@sophon-labs/account-message-bridge@npm:2.0.0-next.33, @sophon-labs/account-message-bridge@workspace:packages/account-message-bridge":
+"@sophon-labs/account-message-bridge@npm:2.0.0-next.34, @sophon-labs/account-message-bridge@workspace:packages/account-message-bridge":
   version: 0.0.0-use.local
   resolution: "@sophon-labs/account-message-bridge@workspace:packages/account-message-bridge"
   dependencies:
@@ -4627,8 +4627,8 @@ __metadata:
     "@evilmartians/lefthook": "npm:^1.5.0"
     "@react-native/babel-preset": "npm:0.78.2"
     "@release-it/conventional-changelog": "npm:^9.0.2"
-    "@sophon-labs/account-core": "npm:2.0.0-next.33"
-    "@sophon-labs/account-message-bridge": "npm:2.0.0-next.33"
+    "@sophon-labs/account-core": "npm:2.0.0-next.34"
+    "@sophon-labs/account-message-bridge": "npm:2.0.0-next.34"
     "@types/jest": "npm:^29.5.5"
     commitlint: "npm:^19.6.1"
     del-cli: "npm:^5.1.0"
@@ -4661,12 +4661,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@sophon-labs/account-react@workspace:packages/account-react"
   dependencies:
-    "@sophon-labs/account-connector": "npm:2.0.0-next.33"
-    "@sophon-labs/account-core": "npm:2.0.0-next.33"
+    "@sophon-labs/account-connector": "npm:2.0.0-next.34"
+    "@sophon-labs/account-core": "npm:2.0.0-next.34"
     "@testing-library/jest-dom": "npm:^6.1.0"
     "@testing-library/react": "npm:^14.1.0"
     "@types/node": "npm:^20.0.0"
-    "@types/react": "npm:^19.1.0"
+    "@types/react": "npm:^18.1.0"
     "@vitest/coverage-v8": "npm:^1.0.0"
     axios: "npm:^1.11.0"
     clsx: "npm:^2.1.1"
@@ -4676,11 +4676,11 @@ __metadata:
     vitest: "npm:^1.0.0"
     wagmi: "npm:^2.16.4"
   peerDependencies:
-    "@tanstack/react-query": ^5.85.3
-    react: ^19.1.0
-    react-dom: ^19.1.0
-    viem: ^2.34.0
-    wagmi: ^2.16.4
+    "@tanstack/react-query": ">=5"
+    react: ">=18"
+    react-dom: ">=18"
+    viem: ">=2"
+    wagmi: ">=2"
   languageName: unknown
   linkType: soft
 
@@ -5061,22 +5061,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^18":
+"@types/react@npm:^18, @types/react@npm:^18.1.0":
   version: 18.3.23
   resolution: "@types/react@npm:18.3.23"
   dependencies:
     "@types/prop-types": "npm:*"
     csstype: "npm:^3.0.2"
   checksum: 10c0/49331800b76572eb2992a5c44801dbf8c612a5f99c8f4e4200f06c7de6f3a6e9455c661784a6c5469df96fa45622cb4a9d0982c44e6a0d5719be5f2ef1f545ed
-  languageName: node
-  linkType: hard
-
-"@types/react@npm:^19.1.0":
-  version: 19.1.10
-  resolution: "@types/react@npm:19.1.10"
-  dependencies:
-    csstype: "npm:^3.0.2"
-  checksum: 10c0/fb583deacd0a815e2775dc1b9f764532d8cacb748ddd2c2914805a46c257ce6c237b4078f44009692074db212ab61a390301c6470f07f5aa5bfdeb78a2acfda1
   languageName: node
   linkType: hard
 

@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 2.0.0-next.34
+
+### Patch Changes
+
+- Updating react version, preparing for testing eip6963
+
 ## 2.0.0-next.33
 
 ### Patch Changes
