@@ -158,7 +158,7 @@ export default function RootPage() {
           if (isWalletConnectActive) {
             actorRef.send({ type: 'WALLET_CONNECT_CANCELLED' });
           } else {
-            actorRef.send({ type: 'CANCEL' });
+            actorRef.send({ type: 'GO_BACK' });
           }
         }}
       >
