@@ -3,14 +3,14 @@
  * Used for communication with the swap API
  */
 
-export const bigintSerializer = (key: string, value: any): any => {
+export const bigintSerializer = (_key: string, value: unknown): unknown => {
   if (typeof value === 'bigint') {
     return value.toString();
   }
   return value;
 };
 
-export const bigintDeserializer = (key: string, value: any): any => {
+export const bigintDeserializer = (_key: string, value: unknown): unknown => {
   if (typeof value === 'string' && /^\d+$/.test(value) && value.length > 15) {
     try {
       return BigInt(value);
@@ -24,7 +24,7 @@ export const bigintDeserializer = (key: string, value: any): any => {
 /**
  * Serialize object for API transmission
  */
-export const serializeForAPI = (obj: any): string => {
+export const serializeForAPI = (obj: unknown): string => {
   return JSON.stringify(obj, bigintSerializer);
 };
 

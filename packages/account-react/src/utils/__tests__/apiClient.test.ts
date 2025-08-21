@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import axios, { type AxiosInstance } from 'axios';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ApiClient, createApiClient } from '../apiClient';
-import axios from 'axios';
 
 // Mock axios
 vi.mock('axios');
@@ -19,7 +19,7 @@ const mockAxiosInstance = {
   },
 };
 
-mockedAxios.create = vi.fn(() => mockAxiosInstance as any);
+mockedAxios.create = vi.fn(() => mockAxiosInstance as unknown as AxiosInstance);
 
 describe('ApiClient', () => {
   let client: ApiClient;
@@ -52,9 +52,9 @@ describe('ApiClient', () => {
     });
 
     it('should use custom timeout', () => {
-      new ApiClient({ 
-        baseUrl: 'https://api.example.com', 
-        timeout: 5000 
+      new ApiClient({
+        baseUrl: 'https://api.example.com',
+        timeout: 5000,
       });
       expect(mockedAxios.create).toHaveBeenCalledWith({
         baseURL: 'https://api.example.com',
@@ -98,7 +98,9 @@ describe('ApiClient', () => {
 
       await client.get('/test', {});
 
-      expect(mockAxiosInstance.get).toHaveBeenCalledWith('/test', { params: {} });
+      expect(mockAxiosInstance.get).toHaveBeenCalledWith('/test', {
+        params: {},
+      });
     });
   });
 
@@ -106,7 +108,7 @@ describe('ApiClient', () => {
     it('should make POST request with correct data', async () => {
       const mockResponse = { success: true };
       const requestData = { name: 'test', value: 123 };
-      
+
       mockAxiosInstance.post.mockResolvedValueOnce({ data: mockResponse });
 
       const result = await client.post('/test', requestData);
@@ -117,7 +119,7 @@ describe('ApiClient', () => {
 
     it('should make POST request without data', async () => {
       const mockResponse = { success: true };
-      
+
       mockAxiosInstance.post.mockResolvedValueOnce({ data: mockResponse });
 
       await client.post('/test');
@@ -130,7 +132,7 @@ describe('ApiClient', () => {
     it('should make PUT request with correct data', async () => {
       const mockResponse = { success: true };
       const requestData = { name: 'updated', value: 456 };
-      
+
       mockAxiosInstance.put.mockResolvedValueOnce({ data: mockResponse });
 
       const result = await client.put('/test', requestData);
@@ -143,7 +145,7 @@ describe('ApiClient', () => {
   describe('delete method', () => {
     it('should make DELETE request', async () => {
       const mockResponse = { success: true };
-      
+
       mockAxiosInstance.delete.mockResolvedValueOnce({ data: mockResponse });
 
       const result = await client.delete('/test');
@@ -157,7 +159,7 @@ describe('ApiClient', () => {
     it('should create ApiClient instance', () => {
       const config = { baseUrl: 'https://test.com' };
       const instance = createApiClient(config);
-      
+
       expect(instance).toBeInstanceOf(ApiClient);
     });
   });

@@ -53,7 +53,7 @@ export interface TransactionOptions {
 }
 
 export interface ActionConfiguration {
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface UnifiedTransactionRequest {

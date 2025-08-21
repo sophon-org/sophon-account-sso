@@ -1,7 +1,11 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  TransactionType,
+  type UnifiedTransactionRequest,
+  type UnifiedTransactionResponse,
+} from '../../types/swap';
 import { useGetSwapTransaction } from '../useGetSwapTransaction';
-import { UnifiedTransactionRequest, TransactionType, UnifiedTransactionResponse } from '../../types/swap';
 
 // Mock the API client
 const mockGet = vi.fn();
@@ -50,11 +54,11 @@ describe('useGetSwapTransaction Hook', () => {
 
   it('should initialize with correct default state', () => {
     const mockRequest = createMockRequest();
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useGetSwapTransaction(
         { config: mockRequest, enabled: false },
-        mockApiConfig
-      )
+        mockApiConfig,
+      ),
     );
 
     expect(result.current.data).toBe(null);
@@ -65,13 +69,13 @@ describe('useGetSwapTransaction Hook', () => {
 
   it('should fetch data when enabled and sender exists', async () => {
     mockGet.mockResolvedValueOnce(mockApiResponse);
-    
+
     const mockRequest = createMockRequest();
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useGetSwapTransaction(
         { config: mockRequest, enabled: true },
-        mockApiConfig
-      )
+        mockApiConfig,
+      ),
     );
 
     await waitFor(() => {
@@ -95,11 +99,11 @@ describe('useGetSwapTransaction Hook', () => {
 
   it('should not fetch when disabled', () => {
     const mockRequest = createMockRequest();
-    renderHook(() => 
+    renderHook(() =>
       useGetSwapTransaction(
         { config: mockRequest, enabled: false },
-        mockApiConfig
-      )
+        mockApiConfig,
+      ),
     );
 
     expect(mockGet).not.toHaveBeenCalled();
@@ -110,12 +114,12 @@ describe('useGetSwapTransaction Hook', () => {
       ...createMockRequest(),
       sender: '',
     };
-    
-    renderHook(() => 
+
+    renderHook(() =>
       useGetSwapTransaction(
         { config: mockRequest, enabled: true },
-        mockApiConfig
-      )
+        mockApiConfig,
+      ),
     );
 
     expect(mockGet).not.toHaveBeenCalled();
@@ -124,13 +128,13 @@ describe('useGetSwapTransaction Hook', () => {
   it('should handle API errors', async () => {
     const mockError = new Error('API Error');
     mockGet.mockRejectedValueOnce(mockError);
-    
+
     const mockRequest = createMockRequest();
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useGetSwapTransaction(
         { config: mockRequest, enabled: true },
-        mockApiConfig
-      )
+        mockApiConfig,
+      ),
     );
 
     await waitFor(() => {
@@ -143,25 +147,28 @@ describe('useGetSwapTransaction Hook', () => {
 
   it('should include recipient when provided', async () => {
     mockGet.mockResolvedValueOnce(mockApiResponse);
-    
+
     const mockRequest = {
       ...createMockRequest(),
       recipient: '0x789',
     };
-    
-    renderHook(() => 
+
+    renderHook(() =>
       useGetSwapTransaction(
         { config: mockRequest, enabled: true },
-        mockApiConfig
-      )
+        mockApiConfig,
+      ),
     );
 
     await waitFor(() => {
       expect(mockGet).toHaveBeenCalled();
     });
 
-    expect(mockGet).toHaveBeenCalledWith('/swap/transaction', expect.objectContaining({
-      recipient: '0x789',
-    }));
+    expect(mockGet).toHaveBeenCalledWith(
+      '/swap/transaction',
+      expect.objectContaining({
+        recipient: '0x789',
+      }),
+    );
   });
 });

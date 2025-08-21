@@ -1,31 +1,36 @@
-import { useState, useCallback } from 'react';
-import { useAccount, useWriteContract, useReadContract, useWaitForTransactionReceipt } from 'wagmi';
-import { erc20Abi } from 'viem';
-import type { UseERC20ApprovalArgs } from '../types/swap';
 import { ethers } from 'ethers';
+import { useCallback, useState } from 'react';
+import { erc20Abi } from 'viem';
+import {
+  useAccount,
+  useReadContract,
+  useWaitForTransactionReceipt,
+  useWriteContract,
+} from 'wagmi';
+import type { UseERC20ApprovalArgs } from '../types/swap';
 
 // Explicit ERC20 approve ABI to avoid MetaMask confusion
 const ERC20_APPROVE_ABI = [
   {
     inputs: [
       { name: 'spender', type: 'address' },
-      { name: 'amount', type: 'uint256' }
+      { name: 'amount', type: 'uint256' },
     ],
     name: 'approve',
     outputs: [{ name: '', type: 'bool' }],
     stateMutability: 'nonpayable',
-    type: 'function'
+    type: 'function',
   },
   {
     inputs: [
       { name: 'owner', type: 'address' },
-      { name: 'spender', type: 'address' }
+      { name: 'spender', type: 'address' },
     ],
     name: 'allowance',
     outputs: [{ name: '', type: 'uint256' }],
     stateMutability: 'view',
-    type: 'function'
-  }
+    type: 'function',
+  },
 ] as const;
 
 /**
@@ -41,41 +46,44 @@ export function useERC20Approval(args: UseERC20ApprovalArgs) {
   const { address: userAddress } = useAccount();
 
   // Read current allowance (use context automatically)
-  const { data: currentAllowance, refetch: refetchAllowance } = useReadContract({
-    address: tokenAddress,
-    abi: erc20Abi,
-    functionName: 'allowance',
-    args: userAddress ? [userAddress, spender] : undefined,
-    chainId,
-    query: {
-      enabled: !!userAddress && !!tokenAddress && !!spender,
-    },
-  } as any);
+  const { data: currentAllowance, refetch: refetchAllowance } = useReadContract(
+    {
+      address: tokenAddress,
+      abi: erc20Abi,
+      functionName: 'allowance',
+      args: userAddress ? [userAddress, spender] : undefined,
+      chainId,
+      query: {
+        enabled: !!userAddress && !!tokenAddress && !!spender,
+      },
+    } as const,
+  );
 
   // Write contract for approval (use context automatically)
-  const { 
-    writeContract, 
-    data: approvalTxHash, 
+  const {
+    writeContract,
+    data: approvalTxHash,
     isPending: isWritePending,
-    error: writeError 
+    error: writeError,
   } = useWriteContract();
 
   // Wait for approval transaction (use context automatically)
-  const { 
-    isLoading: isConfirming, 
+  const {
+    isLoading: isConfirming,
     isSuccess: isConfirmed,
-    error: confirmError 
+    error: confirmError,
   } = useWaitForTransactionReceipt({
     hash: approvalTxHash,
     chainId,
   });
 
   // Check if current allowance is sufficient
-  const isApproved = currentAllowance ? (currentAllowance as bigint) >= amount : false;
+  const isApproved = currentAllowance
+    ? (currentAllowance as bigint) >= amount
+    : false;
 
   // Approve function
   const approve = useCallback(async () => {
-    
     if (!userAddress) {
       throw new Error('Wallet not connected');
     }
@@ -92,7 +100,6 @@ export function useERC20Approval(args: UseERC20ApprovalArgs) {
         args: [spender as `0x${string}`, amount],
         chainId,
       });
-
     } catch (err) {
       const error = err instanceof Error ? err : new Error('Approval failed');
       setError(error);
@@ -122,9 +129,11 @@ export function useERC20Approval(args: UseERC20ApprovalArgs) {
 /**
  * Helper hook for infinite approval (max uint256)
  */
-export function useERC20InfiniteApproval(args: Omit<UseERC20ApprovalArgs, 'amount'>) {
+export function useERC20InfiniteApproval(
+  args: Omit<UseERC20ApprovalArgs, 'amount'>,
+) {
   const maxAmount = ethers.MaxUint256;
-  
+
   return useERC20Approval({
     ...args,
     amount: maxAmount,

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useEstimateGas, useGasPrice } from 'wagmi';
 import type { UseGasEstimationArgs } from '../types/swap';
 
@@ -6,15 +5,17 @@ import type { UseGasEstimationArgs } from '../types/swap';
  * Hook to estimate gas for a transaction
  * Provides gas estimate, gas price, and total fee estimation
  */
-export function useGasEstimation(args: UseGasEstimationArgs & { enabled?: boolean }) {
+export function useGasEstimation(
+  args: UseGasEstimationArgs & { enabled?: boolean },
+) {
   const { to, from, data, value, chainId, enabled = true } = args;
 
   // Estimate gas units needed (use context automatically)
-  const { 
-    data: gasEstimate, 
-    isLoading: isEstimatingGas, 
+  const {
+    data: gasEstimate,
+    isLoading: isEstimatingGas,
     error: gasEstimateError,
-    refetch: refetchGasEstimate 
+    refetch: refetchGasEstimate,
   } = useEstimateGas({
     account: from,
     to,
@@ -27,10 +28,10 @@ export function useGasEstimation(args: UseGasEstimationArgs & { enabled?: boolea
   });
 
   // Get current gas price (legacy, use context automatically)
-  const { 
-    data: gasPrice, 
-    isLoading: isLoadingGasPrice, 
-    error: gasPriceError 
+  const {
+    data: gasPrice,
+    isLoading: isLoadingGasPrice,
+    error: gasPriceError,
   } = useGasPrice({
     chainId,
     query: {
@@ -39,7 +40,8 @@ export function useGasEstimation(args: UseGasEstimationArgs & { enabled?: boolea
   });
 
   // Calculate total fee estimates
-  const totalFeeEstimate = gasEstimate && gasPrice ? gasEstimate * gasPrice : undefined;
+  const totalFeeEstimate =
+    gasEstimate && gasPrice ? gasEstimate * gasPrice : undefined;
 
   const refetch = async () => {
     return await refetchGasEstimate();
@@ -64,7 +66,7 @@ export function useSwapGasEstimation(
     data: string;
     value: string;
   },
-  chainId?: number
+  chainId?: number,
 ) {
   return useGasEstimation({
     to: transactionData?.to,

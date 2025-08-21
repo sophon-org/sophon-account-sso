@@ -1,8 +1,8 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import type { 
-  UseGetSwapStatusArgs, 
-  UnifiedStatusResponse, 
-  SwapApiConfig 
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import type {
+  SwapApiConfig,
+  UnifiedStatusResponse,
+  UseGetSwapStatusArgs,
 } from '../types/swap';
 import { createApiClient } from '../utils/apiClient';
 
@@ -12,22 +12,16 @@ import { createApiClient } from '../utils/apiClient';
  */
 export function useGetSwapStatus(
   args: UseGetSwapStatusArgs,
-  apiConfig: SwapApiConfig
+  apiConfig: SwapApiConfig,
 ) {
-  const { 
-    txHash, 
-    chainId, 
-    enabled = false,
-    refetchInterval = 0
-  } = args;
+  const { txHash, chainId, enabled = false, refetchInterval = 0 } = args;
   const [data, setData] = useState<UnifiedStatusResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  
-  const apiClient = useMemo(() => createApiClient(apiConfig), [apiConfig.baseUrl]);
+
+  const apiClient = useMemo(() => createApiClient(apiConfig), [apiConfig]);
 
   useEffect(() => {
-    
     // Reset states when conditions change
     if (!enabled || !txHash) {
       setIsLoading(false);
@@ -41,7 +35,7 @@ export function useGetSwapStatus(
 
     const fetchData = async () => {
       if (isCancelled) return;
-      
+
       setIsLoading(true);
       setError(null);
 
@@ -49,13 +43,16 @@ export function useGetSwapStatus(
         const params: Record<string, string> = {
           txHash,
         };
-        
+
         if (chainId) {
           params.sourceChainId = chainId.toString();
         }
 
-        const result = await apiClient.get<UnifiedStatusResponse>('/swap/status', params);
-        
+        const result = await apiClient.get<UnifiedStatusResponse>(
+          '/swap/status',
+          params,
+        );
+
         if (!isCancelled) {
           setData(result);
           setIsLoading(false);
@@ -86,7 +83,7 @@ export function useGetSwapStatus(
 
   const refetch = useCallback(async () => {
     if (!txHash) return;
-    
+
     setIsLoading(true);
     setError(null);
 
@@ -96,7 +93,10 @@ export function useGetSwapStatus(
         params.sourceChainId = chainId.toString();
       }
 
-      const result = await apiClient.get<UnifiedStatusResponse>('/swap/status', params);
+      const result = await apiClient.get<UnifiedStatusResponse>(
+        '/swap/status',
+        params,
+      );
       setData(result);
     } catch (err) {
       setError(err as Error);
@@ -113,7 +113,7 @@ export function useGetSwapStatus(
  */
 export function useGetSwapStatusWithDefaults(
   args: UseGetSwapStatusArgs,
-  baseUrl = 'http://localhost:4001'
+  baseUrl = 'http://localhost:4001',
 ) {
   return useGetSwapStatus(args, { baseUrl });
 }
