@@ -59,6 +59,31 @@ export const MainStateMachineContextProvider = ({
               },
             };
           }),
+          clearProfileRequests: assign(({ context }) => {
+            if (context.requests.incoming) {
+              const successResponse = {
+                id: crypto.randomUUID(),
+                requestId: context.requests.incoming.id,
+                content: {
+                  result: [{ eth_accounts: {} }],
+                },
+              };
+              windowService.sendMessage(successResponse);
+            }
+
+            return {
+              ...context,
+              requests: {
+                incoming: null,
+                typedDataSigning: null,
+                messageSigning: null,
+                transaction: null,
+                session: null,
+                authentication: null,
+                logout: null,
+              },
+            };
+          }),
           clearScopes: assign(({ context }) => {
             return {
               ...context,

@@ -66,6 +66,16 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
           setAuthenticationRequest({
             domain: 'http://samplerequest.com',
           });
+        } else if (method === 'wallet_requestPermissions') {
+          // Handle wallet permissions as profile request
+          setTypedDataSigningRequest(null);
+          setMessageSigningRequest(null);
+          setTransactionRequest(null);
+          setSessionPreferences(null);
+          setAuthenticationRequest({
+            domain: 'profile',
+            type: 'profile_view',
+          });
         } else if (method === 'personal_sign') {
           const params = data.content.action?.params;
           if (params && params.length >= 2) {
@@ -79,7 +89,10 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
             setTypedDataSigningRequest(null);
             setTransactionRequest(null);
           }
-        } else if (method === 'wallet_revokePermissions') {
+        } else if (
+          method === 'wallet_revokePermissions' ||
+          method === 'wallet_disconnect'
+        ) {
           setLogoutRequest({
             reason: 'wallet_revoke_permissions',
           });

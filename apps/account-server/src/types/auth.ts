@@ -29,6 +29,7 @@ export interface TypedDataSigningRequest {
 
 export interface AuthenticationRequest {
   domain: string;
+  type?: 'profile_view' | 'connection_request';
 }
 
 export interface LogoutRequest {
