@@ -148,3 +148,39 @@ export interface TxDetails {
     address: Address;
   };
 }
+
+export interface SwapAPIResponse<T = unknown> {
+  success: boolean;
+  error?: {
+    message: string;
+    code?: string;
+    details?: unknown;
+  };
+  data?: T;
+}
+
+export type SwapActionAPIResponse = SwapAPIResponse<SwapActionResponse>;
+export type SwapStatusAPIResponse = SwapAPIResponse<SwapStatusResponse>;
+
+export interface HTTPResponse {
+  status: number;
+  statusText: string;
+  headers: Record<string, string>;
+  data: SwapActionResponse | SwapStatusResponse;
+}
+
+export interface ExtendedSwapActionResponse extends SwapActionResponse {
+  success: boolean;
+  error?: {
+    message: string;
+    code?: string;
+    details?: Record<string, string | number>;
+  };
+}
+
+export interface ActionConfigInput {
+  contractAddress: string;
+  chainId: number;
+  data: string;
+  value?: bigint;
+}

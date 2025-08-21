@@ -13,6 +13,9 @@ import {
   SwapActionRequest,
   SwapActionResponse,
   SwapStatusResponse,
+  ExtendedSwapActionResponse,
+  HTTPResponse,
+  ActionConfigInput,
 } from '../types/swaps.types';
 import {
   UnifiedStatusRequest,
@@ -131,7 +134,10 @@ export class SwapsProvider implements ISwapProvider {
         },
       );
 
-      const swapResponse = await this.callSwapAPI('/getAction', swapRequest);
+      const swapResponse = await this.callSwapAPI('/getAction', swapRequest) as SwapActionResponse & { 
+        success: boolean; 
+        error?: { message: string; [key: string]: any }; 
+      };
       this.loggingService.logProviderDebug(
         this.providerId,
         'getAction API response received',
@@ -174,7 +180,7 @@ export class SwapsProvider implements ISwapProvider {
       }
 
       const unifiedResponse = this.transformToUnifiedResponse(
-        swapResponse,
+        swapResponse as SwapActionResponse,
         request,
       );
       this.loggingService.logProviderDebug(
@@ -236,7 +242,7 @@ export class SwapsProvider implements ISwapProvider {
         },
       );
 
-      const response = await this.callSwapAPI('/getStatus', params);
+      const response = await this.callSwapAPI('/getStatus', params) as SwapStatusResponse;
       this.loggingService.logProviderDebug(
         this.providerId,
         'Status API response received',
@@ -357,8 +363,8 @@ export class SwapsProvider implements ISwapProvider {
         dstChainId: request.destinationChain,
         slippage: request.slippage * 100, // Convert to bps
         actionConfig: {
-          contractAddress: request.actionConfig.contractAddress,
-          chainId: request.actionConfig.chainId || request.destinationChain,
+          contractAddress: request.actionConfig.contractAddress as string,
+          chainId: (request.actionConfig.chainId as number) || request.destinationChain,
           cost: {
             amount: request.amount,
             address:
@@ -369,7 +375,7 @@ export class SwapsProvider implements ISwapProvider {
                 ? '0x0000000000000000000000000000000000000000'
                 : request.sourceToken,
           },
-          data: request.actionConfig.data,
+          data: request.actionConfig.data as string,
           value:
             request.sourceToken ===
               '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' ||
@@ -738,9 +744,17 @@ export class SwapsProvider implements ISwapProvider {
   }
 
   private async callSwapAPI(
+    endpoint: '/getAction',
+    data: SwapActionRequest,
+  ): Promise<ExtendedSwapActionResponse>;
+  private async callSwapAPI(
+    endpoint: '/getStatus',
+    data: { chainId: number; txHash: string },
+  ): Promise<SwapStatusResponse>;
+  private async callSwapAPI(
     endpoint: string,
-    data?: unknown,
-  ): Promise<unknown> {
+    data?: SwapActionRequest | { chainId: number; txHash: string },
+  ): Promise<ExtendedSwapActionResponse | SwapStatusResponse> {
     this.loggingService.logProviderDebug(this.providerId, 'Making API call', {
       endpoint,
       hasData: !!data,
@@ -760,7 +774,7 @@ export class SwapsProvider implements ISwapProvider {
     }
 
     try {
-      let response: Record<string, unknown>;
+      let response: HTTPResponse;
 
       if (endpoint === '/getAction' && data) {
         this.loggingService.logProviderDebug(
@@ -899,7 +913,7 @@ export class SwapsProvider implements ISwapProvider {
         },
       );
 
-      return response.data;
+      return response.data as ExtendedSwapActionResponse | SwapStatusResponse;
     } catch (error) {
       this.logger.error(`Swaps.xyz API call failed: ${error.message}`);
       this.loggingService.logProviderDebug(
