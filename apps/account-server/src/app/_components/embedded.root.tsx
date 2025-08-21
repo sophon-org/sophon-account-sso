@@ -2,7 +2,6 @@
 
 import { shortenAddress } from '@sophon-labs/account-core';
 import { useRNHandler } from '@sophon-labs/account-message-bridge';
-import { useParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { Loader } from '@/components/loader';
 import { Button } from '@/components/ui/button';
@@ -25,8 +24,11 @@ import TransactionRequestView from '@/views/TransactionRequestView';
 import WaitOtpView from '@/views/WaitOtpView';
 import WrongNetworkView from '@/views/WrongNetworkView';
 
-export default function EmbeddedPage() {
-  const { partnerId } = useParams<{ partnerId: string }>();
+interface EmbeddedRootProps {
+  partnerId?: string;
+}
+
+export default function EmbeddedRoot({ partnerId }: EmbeddedRootProps) {
   const [open, setOpen] = useState(false);
   const state = MainStateMachineContext.useSelector((state) => state);
   const actorRef = MainStateMachineContext.useActorRef();
