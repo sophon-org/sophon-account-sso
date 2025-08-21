@@ -10,12 +10,11 @@ import {
   ValidationResult,
 } from '../types/common.types';
 import {
+  ExtendedSwapActionResponse,
+  HTTPResponse,
   SwapActionRequest,
   SwapActionResponse,
   SwapStatusResponse,
-  ExtendedSwapActionResponse,
-  HTTPResponse,
-  ActionConfigInput,
 } from '../types/swaps.types';
 import {
   UnifiedStatusRequest,
@@ -134,10 +133,10 @@ export class SwapsProvider implements ISwapProvider {
         },
       );
 
-      const swapResponse = await this.callSwapAPI('/getAction', swapRequest) as SwapActionResponse & { 
-        success: boolean; 
-        error?: { message: string; [key: string]: any }; 
-      };
+      const swapResponse = (await this.callSwapAPI(
+        '/getAction',
+        swapRequest,
+      )) as ExtendedSwapActionResponse;
       this.loggingService.logProviderDebug(
         this.providerId,
         'getAction API response received',
@@ -242,7 +241,10 @@ export class SwapsProvider implements ISwapProvider {
         },
       );
 
-      const response = await this.callSwapAPI('/getStatus', params) as SwapStatusResponse;
+      const response = (await this.callSwapAPI(
+        '/getStatus',
+        params,
+      )) as SwapStatusResponse;
       this.loggingService.logProviderDebug(
         this.providerId,
         'Status API response received',
@@ -364,7 +366,9 @@ export class SwapsProvider implements ISwapProvider {
         slippage: request.slippage * 100, // Convert to bps
         actionConfig: {
           contractAddress: request.actionConfig.contractAddress as string,
-          chainId: (request.actionConfig.chainId as number) || request.destinationChain,
+          chainId:
+            (request.actionConfig.chainId as number) ||
+            request.destinationChain,
           cost: {
             amount: request.amount,
             address:
