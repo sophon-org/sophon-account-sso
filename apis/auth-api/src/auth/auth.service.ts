@@ -23,7 +23,12 @@ import {
 	unpackScope,
 } from "../config/permission-allowed-fields";
 import { PartnerRegistryService } from "../partners/partner-registry.service";
-import { getPrivateKey, getPublicKey, getRefreshPrivateKey, getRefreshPublicKey } from "../utils/jwt";
+import {
+	getPrivateKey,
+	getPublicKey,
+	getRefreshPrivateKey,
+	getRefreshPublicKey,
+} from "../utils/jwt";
 import { verifyEIP1271Signature } from "../utils/signature";
 import type { AccessTokenPayload, RefreshTokenPayload } from "./types";
 
@@ -40,8 +45,12 @@ type NoncePayload = JwtPayload & {
 const ACCESS_TTL_S = Number(process.env.ACCESS_TTL_S ?? 60 * 60 * 3);
 const REFRESH_TTL_S = Number(process.env.REFRESH_TTL_S ?? 60 * 60 * 24 * 30);
 const NONCE_TTL_S = Number(process.env.NONCE_TTL_S ?? 60 * 10);
-const COOKIE_ACCESS_MAX_AGE_S = Number(process.env.COOKIE_ACCESS_MAX_AGE_S ?? ACCESS_TTL_S);
-const COOKIE_REFRESH_MAX_AGE_S = Number(process.env.COOKIE_REFRESH_MAX_AGE_S ?? REFRESH_TTL_S);
+const COOKIE_ACCESS_MAX_AGE_S = Number(
+	process.env.COOKIE_ACCESS_MAX_AGE_S ?? ACCESS_TTL_S,
+);
+const COOKIE_REFRESH_MAX_AGE_S = Number(
+	process.env.COOKIE_REFRESH_MAX_AGE_S ?? REFRESH_TTL_S,
+);
 
 @Injectable()
 export class AuthService {

@@ -55,19 +55,23 @@ export class AuthController {
 				body.nonceToken,
 			);
 		res
+			.cookie("access_token", accessToken, this.authService.cookieOptions())
 			.cookie(
-				"access_token",
-				accessToken,
-				this.authService.cookieOptions(),
+				"refresh_token",
+				refreshToken,
+				this.authService.refreshCookieOptions(),
 			)
-			.cookie("refresh_token", refreshToken, this.authService.refreshCookieOptions())
 			.json({ token: accessToken });
 	}
 
 	@Post("refresh")
-	@ApiResponse({ status: 200, description: "Rotates access and refresh tokens" })
+	@ApiResponse({
+		status: 200,
+		description: "Rotates access and refresh tokens",
+	})
 	async refresh(@Req() req: Request, @Res() res: Response) {
-		const fromCookie = (req as any).cookies?.refresh_token as string | undefined;
+		const fromCookie = (req as Request & { cookies?: Record<string, string> })
+			.cookies?.refresh_token as string | undefined;
 		const fromAuth = req.headers.authorization?.startsWith("Bearer ")
 			? req.headers.authorization.slice("Bearer ".length)
 			: undefined;
@@ -79,7 +83,11 @@ export class AuthController {
 		const { accessToken, refreshToken } = await this.authService.refresh(rt);
 		res
 			.cookie("access_token", accessToken, this.authService.cookieOptions())
-			.cookie("refresh_token", refreshToken, this.authService.refreshCookieOptions())
+			.cookie(
+				"refresh_token",
+				refreshToken,
+				this.authService.refreshCookieOptions(),
+			)
 			.json({ token: accessToken });
 	}
 
