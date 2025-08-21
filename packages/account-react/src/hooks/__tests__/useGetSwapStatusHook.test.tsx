@@ -1,10 +1,7 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import {
-  TransactionStatus,
-  type UnifiedStatusResponse,
-} from '../../types/swap';
 import { useGetSwapStatus } from '../useGetSwapStatus';
+import { UnifiedStatusResponse, TransactionStatus } from '../../types/swap';
 
 // Mock the API client
 const mockGet = vi.fn();
@@ -50,8 +47,11 @@ describe('useGetSwapStatus Hook', () => {
   });
 
   it('should initialize with correct default state', () => {
-    const { result } = renderHook(() =>
-      useGetSwapStatus({ txHash: '0xabc123', enabled: false }, mockApiConfig),
+    const { result } = renderHook(() => 
+      useGetSwapStatus(
+        { txHash: '0xabc123', enabled: false },
+        mockApiConfig
+      )
     );
 
     expect(result.current.data).toBe(null);
@@ -61,9 +61,12 @@ describe('useGetSwapStatus Hook', () => {
 
   it('should fetch status when enabled and txHash exists', async () => {
     mockGet.mockResolvedValueOnce(mockApiResponse);
-
-    const { result } = renderHook(() =>
-      useGetSwapStatus({ txHash: '0xabc123', enabled: true }, mockApiConfig),
+    
+    const { result } = renderHook(() => 
+      useGetSwapStatus(
+        { txHash: '0xabc123', enabled: true },
+        mockApiConfig
+      )
     );
 
     await waitFor(() => {
@@ -80,12 +83,12 @@ describe('useGetSwapStatus Hook', () => {
 
   it('should include chainId when provided', async () => {
     mockGet.mockResolvedValueOnce(mockApiResponse);
-
-    renderHook(() =>
+    
+    renderHook(() => 
       useGetSwapStatus(
         { txHash: '0xabc123', chainId: 1, enabled: true },
-        mockApiConfig,
-      ),
+        mockApiConfig
+      )
     );
 
     await waitFor(() => {
@@ -99,16 +102,22 @@ describe('useGetSwapStatus Hook', () => {
   });
 
   it('should not fetch when disabled', () => {
-    renderHook(() =>
-      useGetSwapStatus({ txHash: '0xabc123', enabled: false }, mockApiConfig),
+    renderHook(() => 
+      useGetSwapStatus(
+        { txHash: '0xabc123', enabled: false },
+        mockApiConfig
+      )
     );
 
     expect(mockGet).not.toHaveBeenCalled();
   });
 
   it('should not fetch when txHash is empty', () => {
-    renderHook(() =>
-      useGetSwapStatus({ txHash: '', enabled: true }, mockApiConfig),
+    renderHook(() => 
+      useGetSwapStatus(
+        { txHash: '', enabled: true },
+        mockApiConfig
+      )
     );
 
     expect(mockGet).not.toHaveBeenCalled();
@@ -117,9 +126,12 @@ describe('useGetSwapStatus Hook', () => {
   it('should handle API errors', async () => {
     const mockError = new Error('API Error');
     mockGet.mockRejectedValueOnce(mockError);
-
-    const { result } = renderHook(() =>
-      useGetSwapStatus({ txHash: '0xabc123', enabled: true }, mockApiConfig),
+    
+    const { result } = renderHook(() => 
+      useGetSwapStatus(
+        { txHash: '0xabc123', enabled: true },
+        mockApiConfig
+      )
     );
 
     await waitFor(() => {

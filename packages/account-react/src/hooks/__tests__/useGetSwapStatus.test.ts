@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, it, expect } from 'vitest';
 
 describe('useGetSwapStatus', () => {
   it('should format status query parameters correctly', () => {
@@ -8,7 +8,7 @@ describe('useGetSwapStatus', () => {
     const params: Record<string, string> = {
       txHash,
     };
-
+    
     if (chainId) {
       params.sourceChainId = chainId.toString();
     }

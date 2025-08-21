@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, it, expect } from 'vitest';
 
 describe('useERC20Approval', () => {
   it('should calculate approval status correctly', () => {
@@ -8,15 +8,9 @@ describe('useERC20Approval', () => {
 
     const requiredAmount = BigInt('1000000000000000000'); // 1 ETH
 
-    expect(isApproved(BigInt('2000000000000000000'), requiredAmount)).toBe(
-      true,
-    );
-    expect(isApproved(BigInt('1000000000000000000'), requiredAmount)).toBe(
-      true,
-    );
-    expect(isApproved(BigInt('500000000000000000'), requiredAmount)).toBe(
-      false,
-    );
+    expect(isApproved(BigInt('2000000000000000000'), requiredAmount)).toBe(true);
+    expect(isApproved(BigInt('1000000000000000000'), requiredAmount)).toBe(true);
+    expect(isApproved(BigInt('500000000000000000'), requiredAmount)).toBe(false);
     expect(isApproved(BigInt('0'), requiredAmount)).toBe(false);
   });
 
@@ -25,16 +19,14 @@ describe('useERC20Approval', () => {
     const requiredAmount = BigInt('1000000000000000000');
 
     expect(maxUint256 > requiredAmount).toBe(true);
-    expect(maxUint256.toString()).toBe(
-      '115792089237316195423570985008687907853269984665640564039457584007913129639935',
-    );
+    expect(maxUint256.toString()).toBe('115792089237316195423570985008687907853269984665640564039457584007913129639935');
   });
 
   it('should determine when approval is needed', () => {
     const needsApproval = (
-      currentAllowance: bigint,
-      requiredAmount: bigint,
-      hasWallet: boolean,
+      currentAllowance: bigint, 
+      requiredAmount: bigint, 
+      hasWallet: boolean
     ) => {
       return hasWallet && currentAllowance < requiredAmount;
     };
@@ -42,12 +34,8 @@ describe('useERC20Approval', () => {
     const requiredAmount = BigInt('1000000000000000000');
 
     expect(needsApproval(BigInt('0'), requiredAmount, true)).toBe(true);
-    expect(
-      needsApproval(BigInt('500000000000000000'), requiredAmount, true),
-    ).toBe(true);
-    expect(
-      needsApproval(BigInt('2000000000000000000'), requiredAmount, true),
-    ).toBe(false);
+    expect(needsApproval(BigInt('500000000000000000'), requiredAmount, true)).toBe(true);
+    expect(needsApproval(BigInt('2000000000000000000'), requiredAmount, true)).toBe(false);
     expect(needsApproval(BigInt('0'), requiredAmount, false)).toBe(false);
   });
 
@@ -55,7 +43,7 @@ describe('useERC20Approval', () => {
     const isLoading = (
       isSettingLoading: boolean,
       isWritePending: boolean,
-      isConfirming: boolean,
+      isConfirming: boolean
     ) => {
       return isSettingLoading || isWritePending || isConfirming;
     };

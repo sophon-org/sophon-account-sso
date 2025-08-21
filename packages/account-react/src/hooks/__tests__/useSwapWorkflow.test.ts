@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest';
+import { describe, it, expect } from 'vitest';
 
-type SwapWorkflowStep =
+type SwapWorkflowStep = 
   | 'preparing'
   | 'approval-needed'
   | 'approving'
@@ -21,7 +21,7 @@ describe('useSwapWorkflow', () => {
       hasSwapData: boolean,
       isSwapping: boolean,
       isConfirming: boolean,
-      isCompleted: boolean,
+      isCompleted: boolean
     ): SwapWorkflowStep => {
       if (isPreparingSwap) return 'preparing';
       if (hasError) return 'failed';
@@ -35,88 +35,29 @@ describe('useSwapWorkflow', () => {
       return 'preparing';
     };
 
-    expect(
-      determineStep(
-        true,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-      ),
-    ).toBe('preparing');
-    expect(
-      determineStep(
-        false,
-        true,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-      ),
-    ).toBe('failed');
-    expect(
-      determineStep(
-        false,
-        false,
-        true,
-        false,
-        false,
-        true,
-        false,
-        false,
-        false,
-      ),
-    ).toBe('approval-needed');
-    expect(
-      determineStep(false, false, true, false, true, true, false, false, false),
-    ).toBe('approving');
-    expect(
-      determineStep(
-        false,
-        false,
-        false,
-        true,
-        false,
-        true,
-        false,
-        false,
-        false,
-      ),
-    ).toBe('ready-to-swap');
-    expect(
-      determineStep(false, false, false, true, false, true, true, false, false),
-    ).toBe('swapping');
-    expect(
-      determineStep(false, false, false, true, false, true, false, true, false),
-    ).toBe('confirming');
-    expect(
-      determineStep(false, false, false, true, false, true, false, false, true),
-    ).toBe('completed');
+    expect(determineStep(true, false, false, false, false, false, false, false, false)).toBe('preparing');
+    expect(determineStep(false, true, false, false, false, false, false, false, false)).toBe('failed');
+    expect(determineStep(false, false, true, false, false, true, false, false, false)).toBe('approval-needed');
+    expect(determineStep(false, false, true, false, true, true, false, false, false)).toBe('approving');
+    expect(determineStep(false, false, false, true, false, true, false, false, false)).toBe('ready-to-swap');
+    expect(determineStep(false, false, false, true, false, true, true, false, false)).toBe('swapping');
+    expect(determineStep(false, false, false, true, false, true, false, true, false)).toBe('confirming');
+    expect(determineStep(false, false, false, true, false, true, false, false, true)).toBe('completed');
   });
 
   it('should calculate progress correctly', () => {
-    const calculateProgress = (
-      currentStep: SwapWorkflowStep,
-      needsApproval: boolean,
-    ) => {
+    const calculateProgress = (currentStep: SwapWorkflowStep, needsApproval: boolean) => {
       const stepOrder: SwapWorkflowStep[] = [
         'preparing',
         'approval-needed',
         'ready-to-swap',
         'swapping',
         'confirming',
-        'completed',
+        'completed'
       ];
 
       const currentIndex = stepOrder.indexOf(currentStep);
-
+      
       return {
         preparing: currentIndex > 0,
         approvalNeeded: !needsApproval || currentIndex > 1,
@@ -140,7 +81,7 @@ describe('useSwapWorkflow', () => {
     const canExecuteSwap = (
       hasSwapData: boolean,
       hasWalletAddress: boolean,
-      currentStep: SwapWorkflowStep,
+      currentStep: SwapWorkflowStep
     ) => {
       return hasSwapData && hasWalletAddress && currentStep === 'ready-to-swap';
     };
@@ -154,7 +95,7 @@ describe('useSwapWorkflow', () => {
   it('should determine when to auto-approve', () => {
     const shouldAutoApprove = (
       autoApprove: boolean,
-      currentStep: SwapWorkflowStep,
+      currentStep: SwapWorkflowStep
     ) => {
       return autoApprove && currentStep === 'approval-needed';
     };

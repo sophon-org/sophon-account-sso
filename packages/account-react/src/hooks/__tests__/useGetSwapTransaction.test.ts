@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { TransactionType } from '../../types/swap';
 
 describe('useGetSwapTransaction', () => {
@@ -51,17 +51,11 @@ describe('useGetSwapTransaction', () => {
     expect(retryLogic(3, new Error('Network error'))).toBe(false);
 
     // Test 5xx errors (should retry)
-    expect(retryLogic(1, new Error('HTTP 500: Internal Server Error'))).toBe(
-      true,
-    );
+    expect(retryLogic(1, new Error('HTTP 500: Internal Server Error'))).toBe(true);
   });
 
   it('should determine enabled state correctly', () => {
-    const isEnabled = (
-      hasConfig: boolean,
-      hasSender: boolean,
-      enabled: boolean,
-    ) => {
+    const isEnabled = (hasConfig: boolean, hasSender: boolean, enabled: boolean) => {
       return enabled && hasConfig && hasSender;
     };
 
