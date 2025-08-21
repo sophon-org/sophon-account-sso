@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { ProviderRegistryService } from './provider-registry.service';
-import { ChainId } from '../types/common.types';
+import type { ChainId } from '../types/common.types';
+import type { ProviderRegistryService } from './provider-registry.service';
 
 @Injectable()
 export class ChainValidationService {
@@ -18,11 +18,11 @@ export class ChainValidationService {
 
     const enabledProviders = this.providerRegistry.getEnabledProviders();
     const allChains = new Set<ChainId>();
-    
-    enabledProviders.forEach(provider => {
-      provider.supportedChains.forEach(chainId => allChains.add(chainId));
+
+    enabledProviders.forEach((provider) => {
+      provider.supportedChains.forEach((chainId) => allChains.add(chainId));
     });
-    
+
     return Array.from(allChains);
   }
 
@@ -31,22 +31,25 @@ export class ChainValidationService {
     return supportedChains.includes(chainId);
   }
 
-  validateChainForProvider(chainId: ChainId, providerId?: string): { isValid: boolean; error?: string } {
+  validateChainForProvider(
+    chainId: ChainId,
+    providerId?: string,
+  ): { isValid: boolean; error?: string } {
     if (providerId) {
       try {
         this.providerRegistry.getProvider(providerId);
       } catch (error) {
         return {
           isValid: false,
-          error: `Provider '${providerId}' not found or disabled`
+          error: `Provider '${providerId}' not found or disabled`,
         };
       }
-      
+
       if (!this.isChainSupported(chainId, providerId)) {
         const supportedChains = this.getSupportedChains(providerId);
         return {
           isValid: false,
-          error: `Chain ${chainId} is not supported by provider '${providerId}'. Supported chains: ${supportedChains.join(', ')}`
+          error: `Chain ${chainId} is not supported by provider '${providerId}'. Supported chains: ${supportedChains.join(', ')}`,
         };
       }
     } else {
@@ -54,11 +57,11 @@ export class ChainValidationService {
         const supportedChains = this.getSupportedChains();
         return {
           isValid: false,
-          error: `Chain ${chainId} is not supported by any enabled provider. Supported chains: ${supportedChains.join(', ')}`
+          error: `Chain ${chainId} is not supported by any enabled provider. Supported chains: ${supportedChains.join(', ')}`,
         };
       }
     }
-    
+
     return { isValid: true };
   }
 }

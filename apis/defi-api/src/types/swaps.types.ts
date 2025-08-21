@@ -1,4 +1,4 @@
-import { Address, ChainId } from './common.types';
+import type { Address, ChainId } from './common.types';
 
 export interface SwapActionRequest {
   actionType: 'swap-action' | 'evm-calldata-tx' | 'evm-function';

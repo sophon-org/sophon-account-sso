@@ -1,26 +1,26 @@
 import {
+  Body,
   Controller,
   Get,
-  Post,
-  Query,
-  Body,
-  Param,
   HttpException,
   HttpStatus,
   Logger,
-  ValidationPipe,
+  Param,
+  Post,
+  Query,
   UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
-import { SwapService } from '../services/swap.service';
-import { LoggingService } from '../services/logging.service';
-import { PrepareTransactionDto, GetStatusDto } from '../dto/swap.dto';
-import {
-  UnifiedTransactionResponse,
-  UnifiedStatusResponse,
-  GetProvidersResponse,
-} from '../types/unified.types';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import type { GetStatusDto, PrepareTransactionDto } from '../dto/swap.dto';
 import { SwapAPIError } from '../errors/swap-api.error';
+import type { LoggingService } from '../services/logging.service';
+import type { SwapService } from '../services/swap.service';
+import type {
+  GetProvidersResponse,
+  UnifiedStatusResponse,
+  UnifiedTransactionResponse,
+} from '../types/unified.types';
 
 @ApiTags('Swap')
 @Controller('swap')
@@ -30,7 +30,7 @@ export class SwapController {
 
   constructor(
     private readonly swapService: SwapService,
-    private readonly loggingService: LoggingService
+    private readonly loggingService: LoggingService,
   ) {}
 
   @Get('providers')
@@ -40,39 +40,52 @@ export class SwapController {
     this.loggingService.logDebug('GET /swap/providers endpoint called');
     try {
       const result = await this.swapService.getProviders();
-      this.loggingService.logDebug('GET /swap/providers completed successfully', {
-        providersCount: result.providers.length
-      });
+      this.loggingService.logDebug(
+        'GET /swap/providers completed successfully',
+        {
+          providersCount: result.providers.length,
+        },
+      );
       return result;
     } catch (error) {
-      this.loggingService.logDebug('GET /swap/providers failed', { error: error.message });
+      this.loggingService.logDebug('GET /swap/providers failed', {
+        error: error.message,
+      });
       this.handleError(error);
     }
   }
 
   @Get('transaction')
   @ApiOperation({ summary: 'Prepare a cross-chain transaction' })
-  @ApiResponse({ status: 200, description: 'Transaction prepared successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Transaction prepared successfully',
+  })
   @ApiResponse({ status: 400, description: 'Invalid parameters' })
   @ApiResponse({ status: 503, description: 'Service unavailable' })
-  async prepareTransaction(@Query() dto: PrepareTransactionDto): Promise<UnifiedTransactionResponse> {
+  async prepareTransaction(
+    @Query() dto: PrepareTransactionDto,
+  ): Promise<UnifiedTransactionResponse> {
     this.loggingService.logDebug('GET /swap/transaction endpoint called', {
       sourceChain: dto.sourceChain,
       destinationChain: dto.destinationChain,
-      provider: dto.provider
+      provider: dto.provider,
     });
     try {
       const result = await this.swapService.prepareTransaction(dto);
-      this.loggingService.logDebug('GET /swap/transaction completed successfully', {
-        transactionId: result.transactionId,
-        provider: result.provider
-      });
+      this.loggingService.logDebug(
+        'GET /swap/transaction completed successfully',
+        {
+          transactionId: result.transactionId,
+          provider: result.provider,
+        },
+      );
       return result;
     } catch (error) {
-      this.loggingService.logDebug('GET /swap/transaction failed', { 
+      this.loggingService.logDebug('GET /swap/transaction failed', {
         error: error.message,
         sourceChain: dto.sourceChain,
-        destinationChain: dto.destinationChain
+        destinationChain: dto.destinationChain,
       });
       this.handleError(error);
     }
@@ -82,11 +95,13 @@ export class SwapController {
   @ApiOperation({ summary: 'Get transaction status' })
   @ApiResponse({ status: 200, description: 'Transaction status retrieved' })
   @ApiResponse({ status: 404, description: 'Transaction not found' })
-  async getTransactionStatus(@Query() dto: GetStatusDto): Promise<UnifiedStatusResponse> {
+  async getTransactionStatus(
+    @Query() dto: GetStatusDto,
+  ): Promise<UnifiedStatusResponse> {
     this.loggingService.logDebug('GET /swap/status endpoint called', {
       txHash: dto.txHash,
       sourceChainId: dto.sourceChainId,
-      provider: dto.provider
+      provider: dto.provider,
     });
     try {
       const result = await this.swapService.getTransactionStatus(dto);
@@ -94,13 +109,13 @@ export class SwapController {
         found: result.found,
         status: result.status,
         hasLinks: !!(result.links?.explorer || result.links?.providerTracker),
-        hasFees: !!(result.fees?.total && result.fees.total !== '0')
+        hasFees: !!(result.fees?.total && result.fees.total !== '0'),
       });
       return result;
     } catch (error) {
-      this.loggingService.logDebug('GET /swap/status failed', { 
+      this.loggingService.logDebug('GET /swap/status failed', {
         error: error.message,
-        txHash: dto.txHash
+        txHash: dto.txHash,
       });
       this.handleError(error);
     }

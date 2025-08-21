@@ -3,7 +3,13 @@ import { defineConfig } from 'tsup';
 
 export default defineConfig((options) => {
   return {
-    entry: ['src/*', 'src/hooks/*', 'src/components/*', 'src/utils/*', 'src/types/*'],
+    entry: [
+      'src/*',
+      'src/hooks/*',
+      'src/components/*',
+      'src/utils/*',
+      'src/types/*',
+    ],
     splitting: false,
     sourcemap: !!options.watch,
     clean: true,

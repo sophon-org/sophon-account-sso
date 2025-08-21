@@ -2,7 +2,11 @@
  * HTTP client for API communication
  */
 
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosError } from 'axios';
+import axios, {
+  type AxiosError,
+  type AxiosInstance,
+  type AxiosRequestConfig,
+} from 'axios';
 
 export interface ApiClientConfig {
   baseUrl: string;
@@ -33,19 +37,22 @@ export class ApiClient {
       (error: AxiosError) => {
         if (error.response?.data) {
           const errorData = error.response.data as any;
-          throw new Error(errorData.message || `HTTP ${error.response.status}: ${error.response.statusText}`);
+          throw new Error(
+            errorData.message ||
+              `HTTP ${error.response.status}: ${error.response.statusText}`,
+          );
         }
         if (error.code === 'ECONNABORTED') {
           throw new Error('Request timeout');
         }
         throw new Error(error.message || 'Network error');
-      }
+      },
     );
   }
 
   private parseResponseData(data: any): any {
     if (data === null || data === undefined) return data;
-    
+
     if (typeof data === 'string' && /^\d+n?$/.test(data)) {
       // Handle string numbers that might be BigInt
       const cleanValue = data.replace(/n$/, '');
@@ -57,11 +64,11 @@ export class ApiClient {
         }
       }
     }
-    
+
     if (Array.isArray(data)) {
-      return data.map(item => this.parseResponseData(item));
+      return data.map((item) => this.parseResponseData(item));
     }
-    
+
     if (typeof data === 'object') {
       const result: any = {};
       for (const [key, value] of Object.entries(data)) {
@@ -69,13 +76,13 @@ export class ApiClient {
       }
       return result;
     }
-    
+
     return data;
   }
 
   async get<T>(endpoint: string, params?: Record<string, any>): Promise<T> {
     const config: AxiosRequestConfig = {};
-    
+
     if (params) {
       config.params = params;
     }
@@ -101,4 +108,5 @@ export class ApiClient {
 }
 
 // Factory function
-export const createApiClient = (config: ApiClientConfig) => new ApiClient(config);
+export const createApiClient = (config: ApiClientConfig) =>
+  new ApiClient(config);

@@ -1,15 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ProviderRegistryService } from './provider-registry.service';
-import { LoggingService } from './logging.service';
-import { PrepareTransactionDto, GetStatusDto } from '../dto/swap.dto';
-import {
-  UnifiedTransactionRequest,
-  UnifiedTransactionResponse,
+import type { GetStatusDto, PrepareTransactionDto } from '../dto/swap.dto';
+import { ErrorCodes, SwapAPIError } from '../errors/swap-api.error';
+import type {
+  GetProvidersResponse,
   UnifiedStatusRequest,
   UnifiedStatusResponse,
-  GetProvidersResponse,
+  UnifiedTransactionRequest,
+  UnifiedTransactionResponse,
 } from '../types/unified.types';
-import { SwapAPIError, ErrorCodes } from '../errors/swap-api.error';
+import type { LoggingService } from './logging.service';
+import type { ProviderRegistryService } from './provider-registry.service';
 
 @Injectable()
 export class SwapService {
@@ -17,51 +17,58 @@ export class SwapService {
 
   constructor(
     private readonly providerRegistry: ProviderRegistryService,
-    private readonly loggingService: LoggingService
+    private readonly loggingService: LoggingService,
   ) {}
 
   async getProviders(): Promise<GetProvidersResponse> {
     this.loggingService.logDebug('Getting available providers');
     const providers = this.providerRegistry.getProviderSummary();
-    this.loggingService.logDebug('Retrieved providers', { 
+    this.loggingService.logDebug('Retrieved providers', {
       providersCount: providers.length,
-      providerIds: providers.map(p => p.providerId)
+      providerIds: providers.map((p) => p.providerId),
     });
-    
+
     return { providers };
   }
 
-  async prepareTransaction(dto: PrepareTransactionDto): Promise<UnifiedTransactionResponse> {
+  async prepareTransaction(
+    dto: PrepareTransactionDto,
+  ): Promise<UnifiedTransactionResponse> {
     this.loggingService.logDebug('Preparing transaction', {
       sourceChain: dto.sourceChain,
       destinationChain: dto.destinationChain,
       amount: dto.amount,
-      provider: dto.provider
+      provider: dto.provider,
     });
 
     const request = this.mapDtoToUnifiedRequest(dto);
-    const provider = this.providerRegistry.selectBestProvider(request, dto.provider);
-    
-    this.loggingService.logDebug('Selected provider for transaction', { 
+    const provider = this.providerRegistry.selectBestProvider(
+      request,
+      dto.provider,
+    );
+
+    this.loggingService.logDebug('Selected provider for transaction', {
       providerId: provider.providerId,
-      providerName: provider.name 
+      providerName: provider.name,
     });
 
     const result = await provider.prepareTransaction(request);
     this.loggingService.logDebug('Transaction prepared successfully', {
       transactionId: result.transactionId,
       providerId: result.provider,
-      estimatedTime: result.estimatedTime
+      estimatedTime: result.estimatedTime,
     });
 
     return result;
   }
 
-  async getTransactionStatus(dto: GetStatusDto): Promise<UnifiedStatusResponse> {
+  async getTransactionStatus(
+    dto: GetStatusDto,
+  ): Promise<UnifiedStatusResponse> {
     this.loggingService.logDebug('Getting transaction status', {
       txHash: dto.txHash,
       sourceChainId: dto.sourceChainId,
-      provider: dto.provider
+      provider: dto.provider,
     });
 
     const request: UnifiedStatusRequest = {
@@ -72,14 +79,18 @@ export class SwapService {
 
     let provider;
     if (dto.provider) {
-      this.loggingService.logDebug('Using specified provider', { providerId: dto.provider });
+      this.loggingService.logDebug('Using specified provider', {
+        providerId: dto.provider,
+      });
       provider = this.providerRegistry.getProvider(dto.provider);
     } else {
-      this.loggingService.logDebug('No provider specified, searching enabled providers');
+      this.loggingService.logDebug(
+        'No provider specified, searching enabled providers',
+      );
       const enabledProviders = this.providerRegistry.getEnabledProviders();
-      this.loggingService.logDebug('Found enabled providers', { 
+      this.loggingService.logDebug('Found enabled providers', {
         count: enabledProviders.length,
-        providerIds: enabledProviders.map(p => p.providerId)
+        providerIds: enabledProviders.map((p) => p.providerId),
       });
 
       if (enabledProviders.length === 0) {
@@ -92,29 +103,37 @@ export class SwapService {
           503,
         );
       }
-      
+
       for (const p of enabledProviders) {
-        this.loggingService.logDebug('Trying provider', { providerId: p.providerId });
+        this.loggingService.logDebug('Trying provider', {
+          providerId: p.providerId,
+        });
         try {
           const result = await p.getTransactionStatus(request);
           if (result.found) {
-            this.loggingService.logDebug('Transaction found by provider', { 
+            this.loggingService.logDebug('Transaction found by provider', {
               providerId: p.providerId,
               status: result.status,
-              hasLinks: !!(result.links?.explorer || result.links?.providerTracker)
+              hasLinks: !!(
+                result.links?.explorer || result.links?.providerTracker
+              ),
             });
             return result;
           }
-          this.loggingService.logDebug('Transaction not found by provider', { providerId: p.providerId });
-        } catch (error) {
-          this.logger.warn(`Provider ${p.providerId} failed to find transaction: ${error.message}`);
-          this.loggingService.logDebug('Provider error during status check', { 
+          this.loggingService.logDebug('Transaction not found by provider', {
             providerId: p.providerId,
-            error: error.message
+          });
+        } catch (error) {
+          this.logger.warn(
+            `Provider ${p.providerId} failed to find transaction: ${error.message}`,
+          );
+          this.loggingService.logDebug('Provider error during status check', {
+            providerId: p.providerId,
+            error: error.message,
           });
         }
       }
-      
+
       this.loggingService.logDebug('Transaction not found in any provider');
       throw new SwapAPIError(
         'Transaction not found in any provider',
@@ -125,19 +144,23 @@ export class SwapService {
       );
     }
 
-    this.loggingService.logDebug('Calling provider for status', { providerId: provider.providerId });
+    this.loggingService.logDebug('Calling provider for status', {
+      providerId: provider.providerId,
+    });
     const result = await provider.getTransactionStatus(request);
     this.loggingService.logDebug('Status retrieved successfully', {
       found: result.found,
       status: result.status,
       hasLinks: !!(result.links?.explorer || result.links?.providerTracker),
-      hasFees: !!(result.fees?.total && result.fees.total !== '0')
+      hasFees: !!(result.fees?.total && result.fees.total !== '0'),
     });
 
     return result;
   }
 
-  private mapDtoToUnifiedRequest(dto: PrepareTransactionDto): UnifiedTransactionRequest {
+  private mapDtoToUnifiedRequest(
+    dto: PrepareTransactionDto,
+  ): UnifiedTransactionRequest {
     return {
       actionType: dto.actionType,
       sender: dto.sender,

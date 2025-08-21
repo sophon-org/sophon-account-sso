@@ -1,10 +1,10 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { SwapService } from './swap.service';
-import { ProviderRegistryService } from './provider-registry.service';
+import { Test, type TestingModule } from '@nestjs/testing';
+import type { GetStatusDto, PrepareTransactionDto } from '../dto/swap.dto';
+import { ErrorCodes, SwapAPIError } from '../errors/swap-api.error';
+import { TransactionStatus, TransactionType } from '../types/common.types';
 import { LoggingService } from './logging.service';
-import { TransactionType, TransactionStatus } from '../types/common.types';
-import { PrepareTransactionDto, GetStatusDto } from '../dto/swap.dto';
-import { SwapAPIError, ErrorCodes } from '../errors/swap-api.error';
+import { ProviderRegistryService } from './provider-registry.service';
+import { SwapService } from './swap.service';
 
 describe('SwapService', () => {
   let service: SwapService;
@@ -24,7 +24,7 @@ describe('SwapService', () => {
   beforeEach(async () => {
     // Clear all mocks
     jest.clearAllMocks();
-    
+
     const mockProviderRegistryService = {
       selectBestProvider: jest.fn().mockReturnValue(mockProvider),
       getProvider: jest.fn().mockReturnValue(mockProvider),
@@ -41,7 +41,13 @@ describe('SwapService', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        SwapService,
+        {
+          provide: SwapService,
+          useFactory: (providerRegistry: ProviderRegistryService, loggingService: LoggingService) => {
+            return new SwapService(providerRegistry, loggingService);
+          },
+          inject: [ProviderRegistryService, LoggingService],
+        },
         {
           provide: ProviderRegistryService,
           useValue: mockProviderRegistryService,
@@ -103,18 +109,30 @@ describe('SwapService', () => {
 
     it('should handle provider selection errors', async () => {
       mockProviderRegistry.selectBestProvider.mockImplementation(() => {
-        throw new SwapAPIError('No compatible provider found', ErrorCodes.UNSUPPORTED_ROUTE, 'test');
+        throw new SwapAPIError(
+          'No compatible provider found',
+          ErrorCodes.UNSUPPORTED_ROUTE,
+          'test',
+        );
       });
 
-      await expect(service.prepareTransaction(mockDto)).rejects.toThrow(SwapAPIError);
+      await expect(service.prepareTransaction(mockDto)).rejects.toThrow(
+        SwapAPIError,
+      );
     });
 
     it('should handle provider transaction preparation errors', async () => {
       mockProvider.prepareTransaction.mockRejectedValue(
-        new SwapAPIError('Provider error', ErrorCodes.PROVIDER_ERROR, 'test-provider')
+        new SwapAPIError(
+          'Provider error',
+          ErrorCodes.PROVIDER_ERROR,
+          'test-provider',
+        ),
       );
 
-      await expect(service.prepareTransaction(mockDto)).rejects.toThrow(SwapAPIError);
+      await expect(service.prepareTransaction(mockDto)).rejects.toThrow(
+        SwapAPIError,
+      );
     });
 
     it('should pass through paymaster options', async () => {
@@ -145,9 +163,12 @@ describe('SwapService', () => {
 
       await service.prepareTransaction(dtoWithPaymaster);
 
-      const prepareTransactionCall = mockProvider.prepareTransaction.mock.calls[0][0];
+      const prepareTransactionCall =
+        mockProvider.prepareTransaction.mock.calls[0][0];
       expect(prepareTransactionCall.options).toBeDefined();
-      expect(prepareTransactionCall.options.paymaster).toBe('0x1234567890123456789012345678901234567890');
+      expect(prepareTransactionCall.options.paymaster).toBe(
+        '0x1234567890123456789012345678901234567890',
+      );
       expect(prepareTransactionCall.options.paymasterInput).toBe('0xabcdef...');
     });
   });
@@ -193,7 +214,9 @@ describe('SwapService', () => {
       const result = await service.getTransactionStatus(mockStatusDto);
 
       expect(result).toEqual(mockStatusResponse);
-      expect(mockProviderRegistry.getProvider).toHaveBeenCalledWith('test-provider');
+      expect(mockProviderRegistry.getProvider).toHaveBeenCalledWith(
+        'test-provider',
+      );
       expect(mockProvider.getTransactionStatus).toHaveBeenCalled();
     });
 
@@ -231,7 +254,9 @@ describe('SwapService', () => {
 
       mockProviderRegistry.getEnabledProviders.mockReturnValue([]);
 
-      await expect(service.getTransactionStatus(dtoWithoutProvider)).rejects.toThrow(SwapAPIError);
+      await expect(
+        service.getTransactionStatus(dtoWithoutProvider),
+      ).rejects.toThrow(SwapAPIError);
     });
 
     it('should throw error when transaction not found in any provider', async () => {
@@ -253,20 +278,32 @@ describe('SwapService', () => {
       mockProvider.getTransactionStatus.mockResolvedValue(notFoundResponse);
       mockProviderRegistry.getEnabledProviders.mockReturnValue([mockProvider]);
 
-      await expect(service.getTransactionStatus(dtoWithoutProvider)).rejects.toThrow(SwapAPIError);
+      await expect(
+        service.getTransactionStatus(dtoWithoutProvider),
+      ).rejects.toThrow(SwapAPIError);
     });
 
     it('should handle provider errors in status check', async () => {
       mockProvider.getTransactionStatus.mockRejectedValue(
-        new SwapAPIError('Transaction not found', ErrorCodes.TRANSACTION_NOT_FOUND, 'test-provider')
+        new SwapAPIError(
+          'Transaction not found',
+          ErrorCodes.TRANSACTION_NOT_FOUND,
+          'test-provider',
+        ),
       );
 
-      await expect(service.getTransactionStatus(mockStatusDto)).rejects.toThrow(SwapAPIError);
+      await expect(service.getTransactionStatus(mockStatusDto)).rejects.toThrow(
+        SwapAPIError,
+      );
     });
 
     it('should handle provider not found error', async () => {
       mockProviderRegistry.getProvider.mockImplementation(() => {
-        throw new SwapAPIError('Provider not found', ErrorCodes.PROVIDER_NOT_FOUND, 'unknown');
+        throw new SwapAPIError(
+          'Provider not found',
+          ErrorCodes.PROVIDER_NOT_FOUND,
+          'unknown',
+        );
       });
 
       const dtoWithUnknownProvider = {
@@ -274,7 +311,9 @@ describe('SwapService', () => {
         provider: 'unknown-provider',
       };
 
-      await expect(service.getTransactionStatus(dtoWithUnknownProvider)).rejects.toThrow(SwapAPIError);
+      await expect(
+        service.getTransactionStatus(dtoWithUnknownProvider),
+      ).rejects.toThrow(SwapAPIError);
     });
   });
 

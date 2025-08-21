@@ -1,9 +1,9 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import {
-  bigintSerializer,
   bigintDeserializer,
-  serializeForAPI,
+  bigintSerializer,
   deserializeFromAPI,
+  serializeForAPI,
 } from '../serializers';
 
 describe('Serializers', () => {
@@ -38,7 +38,10 @@ describe('Serializers', () => {
 
   describe('bigintDeserializer', () => {
     it('should convert large numeric strings to bigint', () => {
-      const result = bigintDeserializer('amount', '123456789012345678901234567890');
+      const result = bigintDeserializer(
+        'amount',
+        '123456789012345678901234567890',
+      );
       expect(result).toBe(BigInt('123456789012345678901234567890'));
       expect(typeof result).toBe('bigint');
     });
@@ -66,20 +69,28 @@ describe('Serializers', () => {
 
     it('should handle edge cases for numeric strings', () => {
       // Exactly 15 characters - should stay string
-      expect(bigintDeserializer('medium', '123456789012345')).toBe('123456789012345');
-      
+      expect(bigintDeserializer('medium', '123456789012345')).toBe(
+        '123456789012345',
+      );
+
       // 16 characters - should become bigint
       const result = bigintDeserializer('large', '1234567890123456');
       expect(result).toBe(BigInt('1234567890123456'));
     });
 
     it('should handle invalid bigint strings gracefully', () => {
-      const result = bigintDeserializer('invalid', '123abc456789012345678901234567890');
+      const result = bigintDeserializer(
+        'invalid',
+        '123abc456789012345678901234567890',
+      );
       expect(result).toBe('123abc456789012345678901234567890');
     });
 
     it('should handle strings with leading zeros', () => {
-      const result = bigintDeserializer('zero-padded', '0001234567890123456789');
+      const result = bigintDeserializer(
+        'zero-padded',
+        '0001234567890123456789',
+      );
       expect(result).toBe(BigInt('0001234567890123456789'));
     });
   });
@@ -289,9 +300,15 @@ describe('Serializers', () => {
       const serialized = serializeForAPI(complexData);
       const deserialized = deserializeFromAPI(serialized);
 
-      expect(deserialized.level1.level2.level3.bigValue).toBe(BigInt('999999999999999999'));
-      expect(deserialized.level1.level2.level3.array[0].amount).toBe(BigInt('123456789012345678'));
-      expect(deserialized.level1.level2.level3.array[1].amount).toBe(BigInt('987654321098765432'));
+      expect(deserialized.level1.level2.level3.bigValue).toBe(
+        BigInt('999999999999999999'),
+      );
+      expect(deserialized.level1.level2.level3.array[0].amount).toBe(
+        BigInt('123456789012345678'),
+      );
+      expect(deserialized.level1.level2.level3.array[1].amount).toBe(
+        BigInt('987654321098765432'),
+      );
     });
 
     it('should preserve type information correctly', () => {

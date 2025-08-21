@@ -5,7 +5,7 @@ describe('LoggingService', () => {
 
   beforeEach(() => {
     service = new LoggingService();
-    
+
     // Mock the internal logger to prevent actual logging
     (service as any).logger = {
       error: jest.fn(),
@@ -24,7 +24,7 @@ describe('LoggingService', () => {
 
       expect((service as any).logger.error).toHaveBeenCalledWith(
         `Provider ${providerId} error: ${errorMessage}`,
-        metadata
+        metadata,
       );
     });
 
@@ -36,7 +36,7 @@ describe('LoggingService', () => {
 
       expect((service as any).logger.error).toHaveBeenCalledWith(
         `Provider ${providerId} error: ${errorMessage}`,
-        undefined
+        undefined,
       );
     });
 
@@ -48,7 +48,7 @@ describe('LoggingService', () => {
 
       expect((service as any).logger.error).toHaveBeenCalledWith(
         `Provider ${providerId} error: `,
-        undefined
+        undefined,
       );
     });
 
@@ -70,7 +70,7 @@ describe('LoggingService', () => {
 
       expect((service as any).logger.error).toHaveBeenCalledWith(
         `Provider ${providerId} error: ${errorMessage}`,
-        metadata
+        metadata,
       );
     });
   });
@@ -85,7 +85,7 @@ describe('LoggingService', () => {
 
       expect((service as any).logger.log).toHaveBeenCalledWith(
         `Provider ${providerId}: ${message}`,
-        metadata
+        metadata,
       );
     });
 
@@ -97,7 +97,7 @@ describe('LoggingService', () => {
 
       expect((service as any).logger.log).toHaveBeenCalledWith(
         `Provider ${providerId}: ${message}`,
-        undefined
+        undefined,
       );
     });
 
@@ -109,7 +109,7 @@ describe('LoggingService', () => {
 
       expect((service as any).logger.log).toHaveBeenCalledWith(
         `Provider ${providerId}: `,
-        undefined
+        undefined,
       );
     });
 
@@ -132,7 +132,7 @@ describe('LoggingService', () => {
 
       expect((service as any).logger.log).toHaveBeenCalledWith(
         `Provider ${providerId}: ${message}`,
-        metadata
+        metadata,
       );
     });
 
@@ -149,7 +149,7 @@ describe('LoggingService', () => {
 
       expect((service as any).logger.log).toHaveBeenCalledWith(
         `Provider ${providerId}: ${message}`,
-        metadata
+        metadata,
       );
     });
   });
@@ -158,24 +158,24 @@ describe('LoggingService', () => {
     it('should log provider debug with providerId and message', () => {
       const providerId = 'testProvider';
       const message = 'Test debug message';
-      
+
       service.logProviderDebug(providerId, message);
-      
+
       expect((service as any).logger.debug).toHaveBeenCalledWith(
         `Provider ${providerId}: ${message}`,
-        undefined
+        undefined,
       );
     });
 
     it('should log provider debug without metadata', () => {
       const providerId = 'testProvider';
       const message = 'Debug message without metadata';
-      
+
       service.logProviderDebug(providerId, message);
-      
+
       expect((service as any).logger.debug).toHaveBeenCalledWith(
         `Provider ${providerId}: ${message}`,
-        undefined
+        undefined,
       );
     });
 
@@ -183,12 +183,12 @@ describe('LoggingService', () => {
       const providerId = 'testProvider';
       const message = 'Debug with metadata';
       const metadata = { requestId: '12345', chainId: 1 };
-      
+
       service.logProviderDebug(providerId, message, metadata);
-      
+
       expect((service as any).logger.debug).toHaveBeenCalledWith(
         `Provider ${providerId}: ${message}`,
-        metadata
+        metadata,
       );
     });
   });
@@ -196,19 +196,25 @@ describe('LoggingService', () => {
   describe('logDebug', () => {
     it('should log general debug message', () => {
       const message = 'General debug message';
-      
+
       service.logDebug(message);
-      
-      expect((service as any).logger.debug).toHaveBeenCalledWith(message, undefined);
+
+      expect((service as any).logger.debug).toHaveBeenCalledWith(
+        message,
+        undefined,
+      );
     });
 
     it('should log general debug message with metadata', () => {
       const message = 'Debug with metadata';
       const metadata = { userId: 'user123', action: 'swap' };
-      
+
       service.logDebug(message, metadata);
-      
-      expect((service as any).logger.debug).toHaveBeenCalledWith(message, metadata);
+
+      expect((service as any).logger.debug).toHaveBeenCalledWith(
+        message,
+        metadata,
+      );
     });
   });
 
