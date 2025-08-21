@@ -12,7 +12,6 @@ import {
   trackSigningRequestReceived,
   trackSigningRequestResult,
 } from '@/lib/analytics';
-import { serverLog } from '@/lib/server-log';
 import { windowService } from '@/service/window.service';
 
 export default function SigningRequestView() {
@@ -20,7 +19,7 @@ export default function SigningRequestView() {
   const { incoming, typedDataSigning, messageSigning } =
     MainStateMachineContext.useSelector((state) => state.context.requests);
   const actorRef = MainStateMachineContext.useActorRef();
-  const { isSigning, signTypeData, signMessage } = useSignature();
+  const { isSigning, signTypeData, signMessage, signingError } = useSignature();
 
   // Track signing request received
   useEffect(() => {
@@ -120,7 +119,6 @@ export default function SigningRequestView() {
                   },
                 };
 
-                serverLog(`🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥 signResponse ${signature}`);
                 windowService.sendMessage(signResponse);
                 actorRef.send({ type: 'ACCEPT' });
               }
@@ -138,6 +136,11 @@ export default function SigningRequestView() {
             'Sign'
           )}
         </Button>
+        {signingError && (
+          <p className="text-red-500 text-xs whitespace-pre-wrap break-words line-clamp-3">
+            {signingError}
+          </p>
+        )}
       </div>
     </div>
   );

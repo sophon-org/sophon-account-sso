@@ -1,7 +1,12 @@
 import type { Address, TypedDataDefinition } from 'viem';
 import { env } from '@/env';
 
-export const requestNonce = async (address: string) => {
+export const requestNonce = async (
+  address: string,
+  partnerId: string,
+  fields: string[],
+  userId?: string,
+) => {
   const response = await fetch(
     `${env.NEXT_PUBLIC_AUTH_SERVER_ENDPOINT}/auth/nonce`,
     {
@@ -10,7 +15,7 @@ export const requestNonce = async (address: string) => {
         // Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ address }),
+      body: JSON.stringify({ address, partnerId, fields, userId }),
     },
   );
 
@@ -36,11 +41,10 @@ export const verifyAuthorization = async (
     {
       method: 'POST',
       headers: {
-        // Accept: 'application/json',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        typedData: JSON.stringify(typedData),
+        typedData,
         signature,
         nonceToken,
         rememberMe,

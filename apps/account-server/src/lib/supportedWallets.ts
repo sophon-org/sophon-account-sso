@@ -6,6 +6,11 @@ export interface SupportedWallet {
 
 export const SUPPORTED_WALLETS: SupportedWallet[] = [
   {
+    name: 'WalletConnect',
+    icon: '/images/supported-wallets/wallet-connect.png',
+    downloadUrl: 'https://reown.com/',
+  },
+  {
     name: 'MetaMask',
     icon: '/images/supported-wallets/metamask.png',
     downloadUrl: 'https://metamask.io/en-GB/download',

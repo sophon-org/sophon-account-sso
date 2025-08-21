@@ -1,5 +1,5 @@
 import { useConnectWithOtp } from '@dynamic-labs/sdk-react-core';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { MainStateMachineContext } from '@/context/state-machine-context';
 import {
   trackAuthCompleted,
@@ -9,6 +9,7 @@ import {
 
 export function useOTPConnect() {
   const actorRef = MainStateMachineContext.useActorRef();
+  const [error, setError] = useState<string | null>(null);
 
   const { connectWithEmail, verifyOneTimePassword, retryOneTimePassword } =
     useConnectWithOtp();
@@ -31,6 +32,7 @@ export function useOTPConnect() {
           error instanceof Error
             ? error.message
             : 'Email authentication failed';
+        setError(errorMessage);
         console.error('❌ Email authentication failed:', error);
         trackAuthFailed('email', errorMessage, 'otp_request');
         actorRef.send({
@@ -58,6 +60,7 @@ export function useOTPConnect() {
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : 'OTP verification failed';
+        setError(errorMessage);
         console.error('❌ OTP verification failed:', error);
         trackAuthFailed('email', errorMessage, 'otp_verification');
         actorRef.send({ type: 'SET_ERROR', error: 'OTP verification failed' });
@@ -71,6 +74,9 @@ export function useOTPConnect() {
       await retryOneTimePassword();
     } catch (error) {
       console.error('❌ OTP resend failed:', error);
+      const errorMessage =
+        error instanceof Error ? error.message : 'OTP resend failed';
+      setError(errorMessage);
       actorRef.send({ type: 'SET_ERROR', error: 'OTP resend failed' });
     }
   }, [retryOneTimePassword, actorRef]);
@@ -79,5 +85,6 @@ export function useOTPConnect() {
     requestOTP,
     verifyOTP,
     resendOTP,
+    otpError: error,
   };
 }

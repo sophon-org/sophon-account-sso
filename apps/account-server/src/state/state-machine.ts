@@ -2,10 +2,12 @@ import { assign, createMachine } from 'xstate';
 import type {
   AuthenticationRequest,
   IncomingRequest,
+  LogoutRequest,
   MessageSigningRequest,
   TransactionRequest,
   TypedDataSigningRequest,
 } from '@/types/auth';
+import type { Scopes } from '@/types/data-scopes';
 
 const defaultContext = {
   error: undefined as string | undefined,
@@ -14,12 +16,23 @@ const defaultContext = {
   email: undefined as string | undefined,
   requests: {
     incoming: null as IncomingRequest | null | undefined,
-    session: null as unknown | null | undefined,
+    session: null as undefined | null,
     typedDataSigning: null as TypedDataSigningRequest | null | undefined,
     messageSigning: null as MessageSigningRequest | null | undefined,
     transaction: null as TransactionRequest | null | undefined,
     authentication: null as AuthenticationRequest | null | undefined,
+    logout: null as LogoutRequest | null | undefined,
   },
+  scopes: {
+    profile: false,
+    email: false,
+    google: false,
+    discord: false,
+    telegram: false,
+    x: false,
+  } as Record<Scopes, boolean>,
+  partnerId: undefined as string | undefined,
+  isWalletConnectActive: false as boolean,
 };
 
 export const userWalletRequestStateMachine = createMachine({
@@ -52,6 +65,18 @@ export const userWalletRequestStateMachine = createMachine({
         return {
           ...context,
           error: event.error,
+        };
+      }),
+    },
+    SET_ACCEPTED_SCOPES: {
+      actions: assign(({ context, event }) => {
+        return {
+          ...context,
+          scopes: {
+            ...context.scopes,
+            ...event.scopes,
+          },
+          partnerId: event.partnerId,
         };
       }),
     },
@@ -125,17 +150,28 @@ export const userWalletRequestStateMachine = createMachine({
         selectEOAWallet: {
           on: {
             CANCEL: {
+              target: '#userWalletRequestStateMachine.completed',
+              actions: 'clearRequests',
+            },
+            GO_BACK: {
               target: 'idle',
             },
             WALLET_SELECTED: {
               target: 'started',
+            },
+            WALLET_CONNECT_SELECTED: {
+              actions: assign({ isWalletConnectActive: true }),
+            },
+            WALLET_CONNECT_CANCELLED: {
+              actions: assign({ isWalletConnectActive: false }),
             },
           },
         },
         waitForEmailOTP: {
           on: {
             CANCEL: {
-              target: 'idle',
+              target: '#userWalletRequestStateMachine.completed',
+              actions: 'clearRequests',
             },
             OTP_VERIFIED: {
               target: 'started',
@@ -239,6 +275,13 @@ export const userWalletRequestStateMachine = createMachine({
             return context.isAuthenticated && !!context.requests.authentication;
           },
           target: 'incoming-authentication',
+          actions: ['clearScopes'],
+        },
+        {
+          guard: ({ context }) => {
+            return !!context.requests.logout;
+          },
+          target: 'incoming-logout',
         },
       ],
     },
@@ -287,6 +330,29 @@ export const userWalletRequestStateMachine = createMachine({
         CANCEL: {
           target: 'completed',
           actions: 'clearRequests',
+        },
+      },
+    },
+    'incoming-logout': {
+      on: {
+        ACCEPT: {
+          target: 'completed',
+          actions: 'clearRequests',
+        },
+        CANCEL: {
+          target: 'completed',
+          actions: 'clearRequests',
+        },
+        LOGOUT: {
+          target: 'login-required',
+          actions: [
+            'clearRequests',
+            assign(({ context }) => ({
+              ...context,
+              isAuthenticated: false,
+              isLoadingResources: false,
+            })),
+          ],
         },
       },
     },

@@ -8,11 +8,13 @@
     "@sophon-labs/account-eip6963": "1.0.0",
     "@sophon-labs/account-message-bridge": "1.0.0",
     "@sophon-labs/account-react-native": "1.0.0",
-    "@sophon-labs/account-react": "1.0.0"
+    "@sophon-labs/account-react": "1.0.0",
+    "@sophon-labs/account-api-sdk": "1.0.0"
   },
   "changesets": [
     "big-poems-beg",
     "clean-moments-push",
+    "clear-breads-see",
     "clever-parents-fold",
     "cuddly-baboons-beg",
     "cuddly-dingos-build",
@@ -26,6 +28,7 @@
     "few-needles-cough",
     "free-mangos-pump",
     "full-meals-sink",
+    "gold-pens-learn",
     "nice-rules-wave",
     "puny-years-talk",
     "purple-mugs-make",
@@ -35,9 +38,13 @@
     "slimy-mammals-know",
     "smooth-adults-beam",
     "solid-tires-fetch",
+    "ten-laws-learn",
+    "ten-teeth-share",
+    "tired-clouds-lick",
     "tricky-crews-beg",
     "true-snakes-marry",
     "wicked-showers-listen",
-    "wise-buses-burn"
+    "wise-buses-burn",
+    "witty-singers-joke"
   ]
 }

@@ -1,5 +1,41 @@
 # @sophon-labs/account-core
 
+## 2.0.0-next.33
+
+### Patch Changes
+
+- Updating sdk-api package generation for more compatibility
+
+## 2.0.0-next.32
+
+### Patch Changes
+
+- Updating polyfills
+
+## 2.0.0-next.31
+
+### Patch Changes
+
+- Updating polyfills
+
+## 2.0.0-next.30
+
+### Patch Changes
+
+- Releasing API SDK
+
+## 2.0.0-next.29
+
+### Patch Changes
+
+- Social login fix
+
+## 2.0.0-next.28
+
+### Patch Changes
+
+- Visual and flows changes + version updates
+
 ## 2.0.0-next.27
 
 ### Patch Changes

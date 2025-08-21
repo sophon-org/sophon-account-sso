@@ -19,6 +19,7 @@ import { useAccountContext } from './useAccountContext';
 export const useSignature = () => {
   const { account } = useAccountContext();
   const [isSigning, setIsSigning] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { address: connectedAddress } = useAccount();
   const { data: walletClient } = useWalletClient();
   const { primaryWallet } = useDynamicContext();
@@ -156,6 +157,10 @@ export const useSignature = () => {
       }
 
       return signature;
+    } catch (error) {
+      console.error('Signing error:', error);
+      setError(error instanceof Error ? error.message : 'Signing error');
+      throw error;
     } finally {
       setIsSigning(false);
     }
@@ -267,6 +272,10 @@ export const useSignature = () => {
       }
 
       return signature;
+    } catch (error) {
+      console.error('Signing error:', error);
+      setError(error instanceof Error ? error.message : 'Signing error');
+      throw error;
     } finally {
       setIsSigning(false);
     }
@@ -276,5 +285,6 @@ export const useSignature = () => {
     signTypeData,
     signMessage,
     isSigning,
+    signingError: error,
   };
 };

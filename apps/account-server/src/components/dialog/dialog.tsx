@@ -31,7 +31,7 @@ export const DialogHeader = ({
     sendMessage('smart-contract.logout', null);
   };
   return (
-    <div className="flex justify-between items-center p-2 min-h-16">
+    <div className="flex justify-between items-center py-2 px-6 min-h-16">
       {!!onBack && (
         <button
           type="button"
@@ -136,7 +136,9 @@ export function Dialog({
           'linear-gradient(180deg, rgba(255, 255, 255, 0.00) 0%, #FFF 75%), url(/images/skybg.webp) lightgray -46.312px 0px / 395.062% 100% no-repeat',
       }}
     >
-      <div className={cn('mx-auto h-full relative w-[360px] flex flex-col')}>
+      <div
+        className={cn('mx-auto h-full relative max-w-[360px] flex flex-col')}
+      >
         <DialogHeader
           title={title}
           onBack={onBack}

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { parseEther } from 'viem';
+import { erc20Abi, parseEther, parseUnits } from 'viem';
 import { sophonTestnet } from 'viem/chains';
 import {
   useAccount,
@@ -10,7 +10,9 @@ import {
   useSendTransaction,
   useSignMessage,
   useSignTypedData,
+  useWriteContract,
 } from 'wagmi';
+import { nftAbi } from '@/abi/nft';
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
@@ -31,9 +33,26 @@ export default function Home() {
     error: signError,
   } = useSignTypedData();
   const { sendTransaction, isPending: isSendPending } = useSendTransaction();
+  const {
+    writeContract,
+    isPending: isWriteContractPending,
+    data: writeContractData,
+  } = useWriteContract();
 
   useEffect(() => {
     setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('message', (event) => {
+      if (event.origin !== 'http://localhost:3000') {
+        return;
+      }
+
+      if (event.data.type === 'token') {
+        console.log('token', event.data.payload);
+      }
+    });
   }, []);
 
   // Prevent hydration mismatch
@@ -88,6 +107,27 @@ export default function Home() {
       to: '0x0d94c4DBE58f6FE1566A7302b4E4C3cD03744626',
       value: parseEther('0.001'),
       data: '0x',
+    });
+  };
+
+  const handleERC20Transfer = () => {
+    writeContract({
+      address: '0xE70a7d8563074D6510F550Ba547874C3C2a6F81F', // MOCK DAI contract
+      abi: erc20Abi,
+      functionName: 'transfer',
+      args: [
+        '0x0d94c4DBE58f6FE1566A7302b4E4C3cD03744626' as `0x${string}`,
+        parseUnits('1', 18),
+      ],
+    });
+  };
+
+  const mint = () => {
+    writeContract({
+      address: '0xbc812793ddc7570b96A5b0A520eB0A6c07c06a6a', // MOCK NFT contract
+      abi: nftAbi,
+      functionName: 'claim',
+      args: [0o000],
     });
   };
 
@@ -178,7 +218,39 @@ export default function Home() {
                     marginRight: '10px',
                   }}
                 >
-                  {isSignPending ? 'Sending...' : 'Send Transaction'}
+                  {isSignPending ? 'Sending...' : 'Send SOPH'}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleERC20Transfer}
+                  disabled={isWriteContractPending}
+                  style={{
+                    backgroundColor: isSignPending ? '#94a3b8' : '#059669',
+                    color: 'white',
+                    border: 'none',
+                    padding: '8px 16px',
+                    borderRadius: '4px',
+                    cursor: isSignPending ? 'not-allowed' : 'pointer',
+                    marginRight: '10px',
+                  }}
+                >
+                  {isWriteContractPending ? 'Sending...' : 'Send ERC20'}
+                </button>
+                <button
+                  type="button"
+                  onClick={mint}
+                  disabled={isWriteContractPending}
+                  style={{
+                    backgroundColor: isSignPending ? '#94a3b8' : '#059669',
+                    color: 'white',
+                    border: 'none',
+                    padding: '8px 16px',
+                    borderRadius: '4px',
+                    cursor: isSignPending ? 'not-allowed' : 'pointer',
+                    marginRight: '10px',
+                  }}
+                >
+                  {isWriteContractPending ? 'Sending...' : 'Mint NFT'}
                 </button>
                 <button
                   type="button"
@@ -252,6 +324,14 @@ export default function Home() {
                   </p>
                   <code style={{ wordBreak: 'break-all', color: '#374151' }}>
                     {messageData}
+                  </code>
+                </div>
+              )}
+              {writeContractData && (
+                <div style={{ marginTop: '10px' }}>
+                  <p>Write Contract Data:</p>
+                  <code style={{ wordBreak: 'break-all', color: '#374151' }}>
+                    {writeContractData}
                   </code>
                 </div>
               )}

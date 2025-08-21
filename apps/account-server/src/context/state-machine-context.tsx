@@ -55,7 +55,22 @@ export const MainStateMachineContextProvider = ({
                 transaction: null,
                 session: null,
                 authentication: null,
+                logout: null,
               },
+            };
+          }),
+          clearScopes: assign(({ context }) => {
+            return {
+              ...context,
+              scopes: {
+                profile: false,
+                email: false,
+                google: false,
+                discord: false,
+                telegram: false,
+                x: false,
+              },
+              partnerId: undefined,
             };
           }),
           finishFlow: () => {

@@ -1,11 +1,15 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsBoolean, IsOptional, IsString } from "class-validator";
-import type { Address, Hash } from "viem";
+import { IsBoolean, IsObject, IsOptional, IsString } from "class-validator";
+import type { Address, Hash, TypedDataDefinition } from "viem";
 
 export class VerifySiweDto {
-	@ApiProperty()
-	@IsString()
-	typedData: string;
+	@ApiProperty({
+		type: "object",
+		description: "EIP-712 typed data",
+		additionalProperties: true,
+	})
+	@IsObject()
+	typedData: TypedDataDefinition;
 
 	@ApiProperty()
 	@IsString()

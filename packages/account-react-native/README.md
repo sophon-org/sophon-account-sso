@@ -10,11 +10,11 @@ Before you start, you need these libraries:
 # Passkey requirements
 npm install @simplewebauthn/browser @simplewebauthn/server
 
-# Pollyfills
-npm install expo-crypto expo-standard-web-crypto react-native-url-polyfill text-encoding-polyfill
+# Expo packages
+npx expo install expo-standard-web-crypto expo-crypto expo-network
 
 # Overall native requirements
-npm install react-native-mmkv react-native-webview
+npm install react-native-mmkv react-native-webview text-encoding-polyfill
 ```
 
 After that, you are ready to install our SDK:

@@ -60,6 +60,19 @@ export const BLOCK_EXPLORER_URL_BY_CHAIN: Record<ChainId, string> = {
 export const BLOCK_EXPLORER_URL =
   BLOCK_EXPLORER_URL_BY_CHAIN[env.NEXT_PUBLIC_CHAIN_ID.toString() as ChainId];
 
+export const BLOCK_EXPLORER_API_URL_BY_CHAIN: Record<ChainId, string> = {
+  '531050104': 'https://block-explorer-api.testnet.sophon.xyz',
+  '50104': 'https://api-explorer.sophon.xyz/',
+};
+
+/**
+ * Helper to get the block explorer url for the current chain.
+ */
+export const BLOCK_EXPLORER_API_URL =
+  BLOCK_EXPLORER_API_URL_BY_CHAIN[
+    env.NEXT_PUBLIC_CHAIN_ID.toString() as ChainId
+  ];
+
 /**
  * Helper to get the local storage key for the account.
  */

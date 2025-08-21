@@ -2,7 +2,14 @@ import {
   AccountServerURL,
   type SophonNetworkType,
 } from '@sophon-labs/account-core';
-import { createContext, useCallback, useMemo, useState } from 'react';
+import { addNetworkStateListener, getNetworkStateAsync } from 'expo-network';
+import {
+  createContext,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import {
   type Address,
   type Chain,
@@ -11,8 +18,9 @@ import {
   type WalletClient,
 } from 'viem';
 import { sophon, sophonTestnet } from 'viem/chains';
+import { erc7846Actions } from 'viem/experimental';
 import type { WalletProvider } from 'zksync-sso';
-import { SophonMainView } from '../components';
+import { SophonMainView, type SophonMainViewProps } from '../components';
 import { useUIEventHandler } from '../messaging';
 import {
   createWalletProvider,
@@ -21,6 +29,7 @@ import {
 } from '../provider';
 
 export interface SophonContextConfig {
+  partnerId: string;
   authServerUrl?: string;
   walletClient?: WalletClient;
   account?: SophonAccount;
@@ -29,12 +38,15 @@ export interface SophonContextConfig {
   provider?: WalletProvider;
   token?: string | null;
   disconnect: () => void;
+  hasInternet: boolean;
 }
 
 export const SophonContext = createContext<SophonContextConfig>({
+  partnerId: '',
   chain: sophonTestnet,
   setAccount: () => {},
   disconnect: () => {},
+  hasInternet: false,
 });
 
 export interface SophonAccount {
@@ -45,11 +57,31 @@ export const SophonContextProvider = ({
   children,
   network = 'testnet',
   authServerUrl,
+  partnerId,
+  insets,
 }: {
   children: React.ReactNode;
   network: SophonNetworkType;
   authServerUrl?: string;
+  partnerId: string;
+  insets?: SophonMainViewProps['insets'];
 }) => {
+  const [isConnected, setIsConnected] = useState(false);
+
+  useEffect(() => {
+    const listener = addNetworkStateListener(() => {
+      setTimeout(async () => {
+        const { isConnected, isInternetReachable } =
+          await getNetworkStateAsync();
+        setIsConnected(!!isConnected && !!isInternetReachable);
+      }, 500);
+    });
+
+    return () => {
+      listener.remove();
+    };
+  }, []);
+
   const serverUrl = useMemo(
     () => authServerUrl ?? AccountServerURL[network],
     [authServerUrl, network],
@@ -59,7 +91,6 @@ export const SophonContextProvider = ({
       ? JSON.parse(SophonAppStorage.getItem(StorageKeys.USER_ACCOUNT)!)
       : undefined,
   );
-  // const [token, setToken] = useState<string>();
   const chain = useMemo(
     () => (network === 'mainnet' ? sophon : sophonTestnet),
     [network],
@@ -97,12 +128,13 @@ export const SophonContextProvider = ({
         return await provider?.request({ method, params });
       },
     }),
-  });
+  }).extend(erc7846Actions());
 
-  const disconnect = useCallback(() => {
-    provider?.disconnect();
-    SophonAppStorage.clear();
-    setAccount(undefined);
+  const disconnect = useCallback(async () => {
+    await walletClient.disconnect();
+    // await provider?.disconnect();
+    // SophonAppStorage.clear();
+    // setAccount(undefined);
   }, [provider]);
 
   const contextValue = useMemo<SophonContextConfig>(
@@ -115,8 +147,20 @@ export const SophonContextProvider = ({
       setAccount: setAccountWithEffect,
       token,
       disconnect,
+      partnerId,
+      hasInternet: isConnected,
     }),
-    [network, serverUrl, walletClient, account, chain, token, disconnect],
+    [
+      network,
+      serverUrl,
+      walletClient,
+      account,
+      chain,
+      token,
+      disconnect,
+      partnerId,
+      isConnected,
+    ],
   );
 
   useUIEventHandler('logout', () => {
@@ -125,7 +169,12 @@ export const SophonContextProvider = ({
 
   return (
     <SophonContext.Provider value={contextValue}>
-      <SophonMainView authServerUrl={serverUrl} />
+      <SophonMainView
+        insets={insets}
+        authServerUrl={serverUrl}
+        partnerId={partnerId}
+        hasInternet={isConnected}
+      />
       {children}
     </SophonContext.Provider>
   );

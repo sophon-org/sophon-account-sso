@@ -1,6 +1,6 @@
 {
   "name": "@sophon-labs/account-react-native",
-  "version": "2.0.0-next.27",
+  "version": "2.0.0-next.33",
   "description": "Library to handle sophon account on react native environments",
   "main": "./dist/module/index.js",
   "types": "./dist/typescript/src/index.d.ts",
@@ -37,10 +37,11 @@
     "dev": "nodemon -e ts,tsx -w ./src -x 'yarn build'"
   },
   "dependencies": {
-    "@sophon-labs/account-core": "2.0.0-next.27",
-    "@sophon-labs/account-message-bridge": "2.0.0-next.27",
+    "@sophon-labs/account-core": "2.0.0-next.33",
+    "@sophon-labs/account-message-bridge": "2.0.0-next.33",
     "eventemitter3": "5.0.1",
-    "zksync-sso": "github:sophon-org/zksync-sso-preview#main"
+    "text-encoding-polyfill": "^0.6.7",
+    "zksync-sso": "0.4.1"
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^19.6.0",
@@ -50,29 +51,25 @@
     "@types/jest": "^29.5.5",
     "commitlint": "^19.6.1",
     "del-cli": "^5.1.0",
-    "expo-crypto": "^14.1.4",
-    "expo-standard-web-crypto": "^2.1.4",
+    "expo-network": "^7.1.5",
+    "expo-standard-web-crypto": "2.1.4",
     "jest": "^29.7.0",
     "prettier": "^3.0.3",
     "react-native": "0.76.6",
     "react-native-builder-bob": "^0.40.12",
     "react-native-mmkv": "^3.3.0",
-    "react-native-url-polyfill": "^2.0.0",
     "react-native-webview": "13.12.5",
     "release-it": "^17.10.0",
-    "text-encoding-polyfill": "^0.6.7",
     "tsup": "^8.5.0",
     "typescript": "^5.8.3",
     "viem": "^2.21.49"
   },
   "peerDependencies": {
-    "expo-crypto": ">=14.1.4",
-    "expo-standard-web-crypto": ">=2.1.4",
+    "expo-network": "*",
+    "expo-standard-web-crypto": "*",
     "react-native": ">=0.76.6",
     "react-native-mmkv": ">=3.3.0",
-    "react-native-url-polyfill": ">=2.0.0",
     "react-native-webview": ">=13.12.5",
-    "text-encoding-polyfill": "*",
     "viem": ">=2.21.49"
   },
   "jest": {

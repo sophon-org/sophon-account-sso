@@ -25,6 +25,13 @@ export function createSophonEIP1193Provider(
     },
   });
 
+  // Hydrate from storage (silent) so eth_accounts can return without UI.
+  const storageKey = `sophon.accounts.${network}`;
+  try {
+    const saved = localStorage.getItem(storageKey);
+    if (saved) currentAccounts = JSON.parse(saved);
+  } catch {}
+
   // Helper to make requests through the existing communicator
   // biome-ignore lint/suspicious/noExplicitAny: TODO: review this
   async function makeAuthRequest(method: string, params?: any): Promise<any> {
@@ -41,18 +48,25 @@ export function createSophonEIP1193Provider(
 
   return {
     async request({ method, params }) {
-      console.log('EIP-1193 request 8:', method, params);
+      console.log('EIP-1193 request:', method, params);
 
       switch (method) {
         case 'eth_requestAccounts':
           try {
             const result = await makeAuthRequest('eth_requestAccounts');
-            console.log('EIP-1193 request result:', result);
+            if (result?.content?.error) {
+              throw new Error(result?.content?.error?.message);
+            }
             const address = result?.content?.result?.account?.address;
             currentAccounts = address ? [address] : [];
 
             const listeners = eventListeners.get('accountsChanged') || [];
             listeners.forEach((listener) => listener(currentAccounts));
+
+            // Persist for silent restore on refresh
+            try {
+              localStorage.setItem(storageKey, JSON.stringify(currentAccounts));
+            } catch {}
 
             return currentAccounts;
           } catch (error) {
@@ -86,18 +100,52 @@ export function createSophonEIP1193Provider(
         case 'personal_sign': {
           console.log('EIP-1193 personal_sign:', method, params);
           const result = await makeAuthRequest('personal_sign', params);
+          if (result?.content?.error) {
+            throw new Error(result?.content?.error?.message);
+          }
           return result?.content?.result;
         }
 
         case 'eth_signTypedData_v4': {
           console.log('EIP-1193 eth_signTypedData_v4:', method, params);
           const result = await makeAuthRequest('eth_signTypedData_v4', params);
+          if (result?.content?.error) {
+            throw new Error(result?.content?.error?.message);
+          }
           return result?.content?.result;
         }
 
         case 'eth_sendTransaction': {
           console.log('EIP-1193 eth_sendTransaction:', method, params);
-          return await makeAuthRequest('eth_sendTransaction', params);
+          const result = await makeAuthRequest('eth_sendTransaction', params);
+          if (result?.content?.error) {
+            throw new Error(result?.content?.error?.message);
+          }
+          return result?.content?.result;
+        }
+
+        case 'wallet_revokePermissions': {
+          console.log('EIP-1193 wallet_revokePermissions:', method, params);
+
+          try {
+            // Clear local provider state
+            localStorage.removeItem(`sophon.accounts.${network}`);
+            currentAccounts = [];
+
+            // Send logout request to the account server popup
+            await makeAuthRequest('wallet_revokePermissions');
+          } catch (error) {
+            console.warn(
+              'Failed to send logout request to account server:',
+              error,
+            );
+          }
+
+          // Notify listeners about the account change
+          const listeners = eventListeners.get('accountsChanged') || [];
+          listeners.forEach((listener) => listener(currentAccounts));
+
+          return currentAccounts;
         }
 
         default:

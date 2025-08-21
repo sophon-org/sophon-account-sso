@@ -1,296 +1,203 @@
-import { isEthereumWallet } from '@dynamic-labs/ethereum';
-import { isZKsyncConnector } from '@dynamic-labs/ethereum-aa-zksync';
-import { useDynamicContext } from '@dynamic-labs/sdk-react-core';
-import { useEffect, useState } from 'react';
-import { formatEther, http } from 'viem';
-import { toAccount } from 'viem/accounts';
-import { useAccount, useWalletClient } from 'wagmi';
-import { createZksyncEcdsaClient } from 'zksync-sso/client/ecdsa';
-import { createZksyncPasskeyClient } from 'zksync-sso/client/passkey';
+import { useEffect } from 'react';
+import { IconSignature } from '@/components/icons/icon-signature';
 import { Loader } from '@/components/loader';
+import { Button } from '@/components/ui/button';
+import MessageContainer from '@/components/ui/messageContainer';
+import VerificationImage from '@/components/ui/verification-image';
 import { MainStateMachineContext } from '@/context/state-machine-context';
-import { useAccountContext } from '@/hooks/useAccountContext';
+import { useEnrichTransactionRequest } from '@/hooks/useEnrichTransactionRequest';
+import { useTransaction } from '@/hooks/useTransaction';
 import {
   trackDialogInteraction,
   trackTransactionRequest,
   trackTransactionResult,
 } from '@/lib/analytics';
-import { CONTRACTS, VIEM_CHAIN } from '@/lib/constants';
 import { windowService } from '@/service/window.service';
+import { TransactionType } from '@/types/auth';
 
 export default function TransactionRequestView() {
   const { incoming: incomingRequest, transaction: transactionRequest } =
     MainStateMachineContext.useSelector((state) => state.context.requests);
-  const { account } = useAccountContext();
   const actorRef = MainStateMachineContext.useActorRef();
-  const { address: connectedAddress } = useAccount();
-  const { data: walletClient } = useWalletClient();
-  const { primaryWallet } = useDynamicContext();
-  const [isSending, setIsSending] = useState(false);
-
+  const { enrichedTransactionRequest, isLoading, isEstimating } =
+    useEnrichTransactionRequest(transactionRequest);
+  const { isSending, sendTransaction, transactionError } = useTransaction();
+  console.log(enrichedTransactionRequest);
   // Track transaction request received
   useEffect(() => {
     if (transactionRequest) {
-      trackTransactionRequest(
-        windowService.name,
-        transactionRequest.value,
-        transactionRequest.paymaster,
-      );
+      trackTransactionRequest(windowService.name, transactionRequest.value);
     }
   }, [transactionRequest]);
 
-  if (!transactionRequest || !incomingRequest || !account) {
-    return <div>No transaction request or account present</div>;
+  if (!transactionRequest || !incomingRequest) {
+    return <div>No transaction request present</div>;
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-purple-600">
-            Send Transaction
-          </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Please review and confirm this transaction
-          </p>
-
-          <div className="mt-4 space-y-3">
-            <div className="p-3 bg-gray-50 rounded border text-left">
-              <p className="text-xs text-gray-500">To:</p>
-              <p className="text-sm font-mono break-all text-black">
-                {transactionRequest.to}
-              </p>
-            </div>
-
-            <div className="p-3 bg-gray-50 rounded border text-left">
-              <p className="text-xs text-gray-500">Value:</p>
-              <p className="text-sm text-black">
-                {transactionRequest.value && transactionRequest.value !== '0x0'
-                  ? `${formatEther(BigInt(transactionRequest.value))} SOPH`
-                  : '0 SOPH'}
-              </p>
-            </div>
-
-            {transactionRequest.data && transactionRequest.data !== '0x' && (
-              <div className="p-3 bg-gray-50 rounded border text-left">
-                <p className="text-xs text-gray-500">Data:</p>
-                <p className="text-xs font-mono break-all text-black">
-                  {transactionRequest.data}
-                </p>
-              </div>
-            )}
-
-            <div className="p-3 bg-purple-50 rounded border">
-              <p className="text-xs text-gray-500">From:</p>
-              <p className="text-sm font-mono break-all text-purple-600">
-                {transactionRequest.from}
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-4 space-y-2">
-            <button
-              disabled={isSending}
-              type="button"
-              onClick={async () => {
-                setIsSending(true);
-                const availableAddress =
-                  account.address || primaryWallet?.address;
-                if (!availableAddress) {
-                  throw new Error('No account address available');
-                }
-                try {
-                  const isEOAAccount = !account.owner.passkey;
-                  let txHash: string = '';
-                  if (primaryWallet && isEthereumWallet(primaryWallet)) {
-                    console.log('Sending transaction with Ethereum wallet...');
-                    try {
-                      if (isZKsyncConnector(primaryWallet.connector)) {
-                        const ecdsaClient =
-                          primaryWallet.connector.getAccountAbstractionProvider();
-
-                        txHash = await ecdsaClient.sendTransaction({
-                          to: transactionRequest.to as `0x${string}`,
-                          value: BigInt(transactionRequest.value || '0'),
-                          data:
-                            (transactionRequest.data as `0x${string}`) || '0x',
-                        });
-
-                        console.log('Transaction sent:', txHash);
-                      }
-                    } catch (error) {
-                      console.error('Transaction error:', error);
-                      throw error;
-                    }
-                  } else if (isEOAAccount) {
-                    console.log('Sending transaction with EOA...');
-                    const localAccount = toAccount({
-                      address: connectedAddress as `0x${string}`,
-                      async signMessage({ message }) {
-                        const signature = await walletClient?.signMessage({
-                          message,
-                        });
-                        if (!signature)
-                          throw new Error('Failed to sign message');
-                        return signature; // Now guaranteed to be Hex
-                      },
-                      async signTransaction(transaction) {
-                        const signature = await walletClient?.signTransaction(
-                          // @ts-expect-error - Type mismatch between viem account interface and wallet client
-                          transaction,
-                        );
-                        if (!signature)
-                          throw new Error('Failed to sign transaction');
-                        return signature;
-                      },
-                      async signTypedData(typedData) {
-                        const signature = await walletClient?.signTypedData(
-                          // @ts-expect-error - Type mismatch between viem account interface and wallet client
-                          typedData,
-                        );
-                        if (!signature)
-                          throw new Error('Failed to sign typed data');
-                        return signature;
-                      },
-                    });
-
-                    const client = await createZksyncEcdsaClient({
-                      address: account.address,
-                      owner: localAccount,
-                      chain: VIEM_CHAIN,
-                      transport: http(),
-                      contracts: {
-                        session: CONTRACTS.session,
-                      },
-                    });
-
-                    try {
-                      const gasEstimate = await client.estimateGas({
-                        to: transactionRequest.to as `0x${string}`,
-                        value: BigInt(transactionRequest.value || '0'),
-                        data:
-                          (transactionRequest.data as `0x${string}`) || '0x',
-                      });
-                      console.log('Gas estimate:', gasEstimate.toString());
-                    } catch (gasError) {
-                      console.error('Gas estimation failed:', gasError);
-                    }
-
-                    txHash = await client.sendTransaction({
-                      to: transactionRequest.to as `0x${string}`,
-                      value: BigInt(transactionRequest.value || '0'),
-                      data: (transactionRequest.data as `0x${string}`) || '0x',
-                    });
-                  } else {
-                    console.log('Sending transaction with Passkey...');
-                    if (!account.owner.passkey) {
-                      throw new Error('No passkey data available');
-                    }
-
-                    const client = createZksyncPasskeyClient({
-                      address: account.address,
-                      credentialPublicKey: account.owner.passkey,
-                      userName: account.username || 'Sophon User',
-                      userDisplayName: account.username || 'Sophon User',
-                      contracts: CONTRACTS,
-                      chain: VIEM_CHAIN,
-                      transport: http(),
-                    });
-
-                    try {
-                      const gasEstimate = await client.estimateGas({
-                        to: transactionRequest.to as `0x${string}`,
-                        value: BigInt(transactionRequest.value || '0'),
-                        data:
-                          (transactionRequest.data as `0x${string}`) || '0x',
-                      });
-                      console.log('Gas estimate:', gasEstimate.toString());
-                    } catch (gasError) {
-                      console.error('Gas estimation failed:', gasError);
-                    }
-
-                    txHash = await client.sendTransaction({
-                      to: transactionRequest.to as `0x${string}`,
-                      value: BigInt(transactionRequest.value || '0'),
-                      data: (transactionRequest.data as `0x${string}`) || '0x',
-                      /* paymaster: transactionRequest.paymaster as `0x${string}`,
-                      paymasterInput: getGeneralPaymasterInput({
-                        innerInput: "0x",
-                      }), */
-                    });
-                  }
-
-                  trackTransactionResult(true, txHash);
-
-                  if (windowService.isManaged() && incomingRequest) {
-                    const txResponse = {
-                      id: crypto.randomUUID(),
-                      requestId: incomingRequest.id,
-                      content: {
-                        result: txHash,
-                      },
-                    };
-
-                    windowService.sendMessage(txResponse);
-                    actorRef.send({ type: 'ACCEPT' });
-                  }
-                } catch (error) {
-                  console.error('Transaction failed:', error);
-
-                  // Track failed transaction
-                  const errorMessage =
-                    error instanceof Error
-                      ? error.message
-                      : 'Transaction failed';
-                  trackTransactionResult(false, undefined, errorMessage);
-                } finally {
-                  setIsSending(false);
-                }
-              }}
-              className="w-full px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
-            >
-              {isSending ? (
-                <Loader className="w-4 h-4 border-white border-r-transparent" />
-              ) : (
-                'Send Transaction'
-              )}
-            </button>
-
-            <button
-              type="button"
-              disabled={isSending}
-              onClick={() => {
-                trackTransactionResult(
-                  false,
-                  undefined,
-                  'User cancelled transaction',
-                );
-                trackDialogInteraction('transaction_request', 'cancel');
-
-                if (windowService.isManaged() && incomingRequest) {
-                  const signResponse = {
-                    id: crypto.randomUUID(),
-                    requestId: incomingRequest.id,
-                    content: {
-                      result: null,
-                      error: {
-                        message: 'User cancelled transaction',
-                        code: -32002,
-                      },
-                    },
-                  };
-
-                  windowService.sendMessage(signResponse);
-                  actorRef.send({ type: 'CANCEL' });
-                }
-              }}
-              className="w-full px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
+    <div className="text-center flex flex-col items-center justify-center gap-8 px-6">
+      <VerificationImage icon={<IconSignature className="w-24 h-24" />} />
+      <div className="flex flex-col items-center justify-center">
+        <h5 className="text-2xl font-bold">Transaction request</h5>
+        <p className="hidden">https://my.staging.sophon.xyz</p>
       </div>
+      <MessageContainer>
+        {isLoading ? (
+          <div className="flex items-center justify-center gap-2 w-full h-full">
+            <Loader className="w-8 h-8 border-white border-r-transparent" />
+          </div>
+        ) : enrichedTransactionRequest?.transactionType ===
+          TransactionType.SOPH ? (
+          // SOPH transaction display
+          <div className="text-sm text-black flex flex-col gap-1">
+            <p className="text-xs font-bold">From:</p>
+            <p className="text-sm text-black font-mono break-all">
+              {enrichedTransactionRequest?.from}
+            </p>
+            <p className="text-xs font-bold">To:</p>
+            <p className="text-sm font-mono break-all text-black">
+              {enrichedTransactionRequest?.recipient}
+            </p>
+            <p className="text-xs font-bold">Token:</p>
+            <p className="text-sm text-black">
+              {enrichedTransactionRequest?.token?.symbol}
+            </p>
+            <p className="text-xs font-bold">Amount:</p>
+            <p className="text-sm text-black">
+              {enrichedTransactionRequest?.displayValue}
+            </p>
+          </div>
+        ) : enrichedTransactionRequest?.transactionType ===
+          TransactionType.ERC20 ? (
+          // ERC20 transaction display
+          <div className="text-sm text-black flex flex-col gap-1">
+            <p className="text-xs font-bold">From:</p>
+            <p className="text-sm text-black font-mono break-all">
+              {enrichedTransactionRequest?.from}
+            </p>
+            <p className="text-xs font-bold">To:</p>
+            <p className="text-sm font-mono break-all text-black">
+              {enrichedTransactionRequest?.recipient}
+            </p>
+            <p className="text-xs font-bold">Token:</p>
+            <p className="text-sm text-black">
+              {enrichedTransactionRequest?.token?.symbol}
+            </p>
+            <p className="text-xs font-bold">Amount:</p>
+            <p className="text-sm text-black">
+              {enrichedTransactionRequest?.displayValue}
+            </p>
+          </div>
+        ) : enrichedTransactionRequest?.transactionType ===
+          TransactionType.CONTRACT ? (
+          // Contract transaction display
+          // Contract transaction display
+          <div className="text-sm text-black flex flex-col gap-3">
+            <div className="text-left">
+              <p className="text-sm font-bold">Interacting with</p>
+              <p className="text-sm text-black">
+                Sophon Guardian NFT @{' '}
+                {enrichedTransactionRequest?.recipient?.slice(0, 6)}...
+                {enrichedTransactionRequest?.recipient?.slice(-6)}
+              </p>
+            </div>
+
+            <div>
+              <p className="text-sm font-bold">
+                Executing "
+                {enrichedTransactionRequest?.decodedData?.functionName ||
+                  'Unknown'}
+                " with parameters
+              </p>
+              {enrichedTransactionRequest?.decodedData?.parameters?.map(
+                (param) => (
+                  <div key={param.name} className="text-sm text-black">
+                    <span className="font-mono">{param.name}:</span>{' '}
+                    {param.value}
+                  </div>
+                ),
+              )}
+            </div>
+
+            <div className="text-left">
+              <p className="text-sm text-black">
+                You are sending {enrichedTransactionRequest?.displayValue} SOPH
+                for this transaction to the contract above.
+              </p>
+            </div>
+          </div>
+        ) : (
+          // Default case for unknown transaction types
+          <div className="text-sm text-black">
+            <p>Unknown transaction type</p>
+          </div>
+        )}
+      </MessageContainer>
+
+      <div className="w-full flex justify-between">
+        <p className="text-xs font-bold">Estimated fee:</p>
+        {isEstimating && (
+          <Loader className="w-4 h-4 border-black border-r-transparent" />
+        )}
+        {!isEstimating && enrichedTransactionRequest?.fee && (
+          <p className="text-sm text-black">
+            {enrichedTransactionRequest?.fee} SOPH
+          </p>
+        )}
+        {enrichedTransactionRequest?.usePaymaster && (
+          <p className="text-sm text-black">Sponsored</p>
+        )}
+      </div>
+
+      <div className="flex items-center justify-center gap-2 w-full">
+        <Button
+          variant="transparent"
+          disabled={isSending}
+          onClick={() => {
+            trackTransactionResult(
+              false,
+              undefined,
+              'User cancelled transaction',
+            );
+            trackDialogInteraction('transaction_request', 'cancel');
+
+            if (windowService.isManaged() && incomingRequest) {
+              const signResponse = {
+                id: crypto.randomUUID(),
+                requestId: incomingRequest.id,
+                content: {
+                  result: null,
+                  error: {
+                    message: 'User cancelled transaction',
+                    code: -32002,
+                  },
+                },
+              };
+
+              windowService.sendMessage(signResponse);
+              actorRef.send({ type: 'CANCEL' });
+            }
+          }}
+        >
+          Cancel
+        </Button>
+        <Button
+          type="button"
+          disabled={isSending}
+          onClick={() => sendTransaction(transactionRequest, incomingRequest)}
+        >
+          {isSending ? (
+            <Loader className="w-4 h-4 border-white border-r-transparent" />
+          ) : (
+            'Approve'
+          )}
+        </Button>
+      </div>
+      {transactionError && (
+        <p className="text-red-500 text-xs whitespace-pre-wrap break-words line-clamp-3 text-left">
+          {transactionError}
+        </p>
+      )}
     </div>
   );
 }

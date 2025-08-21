@@ -121,7 +121,6 @@ const webViewWindowService: WindowCommunicationService = {
   },
 
   sendMessage: (message: unknown) => {
-    // alert(`sendMessage webview ${JSON.stringify(message)}`);
     sendMessageToRN('rpc', message as FromWebActions['rpc']);
   },
 

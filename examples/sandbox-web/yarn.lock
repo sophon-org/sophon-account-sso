@@ -783,7 +783,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@noble/curves@npm:^1.6.0, @noble/curves@npm:^1.9.1, @noble/curves@npm:~1.9.0":
+"@noble/curves@npm:1.9.6, @noble/curves@npm:^1.6.0, @noble/curves@npm:^1.9.1, @noble/curves@npm:~1.9.0":
   version: 1.9.6
   resolution: "@noble/curves@npm:1.9.6"
   dependencies:
@@ -1189,22 +1189,22 @@ __metadata:
   linkType: hard
 
 "@sophon-labs/account-connector@file:../../packages/account-connector::locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A.":
-  version: 2.0.0-next.25
-  resolution: "@sophon-labs/account-connector@file:../../packages/account-connector#../../packages/account-connector::hash=78e904&locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A."
+  version: 2.0.0-next.33
+  resolution: "@sophon-labs/account-connector@file:../../packages/account-connector#../../packages/account-connector::hash=ab0a8d&locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A."
   dependencies:
-    "@sophon-labs/account-core": "npm:2.0.0-next.25"
-    zksync-sso: "github:sophon-org/zksync-sso-preview#main"
+    "@sophon-labs/account-core": "npm:2.0.0-next.33"
+    zksync-sso: "npm:0.4.1"
   peerDependencies:
     "@wagmi/core": ^2.17.3
     viem: ">=2.21.49"
-  checksum: 10c0/c75f460487b7ebe32c2bd2db96baf31836646cca8a6d60c614ec0a4b389df9c7d92c003864ce3c1129a4e2a991a9169cd37287859c5e25ded7a287dd1213b188
+  checksum: 10c0/79842f9c6982f49079aaffc3dbe50f6c007dae93165797d48def7b04d735c0fe441afe60fa2733fdb98b55e97d6bd3faa210202f1ef800ecdfa597000e5a84b7
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-core@npm:2.0.0-next.25":
-  version: 2.0.0-next.25
-  resolution: "@sophon-labs/account-core@npm:2.0.0-next.25"
-  checksum: 10c0/a6f963106de7971ff19de96e7b908eb154ef6e55b9a3e3833f716d6e309a094d4b45e383806ce265e02bed362e49153ea5b82283cc593973b1f61a750fa6c0cf
+"@sophon-labs/account-core@npm:2.0.0-next.33":
+  version: 2.0.0-next.33
+  resolution: "@sophon-labs/account-core@npm:2.0.0-next.33"
+  checksum: 10c0/08b21f258bb05640fec7e7b74cc04bd8e0fc494d7a4117f0c2f24b59521375802bfcdab356f354b5afc4ac6b1a1064b0cd2a250cd5a848a6020632fc28c12327
   languageName: node
   linkType: hard
 
@@ -1220,11 +1220,13 @@ __metadata:
     "@types/node": "npm:^20"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
+    "@wagmi/core": "npm:^2.19.0"
     next: "npm:15.3.3"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
     tailwindcss: "npm:^4"
     typescript: "npm:^5"
+    viem: "npm:^2.34.0"
     wagmi: "npm:^2.15.6"
   languageName: unknown
   linkType: soft
@@ -1536,6 +1538,26 @@ __metadata:
     typescript:
       optional: true
   checksum: 10c0/e21bbcc124cd3aef32a500b4f3cf2028aaee80fbd02a6567bd460c8b58d613bd89178556af1b138c9b733ba86a869b0c6894a947cf0184e3d7031b471379026f
+  languageName: node
+  linkType: hard
+
+"@wagmi/core@npm:^2.19.0":
+  version: 2.19.0
+  resolution: "@wagmi/core@npm:2.19.0"
+  dependencies:
+    eventemitter3: "npm:5.0.1"
+    mipd: "npm:0.0.7"
+    zustand: "npm:5.0.0"
+  peerDependencies:
+    "@tanstack/query-core": ">=5.0.0"
+    typescript: ">=5.0.4"
+    viem: 2.x
+  peerDependenciesMeta:
+    "@tanstack/query-core":
+      optional: true
+    typescript:
+      optional: true
+  checksum: 10c0/eab96a09570ce6d9f0cbedd6b3a620ec733d27ee68cd461a1895465a51df164be91c2fc8bd2f134e88efcf5b31e8846919ea5c691947e1d82cf8381ef34a59d0
   languageName: node
   linkType: hard
 
@@ -3794,6 +3816,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ox@npm:0.8.7":
+  version: 0.8.7
+  resolution: "ox@npm:0.8.7"
+  dependencies:
+    "@adraffy/ens-normalize": "npm:^1.11.0"
+    "@noble/ciphers": "npm:^1.3.0"
+    "@noble/curves": "npm:^1.9.1"
+    "@noble/hashes": "npm:^1.8.0"
+    "@scure/bip32": "npm:^1.7.0"
+    "@scure/bip39": "npm:^1.6.0"
+    abitype: "npm:^1.0.8"
+    eventemitter3: "npm:5.0.1"
+  peerDependencies:
+    typescript: ">=5.4.0"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 10c0/a0919651e35b60d741f745ef6a0cfa1f63daf17d43e95cae7957c291eba90248be0968ee0a6d2f268e5e79f6dbbc3ab3b4617df0bcadcae722843168639795e1
+  languageName: node
+  linkType: hard
+
 "p-limit@npm:^2.2.0":
   version: 2.3.0
   resolution: "p-limit@npm:2.3.0"
@@ -4953,6 +4996,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"viem@npm:^2.34.0":
+  version: 2.34.0
+  resolution: "viem@npm:2.34.0"
+  dependencies:
+    "@noble/curves": "npm:1.9.6"
+    "@noble/hashes": "npm:1.8.0"
+    "@scure/bip32": "npm:1.7.0"
+    "@scure/bip39": "npm:1.6.0"
+    abitype: "npm:1.0.8"
+    isows: "npm:1.0.7"
+    ox: "npm:0.8.7"
+    ws: "npm:8.18.3"
+  peerDependencies:
+    typescript: ">=5.0.4"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 10c0/e2cd2a672d1912db63e8e0a7e95d0ce551e30ba4c4fa1fde042b23cde590eed7144fcdfce88777bfcbb8503c5f45a7b8d439e82853bc2ef746e408bf1394c4a3
+  languageName: node
+  linkType: hard
+
 "wagmi@npm:^2.15.6":
   version: 2.16.1
   resolution: "wagmi@npm:2.16.1"
@@ -5117,6 +5181,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ws@npm:8.18.3":
+  version: 8.18.3
+  resolution: "ws@npm:8.18.3"
+  peerDependencies:
+    bufferutil: ^4.0.1
+    utf-8-validate: ">=5.0.2"
+  peerDependenciesMeta:
+    bufferutil:
+      optional: true
+    utf-8-validate:
+      optional: true
+  checksum: 10c0/eac918213de265ef7cb3d4ca348b891a51a520d839aa51cdb8ca93d4fa7ff9f6ccb339ccee89e4075324097f0a55157c89fa3f7147bde9d8d7e90335dc087b53
+  languageName: node
+  linkType: hard
+
 "ws@npm:^7.5.1":
   version: 7.5.10
   resolution: "ws@npm:7.5.10"
@@ -5211,9 +5290,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zksync-sso@github:sophon-org/zksync-sso-preview#main":
-  version: 0.0.0-development
-  resolution: "zksync-sso@https://github.com/sophon-org/zksync-sso-preview.git#commit=db6809bf96064469dcc0ef52b41c010c80e721d3"
+"zksync-sso@npm:0.4.1":
+  version: 0.4.1
+  resolution: "zksync-sso@npm:0.4.1"
   dependencies:
     "@peculiar/asn1-ecc": "npm:^2.3.13"
     "@peculiar/asn1-schema": "npm:^2.3.13"
@@ -5234,7 +5313,7 @@ __metadata:
       optional: true
     typescript:
       optional: true
-  checksum: 10c0/9c3949b863a31643c0015190f199e6cbbf230157a4d6f446f1ff2c4e62addc780c85fe29a22eb814fc2056ce425c30959b759ab278cffdf50dd706a31e757da2
+  checksum: 10c0/2a7446a7e5af2acb12e5e7ec8ee01fd0461d804c06de18497a7c1c9327a52df89ca09442c39ac83e1d1f2d6af862dbcf7fc7e1043b4c6d3066dedf986a93c8a7
   languageName: node
   linkType: hard
 

@@ -39,7 +39,7 @@ const DrawerHeader = ({
   drawerType = 'drawer',
 }: DrawerHeaderProps) => {
   return (
-    <div className="relative flex justify-between items-center p-8 gap-2">
+    <div className="relative flex justify-between items-center p-8 gap-2 pb-0">
       <div className="flex items-center gap-2 z-10">
         {showProfileImage && (
           <Image
@@ -142,7 +142,7 @@ export const Drawer = ({
     >
       <VaulDrawer.Portal>
         <VaulDrawer.Overlay className="fixed inset-0 bg-black/40" />
-        <VaulDrawer.Content className="bg-white h-fit fixed bottom-0 left-0 right-0 outline-none rounded-t-3xl pb-8">
+        <VaulDrawer.Content className="bg-white h-fit fixed bottom-0 left-0 right-0 outline-none rounded-t-3xl">
           <VaulDrawer.Title hidden={true}>
             Sophon Authentication Modal
           </VaulDrawer.Title>

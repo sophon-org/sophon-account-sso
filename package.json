@@ -32,7 +32,6 @@
     "typescript": "^5.0.0"
   },
   "resolutions": {
-    "react-native-webview": "13.15.0",
-    "zksync-sso": "github:sophon-org/zksync-sso-preview#main"
+    "react-native-webview": "13.15.0"
   }
 }
