@@ -22,9 +22,9 @@ const config = createConfig(
 
     walletConnectProjectId: projectId,
 
-    appName: 'Sophon Account',
-    appDescription: 'Sophon Account',
-    appUrl: 'https://sophon.xyz',
+    appName: 'Sophon Account via EIP-6963',
+    appDescription: 'Sophon Account via EIP-6963',
+    appUrl: 'https://my.staging.sophon.xyz',
     appIcon: 'https://family.co/logo.png',
   }),
 );
