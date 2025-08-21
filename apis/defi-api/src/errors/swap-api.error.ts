@@ -17,8 +17,8 @@ export class SwapAPIError extends Error {
     message: string,
     public code: ErrorCodes,
     public provider?: string,
-    public originalError?: any,
-    public statusCode: number = 400,
+    public originalError?: unknown,
+    public statusCode = 400,
   ) {
     super(message);
     this.name = 'SwapAPIError';

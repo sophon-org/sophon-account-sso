@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ProviderRegistryService } from './provider-registry.service';
+import { ErrorCodes, SwapAPIError } from '../errors/swap-api.error';
 import { ISwapProvider } from '../interfaces/swap-provider.interface';
 import { TransactionType } from '../types/common.types';
-import { SwapAPIError, ErrorCodes } from '../errors/swap-api.error';
+import { ProviderRegistryService } from './provider-registry.service';
 
 describe('ProviderRegistryService', () => {
   let service: ProviderRegistryService;
@@ -100,7 +100,9 @@ describe('ProviderRegistryService', () => {
         ...mockRequest,
         sourceChain: 999,
       };
-      expect(() => service.selectBestProvider(incompatibleRequest)).toThrow(SwapAPIError);
+      expect(() => service.selectBestProvider(incompatibleRequest)).toThrow(
+        SwapAPIError,
+      );
       try {
         service.selectBestProvider(incompatibleRequest);
       } catch (error) {

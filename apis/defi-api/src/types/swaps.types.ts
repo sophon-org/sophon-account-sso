@@ -40,7 +40,7 @@ export interface EvmFunctionConfig {
     address: Address;
   };
   signature: string;
-  args: any[];
+  args: (string | number | boolean)[];
 }
 
 export interface SwapActionResponse {

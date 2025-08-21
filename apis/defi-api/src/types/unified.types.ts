@@ -1,17 +1,14 @@
 import {
+  ActionConfiguration,
   Address,
   ChainId,
-  TransactionType,
-  TransactionStatus,
-  TokenApproval,
   FeeBreakdown,
+  TokenApproval,
   TransactionDetails,
-  TransactionTimestamps,
   TransactionOptions,
-  ActionConfiguration,
-  ValidationResult,
-  TokenInfo,
-  FeeEstimate,
+  TransactionStatus,
+  TransactionTimestamps,
+  TransactionType,
 } from './common.types';
 
 export interface UnifiedTransactionRequest {
