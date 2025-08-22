@@ -3,7 +3,7 @@ import {
 	Injectable,
 	InternalServerErrorException,
 } from "@nestjs/common";
-import { PARTNER_CDN } from "../config/env";
+import { getEnv } from "../config/env";
 
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 const REQUEST_TIMEOUT_MS = 2500; // 2.5s
@@ -24,7 +24,7 @@ export class PartnerRegistryService {
 			return true;
 		}
 
-		if (!PARTNER_CDN) {
+		if (!getEnv().PARTNER_CDN) {
 			throw new InternalServerErrorException(
 				"Server misconfiguration: PARTNER_CDN is not set",
 			);
@@ -61,7 +61,7 @@ export class PartnerRegistryService {
 	}
 
 	private buildUrl(partnerId: string): string {
-		return `${PARTNER_CDN.replace(/\/+$/, "")}/${encodeURIComponent(
+		return `${getEnv().PARTNER_CDN.replace(/\/+$/, "")}/${encodeURIComponent(
 			partnerId,
 		)}.json`;
 	}

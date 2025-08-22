@@ -21,12 +21,28 @@ jest.mock("../utils/jwt", () => ({
 	getPublicKey: jest.fn().mockResolvedValue("PUBLIC_KEY"),
 }));
 
-jest.mock("../config/env", () => ({
-	getJwtKid: jest.fn().mockReturnValue("test-kid"),
-	JWT_ISSUER: "https://auth.example.com",
-	JWT_AUDIENCE: "example-client",
-	ALLOWED_AUDIENCES: ["sophon-web", "sophon-admin", "partner-x"],
-}));
+jest.mock("../config/env", () => {
+	const env = {
+		ACCESS_TTL_S: 60 * 60 * 3,
+		REFRESH_TTL_S: 60 * 60 * 24 * 30,
+		NONCE_TTL_S: 600,
+		COOKIE_ACCESS_MAX_AGE_S: 60 * 60 * 3,
+		COOKIE_REFRESH_MAX_AGE_S: 60 * 60 * 24 * 30,
+		JWT_ISSUER: "https://auth.example.com",
+		NONCE_ISSUER: "https://auth.example.com",
+		REFRESH_ISSUER: "https://auth.example.com",
+		COOKIE_DOMAIN: "localhost",
+		REFRESH_JWT_KID: "test-refresh-kid",
+		COOKIE_SAME_SITE: "lax",
+	};
+	return {
+		getJwtKid: jest.fn().mockReturnValue("test-kid"),
+		JWT_ISSUER: env.JWT_ISSUER,
+		JWT_AUDIENCE: "example-client",
+		ALLOWED_AUDIENCES: ["sophon-web", "sophon-admin", "partner-x"],
+		getEnv: jest.fn().mockReturnValue(env),
+	};
+});
 
 describe("AuthService", () => {
 	let service: AuthService;
@@ -142,14 +158,14 @@ describe("AuthService", () => {
 		expect(options).toMatchObject({
 			httpOnly: true,
 			secure: true,
-			sameSite: "none",
-			maxAge: 60 * 60 * 3,
+			sameSite: "lax",
+			maxAge: 60 * 60 * 3 * 1000,
 			domain: "localhost",
 		});
 	});
 
 	it("should return correct cookie options for refresh token", () => {
 		const options = service.refreshCookieOptions();
-		expect(options.maxAge).toBe(60 * 60 * 24 * 30);
+		expect(options.maxAge).toBe(60 * 60 * 24 * 30 * 1000);
 	});
 });

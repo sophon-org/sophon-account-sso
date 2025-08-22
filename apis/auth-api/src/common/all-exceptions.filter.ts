@@ -22,6 +22,18 @@ export class AllExceptionsFilter implements ExceptionFilter {
 			? (exception as HttpException).getResponse()
 			: { message: "Internal server error" };
 
+		if (req?.url?.startsWith?.("/auth")) {
+			res?.set?.("Cache-Control", "no-store");
+			res?.set?.("Pragma", "no-cache");
+		}
+
+		if (status === HttpStatus.UNAUTHORIZED && !res?.get?.("WWW-Authenticate")) {
+			res?.set?.(
+				"WWW-Authenticate",
+				'Bearer realm="refresh", error="invalid_token"',
+			);
+		}
+
 		console.error({
 			path: req?.url,
 			method: req?.method,
@@ -30,7 +42,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
 			body,
 		});
 
-		res.status(status).json({
+		return res.status(status).json({
 			statusCode: status,
 			timestamp: new Date().toISOString(),
 			path: req?.url,

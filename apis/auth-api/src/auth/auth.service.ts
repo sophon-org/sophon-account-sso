@@ -16,7 +16,7 @@ import jwt, {
 import type { TypedDataDefinition } from "viem";
 import { sophonTestnet } from "viem/chains";
 
-import { getJwtKid, JWT_ISSUER } from "../config/env";
+import { getEnv, getJwtKid } from "../config/env";
 import {
 	type PermissionAllowedField,
 	packScope,
@@ -42,19 +42,13 @@ type NoncePayload = JwtPayload & {
 	userId?: string;
 };
 
-const ACCESS_TTL_S = Number(process.env.ACCESS_TTL_S ?? 60 * 60 * 3);
-const REFRESH_TTL_S = Number(process.env.REFRESH_TTL_S ?? 60 * 60 * 24 * 30);
-const NONCE_TTL_S = Number(process.env.NONCE_TTL_S ?? 60 * 10);
-const COOKIE_ACCESS_MAX_AGE_S = Number(
-	process.env.COOKIE_ACCESS_MAX_AGE_S ?? ACCESS_TTL_S,
-);
-const COOKIE_REFRESH_MAX_AGE_S = Number(
-	process.env.COOKIE_REFRESH_MAX_AGE_S ?? REFRESH_TTL_S,
-);
-
 @Injectable()
 export class AuthService {
-	constructor(private readonly partnerRegistry: PartnerRegistryService) {}
+	constructor(private readonly partnerRegistry: PartnerRegistryService) {
+		this.E = getEnv();
+	}
+
+	private readonly E: ReturnType<typeof getEnv>;
 
 	private mapJwtError(e: unknown, ctx: "nonce" | "access" | "refresh"): never {
 		if (e instanceof TokenExpiredError) {
@@ -92,10 +86,10 @@ export class AuthService {
 				{
 					algorithm: "RS256",
 					keyid: getJwtKid(),
-					issuer: JWT_ISSUER,
+					issuer: this.E.JWT_ISSUER,
 					audience,
 					subject: address,
-					expiresIn: NONCE_TTL_S,
+					expiresIn: this.E.NONCE_TTL_S,
 				},
 			);
 		} catch (e) {
@@ -113,7 +107,7 @@ export class AuthService {
 	): Promise<string> {
 		const expectedAud = String(typedData.message.audience);
 		await this.partnerRegistry.assertExists(expectedAud);
-		const expectedIss = process.env.NONCE_ISSUER;
+		const expectedIss = this.E.NONCE_ISSUER;
 
 		let payload!: NoncePayload;
 		try {
@@ -158,7 +152,7 @@ export class AuthService {
 		const scope = packScope(unpackScope(payload.scope ?? ""));
 
 		const iat = Math.floor(Date.now() / 1000);
-		const expiresInSeconds = ACCESS_TTL_S;
+		const expiresInSeconds = this.E.ACCESS_TTL_S;
 
 		try {
 			return jwt.sign(
@@ -192,7 +186,7 @@ export class AuthService {
 	): Promise<{ accessToken: string; refreshToken: string; sid: string }> {
 		const expectedAud = String(typedData.message.audience);
 		await this.partnerRegistry.assertExists(expectedAud);
-		const expectedIss = process.env.NONCE_ISSUER;
+		const expectedIss = this.E.NONCE_ISSUER;
 
 		let payload!: NoncePayload;
 		try {
@@ -238,8 +232,8 @@ export class AuthService {
 
 		const sid = randomUUID();
 		const iat = Math.floor(Date.now() / 1000);
-		const accessExp = ACCESS_TTL_S;
-		const refreshExp = REFRESH_TTL_S;
+		const accessExp = this.E.ACCESS_TTL_S;
+		const refreshExp = this.E.REFRESH_TTL_S;
 
 		const accessToken = jwt.sign(
 			{
@@ -273,8 +267,8 @@ export class AuthService {
 			await getRefreshPrivateKey(),
 			{
 				algorithm: "RS256",
-				keyid: process.env.REFRESH_JWT_KID ?? "refresh-key-1",
-				issuer: process.env.REFRESH_ISSUER ?? JWT_ISSUER,
+				keyid: this.E.REFRESH_JWT_KID,
+				issuer: this.E.REFRESH_ISSUER,
 				audience: payload.aud,
 				expiresIn: refreshExp,
 			},
@@ -287,9 +281,10 @@ export class AuthService {
 		return {
 			httpOnly: true,
 			secure: true,
-			sameSite: "none" as const,
-			domain: process.env.COOKIE_DOMAIN || "localhost",
-			maxAge: COOKIE_ACCESS_MAX_AGE_S,
+			sameSite: "lax" as const,
+			domain: this.E.COOKIE_DOMAIN,
+			path: "/",
+			maxAge: this.E.COOKIE_ACCESS_MAX_AGE_S * 1000,
 		};
 	}
 
@@ -297,9 +292,10 @@ export class AuthService {
 		return {
 			httpOnly: true,
 			secure: true,
-			sameSite: "none" as const,
-			domain: process.env.COOKIE_DOMAIN || "localhost",
-			maxAge: COOKIE_REFRESH_MAX_AGE_S,
+			sameSite: "strict" as const,
+			domain: this.E.COOKIE_DOMAIN,
+			path: "/auth/refresh",
+			maxAge: this.E.COOKIE_REFRESH_MAX_AGE_S * 1000,
 		};
 	}
 
@@ -313,7 +309,7 @@ export class AuthService {
 			this.mapJwtError(e, "access");
 		}
 
-		if (payload.iss !== JWT_ISSUER) {
+		if (payload.iss !== this.E.JWT_ISSUER) {
 			throw new UnauthorizedException("invalid token issuer");
 		}
 
@@ -329,7 +325,7 @@ export class AuthService {
 		try {
 			r = jwt.verify(refreshToken, await getRefreshPublicKey(), {
 				algorithms: ["RS256"],
-				issuer: process.env.REFRESH_ISSUER ?? JWT_ISSUER,
+				issuer: this.E.REFRESH_ISSUER,
 			}) as RefreshTokenPayload;
 		} catch (e) {
 			this.mapJwtError(e, "refresh");
@@ -352,9 +348,9 @@ export class AuthService {
 			{
 				algorithm: "RS256",
 				keyid: getJwtKid(),
-				issuer: JWT_ISSUER,
+				issuer: this.E.JWT_ISSUER,
 				audience: r.aud,
-				expiresIn: ACCESS_TTL_S,
+				expiresIn: this.E.ACCESS_TTL_S,
 			},
 		);
 
@@ -371,10 +367,10 @@ export class AuthService {
 			await getRefreshPrivateKey(),
 			{
 				algorithm: "RS256",
-				keyid: process.env.REFRESH_JWT_KID ?? "refresh-key-1",
-				issuer: process.env.REFRESH_ISSUER ?? JWT_ISSUER,
+				keyid: this.E.REFRESH_JWT_KID,
+				issuer: this.E.REFRESH_ISSUER,
 				audience: r.aud,
-				expiresIn: REFRESH_TTL_S,
+				expiresIn: this.E.REFRESH_TTL_S,
 			},
 		);
 

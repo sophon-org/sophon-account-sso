@@ -1,4 +1,5 @@
 import { Test } from "@nestjs/testing";
+import { UnauthorizedException } from "@nestjs/common";
 import type { Request, Response } from "express";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
@@ -51,6 +52,7 @@ describe("AuthController (new flows)", () => {
 
 	const mockRes = (): Response =>
 		({
+			set: jest.fn().mockReturnThis(),
 			cookie: jest.fn().mockReturnThis(),
 			clearCookie: jest.fn().mockReturnThis(),
 			json: jest.fn().mockReturnThis(),
@@ -137,10 +139,9 @@ describe("AuthController (new flows)", () => {
 		const res = mockRes();
 		const req = { cookies: {}, headers: {} } as unknown as Request;
 
-		await controller.refresh(req, res);
-
-		expect(res.status).toHaveBeenCalledWith(401);
-		expect(res.json).toHaveBeenCalledWith({ error: "missing refresh token" });
+		await expect(controller.refresh(req, res)).rejects.toBeInstanceOf(
+			UnauthorizedException,
+		);
 		expect(authServiceMock.refresh).not.toHaveBeenCalled();
 	});
 
