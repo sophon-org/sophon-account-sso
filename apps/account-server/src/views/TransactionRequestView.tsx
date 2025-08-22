@@ -12,6 +12,7 @@ import {
   trackTransactionRequest,
   trackTransactionResult,
 } from '@/lib/analytics';
+import { truncateName } from '@/lib/formatting';
 import { windowService } from '@/service/window.service';
 import { TransactionType } from '@/types/auth';
 
@@ -94,11 +95,16 @@ export default function TransactionRequestView() {
           // Contract transaction display
           <div className="text-sm text-black flex flex-col gap-3">
             <div className="text-left">
-              <p className="text-sm font-bold">Interacting with</p>
+              <p className="text-sm font-bold">Interacting with:</p>
               <p className="text-sm text-black">
-                Sophon Guardian NFT @{' '}
-                {enrichedTransactionRequest?.recipient?.slice(0, 6)}...
-                {enrichedTransactionRequest?.recipient?.slice(-6)}
+                <span className="font-bold truncate block">
+                  {truncateName(enrichedTransactionRequest?.contractName || '')}
+                </span>{' '}
+                @{' '}
+                <span className="font-mono">
+                  {enrichedTransactionRequest?.recipient?.slice(0, 6)}...
+                  {enrichedTransactionRequest?.recipient?.slice(-6)}
+                </span>
               </p>
             </div>
 
@@ -109,14 +115,13 @@ export default function TransactionRequestView() {
                   'Unknown'}
                 " with parameters
               </p>
-              {enrichedTransactionRequest?.decodedData?.parameters?.map(
-                (param) => (
-                  <div key={param.name} className="text-sm text-black">
-                    <span className="font-mono">{param.name}:</span>{' '}
-                    {param.value}
-                  </div>
-                ),
-              )}
+              {enrichedTransactionRequest?.decodedData?.args?.map((arg) => (
+                <div key={arg.name} className="text-sm text-black">
+                  <p className="font-mono">
+                    {arg.name}: {arg.value}
+                  </p>
+                </div>
+              ))}
             </div>
 
             <div className="text-left">
