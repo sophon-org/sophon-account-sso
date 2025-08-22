@@ -19,6 +19,44 @@ describe("PartnerRegistryService", () => {
 	beforeEach(() => {
 		process.env.NODE_ENV = "production";
 		process.env.PARTNER_CDN = CDN;
+
+		// Seed all env vars required by getEnv()
+		process.env.JWT_KID = process.env.JWT_KID ?? "test-kid";
+		process.env.REFRESH_JWT_KID =
+			process.env.REFRESH_JWT_KID ?? "test-refresh-kid";
+
+		process.env.PRIVATE_KEY =
+			process.env.PRIVATE_KEY ??
+			"-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n";
+		process.env.PUBLIC_KEY =
+			process.env.PUBLIC_KEY ??
+			"-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KEY-----\n";
+		process.env.REFRESH_PRIVATE_KEY =
+			process.env.REFRESH_PRIVATE_KEY ??
+			"-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n";
+		process.env.REFRESH_PUBLIC_KEY =
+			process.env.REFRESH_PUBLIC_KEY ??
+			"-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KEY-----\n";
+
+		process.env.ACCESS_TTL_S = process.env.ACCESS_TTL_S ?? String(60 * 60 * 3); // 3h
+		process.env.REFRESH_TTL_S =
+			process.env.REFRESH_TTL_S ?? String(60 * 60 * 24 * 90); // 3 months
+		process.env.NONCE_TTL_S = process.env.NONCE_TTL_S ?? String(10 * 60); // 10m
+
+		process.env.COOKIE_ACCESS_MAX_AGE_S =
+			process.env.COOKIE_ACCESS_MAX_AGE_S ?? String(60 * 60 * 3);
+		process.env.COOKIE_REFRESH_MAX_AGE_S =
+			process.env.COOKIE_REFRESH_MAX_AGE_S ?? String(60 * 60 * 24 * 90);
+		process.env.COOKIE_DOMAIN = process.env.COOKIE_DOMAIN ?? "localhost";
+		process.env.COOKIE_SAME_SITE = process.env.COOKIE_SAME_SITE ?? "lax";
+
+		process.env.JWT_ISSUER =
+			process.env.JWT_ISSUER ?? "https://auth.example.com";
+		process.env.NONCE_ISSUER =
+			process.env.NONCE_ISSUER ?? "https://auth.example.com";
+		process.env.REFRESH_ISSUER =
+			process.env.REFRESH_ISSUER ?? "https://auth.example.com";
+
 		delete process.env.BYPASS_PARTNER_CDN_CHECK;
 
 		fetchMock = jest.fn();
@@ -94,7 +132,6 @@ describe("PartnerRegistryService", () => {
 	it("returns false (and assertExists throws) when not found (404)", async () => {
 		const url = `${CDN}/non-existent.json`;
 
-		// HEAD -> 404 (no fallback needed, but implementation will attempt GET then return false)
 		fetchMock
 			.mockResolvedValueOnce(new Response(null, { status: 404 })) // HEAD
 			.mockResolvedValueOnce(new Response(null, { status: 404 })); // GET fallback
