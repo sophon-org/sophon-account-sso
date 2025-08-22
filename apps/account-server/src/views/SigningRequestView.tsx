@@ -136,10 +136,12 @@ export default function SigningRequestView() {
             'Sign'
           )}
         </Button>
+      </div>
+      <div className="flex items-center  justify-center gap-2 w-full">
         {signingError && (
-          <p className="text-red-500 text-xs whitespace-pre-wrap break-words line-clamp-3">
-            {signingError}
-          </p>
+          <div className="p-3 bg-red-50 border border-red-200 rounded">
+            <p className="text-red-600 text-sm">{signingError}</p>
+          </div>
         )}
       </div>
     </div>

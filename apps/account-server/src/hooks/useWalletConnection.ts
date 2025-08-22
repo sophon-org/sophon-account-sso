@@ -1,7 +1,9 @@
 'use client';
 import { useCallback, useEffect } from 'react';
 import type { Address } from 'viem';
+import { sophonTestnet } from 'viem/chains';
 import {
+  type Connector,
   useAccount,
   useAccountEffect,
   useConnect,
@@ -27,8 +29,8 @@ export const useWalletConnection = () => {
   const { disconnect } = useDisconnect();
   const { data: walletClient } = useWalletClient();
   const { success: accountCreated } = useAccountCreate();
-  const { switchChain } = useSwitchChain();
   const actorRef = MainStateMachineContext.useActorRef();
+  const { switchChain } = useSwitchChain();
 
   useAccountEffect({
     onConnect(data: { address: Address }) {
@@ -51,6 +53,29 @@ export const useWalletConnection = () => {
     },
   });
 
+  const handleCheckChainId = useCallback(async (connector: Connector) => {
+    try {
+      const chainId = await connector.getChainId();
+      console.log('chainId', chainId);
+      if (chainId !== env.NEXT_PUBLIC_CHAIN_ID) {
+        if (connector.switchChain) {
+          await connector.switchChain({ chainId: env.NEXT_PUBLIC_CHAIN_ID });
+        } else {
+          throw new Error(
+            `Please switch to ${
+              env.NEXT_PUBLIC_CHAIN_ID === sophonTestnet.id
+                ? 'Sophon Testnet'
+                : 'Sophon Mainnet'
+            } network manually`,
+          );
+        }
+      }
+    } catch (error) {
+      console.error('Chain switching failed:', error);
+      throw error;
+    }
+  }, []);
+
   const connectWallet = useCallback(
     async (connectorName: string) => {
       try {
@@ -59,7 +84,22 @@ export const useWalletConnection = () => {
         if (!isConnected) {
           const connector = connectors.find((c) => c.name === connectorName);
           if (connector) {
-            await connectAsync({ connector });
+            await handleCheckChainId(connector);
+
+            // Check if the connector is already connected after switching
+            try {
+              await connectAsync({ connector });
+            } catch (connectError) {
+              if (
+                connectError instanceof Error &&
+                connectError.message?.includes('already connected')
+              ) {
+                console.log('Connector already connected, proceeding...');
+              } else {
+                throw connectError;
+              }
+            }
+
             trackAuthCompleted('wallet');
 
             // Update user properties with wallet type
@@ -95,20 +135,23 @@ export const useWalletConnection = () => {
         }
       }
     },
-    [connectors, isConnected, address, connectAsync, actorRef],
+    [
+      connectors,
+      isConnected,
+      address,
+      connectAsync,
+      actorRef,
+      handleCheckChainId,
+    ],
   );
 
   const handleCreateAccount = useCallback(async () => {
-    if (chainId && chainId !== env.NEXT_PUBLIC_CHAIN_ID) {
-      actorRef.send({ type: 'WRONG_NETWORK' });
-      return;
-    }
     if (isSuccess && walletClient && address) {
       sendMessage('k1.login', {
         address: address!,
       });
     }
-  }, [chainId, isSuccess, walletClient, address, actorRef]);
+  }, [isSuccess, walletClient, address]);
 
   const handleSwitchChain = async () => {
     if (chainId && chainId !== env.NEXT_PUBLIC_CHAIN_ID) {
@@ -140,6 +183,7 @@ export const useWalletConnection = () => {
     error,
     isPending,
     accountCreated,
+    handleCheckChainId,
     handleSwitchChain,
   };
 };
