@@ -3,18 +3,11 @@
 import { ConnectKitButton, useIsMounted } from 'connectkit';
 import { Loader } from '../../components/loader';
 import { Logo } from '../../components/logo';
+import { PaymasterProvider } from '../../components/paymaster.provider';
 import { ProfilePanel } from '../../components/profile.panel';
 
 export default function Home() {
   const isMounted = useIsMounted();
-  /* const mint = () => {
-    writeContract({
-      address: '0xbc812793ddc7570b96A5b0A520eB0A6c07c06a6a', // MOCK NFT contract
-      abi: nftAbi,
-      functionName: 'claim',
-      args: [0o000],
-    });
-  }; */
 
   if (!isMounted) {
     return (
@@ -28,12 +21,14 @@ export default function Home() {
   }
 
   return (
-    <div className="flex justify-center items-center h-screen">
-      <div className="flex flex-col gap-2 max-w-md w-full items-center">
-        <Logo className="mb-4" />
-        <ConnectKitButton theme="midnight" />
-        <ProfilePanel />
+    <PaymasterProvider>
+      <div className="flex justify-center h-screen">
+        <div className="flex flex-col gap-2 max-w-md w-full items-center">
+          <Logo className="mb-4" />
+          <ConnectKitButton theme="midnight" />
+          <ProfilePanel />
+        </div>
       </div>
-    </div>
+    </PaymasterProvider>
   );
 }
