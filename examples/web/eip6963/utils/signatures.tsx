@@ -42,16 +42,12 @@ async function validateSmartAccountSignature(
   contractAddress: string,
 ): Promise<boolean> {
   try {
-    console.log("messageHash", messageHash);
-    console.log("signature", signature);
-    console.log("contractAddress", contractAddress);
     const result = await publicClient.readContract({
       address: contractAddress as `0x${string}`,
       abi: EIP1271_ABI,
       functionName: "isValidSignature",
       args: [messageHash, signature as `0x${string}`],
     });
-    console.log("result", result);
 
     const isValid = result === EIP1271_MAGIC_VALUE;
 
