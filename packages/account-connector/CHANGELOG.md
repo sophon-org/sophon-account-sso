@@ -1,5 +1,13 @@
 # @sophon-labs/account-connector
 
+## 2.0.0-next.36
+
+### Patch Changes
+
+- Resolving race conditions when using eip6963
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.0-next.36
+
 ## 2.0.0-next.35
 
 ### Patch Changes
