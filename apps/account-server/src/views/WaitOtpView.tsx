@@ -79,13 +79,13 @@ export default function WaitOtpView() {
             </button>
           </p>
         </form>
-        <div className="mt-4 px-2">
-          {otpError && (
-            <p className="text-red-500 text-xs whitespace-pre-wrap break-words line-clamp-3 text-left">
-              {otpError}
-            </p>
-          )}
-        </div>
+        {otpError && (
+          <div className="mt-4 px-2">
+            <div className="p-3 bg-red-50 border border-red-200 rounded">
+              <p className="text-red-600 text-sm">{otpError}</p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -7,14 +7,14 @@ import type { EIP1193Provider } from './types';
 
 // Simple state management
 let currentAccounts: string[] = [];
-// biome-ignore lint/suspicious/noExplicitAny: TODO: review this
-const eventListeners = new Map<string, ((...args: any[]) => void)[]>();
+const eventListeners = new Map<string, ((...args: unknown[]) => void)[]>();
 
 // The main provider function
 export function createSophonEIP1193Provider(
   network: SophonNetworkType = 'testnet',
+  authServerUrl: string = AccountServerURL[network],
 ): EIP1193Provider {
-  const communicator = new PopupCommunicator(AccountServerURL[network], {
+  const communicator = new PopupCommunicator(authServerUrl, {
     width: 360,
     height: 800,
     calculatePosition(width, height) {
@@ -153,8 +153,7 @@ export function createSophonEIP1193Provider(
       }
     },
 
-    // biome-ignore lint/suspicious/noExplicitAny: TODO: Review this
-    on(eventName: string, callback: (...args: any[]) => void) {
+    on(eventName: string, callback: (...args: unknown[]) => void) {
       if (!eventListeners.has(eventName)) {
         eventListeners.set(eventName, []);
       }
