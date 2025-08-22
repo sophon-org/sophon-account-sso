@@ -1,13 +1,13 @@
-import { useWriteContract } from "wagmi";
-import { nftAbi } from "@/abi/nft";
-import { useEffect, useState } from "react";
-import { unverifiedAbi } from "@/abi/unverified";
-import { verifiedAbi } from "@/abi/verified";
+import { useEffect, useState } from 'react';
+import { useWriteContract } from 'wagmi';
+import { nftAbi } from '@/abi/nft';
+import { unverifiedAbi } from '@/abi/unverified';
+import { verifiedAbi } from '@/abi/verified';
 
 export default function UnverifiedPanel() {
-  const [txType, setTxType] = useState<"unverified" | "verified" | "complex" | undefined>(
-    undefined,
-  );
+  const [txType, setTxType] = useState<
+    'unverified' | 'verified' | 'complex' | undefined
+  >(undefined);
   const [txHash, setTxHash] = useState<`0x${string}` | undefined>(undefined);
   const [txError, setTxError] = useState<string | undefined>(undefined);
 
@@ -33,51 +33,51 @@ export default function UnverifiedPanel() {
   } = useWriteContract();
 
   const doUnverifiedTransaction = () => {
-    setTxType("unverified");
+    setTxType('unverified');
     unverifiedWriteContract({
-      address: "0x0c76828A43556cAA48Fa687e540E6a76155d6850", // Some unverified contract
+      address: '0x0c76828A43556cAA48Fa687e540E6a76155d6850', // Some unverified contract
       abi: unverifiedAbi,
-      functionName: "setAll",
+      functionName: 'setAll',
       args: [0o000],
     });
   };
 
   const doVerifiedTransaction = () => {
-    setTxType("verified");
+    setTxType('verified');
     verifiedWriteContract({
-      address: "0xC0830ABFe9Ab55b476456f7cA13103c666be5502", // Some Verified contract
+      address: '0xC0830ABFe9Ab55b476456f7cA13103c666be5502', // Some Verified contract
       abi: verifiedAbi,
-      functionName: "setString",
-      args: ["Hello World"],
+      functionName: 'setString',
+      args: ['Hello World'],
     });
   };
 
   const doComplexTransaction = () => {
-    setTxType("complex");
+    setTxType('complex');
 
     const struct = {
-      testString: "Hello World",
+      testString: 'Hello World',
       testNumber: 0o020,
-      testAddress: "0x0000000000000000000000000000000000000000",
+      testAddress: '0x0000000000000000000000000000000000000000',
       testBool: true,
     };
 
     complexWriteContract({
-      address: "0xC0830ABFe9Ab55b476456f7cA13103c666be5502", // Some Verified contract
+      address: '0xC0830ABFe9Ab55b476456f7cA13103c666be5502', // Some Verified contract
       abi: verifiedAbi,
-      functionName: "setStruct",
-      args: ["another string", struct],
+      functionName: 'setStruct',
+      args: ['another string', struct],
     });
   };
 
   useEffect(() => {
     if (unverifiedData || verifiedData || complexData) {
       setTxError(undefined);
-      if (txType === "unverified") {
+      if (txType === 'unverified') {
         setTxHash(unverifiedData);
-      } else if (txType === "verified") {
+      } else if (txType === 'verified') {
         setTxHash(verifiedData);
-      } else if (txType === "complex") {
+      } else if (txType === 'complex') {
         setTxHash(complexData);
       }
     }
@@ -86,12 +86,21 @@ export default function UnverifiedPanel() {
   useEffect(() => {
     if (unverifiedError || verifiedError || complexError) {
       setTxHash(undefined);
-      if (txType === "unverified") {
-        setTxError((unverifiedError as { details?: string })?.details ?? unverifiedError?.message);
-      } else if (txType === "verified") {
-        setTxError((verifiedError as { details?: string })?.details ?? verifiedError?.message);
-      } else if (txType === "complex") {
-        setTxError((complexError as { details?: string })?.details ?? complexError?.message);
+      if (txType === 'unverified') {
+        setTxError(
+          (unverifiedError as { details?: string })?.details ??
+            unverifiedError?.message,
+        );
+      } else if (txType === 'verified') {
+        setTxError(
+          (verifiedError as { details?: string })?.details ??
+            verifiedError?.message,
+        );
+      } else if (txType === 'complex') {
+        setTxError(
+          (complexError as { details?: string })?.details ??
+            complexError?.message,
+        );
       }
     }
   }, [unverifiedError, verifiedError, complexError]);
@@ -105,7 +114,7 @@ export default function UnverifiedPanel() {
           onClick={doUnverifiedTransaction}
           type="button"
         >
-          ❌ {isUnverifiedPending ? "Sending..." : "Unverified contract"}
+          ❌ {isUnverifiedPending ? 'Sending...' : 'Unverified contract'}
         </button>
 
         <div className="flex flex-row gap-2 mt-2 w-full">
@@ -114,14 +123,14 @@ export default function UnverifiedPanel() {
             onClick={doVerifiedTransaction}
             type="button"
           >
-            ✅ {isVerifiedPending ? "Sending..." : "Verified"}
+            ✅ {isVerifiedPending ? 'Sending...' : 'Verified'}
           </button>
           <button
             className="bg-purple-400 text-white p-2 rounded-md w-full hover:bg-purple-500 hover:cursor-pointer border-1 border-black/40"
             onClick={doComplexTransaction}
             type="button"
           >
-            ✅ {isComplexPending ? "Sending..." : "Verified (complex args)"}
+            ✅ {isComplexPending ? 'Sending...' : 'Verified (complex args)'}
           </button>
         </div>
       </div>
@@ -136,7 +145,8 @@ export default function UnverifiedPanel() {
           target="_blank"
           className="block text-sm bg-yellow-400/10 p-2 rounded-md border border-yellow-400 text-yellow-400 break-all my-2 w-full mt-4"
         >
-          Tx hash: {txHash?.substring(0, 20)}...{txHash?.substring(txHash.length - 20)}
+          Tx hash: {txHash?.substring(0, 20)}...
+          {txHash?.substring(txHash.length - 20)}
         </a>
       )}
     </div>

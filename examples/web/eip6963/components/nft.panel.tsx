@@ -1,4 +1,4 @@
-import { useAccount, useWriteContract } from "wagmi";
+import { useAccount, useWriteContract } from 'wagmi';
 
 export default function UnverifiedPanel() {
   const { address } = useAccount();
@@ -7,17 +7,17 @@ export default function UnverifiedPanel() {
 
   const minNft = () => {
     writeContract({
-      address: "0x1bbA25233556a7C3b41913F35A035916DbeD1664", // MOCK NFT contract
+      address: '0x1bbA25233556a7C3b41913F35A035916DbeD1664', // MOCK NFT contract
       abi: [
         {
-          inputs: [{ internalType: "address", name: "to", type: "address" }],
-          name: "mint",
+          inputs: [{ internalType: 'address', name: 'to', type: 'address' }],
+          name: 'mint',
           outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
+          stateMutability: 'nonpayable',
+          type: 'function',
         },
       ],
-      functionName: "mint",
+      functionName: 'mint',
       args: [address as `0x${string}`],
     });
   };
@@ -31,7 +31,7 @@ export default function UnverifiedPanel() {
           onClick={minNft}
           type="button"
         >
-          🐶 {isPending ? "Minting..." : "Mint NFT"}
+          🐶 {isPending ? 'Minting...' : 'Mint NFT'}
         </button>
 
         {error && (
@@ -45,7 +45,8 @@ export default function UnverifiedPanel() {
             target="_blank"
             className="block text-sm bg-yellow-400/10 p-2 rounded-md border border-yellow-400 text-yellow-400 break-all my-2 w-full"
           >
-            Tx hash: {data?.substring(0, 20)}...{data?.substring(data.length - 20)}
+            Tx hash: {data?.substring(0, 20)}...
+            {data?.substring(data.length - 20)}
           </a>
         )}
       </div>

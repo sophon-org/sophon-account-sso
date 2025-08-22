@@ -1,28 +1,39 @@
-import Image from "next/image";
-import { useCallback, useEffect, useState } from "react";
-import { useConnect } from "wagmi";
-import { WalletConnectQR } from "@/components/wallet-connect/WalletConnectQR";
-import { MainStateMachineContext } from "@/context/state-machine-context";
-import { useAuthCallbacks } from "@/hooks/auth/useAuthActions";
-import { useWalletConnect } from "@/hooks/auth/useWalletConnect";
-import { SUPPORTED_WALLETS, type SupportedWallet } from "@/lib/supportedWallets";
+import Image from 'next/image';
+import { useCallback, useEffect, useState } from 'react';
+import { useConnect } from 'wagmi';
+import { WalletConnectQR } from '@/components/wallet-connect/WalletConnectQR';
+import { MainStateMachineContext } from '@/context/state-machine-context';
+import { useAuthCallbacks } from '@/hooks/auth/useAuthActions';
+import { useWalletConnect } from '@/hooks/auth/useWalletConnect';
+import {
+  SUPPORTED_WALLETS,
+  type SupportedWallet,
+} from '@/lib/supportedWallets';
 
 export default function SelectingWalletView() {
   const state = MainStateMachineContext.useSelector((state) => state);
   const actorRef = MainStateMachineContext.useActorRef();
   const { connectEOA } = useAuthCallbacks();
   const { connectors } = useConnect();
-  const [search, setSearch] = useState("");
-  const [availableWallets, setAvailableWallets] = useState<SupportedWallet[]>([]);
-  const { initializeWalletConnect, qrCodeDataUrl, isLoading, error, showQR, setShowQR } =
-    useWalletConnect();
+  const [search, setSearch] = useState('');
+  const [availableWallets, setAvailableWallets] = useState<SupportedWallet[]>(
+    [],
+  );
+  const {
+    initializeWalletConnect,
+    qrCodeDataUrl,
+    isLoading,
+    error,
+    showQR,
+    setShowQR,
+  } = useWalletConnect();
 
   const handleWalletClick = async (wallet: SupportedWallet) => {
     const connector = connectors.find((c) => c.name === wallet.name);
 
     // Special handling for WalletConnect
-    if (wallet.name === "WalletConnect") {
-      actorRef.send({ type: "WALLET_CONNECT_SELECTED" });
+    if (wallet.name === 'WalletConnect') {
+      actorRef.send({ type: 'WALLET_CONNECT_SELECTED' });
       await initializeWalletConnect();
       return;
     }
@@ -31,17 +42,17 @@ export default function SelectingWalletView() {
       connectEOA(connector.name);
     } else {
       // Wallet not installed - redirect to installation
-      window.open(wallet.downloadUrl, "_blank");
+      window.open(wallet.downloadUrl, '_blank');
     }
   };
 
   const getAvailableWallets = useCallback(() => {
     const installedWallets = connectors.filter(
-      (c) => c.id !== "injected" && c.id !== "walletConnect",
+      (c) => c.id !== 'injected' && c.id !== 'walletConnect',
     );
     const availableWallets = installedWallets.map((c) => ({
       name: c.name,
-      icon: c.icon?.replace(/\n/g, "").replace(" ", ""),
+      icon: c.icon?.replace(/\n/g, '').replace(' ', ''),
     }));
     const removedDuplicates = SUPPORTED_WALLETS.filter(
       (wallet) => !availableWallets.some((c) => c.name === wallet.name),
@@ -68,8 +79,8 @@ export default function SelectingWalletView() {
         isLoading={isLoading}
         error={error}
         onSuccess={() => {
-          connectEOA("WalletConnect");
-          actorRef.send({ type: "WALLET_CONNECTED" });
+          connectEOA('WalletConnect');
+          actorRef.send({ type: 'WALLET_CONNECTED' });
         }}
       />
     );
@@ -87,9 +98,13 @@ export default function SelectingWalletView() {
       />
       <ul className="flex flex-col gap-2">
         {availableWallets
-          .filter((wallet) => wallet.name.toLowerCase().includes(search.toLowerCase()))
+          .filter((wallet) =>
+            wallet.name.toLowerCase().includes(search.toLowerCase()),
+          )
           .map((wallet) => {
-            const isInstalled = connectors.some((connector) => connector.name === wallet.name);
+            const isInstalled = connectors.some(
+              (connector) => connector.name === wallet.name,
+            );
 
             return (
               <li key={wallet.name}>
@@ -100,7 +115,12 @@ export default function SelectingWalletView() {
                 >
                   <div className="flex items-center gap-4">
                     <div>
-                      <Image src={wallet.icon || ""} alt={wallet.name} width={20} height={20} />
+                      <Image
+                        src={wallet.icon || ''}
+                        alt={wallet.name}
+                        width={20}
+                        height={20}
+                      />
                     </div>
                     <p className="font-medium">{wallet.name}</p>
                   </div>

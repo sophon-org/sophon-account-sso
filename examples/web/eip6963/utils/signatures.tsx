@@ -1,6 +1,6 @@
-import { EIP1271_ABI } from "@/abi/eip1271";
-import { createPublicClient, http, getAddress, hashTypedData } from "viem";
-import { sophonTestnet } from "viem/chains";
+import { createPublicClient, getAddress, hashTypedData, http } from 'viem';
+import { sophonTestnet } from 'viem/chains';
+import { EIP1271_ABI } from '@/abi/eip1271';
 
 // Create a public client for blockchain interactions
 const publicClient = createPublicClient({
@@ -9,7 +9,7 @@ const publicClient = createPublicClient({
 });
 
 // EIP-1271 magic value that indicates a valid signature
-const EIP1271_MAGIC_VALUE = "0x1626ba7e";
+const EIP1271_MAGIC_VALUE = '0x1626ba7e';
 
 export async function validateSignature(
   messageHash: `0x${string}`,
@@ -24,14 +24,18 @@ export async function validateSignature(
       address: normalizedAddress,
     });
 
-    if (code && code !== "0x") {
+    if (code && code !== '0x') {
       // It's a smart contract, use publicClient.verifyTypedData for EIP-1271 validation
-      return await validateSmartAccountSignature(messageHash, signature, normalizedAddress);
+      return await validateSmartAccountSignature(
+        messageHash,
+        signature,
+        normalizedAddress,
+      );
     } else {
       return false;
     }
   } catch (error) {
-    console.error("Error validating signature:", error);
+    console.error('Error validating signature:', error);
     return false;
   }
 }
@@ -45,7 +49,7 @@ async function validateSmartAccountSignature(
     const result = await publicClient.readContract({
       address: contractAddress as `0x${string}`,
       abi: EIP1271_ABI,
-      functionName: "isValidSignature",
+      functionName: 'isValidSignature',
       args: [messageHash, signature as `0x${string}`],
     });
 
@@ -53,7 +57,7 @@ async function validateSmartAccountSignature(
 
     return isValid;
   } catch (error) {
-    console.error("Error validating smart account signature:", error);
+    console.error('Error validating smart account signature:', error);
     return false;
   }
 }

@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { ConnectKitButton, useIsMounted } from "connectkit";
-import { Loader } from "../../components/loader";
-import { Logo } from "../../components/logo";
-import { ProfilePanel } from "../../components/profile.panel";
-import { PaymasterProvider } from "../../components/paymaster.provider";
+import { ConnectKitButton, useIsMounted } from 'connectkit';
+import { Loader } from '../../components/loader';
+import { Logo } from '../../components/logo';
+import { PaymasterProvider } from '../../components/paymaster.provider';
+import { ProfilePanel } from '../../components/profile.panel';
 
 export default function Home() {
   const isMounted = useIsMounted();
