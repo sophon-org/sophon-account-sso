@@ -41,7 +41,6 @@ export async function getPublicKeyPem(): Promise<string> {
 	return pem;
 }
 
-/** NEW: Refresh keypair (separate from access/nonce) */
 export async function getRefreshPrivateKeyPem(): Promise<string> {
 	if (refreshPrivateKeyPemCache) return refreshPrivateKeyPemCache;
 
@@ -80,7 +79,6 @@ export async function getPublicKeyObject(): Promise<KeyObject> {
 	return publicKeyObjCache;
 }
 
-/** NEW: Refresh Node KeyObjects */
 export async function getRefreshPrivateKeyObject(): Promise<KeyObject> {
 	if (refreshPrivateKeyObjCache) return refreshPrivateKeyObjCache;
 	const pem = await getRefreshPrivateKeyPem();
