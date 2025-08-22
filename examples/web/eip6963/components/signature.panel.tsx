@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { hashMessage, hashTypedData } from 'viem';
 import { sophonTestnet } from 'viem/chains';
-import { useAccount, useSignMessage, useSignTypedData } from 'wagmi';
+import { useAccount, useSignMessage, useSignTypedData, UseSignTypedDataReturnType } from 'wagmi';
 import { validateSignature } from '../utils/signatures';
 
 export default function SignaturePanel() {
@@ -16,7 +16,8 @@ export default function SignaturePanel() {
   const [timestamp, setTimestamp] = useState(Date.now());
 
   const MESSAGE_TO_SIGN = 'Hello from Sophon SSO!';
-  const TYPED_DATA_TO_SIGN = (address: `0x${string}`, timestamp: number) => {
+  // biome-ignore lint/suspicious/noExplicitAny: review
+  const TYPED_DATA_TO_SIGN: any = (address: `0x${string}`, timestamp: number) => {
     return {
       domain: {
         name: 'Sophon SSO',
