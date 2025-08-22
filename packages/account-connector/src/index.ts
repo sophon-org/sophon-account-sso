@@ -6,8 +6,7 @@ import { type Communicator, PopupCommunicator } from 'zksync-sso/communicator';
 import { zksyncSsoConnector } from 'zksync-sso/connector';
 
 interface SophonSsoConnectorOptions {
-  // biome-ignore lint/suspicious/noExplicitAny: TODO: review this
-  session?: any;
+  session?: unknown;
   paymaster?: `0x${string}`;
   communicator?: Communicator;
   authServerUrl: string;
@@ -26,19 +25,10 @@ export const sophonSsoConnector = (
     ? `${authServerUrl}/${partnerId}`
     : authServerUrl;
 
-  console.log(
-    'connecting',
-    partnerId,
-    network,
-    authServerUrl,
-    options?.authServerUrl,
-  );
-  console.log('finalAuthServerUrl', finalAuthServerUrl);
-
   const connector = zksyncSsoConnector({
     authServerUrl: finalAuthServerUrl,
     metadata: {
-      name: network === 'mainnet' ? 'Sophon Account' : 'Sophon Testnet Wallet',
+      name: network === 'mainnet' ? 'Sophon Account' : 'Sophon Account Test',
       icon: '/sophon-icon.png',
     },
     // paymasterHandler: async () => ({

@@ -1,12 +1,12 @@
 import { shortenAddress } from '@sophon-labs/account-core';
 import { formatUnits } from 'viem';
 import { useAccount, useBalance, useConfig } from 'wagmi';
+import { disconnect } from 'wagmi/actions';
 import MintPanel from './mint.panel';
 import SimpleSignaturePanel from './simple-signature.panel';
 import TransactionERC20Panel from './transaction-erc20.panel';
 import TransactionNativePanel from './transaction-native.panel';
 import TypedSignaturePanel from './typed-signature.panel';
-import { disconnect } from 'wagmi/actions';
 
 export const ProfilePanel = () => {
   const wagmiConfig = useConfig();
