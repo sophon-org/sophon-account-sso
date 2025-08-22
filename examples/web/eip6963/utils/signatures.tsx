@@ -1,4 +1,4 @@
-import { createPublicClient, getAddress, hashTypedData, http } from 'viem';
+import { createPublicClient, getAddress, http } from 'viem';
 import { sophonTestnet } from 'viem/chains';
 import { EIP1271_ABI } from '@/abi/eip1271';
 

@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useWriteContract } from 'wagmi';
-import { nftAbi } from '@/abi/nft';
 import { unverifiedAbi } from '@/abi/unverified';
 import { verifiedAbi } from '@/abi/verified';
 
@@ -81,7 +80,7 @@ export default function UnverifiedPanel() {
         setTxHash(complexData);
       }
     }
-  }, [unverifiedData, verifiedData, complexData]);
+  }, [unverifiedData, verifiedData, complexData, txType]);
 
   useEffect(() => {
     if (unverifiedError || verifiedError || complexError) {
@@ -103,7 +102,7 @@ export default function UnverifiedPanel() {
         );
       }
     }
-  }, [unverifiedError, verifiedError, complexError]);
+  }, [unverifiedError, verifiedError, complexError, txType]);
 
   return (
     <div>

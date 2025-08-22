@@ -17,11 +17,7 @@ export const ProfilePanel = () => {
     address,
   });
   const { paymasterEnabled, setPaymasterEnabled } = usePaymaster();
-  const {
-    data: balanceMintMe,
-    refetch: refetchMintMe,
-    isRefetching: isRefetchingMintMe,
-  } = useBalance({
+  const { data: balanceMintMe, refetch: refetchMintMe } = useBalance({
     address,
     token: '0xE676a42fEd98d51336f02510bB5d598893AbfE90',
   });
@@ -59,7 +55,7 @@ export const ProfilePanel = () => {
       }
     };
     refetch();
-  }, [writeContractData]);
+  }, [writeContractData, refetchMintMe]);
 
   if (!isConnected)
     return (
@@ -82,12 +78,13 @@ export const ProfilePanel = () => {
           {balanceMintMe
             ? formatUnits(balanceMintMe.value, balanceMintMe.decimals)
             : '0'}{' '}
-          <a
-            className="cursor-pointer text-xs text-gray-500 underline"
+          <button
+            className="text-xs text-gray-500 underline"
             onClick={handleMint}
+            type="button"
           >
-            mint
-          </a>
+            Mint mint
+          </button>
         </p>
       </div>
       <div className="flex items-center gap-2 mt-2">

@@ -66,8 +66,6 @@ export default function SignaturePanel() {
   };
 
   useEffect(() => {
-    console.log('signTypedDataData', signTypedDataData);
-    console.log('messageData', messageData);
     setIsValid(null);
     if (isSigningTypedData) {
       setSigninType('typed-data');
@@ -143,6 +141,7 @@ export default function SignaturePanel() {
                 className="bg-purple-400 text-white p-2 rounded-md w-full hover:bg-purple-500 hover:cursor-pointer border-1 border-black/40"
                 onClick={handleValidateSignature}
                 disabled={isValidating}
+                type="button"
               >
                 ✅{isValidating ? ' Validating...' : ' Validate Signature'}
               </button>

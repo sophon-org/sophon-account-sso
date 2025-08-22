@@ -26,7 +26,7 @@ export default function TransactionNativePanel() {
     if (targetAddress === '') {
       setTargetAddress(address!);
     }
-  }, [address]);
+  }, [address, targetAddress]);
 
   const {
     data: transactionData,
@@ -115,7 +115,7 @@ export default function TransactionNativePanel() {
         setTxHash(approveContractData);
       }
     }
-  }, [transactionData, writeContractData, approveContractData]);
+  }, [transactionData, writeContractData, approveContractData, txType]);
 
   useEffect(() => {
     setTxError(undefined);
@@ -138,7 +138,7 @@ export default function TransactionNativePanel() {
         );
       }
     }
-  }, [txErrorWagmi, writeContractErrorWagmi, approveContractError]);
+  }, [txErrorWagmi, writeContractErrorWagmi, approveContractError, txType]);
 
   return (
     <div>

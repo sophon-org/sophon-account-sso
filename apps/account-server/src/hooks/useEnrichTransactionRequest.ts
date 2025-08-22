@@ -1,11 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-  decodeFunctionData,
-  erc20Abi,
-  formatEther,
-  formatUnits,
-  parseAbi,
-} from 'viem';
+import { decodeFunctionData, formatEther, formatUnits, parseAbi } from 'viem';
 import { BLOCK_EXPLORER_API_URL } from '@/lib/constants';
 import {
   type EnrichedTransactionRequest,
