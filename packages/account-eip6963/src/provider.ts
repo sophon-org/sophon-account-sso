@@ -9,6 +9,29 @@ import type { EIP1193Provider } from './types';
 let currentAccounts: string[] = [];
 const eventListeners = new Map<string, ((...args: unknown[]) => void)[]>();
 
+const awaitForPopupUnload = (authServerUrl: string) => {
+  return new Promise((resolve, reject) => {
+    const listener = (event: MessageEvent) => {
+      if (!authServerUrl.startsWith(event.origin)) {
+        return;
+      }
+
+      if (event.data.event === 'PopupUnload') {
+        window.removeEventListener('message', listener);
+        // wait a little bit to make sure that the popup is closed before trying to open a new one
+        // the behavior changes according to the user browser brand
+        setTimeout(() => {
+          resolve(true);
+        }, 500);
+      } else {
+        reject(new Error('PopupUnload not received'));
+      }
+    };
+
+    window.addEventListener('message', listener);
+  });
+};
+
 // The main provider function
 export function createSophonEIP1193Provider(
   network: SophonNetworkType = 'testnet',
@@ -52,8 +75,11 @@ export function createSophonEIP1193Provider(
 
       switch (method) {
         case 'eth_requestAccounts':
+          console.log('EIP-1193 eth_requestAccounts:', method, params);
           try {
             const result = await makeAuthRequest('eth_requestAccounts');
+            await awaitForPopupUnload(authServerUrl);
+
             if (result?.content?.error) {
               throw new Error(result?.content?.error?.message);
             }
@@ -100,6 +126,7 @@ export function createSophonEIP1193Provider(
         case 'personal_sign': {
           console.log('EIP-1193 personal_sign:', method, params);
           const result = await makeAuthRequest('personal_sign', params);
+          await awaitForPopupUnload(authServerUrl);
           if (result?.content?.error) {
             throw new Error(result?.content?.error?.message);
           }
@@ -109,6 +136,7 @@ export function createSophonEIP1193Provider(
         case 'eth_signTypedData_v4': {
           console.log('EIP-1193 eth_signTypedData_v4:', method, params);
           const result = await makeAuthRequest('eth_signTypedData_v4', params);
+          await awaitForPopupUnload(authServerUrl);
           if (result?.content?.error) {
             throw new Error(result?.content?.error?.message);
           }
@@ -118,6 +146,7 @@ export function createSophonEIP1193Provider(
         case 'eth_sendTransaction': {
           console.log('EIP-1193 eth_sendTransaction:', method, params);
           const result = await makeAuthRequest('eth_sendTransaction', params);
+          await awaitForPopupUnload(authServerUrl);
           if (result?.content?.error) {
             throw new Error(result?.content?.error?.message);
           }
@@ -134,6 +163,7 @@ export function createSophonEIP1193Provider(
 
             // Send logout request to the account server popup
             await makeAuthRequest('wallet_revokePermissions');
+            await awaitForPopupUnload(authServerUrl);
           } catch (error) {
             console.warn(
               'Failed to send logout request to account server:',

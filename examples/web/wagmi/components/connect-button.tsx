@@ -21,7 +21,7 @@ export const ConnectButton = () => {
     });
 
     // await 1 second
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    // await new Promise((resolve) => setTimeout(resolve, 100));
 
     console.log('Connected to Sophon, signing message');
     const msgString = `Message to sign`;
@@ -29,6 +29,10 @@ export const ConnectButton = () => {
       message: msgString,
     });
     console.log(`Signature: ${signature}`);
+    const signature2 = await signMessage(wagmiConfig, {
+      message: `Message to sign2`,
+    });
+    console.log(`Signature2: ${signature2}`);
   };
 
   return (

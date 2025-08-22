@@ -22,7 +22,7 @@ export function createSophonEIP6963Emitter(
   announceEip6963Provider({
     info: {
       uuid: network === 'mainnet' ? 'sophon' : `sophon-testnet`,
-      name: network === 'mainnet' ? 'Sophon Account' : 'Sophon Testnet Account',
+      name: network === 'mainnet' ? 'Sophon Account' : 'Sophon Account Test',
       icon: SophonIcon,
       rdns: network === 'mainnet' ? 'xyz.sophon.my' : `xyz.sophon.staging.my`,
     },

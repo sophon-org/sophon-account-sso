@@ -1,9 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { hexToString } from 'viem';
-import { MainStateMachineContext } from '@/context/state-machine-context';
-
-import { getSocialProviderFromURL } from '@/lib/social-provider';
 import { windowService } from '@/service/window.service';
 import type {
   AuthenticationRequest,
@@ -26,7 +23,6 @@ interface UseMessageHandlerReturn {
 }
 
 export const useMessageHandler = (): UseMessageHandlerReturn => {
-  const state = MainStateMachineContext.useSelector((state) => state);
   const [handlerInitialized, setHandlerInitialized] = useState(false);
   const [incomingRequest, setIncomingRequest] =
     useState<IncomingRequest | null>(null);
@@ -159,14 +155,6 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
       }
     };
 
-    const handleBeforeUnload = () => {
-      const popupUnloadSignal = {
-        event: 'PopupUnload',
-        id: crypto.randomUUID(),
-      };
-      windowService.sendMessage(popupUnloadSignal);
-    };
-
     // Check sessionStorage for saved request (survives OAuth redirects)
     const savedRequest = sessionStorage.getItem('sophon-incoming-request');
     if (savedRequest && !incomingRequest) {
@@ -191,15 +179,8 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
       };
       windowService.sendMessage(popupLoadedSignal);
 
-      // Add beforeunload listener to send PopupUnload event
-      // Skip if we're doing social login to prevent interrupting OAuth flow
-      const isSocialLogin =
-        getSocialProviderFromURL() !== null ||
-        state.matches('login-required.started');
-
-      if (!state.matches('login.init') && !isSocialLogin) {
-        window.addEventListener('beforeunload', handleBeforeUnload);
-      }
+      // differently from Matter Labs auth-server example, we don't need to send
+      // a PopupUnload signal because the popup is closed by the window service
     }
 
     // Define the message handler
@@ -208,12 +189,8 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
 
     return () => {
       unregister();
-      // Clean up the beforeunload listener
-      if (origin && windowService.isManaged()) {
-        window.removeEventListener('beforeunload', handleBeforeUnload);
-      }
     };
-  }, [incomingRequest, state]);
+  }, [incomingRequest]);
 
   return {
     incomingRequest,

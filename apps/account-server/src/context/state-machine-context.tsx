@@ -31,6 +31,20 @@ export const MainStateMachineContextProvider = ({
         },
         actions: {
           clearRequests: assign(({ context }) => {
+            return {
+              ...context,
+              requests: {
+                incoming: null,
+                typedDataSigning: null,
+                messageSigning: null,
+                transaction: null,
+                session: null,
+                authentication: null,
+                logout: null,
+              },
+            };
+          }),
+          cancelRequests: assign(({ context }) => {
             if (context.requests.incoming) {
               const signResponse = {
                 id: crypto.randomUUID(),

@@ -81,7 +81,8 @@ const popupWindowService: WindowCommunicationService = {
   },
 
   close: () => {
-    window.close();
+    window.opener.postMessage({ event: 'PopupUnload' }, '*');
+    // window.close();
   },
 
   sendMessage: (message: unknown) => {
