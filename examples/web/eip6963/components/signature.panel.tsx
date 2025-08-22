@@ -93,14 +93,14 @@ export default function SignaturePanel() {
       <h2 className="text-xl font-bold mt-4">Signatures</h2>
       <div className="flex flex-row gap-2 mt-4 w-full">
         <button
-          className="bg-blue-400 text-white p-2 rounded-md flex-1 hover:bg-blue-500 hover:cursor-pointer border-1 border-black/40"
+          className="bg-purple-400 text-white p-2 rounded-md w-full hover:bg-purple-500 hover:cursor-pointer border-1 border-black/40"
           onClick={handleSignMessage}
           type="button"
         >
           ✍️ {isSigningMessage ? "Signing..." : "Sign Message"}
         </button>
         <button
-          className="bg-orange-400 text-white p-2 rounded-md flex-1 hover:bg-orange-500 hover:cursor-pointer border-1 border-black/40"
+          className="bg-purple-400 text-white p-2 rounded-md w-full hover:bg-purple-500 hover:cursor-pointer border-1 border-black/40"
           onClick={handleSignTypedData}
           type="button"
         >
@@ -127,7 +127,7 @@ export default function SignaturePanel() {
                 {signinType === "typed-data" ? signTypedDataData : messageData}
               </p>
               <button
-                className="bg-green-400 text-white p-2 rounded-md flex-1 hover:bg-green-500 hover:cursor-pointer border-1 border-green-400/40"
+                className="bg-purple-400 text-white p-2 rounded-md w-full hover:bg-purple-500 hover:cursor-pointer border-1 border-black/40"
                 onClick={handleValidateSignature}
                 disabled={isValidating}
               >

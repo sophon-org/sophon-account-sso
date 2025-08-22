@@ -4,6 +4,7 @@ import { ConnectKitButton, useIsMounted } from "connectkit";
 import { Loader } from "../../components/loader";
 import { Logo } from "../../components/logo";
 import { ProfilePanel } from "../../components/profile.panel";
+import { PaymasterProvider } from "../../components/paymaster.provider";
 
 export default function Home() {
   const isMounted = useIsMounted();
@@ -20,12 +21,14 @@ export default function Home() {
   }
 
   return (
-    <div className="flex justify-center h-screen">
-      <div className="flex flex-col gap-2 max-w-md w-full items-center">
-        <Logo className="mb-4" />
-        <ConnectKitButton theme="midnight" />
-        <ProfilePanel />
+    <PaymasterProvider>
+      <div className="flex justify-center h-screen">
+        <div className="flex flex-col gap-2 max-w-md w-full items-center">
+          <Logo className="mb-4" />
+          <ConnectKitButton theme="midnight" />
+          <ProfilePanel />
+        </div>
       </div>
-    </div>
+    </PaymasterProvider>
   );
 }

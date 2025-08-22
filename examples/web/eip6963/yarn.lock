@@ -1409,22 +1409,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-core@npm:2.0.0-next.34":
-  version: 2.0.0-next.34
-  resolution: "@sophon-labs/account-core@npm:2.0.0-next.34"
-  checksum: 10c0/183e726b09c82ac389da452f8cb415e3c3737b8d7fa175d344ae420ddad58c46146d52326082922219e2773efd165940321eee5d3011946a3969757bbbe7b6b3
+"@sophon-labs/account-core@npm:2.0.0-next.35":
+  version: 2.0.0-next.35
+  resolution: "@sophon-labs/account-core@npm:2.0.0-next.35"
+  checksum: 10c0/0c514bb5e7605698ce1f0157dbba42b9195bcb9e6172049d6ab38f165857a06e938528c92addbcb91e263f871cf48c499b23a9dd25180e412490d4281ce463e1
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-eip6963@npm:2.0.0-next.34":
-  version: 2.0.0-next.34
-  resolution: "@sophon-labs/account-eip6963@npm:2.0.0-next.34"
+"@sophon-labs/account-eip6963@npm:2.0.0-next.35":
+  version: 2.0.0-next.35
+  resolution: "@sophon-labs/account-eip6963@npm:2.0.0-next.35"
   dependencies:
-    "@sophon-labs/account-core": "npm:2.0.0-next.34"
+    "@sophon-labs/account-core": "npm:2.0.0-next.35"
     zksync-sso: "npm:0.4.1"
   peerDependencies:
     typescript: ^5.0.0
-  checksum: 10c0/65eecc8a1ca230ee59e3c14941e7ebb9a31da8da4680b675443e5512548d097796818a540bf76b7d51abaeabab430a9a79e2ae3fce566b056c6a39ec02467d98
+  checksum: 10c0/a61302ac311d42754cdb887b3e580edf182b2da683b66246377825ed3a6406de0033d84a5b78ca86addcca50dacd48de13650c77f18786f31a8d232402933877
   languageName: node
   linkType: hard
 
@@ -1432,8 +1432,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@sophon-labs/examples-sandbox-eip6963@workspace:."
   dependencies:
-    "@sophon-labs/account-core": "npm:2.0.0-next.34"
-    "@sophon-labs/account-eip6963": "npm:2.0.0-next.34"
+    "@sophon-labs/account-core": "npm:2.0.0-next.35"
+    "@sophon-labs/account-eip6963": "npm:2.0.0-next.35"
     "@tailwindcss/postcss": "npm:^4"
     "@tanstack/react-query": "npm:^5.83.0"
     "@types/node": "npm:^20"
