@@ -8,6 +8,7 @@ import {
   useAccountEffect,
   useConnect,
   useDisconnect,
+  useSwitchChain,
   useWalletClient,
 } from 'wagmi';
 import { MainStateMachineContext } from '@/context/state-machine-context';
@@ -22,13 +23,14 @@ import {
 import { useAccountCreate } from './useAccountCreate';
 
 export const useWalletConnection = () => {
-  const { address, isConnected, isConnecting } = useAccount();
+  const { address, isConnected, isConnecting, chainId } = useAccount();
   const { connectAsync, connectors, error, isPending, isSuccess } =
     useConnect();
   const { disconnect } = useDisconnect();
   const { data: walletClient } = useWalletClient();
   const { success: accountCreated } = useAccountCreate();
   const actorRef = MainStateMachineContext.useActorRef();
+  const { switchChain } = useSwitchChain();
 
   useAccountEffect({
     onConnect(data: { address: Address }) {
@@ -151,6 +153,12 @@ export const useWalletConnection = () => {
     }
   }, [isSuccess, walletClient, address]);
 
+  const handleSwitchChain = async () => {
+    if (chainId && chainId !== env.NEXT_PUBLIC_CHAIN_ID) {
+      switchChain({ chainId: env.NEXT_PUBLIC_CHAIN_ID });
+    }
+  };
+
   useEffect(() => {
     handleCreateAccount();
   }, [handleCreateAccount]);
@@ -176,5 +184,6 @@ export const useWalletConnection = () => {
     isPending,
     accountCreated,
     handleCheckChainId,
+    handleSwitchChain,
   };
 };
