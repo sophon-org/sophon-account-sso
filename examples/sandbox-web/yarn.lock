@@ -1189,44 +1189,44 @@ __metadata:
   linkType: hard
 
 "@sophon-labs/account-connector@file:../../packages/account-connector::locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A.":
-  version: 2.0.0-next.34
-  resolution: "@sophon-labs/account-connector@file:../../packages/account-connector#../../packages/account-connector::hash=91367c&locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A."
+  version: 2.0.0-next.36
+  resolution: "@sophon-labs/account-connector@file:../../packages/account-connector#../../packages/account-connector::hash=4bad38&locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A."
   dependencies:
-    "@sophon-labs/account-core": "npm:2.0.0-next.34"
+    "@sophon-labs/account-core": "npm:2.0.0-next.36"
     zksync-sso: "npm:0.4.1"
   peerDependencies:
     "@wagmi/core": ^2.17.3
     viem: ">=2.21.49"
-  checksum: 10c0/52e052458e9e2e11f8015b5c4dce45b6e39ddbfaa87e8bdc71db315c666b9b48bb45ecbba29c09787e5dac59b675dfb9797799e9a01b01283b27d7a0366cea1b
+  checksum: 10c0/d8fc25c7d5703bfa04f626702d3e1c50a02a5bd3f2b8fe9ade45f75f7a97269dc6c22f0ec53bc3343743bb9194597cb61d1245e9b0bcb333f2ccf562bda36a53
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-connector@npm:2.0.0-next.34":
-  version: 2.0.0-next.34
-  resolution: "@sophon-labs/account-connector@npm:2.0.0-next.34"
+"@sophon-labs/account-connector@npm:2.0.0-next.36":
+  version: 2.0.0-next.36
+  resolution: "@sophon-labs/account-connector@npm:2.0.0-next.36"
   dependencies:
-    "@sophon-labs/account-core": "npm:2.0.0-next.34"
+    "@sophon-labs/account-core": "npm:2.0.0-next.36"
     zksync-sso: "npm:0.4.1"
   peerDependencies:
     "@wagmi/core": ^2.17.3
     viem: ">=2.21.49"
-  checksum: 10c0/5dffc74e38a061db43c6f937d3f8d34bc9070a6836e00dee26e4ea8e445dd63a7c67400d96e4edf53e8d86d308a0a06d616dcbf5fa04c0a0a6db681abc53d4aa
+  checksum: 10c0/95d5f538e6fe637c48c846b72c6802609db476197a357dfcda9a5274628c6452c03415d73ae7c9087a157f7ae4cf483b2e040c43cf958c6368138b37dcf243d1
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-core@npm:2.0.0-next.34":
-  version: 2.0.0-next.34
-  resolution: "@sophon-labs/account-core@npm:2.0.0-next.34"
-  checksum: 10c0/183e726b09c82ac389da452f8cb415e3c3737b8d7fa175d344ae420ddad58c46146d52326082922219e2773efd165940321eee5d3011946a3969757bbbe7b6b3
+"@sophon-labs/account-core@npm:2.0.0-next.36":
+  version: 2.0.0-next.36
+  resolution: "@sophon-labs/account-core@npm:2.0.0-next.36"
+  checksum: 10c0/800e3713a235ee0d5acee060d685dbb5711bbec41d4a586d141cb00870d49ee5b8eba2e29674e069ea8f22d508e810fa775419bb89b9346c8b63b504abdb5ed9
   languageName: node
   linkType: hard
 
 "@sophon-labs/account-react@file:../../packages/account-react::locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A.":
-  version: 2.0.0-next.34
-  resolution: "@sophon-labs/account-react@file:../../packages/account-react#../../packages/account-react::hash=69aedf&locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A."
+  version: 2.0.0-next.36
+  resolution: "@sophon-labs/account-react@file:../../packages/account-react#../../packages/account-react::hash=bff775&locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A."
   dependencies:
-    "@sophon-labs/account-connector": "npm:2.0.0-next.34"
-    "@sophon-labs/account-core": "npm:2.0.0-next.34"
+    "@sophon-labs/account-connector": "npm:2.0.0-next.36"
+    "@sophon-labs/account-core": "npm:2.0.0-next.36"
     axios: "npm:^1.11.0"
     clsx: "npm:^2.1.1"
   peerDependencies:
@@ -1235,7 +1235,7 @@ __metadata:
     react-dom: ">=18"
     viem: ">=2"
     wagmi: ">=2"
-  checksum: 10c0/9bcdf8492d6de93737d7bd773070823d1e4c2926fedbf804c5f7d326d2a497ad2ff9a600f03f696e2746c316b053abe1b2cf54516bdc6e3c856b109cb3ba76b6
+  checksum: 10c0/e63a43f6e18772da62474991b7aad4a1d2fda7230419e7047bfc545a66cec1984a5cd513b36724f393ab2c66e8e34faee93861949de10fba37b3c0a1526a640e
   languageName: node
   linkType: hard
 

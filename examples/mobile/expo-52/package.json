@@ -18,7 +18,7 @@
     "@react-navigation/native": "^7.0.14",
     "@simplewebauthn/browser": "^13.1.2",
     "@simplewebauthn/server": "^13.1.2",
-    "@sophon-labs/account-react-native": "2.0.0-next.33",
+    "@sophon-labs/account-react-native": "2.0.0-next.36",
     "expo": "~52.0.47",
     "expo-blur": "~14.0.3",
     "expo-constants": "~17.0.8",
