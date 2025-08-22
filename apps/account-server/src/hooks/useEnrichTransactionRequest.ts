@@ -1,13 +1,8 @@
 import { useEffect, useState } from 'react';
-import {
-  decodeFunctionData,
-  erc20Abi,
-  formatEther,
-  formatUnits,
-  parseAbi,
-} from 'viem';
+import { decodeFunctionData, erc20Abi, formatEther, formatUnits } from 'viem';
 import { BLOCK_EXPLORER_API_URL } from '@/lib/constants';
 import {
+  type ContractInfo,
   type EnrichedTransactionRequest,
   type TransactionRequest,
   TransactionType,
@@ -27,13 +22,12 @@ const getTokenFromAddress = async (address: string) => {
   }
 };
 
-const getContractABI = async (
-  address: string,
-): Promise<readonly string[] | null> => {
+const getContractInfo = async (address: string): Promise<ContractInfo> => {
   try {
     const response = await fetch(
-      `${BLOCK_EXPLORER_API_URL}/api?module=contract&action=getabi&address=${address}`,
+      `${BLOCK_EXPLORER_API_URL}/api?module=contract&action=getsourcecode&address=${address}`,
     );
+
     const data = await response.json();
 
     if (
@@ -41,78 +35,54 @@ const getContractABI = async (
       data.result &&
       data.result !== 'Contract source code not verified'
     ) {
-      return data.result;
+      return {
+        abi: JSON.parse(data.result[0].ABI),
+        name: data.result[0].ContractName,
+      };
     }
-    return null;
+    return {
+      abi: null,
+      name: null,
+    };
   } catch (error) {
     console.warn('Failed to fetch contract ABI:', error);
-    return null;
+    return {
+      abi: null,
+      name: null,
+    };
   }
 };
 
-// Function to decode any function call with the actual ABI
-const decodeWithABI = (abi: string, data: string) => {
-  try {
-    // Parse the JSON string from blockchain explorer API
-    const abiArray = JSON.parse(abi);
+const getFunctionParameters = (
+  decodedData: { functionName: string; args: readonly unknown[] },
+  contractInfo: ContractInfo,
+): {
+  functionName: string;
+  args: Array<{ name: string; value: string; type: string }>;
+} | null => {
+  if (!contractInfo.abi) return null;
 
-    // Filter only functions (exclude events, errors, etc.)
+  const functionAbi = contractInfo.abi.find(
+    (item) =>
+      item.type === 'function' &&
+      item.name === decodedData.functionName &&
+      item.inputs?.length === decodedData.args.length,
+  );
 
-    const functionAbi = abiArray.filter(
-      // biome-ignore lint/suspicious/noExplicitAny: review that in the future TODO
-      (item: any) => item.type === 'function',
-    );
+  if (functionAbi?.inputs) {
+    const parameters = decodedData.args.map((arg: unknown, index: number) => ({
+      name: functionAbi.inputs?.[index]?.name || `param${index}`,
+      value: arg?.toString() || '',
+      type: functionAbi.inputs?.[index]?.type || 'unknown',
+    }));
 
-    // Convert ABI objects to function signature strings that viem can parse
-    // biome-ignore lint/suspicious/noExplicitAny: review that in the future TODO
-    const functionSignatures = functionAbi.map((func: any) => {
-      const inputs =
-        func.inputs
-          // biome-ignore lint/suspicious/noExplicitAny: review that in the future TODO
-          ?.map((input: any) => {
-            const name = input.name || `param${input.internalType}`;
-            return `${input.type} ${name}`;
-          })
-          .join(', ') || '';
-      return `function ${func.name}(${inputs})`;
-    });
-
-    const parsedABI = parseAbi(functionSignatures);
-
-    const decodedData = decodeFunctionData({
-      abi: parsedABI,
-      data: data as `0x${string}`,
-    });
-
-    if (!decodedData.args) {
-      return null;
-    }
-
-    const result = {
+    return {
       functionName: decodedData.functionName,
-      functionSignature: functionSignatures[0],
-      parameters: decodedData.args.map((arg, index) => ({
-        name:
-          decodedData.functionName === 'mint' && index === 0
-            ? '_destinationAddress'
-            : decodedData.functionName === 'mint' && index === 1
-              ? '_quantity'
-              : `param${index}`,
-        value: arg?.toString() || '',
-        type:
-          typeof arg === 'bigint'
-            ? 'uint256'
-            : typeof arg === 'string'
-              ? 'address'
-              : 'unknown',
-      })),
+      args: parameters,
     };
-
-    return result;
-  } catch (error) {
-    console.error('Failed to decode with ABI:', error);
-    return null;
   }
+
+  return null;
 };
 
 export const useEnrichTransactionRequest = (
@@ -153,8 +123,36 @@ export const useEnrichTransactionRequest = (
             fee: formatEther(fee || BigInt(0)).slice(0, 8),
           });
         } else {
-          if (token) {
-            // If its not SOPH transfer and we have a token, we can decode the data as ERC20
+          const [token, contractInfo] = await Promise.all([
+            getTokenFromAddress(transactionRequest.to),
+            getContractInfo(transactionRequest.to),
+          ]);
+
+          let decodedData = null;
+
+          if (contractInfo.abi) {
+            try {
+              const rawDecodedData = decodeFunctionData({
+                abi: contractInfo.abi,
+                data: transactionRequest.data as `0x${string}`,
+              });
+
+              if (rawDecodedData.args) {
+                decodedData = getFunctionParameters(
+                  {
+                    functionName: rawDecodedData.functionName,
+                    args: rawDecodedData.args,
+                  },
+                  contractInfo,
+                );
+              }
+            } catch (_error) {
+              decodedData = null;
+            }
+          }
+
+          if (token && !decodedData) {
+            // ERC20 transfer
             const decodedData = decodeFunctionData({
               abi: erc20Abi,
               data: transactionRequest.data as `0x${string}`,
@@ -171,29 +169,7 @@ export const useEnrichTransactionRequest = (
               usePaymaster: true,
             });
           } else {
-            // Not an ERC20 transfer, try to get the actual contract ABI
-            const contractABI = await getContractABI(transactionRequest.to);
-
-            let decodedData = null;
-
-            if (contractABI) {
-              decodedData = decodeWithABI(
-                JSON.stringify(contractABI),
-                transactionRequest.data || '',
-              );
-            }
-
-            // If we still don't have interaction details, create a fallback
-            if (!decodedData) {
-              const functionSignature = transactionRequest.data?.slice(0, 10);
-              decodedData = {
-                functionName: 'unknown',
-                functionSignature: functionSignature || 'unknown',
-                parameters: [],
-              };
-            }
-
-            // Set enriched transaction request for contract interactions
+            // Contract interaction
             setEnrichedTransactionRequest({
               ...transactionRequest,
               transactionType: TransactionType.CONTRACT,
@@ -202,7 +178,8 @@ export const useEnrichTransactionRequest = (
                 BigInt(transactionRequest.value || '0'),
               ),
               usePaymaster: true,
-              decodedData,
+              decodedData: decodedData || undefined,
+              contractName: contractInfo.name || undefined,
             });
           }
         }

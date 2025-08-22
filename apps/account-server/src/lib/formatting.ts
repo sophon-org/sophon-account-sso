@@ -18,3 +18,12 @@ export function maskEmail(email: string) {
   if (localPart.length <= 2) return `${localPart}...@${domain}`;
   return `${localPart.slice(0, 2)}...${localPart.slice(-1)}@${domain}`;
 }
+
+export function truncateName(
+  text: string,
+  startLength: number = 10,
+  endLength: number = 10,
+) {
+  if (text.length <= startLength + endLength + 3) return text;
+  return `${text.slice(0, startLength)}...${text.slice(-endLength)}`;
+}

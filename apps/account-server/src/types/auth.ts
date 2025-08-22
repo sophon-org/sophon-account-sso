@@ -71,7 +71,37 @@ export interface EnrichedTransactionRequest extends TransactionRequest {
   data?: string;
   usePaymaster?: boolean;
   fee?: string;
-  decodedData?: DecodedData;
+  decodedData?:
+    | {
+        args: {
+          name: string;
+          value: string;
+          type: string;
+        }[];
+        functionName: string;
+      }
+    | undefined;
+  contractName?: string;
+}
+
+export type AbiFunction = {
+  type: 'function';
+  name: string;
+  inputs?: Array<{
+    name?: string;
+    type: string;
+    internalType?: string;
+  }>;
+  outputs?: Array<{
+    name?: string;
+    type: string;
+  }>;
+  stateMutability?: string;
+};
+
+export interface ContractInfo {
+  abi: readonly AbiFunction[] | null;
+  name: string | null;
 }
 
 export interface AccountStore {
