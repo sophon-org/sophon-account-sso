@@ -194,9 +194,9 @@ export default function TransactionRequestView() {
         </Button>
       </div>
       {transactionError && (
-        <p className="text-red-500 text-xs whitespace-pre-wrap break-words line-clamp-3 text-left">
-          {transactionError}
-        </p>
+        <div className="p-3 bg-red-50 border border-red-200 rounded">
+          <p className="text-red-600 text-sm">{transactionError}</p>
+        </div>
       )}
     </div>
   );
