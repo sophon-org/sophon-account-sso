@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 2.0.0-next.35
+
+### Patch Changes
+
+- Provide authServerUrl to eip6963
+
 ## 2.0.0-next.34
 
 ### Patch Changes

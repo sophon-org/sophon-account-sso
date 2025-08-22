@@ -1,5 +1,14 @@
 # @sophon-labs/account-react-native
 
+## 2.0.0-next.35
+
+### Patch Changes
+
+- Provide authServerUrl to eip6963
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.0-next.35
+  - @sophon-labs/account-message-bridge@2.0.0-next.35
+
 ## 2.0.0-next.34
 
 ### Patch Changes
