@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useWriteContract } from 'wagmi';
 import { unverifiedAbi } from '@/abi/unverified';
 import { verifiedAbi } from '@/abi/verified';
+import { useWriteContractWithPaymaster } from '../utils/useWriteContractWithPaymaster';
 
 export default function UnverifiedPanel() {
   const [txType, setTxType] = useState<
@@ -15,21 +15,21 @@ export default function UnverifiedPanel() {
     error: unverifiedError,
     writeContract: unverifiedWriteContract,
     isPending: isUnverifiedPending,
-  } = useWriteContract();
+  } = useWriteContractWithPaymaster();
 
   const {
     data: verifiedData,
     error: verifiedError,
     writeContract: verifiedWriteContract,
     isPending: isVerifiedPending,
-  } = useWriteContract();
+  } = useWriteContractWithPaymaster();
 
   const {
     data: complexData,
     error: complexError,
     writeContract: complexWriteContract,
     isPending: isComplexPending,
-  } = useWriteContract();
+  } = useWriteContractWithPaymaster();
 
   const doUnverifiedTransaction = () => {
     setTxType('unverified');
@@ -37,12 +37,13 @@ export default function UnverifiedPanel() {
       address: '0x0c76828A43556cAA48Fa687e540E6a76155d6850', // Some unverified contract
       abi: unverifiedAbi,
       functionName: 'setAll',
-      args: [0o000],
+      args: ['anything', 100],
     });
   };
 
-  const doVerifiedTransaction = () => {
+  const doVerifiedTransaction = async () => {
     setTxType('verified');
+
     verifiedWriteContract({
       address: '0xC0830ABFe9Ab55b476456f7cA13103c666be5502', // Some Verified contract
       abi: verifiedAbi,
