@@ -1,26 +1,26 @@
 import {
-  Injectable,
-  NestInterceptor,
-  ExecutionContext,
   CallHandler,
+  ExecutionContext,
+  Injectable,
   Logger,
+  NestInterceptor,
 } from '@nestjs/common';
-import { Observable } from 'rxjs';
-import { tap, catchError } from 'rxjs/operators';
 import { Request } from 'express';
+import { Observable } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
   private readonly logger = new Logger(LoggingInterceptor.name);
 
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  intercept<T>(context: ExecutionContext, next: CallHandler): Observable<T> {
     const request = context.switchToHttp().getRequest<Request>();
     const startTime = Date.now();
     const requestId = uuidv4();
 
     const { method, url, body, query } = request;
-    
+
     this.logger.log(`Incoming request: ${method} ${url}`, {
       requestId,
       body: this.sanitizeBody(body),
@@ -50,18 +50,18 @@ export class LoggingInterceptor implements NestInterceptor {
     );
   }
 
-  private sanitizeBody(body: any): any {
+  private sanitizeBody(body: Record<string, unknown>): Record<string, unknown> {
     if (!body) return body;
-    
+
     const sanitized = { ...body };
-    
+
     const sensitiveFields = ['apiKey', 'privateKey', 'password', 'secret'];
     for (const field of sensitiveFields) {
       if (sanitized[field]) {
         sanitized[field] = '***REDACTED***';
       }
     }
-    
+
     return sanitized;
   }
 }

@@ -1,8 +1,19 @@
-import { IsString, IsNumber, IsOptional, IsEnum, IsArray, Min, Max } from 'class-validator';
-import { Type, Transform } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+import {
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+} from 'class-validator';
 import { TransactionType } from '../types/common.types';
-import { IsEthereumAddress, IsValidAmount, IsSupportedChain } from '../validators/address.validator';
+import {
+  IsEthereumAddress,
+  IsSupportedChain,
+  IsValidAmount,
+} from '../validators/address.validator';
 
 export class PrepareTransactionDto {
   @ApiProperty({ description: 'Transaction type', enum: TransactionType })
@@ -42,7 +53,9 @@ export class PrepareTransactionDto {
   @Type(() => Number)
   slippage: number;
 
-  @ApiPropertyOptional({ description: 'Recipient address (defaults to sender)' })
+  @ApiPropertyOptional({
+    description: 'Recipient address (defaults to sender)',
+  })
   @IsOptional()
   @IsEthereumAddress()
   recipient?: string;
@@ -90,4 +103,3 @@ export class GetStatusDto {
   @IsString()
   provider?: string;
 }
-

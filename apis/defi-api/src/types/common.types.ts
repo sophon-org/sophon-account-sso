@@ -63,7 +63,7 @@ export interface TransactionOptions {
 }
 
 export interface ActionConfiguration {
-  [key: string]: any;
+  [key: string]: string | number | boolean | object;
 }
 
 export interface ValidationResult {
@@ -71,4 +71,3 @@ export interface ValidationResult {
   errors: string[];
   warnings?: string[];
 }
-
