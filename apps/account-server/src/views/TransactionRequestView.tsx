@@ -47,12 +47,12 @@ export default function TransactionRequestView() {
     transactionRequest: TransactionRequest,
     incomingRequest: IncomingRequest,
   ) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // biome-ignore lint/suspicious/noExplicitAny: update to the proper type in the future
     if ((transactionRequest as any).transactionType === 'eip712') {
       // means we are showing as a tx, but we should actually do a typed data signature,
       // as viem (or similar) will then get the signature and send as a raw tx
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // biome-ignore lint/suspicious/noExplicitAny: update to the proper type in the future
       const signingRequestData = (transactionRequest as any).signingRequestData;
 
       try {

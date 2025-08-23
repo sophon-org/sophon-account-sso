@@ -6,7 +6,7 @@ export function useWriteContractWithPaymaster() {
   const { writeContract, ...rest } = useWriteContract();
   const { paymasterEnabled } = usePaymaster();
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // biome-ignore lint/suspicious/noExplicitAny: update to the proper type in the future
   const writeContractWithPaymaster = async (args: any) => {
     if (paymasterEnabled) {
       // Add paymaster data to transaction
