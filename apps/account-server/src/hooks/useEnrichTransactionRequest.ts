@@ -102,7 +102,7 @@ export const useEnrichTransactionRequest = (
     const enrichTransaction = async () => {
       setIsLoading(true);
 
-      let fee;
+      let fee: string | undefined;
 
       if (
         !transactionRequest.paymaster ||

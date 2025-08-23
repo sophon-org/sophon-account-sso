@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import type { ZksyncTransactionRequest } from 'viem/chains';
 import { IconSignature } from '@/components/icons/icon-signature';
 import { Loader } from '@/components/loader';
 import { Button } from '@/components/ui/button';
