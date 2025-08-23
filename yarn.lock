@@ -4566,6 +4566,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@sophon-labs/account-core@link:../account-core::locator=%40sophon-labs%2Faccount-eip6963%40workspace%3Apackages%2Faccount-eip6963":
+  version: 0.0.0-use.local
+  resolution: "@sophon-labs/account-core@link:../account-core::locator=%40sophon-labs%2Faccount-eip6963%40workspace%3Apackages%2Faccount-eip6963"
+  languageName: node
+  linkType: soft
+
 "@sophon-labs/account-core@npm:2.0.0-next.36, @sophon-labs/account-core@workspace:packages/account-core":
   version: 0.0.0-use.local
   resolution: "@sophon-labs/account-core@workspace:packages/account-core"
@@ -4587,8 +4593,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@sophon-labs/account-eip6963@workspace:packages/account-eip6963"
   dependencies:
-    "@sophon-labs/account-core": "npm:2.0.0-next.36"
+    "@sophon-labs/account-core": "link:../account-core"
     "@types/node": "npm:^20.0.0"
+    json-rpc-2.0: "npm:^1.7.1"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.0.0"
     zksync-sso: "npm:0.4.1"
@@ -11111,6 +11118,13 @@ __metadata:
   version: 2.3.1
   resolution: "json-parse-even-better-errors@npm:2.3.1"
   checksum: 10c0/140932564c8f0b88455432e0f33c4cb4086b8868e37524e07e723f4eaedb9425bdc2bafd71bd1d9765bd15fd1e2d126972bc83990f55c467168c228c24d665f3
+  languageName: node
+  linkType: hard
+
+"json-rpc-2.0@npm:^1.7.1":
+  version: 1.7.1
+  resolution: "json-rpc-2.0@npm:1.7.1"
+  checksum: 10c0/260f573fd2f38c04bce63076b9293ed0c222c10bff12dd14fed8b926555af6d390c4bcc888b01dd42f28a8759056b8e4420b9f65f09e64d12d042a541fd88695
   languageName: node
   linkType: hard
 

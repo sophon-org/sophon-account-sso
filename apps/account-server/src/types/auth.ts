@@ -58,6 +58,8 @@ export interface TransactionRequest {
   to: string;
   value?: string;
   data?: string;
+  paymaster?: string;
+  paymasterInput?: string;
 }
 
 export interface EnrichedTransactionRequest extends TransactionRequest {
@@ -69,7 +71,6 @@ export interface EnrichedTransactionRequest extends TransactionRequest {
   displayValue?: string;
   token?: Token;
   data?: string;
-  usePaymaster?: boolean;
   fee?: string;
   decodedData?:
     | {

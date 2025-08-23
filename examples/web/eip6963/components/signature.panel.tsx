@@ -28,16 +28,23 @@ export default function SignaturePanel() {
         chainId: sophonTestnet.id,
       },
       types: {
-        Message: [
+        Person: [
+          { name: 'name', type: 'string' },
+          { name: 'address', type: 'address' },
+        ],
+        Mail: [
           { name: 'content', type: 'string' },
-          { name: 'from', type: 'address' },
+          { name: 'from', type: 'Person' },
           { name: 'timestamp', type: 'uint256' },
         ],
       },
-      primaryType: 'Message',
+      primaryType: 'Mail',
       message: {
         content: `Hello from Sophon SSO!\n\nThis message confirms you control this wallet.`,
-        from: address,
+        from: {
+          name: 'Little Billy',
+          address: address,
+        },
         timestamp: timestamp,
       },
     };

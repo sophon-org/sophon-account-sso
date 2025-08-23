@@ -3,7 +3,6 @@ import { useDynamicContext } from '@dynamic-labs/sdk-react-core';
 import { useState } from 'react';
 import { http } from 'viem';
 import { toAccount } from 'viem/accounts';
-import { getGeneralPaymasterInput } from 'viem/zksync';
 import { useAccount, useWalletClient } from 'wagmi';
 import { createZksyncEcdsaClient } from 'zksync-sso/client/ecdsa';
 import { createZksyncPasskeyClient } from 'zksync-sso/client/passkey';
@@ -81,15 +80,15 @@ export function useTransaction() {
             value: BigInt(transactionRequest.value || '0'),
             data: (transactionRequest.data as `0x${string}`) || '0x',
             paymaster:
-              transactionRequest.data === '0x'
-                ? undefined
-                : CONTRACTS.accountPaymaster,
+              transactionRequest.paymaster !== undefined &&
+              transactionRequest.paymaster !== '0x'
+                ? (transactionRequest.paymaster as `0x${string}`)
+                : undefined,
             paymasterInput:
-              transactionRequest.data === '0x'
-                ? undefined
-                : getGeneralPaymasterInput({
-                    innerInput: '0x',
-                  }),
+              transactionRequest.paymasterInput !== undefined &&
+              transactionRequest.paymasterInput !== '0x'
+                ? (transactionRequest.paymasterInput as `0x${string}`)
+                : undefined,
           });
         } catch (error) {
           console.error('Transaction error:', error);
@@ -145,21 +144,33 @@ export function useTransaction() {
           console.error('Gas estimation failed:', gasError);
         }
 
-        txHash = await client.sendTransaction({
+        let paymasterInput: `0x${string}` | undefined;
+        if (transactionRequest.paymasterInput) {
+          if (Array.isArray(transactionRequest.paymasterInput)) {
+            const hexString =
+              '0x' +
+              transactionRequest.paymasterInput
+                .map((n) => n.toString(16).padStart(2, '0'))
+                .join('');
+            paymasterInput = hexString as `0x${string}`;
+          } else {
+            paymasterInput = transactionRequest.paymasterInput as `0x${string}`;
+          }
+        }
+
+        const txData = {
           to: transactionRequest.to as `0x${string}`,
           value: BigInt(transactionRequest.value || '0'),
           data: (transactionRequest.data as `0x${string}`) || '0x',
           paymaster:
-            transactionRequest.data === '0x'
-              ? undefined
-              : CONTRACTS.accountPaymaster,
-          paymasterInput:
-            transactionRequest.data === '0x'
-              ? undefined
-              : getGeneralPaymasterInput({
-                  innerInput: '0x',
-                }),
-        });
+            transactionRequest.paymaster !== undefined &&
+            transactionRequest.paymaster !== '0x'
+              ? (transactionRequest.paymaster as `0x${string}`)
+              : undefined,
+          paymasterInput,
+        };
+
+        txHash = await client.sendTransaction(txData);
       } else {
         console.log('Sending transaction with Passkey...');
         if (!account.owner.passkey) {
@@ -192,15 +203,15 @@ export function useTransaction() {
           value: BigInt(transactionRequest.value || '0'),
           data: (transactionRequest.data as `0x${string}`) || '0x',
           paymaster:
-            transactionRequest.data === '0x'
-              ? undefined
-              : CONTRACTS.accountPaymaster,
+            transactionRequest.paymaster !== undefined &&
+            transactionRequest.paymaster !== '0x'
+              ? (transactionRequest.paymaster as `0x${string}`)
+              : undefined,
           paymasterInput:
-            transactionRequest.data === '0x'
-              ? undefined
-              : getGeneralPaymasterInput({
-                  innerInput: '0x',
-                }),
+            transactionRequest.paymasterInput !== undefined &&
+            transactionRequest.paymasterInput !== '0x'
+              ? (transactionRequest.paymasterInput as `0x${string}`)
+              : undefined,
         });
       }
 

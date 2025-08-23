@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { erc20Abi, formatUnits, parseUnits } from 'viem';
 import { useAccount, useBalance, useWriteContract } from 'wagmi';
 import { waitForTransactionReceipt } from 'wagmi/actions';
+import { Loader } from './loader';
 import NftPanel from './nft.panel';
 import OtherPanel from './other.panel';
 import { usePaymaster } from './paymaster.provider';
@@ -56,7 +57,12 @@ export const ProfilePanel = () => {
     refetch();
   }, [writeContractData, refetchMintMe]);
 
-  if (!isConnected) return null;
+  if (!isConnected)
+    return (
+      <div className="flex justify-center items-center mt-4">
+        <Loader />
+      </div>
+    );
   return (
     <div className="flex flex-col gap-1 mt-2  w-full">
       <div className="flex flex-col gap-2 border border-gray-300 rounded-md p-4">
@@ -90,7 +96,7 @@ export const ProfilePanel = () => {
           onChange={(e) => setPaymasterEnabled(e.target.checked)}
         />
         <label htmlFor="usePaymaster" className="text-sm text-gray-500">
-          Use paymaster (broken for now)
+          Use paymaster
         </label>
       </div>
       <SignaturesPanel />

@@ -102,6 +102,15 @@ export const useEnrichTransactionRequest = (
     const enrichTransaction = async () => {
       setIsLoading(true);
 
+      let fee: string | undefined;
+
+      if (
+        !transactionRequest.paymaster ||
+        transactionRequest.paymaster === '0x'
+      ) {
+        fee = formatEther((await estimateFee()) || BigInt(0)).slice(0, 8);
+      }
+
       try {
         // If the data is 0x, it's a SOPH transfer
         const isSophTransfer = transactionRequest.data === '0x';
@@ -112,15 +121,15 @@ export const useEnrichTransactionRequest = (
           : await getTokenFromAddress(transactionRequest.to);
 
         if (isSophTransfer) {
-          const fee = await estimateFee();
           setEnrichedTransactionRequest({
             ...transactionRequest,
             transactionType: TransactionType.SOPH,
             recipient: transactionRequest.to,
             token,
             displayValue: formatEther(BigInt(transactionRequest.value || '0')),
-            usePaymaster: false,
-            fee: formatEther(fee || BigInt(0)).slice(0, 8),
+            paymaster: transactionRequest.paymaster,
+            paymasterInput: transactionRequest.paymasterInput,
+            fee,
           });
         } else {
           const [token, contractInfo] = await Promise.all([
@@ -166,7 +175,9 @@ export const useEnrichTransactionRequest = (
                 BigInt(decodedData.args[1]?.toString() || '0'),
                 18,
               ),
-              usePaymaster: true,
+              paymaster: transactionRequest.paymaster,
+              paymasterInput: transactionRequest.paymasterInput,
+              fee,
             });
           } else {
             // Contract interaction
@@ -177,9 +188,11 @@ export const useEnrichTransactionRequest = (
               displayValue: formatEther(
                 BigInt(transactionRequest.value || '0'),
               ),
-              usePaymaster: true,
+              paymaster: transactionRequest.paymaster,
+              paymasterInput: transactionRequest.paymasterInput,
               decodedData: decodedData || undefined,
               contractName: contractInfo.name || undefined,
+              fee,
             });
           }
         }
@@ -191,7 +204,9 @@ export const useEnrichTransactionRequest = (
           transactionType: TransactionType.UNKNOWN,
           recipient: transactionRequest.to,
           displayValue: formatEther(BigInt(transactionRequest.value || '0')),
-          usePaymaster: false,
+          paymaster: transactionRequest.paymaster,
+          paymasterInput: transactionRequest.paymasterInput,
+          fee,
         });
       } finally {
         setIsLoading(false);

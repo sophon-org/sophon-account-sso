@@ -1,11 +1,7 @@
 import { useEffect, useState } from 'react';
 import { erc20Abi, formatUnits, isAddress, parseEther, parseUnits } from 'viem';
-import {
-  useAccount,
-  useBalance,
-  useSendTransaction,
-  useWriteContract,
-} from 'wagmi';
+import { useAccount, useBalance, useSendTransaction } from 'wagmi';
+import { useWriteContractWithPaymaster } from '../utils/useWriteContractWithPaymaster';
 
 export default function TransactionNativePanel() {
   const { address } = useAccount();
@@ -40,14 +36,14 @@ export default function TransactionNativePanel() {
     error: writeContractErrorWagmi,
     writeContract,
     isPending: isSendingERC20,
-  } = useWriteContract();
+  } = useWriteContractWithPaymaster();
 
   const {
     data: approveContractData,
     error: approveContractError,
     writeContract: approveWriteContract,
     isPending: isSendingApprove,
-  } = useWriteContract();
+  } = useWriteContractWithPaymaster();
 
   const handleSendSoph = () => {
     setError('');

@@ -2,6 +2,7 @@ import {
   AccountServerURL,
   type SophonNetworkType,
 } from '@sophon-labs/account-core';
+import { JSONRPCClient } from 'json-rpc-2.0';
 import { PopupCommunicator } from 'zksync-sso/communicator';
 import type { EIP1193Provider } from './types';
 
@@ -41,7 +42,7 @@ export function createSophonEIP1193Provider(
   authServerUrl: string = AccountServerURL[network],
 ): EIP1193Provider {
   const communicator = new PopupCommunicator(authServerUrl, {
-    width: 360,
+    width: 400,
     height: 800,
     calculatePosition(width, height) {
       return {
@@ -72,10 +73,31 @@ export function createSophonEIP1193Provider(
     return response;
   }
 
+  const rpcClient: JSONRPCClient = new JSONRPCClient((jsonRPCRequest) =>
+    fetch(
+      network === 'testnet'
+        ? 'https://rpc.testnet.sophon.xyz'
+        : 'https://rpc.sophon.xyz',
+      {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify(jsonRPCRequest),
+      },
+    ).then((response) => {
+      if (response.status === 200) {
+        return response
+          .json()
+          .then((jsonRPCResponse) => rpcClient.receive(jsonRPCResponse));
+      } else if (jsonRPCRequest.id !== undefined) {
+        return Promise.reject(new Error(response.statusText));
+      }
+    }),
+  );
+
   return {
     async request({ method, params }) {
-      console.log('EIP-1193 request:', method, params);
-
       switch (method) {
         case 'eth_requestAccounts':
           console.log('EIP-1193 eth_requestAccounts:', method, params);
@@ -181,6 +203,23 @@ export function createSophonEIP1193Provider(
           return currentAccounts;
         }
 
+        case 'eth_sendRawTransaction':
+        case 'eth_gasPrice':
+        case 'eth_getBalance':
+        case 'eth_getCode':
+        case 'eth_getStorageAt':
+        case 'eth_call':
+        case 'eth_blockNumber':
+        case 'eth_getBlockByHash':
+        case 'eth_getBlockByNumber':
+        case 'eth_getTransactionByHash':
+        case 'eth_getTransactionReceipt':
+        case 'eth_getTransactionCount':
+        case 'eth_estimateGas': {
+          // passthrough methods
+          console.log('EIP-1193 passthrough method:', method, params);
+          return await rpcClient.request(method, params);
+        }
         default:
           throw new Error(`Method ${method} not supported`);
       }

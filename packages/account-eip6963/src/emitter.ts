@@ -1,6 +1,7 @@
 import {
   AccountServerURL,
   SophonIcon,
+  SophonIconTestnet,
   type SophonNetworkType,
 } from '@sophon-labs/account-core';
 import { announceEip6963Provider } from './eip6963';
@@ -23,7 +24,7 @@ export function createSophonEIP6963Emitter(
     info: {
       uuid: network === 'mainnet' ? 'sophon' : `sophon-testnet`,
       name: network === 'mainnet' ? 'Sophon Account' : 'Sophon Account Test',
-      icon: SophonIcon,
+      icon: network === 'mainnet' ? SophonIcon : SophonIconTestnet,
       rdns: network === 'mainnet' ? 'xyz.sophon.my' : `xyz.sophon.staging.my`,
     },
     provider,
