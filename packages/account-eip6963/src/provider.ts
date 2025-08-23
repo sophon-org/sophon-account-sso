@@ -10,7 +10,11 @@ let currentAccounts: string[] = [];
 const eventListeners = new Map<string, ((...args: unknown[]) => void)[]>();
 
 const awaitForPopupUnload = (authServerUrl: string) => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
+    const waitLimitTimeout = setTimeout(() => {
+      resolve(true);
+    }, 1000);
+
     const listener = (event: MessageEvent) => {
       if (!authServerUrl.startsWith(event.origin)) {
         return;
@@ -21,10 +25,9 @@ const awaitForPopupUnload = (authServerUrl: string) => {
         // wait a little bit to make sure that the popup is closed before trying to open a new one
         // the behavior changes according to the user browser brand
         setTimeout(() => {
+          clearTimeout(waitLimitTimeout);
           resolve(true);
         }, 500);
-      } else {
-        reject(new Error('PopupUnload not received'));
       }
     };
 
