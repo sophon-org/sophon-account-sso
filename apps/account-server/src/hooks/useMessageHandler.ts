@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { hexToString } from 'viem';
+import { hexToString, toHex } from 'viem';
 import { windowService } from '@/service/window.service';
 import type {
   AuthenticationRequest,
@@ -116,11 +116,34 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
                 address: address,
               };
 
-              setTypedDataSigningRequest(signingRequestData);
-              setSessionPreferences(null);
-              setAuthenticationRequest(null);
-              setMessageSigningRequest(null);
-              setTransactionRequest(null);
+              if (
+                typedData.primaryType === 'Transaction' &&
+                typedData.message?.txType === '113'
+              ) {
+                // ZKsync Transaction Type has addresses as uint, and this breaks the rest of the flow. So we convert here
+                const transactionData = { ...typedData.message };
+                transactionData.from = toHex(BigInt(transactionData.from));
+                transactionData.to = toHex(BigInt(transactionData.to));
+                transactionData.paymaster = toHex(
+                  BigInt(transactionData.paymaster),
+                );
+
+                // not elegant, but it works
+                transactionData.transactionType = 'eip712';
+                transactionData.signingRequestData = signingRequestData;
+
+                setTypedDataSigningRequest(null);
+                setSessionPreferences(null);
+                setAuthenticationRequest(null);
+                setMessageSigningRequest(null);
+                setTransactionRequest(transactionData);
+              } else {
+                setTypedDataSigningRequest(signingRequestData);
+                setSessionPreferences(null);
+                setAuthenticationRequest(null);
+                setMessageSigningRequest(null);
+                setTransactionRequest(null);
+              }
             } catch (parseError) {
               console.error('Failed to parse typed data JSON:', parseError);
             }
@@ -131,16 +154,25 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
           const params = data.content.action?.params;
 
           if (params && params.length >= 1) {
-            const txData = params[0];
+            let txData = params[0];
 
-            const transactionRequestData = {
-              from: txData.from,
-              to: txData.to,
-              value: txData.value || '0x0',
-              data: txData.data || '0x',
-            };
+            if (
+              txData.eip712Meta?.paymasterParams &&
+              (txData.eip712Meta.paymasterParams.paymaster ||
+                txData.eip712Meta.paymasterParams.paymasterInput)
+            ) {
+              const transactionData = { ...txData };
+              transactionData.paymaster =
+                transactionData.eip712Meta.paymasterParams.paymaster ||
+                undefined;
+              transactionData.paymasterInput =
+                transactionData.eip712Meta.paymasterParams.paymasterInput ||
+                undefined;
+              delete transactionData.eip712Meta;
+              txData = transactionData;
+            }
 
-            setTransactionRequest(transactionRequestData);
+            setTransactionRequest(txData);
             setTypedDataSigningRequest(null);
             setMessageSigningRequest(null);
             setSessionPreferences(null);
