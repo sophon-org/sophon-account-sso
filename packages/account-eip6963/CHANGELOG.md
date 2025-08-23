@@ -1,5 +1,11 @@
 # @sophon-labs/account-eip6963
 
+## 2.0.0-next.37
+
+### Patch Changes
+
+- Main changes on eip6963 to accept paymaster
+
 ## 2.0.0-next.36
 
 ### Patch Changes

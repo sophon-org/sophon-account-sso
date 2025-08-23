@@ -1,5 +1,14 @@
 # @sophon-labs/account-react-native
 
+## 2.0.0-next.37
+
+### Patch Changes
+
+- Main changes on eip6963 to accept paymaster
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.0-next.37
+  - @sophon-labs/account-message-bridge@2.0.0-next.37
+
 ## 2.0.0-next.36
 
 ### Patch Changes
