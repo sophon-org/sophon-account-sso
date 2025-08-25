@@ -1409,24 +1409,38 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-core@link:../../../packages/account-core::locator=%40sophon-labs%2Fexamples-sandbox-wagmi%40workspace%3A.":
+"@sophon-labs/account-core@link:../account-core::locator=%40sophon-labs%2Faccount-eip6963%40npm%3A2.0.0-next.37":
   version: 0.0.0-use.local
-  resolution: "@sophon-labs/account-core@link:../../../packages/account-core::locator=%40sophon-labs%2Fexamples-sandbox-wagmi%40workspace%3A."
+  resolution: "@sophon-labs/account-core@link:../account-core::locator=%40sophon-labs%2Faccount-eip6963%40npm%3A2.0.0-next.37"
   languageName: node
   linkType: soft
 
-"@sophon-labs/account-eip6963@link:../../../packages/account-eip6963::locator=%40sophon-labs%2Fexamples-sandbox-wagmi%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@sophon-labs/account-eip6963@link:../../../packages/account-eip6963::locator=%40sophon-labs%2Fexamples-sandbox-wagmi%40workspace%3A."
+"@sophon-labs/account-core@npm:2.0.0-next.37":
+  version: 2.0.0-next.37
+  resolution: "@sophon-labs/account-core@npm:2.0.0-next.37"
+  checksum: 10c0/7a8541337663e6743dd1ead1a1d42cab8f1737807179ea0ae0b78953524a351467439cdbf3db42b2d199aa7927dcc80e5584350e8883d4086646cd3967d9c267
   languageName: node
-  linkType: soft
+  linkType: hard
+
+"@sophon-labs/account-eip6963@npm:2.0.0-next.37":
+  version: 2.0.0-next.37
+  resolution: "@sophon-labs/account-eip6963@npm:2.0.0-next.37"
+  dependencies:
+    "@sophon-labs/account-core": "link:../account-core"
+    json-rpc-2.0: "npm:^1.7.1"
+    zksync-sso: "npm:0.4.1"
+  peerDependencies:
+    typescript: ^5.0.0
+  checksum: 10c0/9c2b23c7ab05d791333f8993ad460ce97d6d72e6bfc7d50b2241b00095401ab18bb970b104428290934e1bb0f8af15e24b344b72832457a61a7b7e1e32b25975
+  languageName: node
+  linkType: hard
 
 "@sophon-labs/examples-sandbox-wagmi@workspace:.":
   version: 0.0.0-use.local
   resolution: "@sophon-labs/examples-sandbox-wagmi@workspace:."
   dependencies:
-    "@sophon-labs/account-core": "link:../../../packages/account-core"
-    "@sophon-labs/account-eip6963": "link:../../../packages/account-eip6963"
+    "@sophon-labs/account-core": "npm:2.0.0-next.37"
+    "@sophon-labs/account-eip6963": "npm:2.0.0-next.37"
     "@tailwindcss/postcss": "npm:^4"
     "@tanstack/react-query": "npm:^5.83.0"
     "@types/node": "npm:^20"
@@ -3508,6 +3522,13 @@ __metadata:
   bin:
     jsesc: bin/jsesc
   checksum: 10c0/531779df5ec94f47e462da26b4cbf05eb88a83d9f08aac2ba04206508fc598527a153d08bd462bae82fc78b3eaa1a908e1a4a79f886e9238641c4cdefaf118b1
+  languageName: node
+  linkType: hard
+
+"json-rpc-2.0@npm:^1.7.1":
+  version: 1.7.1
+  resolution: "json-rpc-2.0@npm:1.7.1"
+  checksum: 10c0/260f573fd2f38c04bce63076b9293ed0c222c10bff12dd14fed8b926555af6d390c4bcc888b01dd42f28a8759056b8e4420b9f65f09e64d12d042a541fd88695
   languageName: node
   linkType: hard
 
