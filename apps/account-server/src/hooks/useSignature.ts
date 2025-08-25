@@ -16,6 +16,9 @@ import type {
 } from '@/types/auth';
 import { useAccountContext } from './useAccountContext';
 
+// TODO: remove this in the future, no need for extra calls on RPC
+const VERIFY_SIGNATURE = false;
+
 export const useSignature = () => {
   const { account } = useAccountContext();
   const [isSigning, setIsSigning] = useState(false);
@@ -47,16 +50,18 @@ export const useSignature = () => {
             message: payload.message,
           });
 
-          const verified = await verifySignature({
-            accountAddress: payload.address,
-            signature,
-            domain: payload.domain,
-            types: payload.types,
-            primaryType: payload.primaryType,
-            message: payload.message,
-            signatureType: 'EIP1271',
-          });
-          if (!verified) throw new Error('Failed to verify message');
+          if (VERIFY_SIGNATURE) {
+            const verified = await verifySignature({
+              accountAddress: payload.address,
+              signature,
+              domain: payload.domain,
+              types: payload.types,
+              primaryType: payload.primaryType,
+              message: payload.message,
+              signatureType: 'EIP1271',
+            });
+            if (!verified) throw new Error('Failed to verify message');
+          }
         } catch (error) {
           console.error('Signing error:', error);
           throw error;
@@ -110,17 +115,19 @@ export const useSignature = () => {
           message: payload.message,
         });
 
-        const verified = await verifySignature({
-          accountAddress: payload.address,
-          signature,
-          domain: payload.domain,
-          types: payload.types,
-          primaryType: payload.primaryType,
-          message: payload.message,
-          signatureType: 'EIP1271',
-        });
+        if (VERIFY_SIGNATURE) {
+          const verified = await verifySignature({
+            accountAddress: payload.address,
+            signature,
+            domain: payload.domain,
+            types: payload.types,
+            primaryType: payload.primaryType,
+            message: payload.message,
+            signatureType: 'EIP1271',
+          });
 
-        if (!verified) throw new Error('Failed to verify message');
+          if (!verified) throw new Error('Failed to verify message');
+        }
       } else {
         if (!account.owner.passkey) {
           throw new Error('No passkey data available for signing');
@@ -144,16 +151,18 @@ export const useSignature = () => {
           message: payload.message,
         });
 
-        const verified = await verifySignature({
-          accountAddress: payload.address,
-          signature,
-          domain: payload.domain,
-          types: payload.types,
-          primaryType: payload.primaryType,
-          message: payload.message,
-          signatureType: 'EIP1271',
-        });
-        if (!verified) throw new Error('Failed to verify message');
+        if (VERIFY_SIGNATURE) {
+          const verified = await verifySignature({
+            accountAddress: payload.address,
+            signature,
+            domain: payload.domain,
+            types: payload.types,
+            primaryType: payload.primaryType,
+            message: payload.message,
+            signatureType: 'EIP1271',
+          });
+          if (!verified) throw new Error('Failed to verify message');
+        }
       }
 
       return signature;
@@ -184,13 +193,15 @@ export const useSignature = () => {
           const client = await primaryWallet.getWalletClient();
           signature = await client.signMessage({ message: payload.message });
 
-          const verified = await verifySignature({
-            accountAddress: payload.address,
-            signature,
-            message: payload.message,
-            signatureType: 'EIP-191',
-          });
-          if (!verified) throw new Error('Failed to verify message');
+          if (VERIFY_SIGNATURE) {
+            const verified = await verifySignature({
+              accountAddress: payload.address,
+              signature,
+              message: payload.message,
+              signatureType: 'EIP-191',
+            });
+            if (!verified) throw new Error('Failed to verify message');
+          }
         } catch (error) {
           console.error('Signing error:', error);
           throw error;
@@ -207,13 +218,15 @@ export const useSignature = () => {
               message,
             });
             if (!signature) throw new Error('Failed to sign message');
-            const verified = await verifySignature({
-              accountAddress: payload.address,
-              signature,
-              message: payload.message,
-              signatureType: 'EIP-191',
-            });
-            if (!verified) throw new Error('Failed to verify message');
+            if (VERIFY_SIGNATURE) {
+              const verified = await verifySignature({
+                accountAddress: payload.address,
+                signature,
+                message: payload.message,
+                signatureType: 'EIP-191',
+              });
+              if (!verified) throw new Error('Failed to verify message');
+            }
             return signature;
           },
           async signTransaction(transaction) {
@@ -262,13 +275,16 @@ export const useSignature = () => {
 
         console.log('passkey signature');
         signature = await client.signMessage({ message: payload.message });
-        const verified = await verifySignature({
-          accountAddress: payload.address,
-          signature,
-          message: payload.message as SignableMessage,
-          signatureType: 'EIP-191',
-        });
-        if (!verified) throw new Error('Failed to verify message');
+
+        if (VERIFY_SIGNATURE) {
+          const verified = await verifySignature({
+            accountAddress: payload.address,
+            signature,
+            message: payload.message as SignableMessage,
+            signatureType: 'EIP-191',
+          });
+          if (!verified) throw new Error('Failed to verify message');
+        }
       }
 
       return signature;

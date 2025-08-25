@@ -17,3 +17,7 @@ export const isValidPartner = async (
     return false;
   }
 };
+
+export const isSSR = () => {
+  return typeof window === 'undefined';
+};
