@@ -6,3 +6,4 @@ build
 src/
 tsup.config.ts
 tsconfig.json
+__tests__

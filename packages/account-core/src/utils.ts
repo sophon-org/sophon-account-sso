@@ -1,12 +1,21 @@
+import { AvailableCDNURL, type SophonNetworkType } from './constants';
+
+/**
+ * Check if a partnerId is valid
+ *
+ * @param network - The network to use
+ * @param partnerId - The partner id to check
+ * @returns True if the partner is valid, false otherwise
+ */
 export const isValidPartner = async (
+  network: SophonNetworkType,
   partnerId: string,
-  sandboxDisabled: boolean,
 ) => {
   if (!partnerId) {
     return false;
   }
 
-  const baseDns = sandboxDisabled ? 'cdn.sophon.xyz' : 'cdn.staging.sophon.xyz';
+  const baseDns = AvailableCDNURL[network];
 
   try {
     const url = `https://${baseDns}/partners/sdk/${partnerId}.json`;
@@ -16,4 +25,13 @@ export const isValidPartner = async (
     console.error('Error fetching partner', error);
     return false;
   }
+};
+
+/**
+ * Check if the code is running on the server
+ *
+ * @returns True if the code is running on the server, false otherwise
+ */
+export const isSSR = () => {
+  return typeof window === 'undefined';
 };
