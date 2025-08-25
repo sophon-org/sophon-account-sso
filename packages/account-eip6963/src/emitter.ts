@@ -31,6 +31,6 @@ export function createSophonEIP6963Emitter(
   });
 
   console.log(
-    `Sophon2 EIP-6963 provider announced for ${network} and url ${authServerUrl}`,
+    `Sophon EIP-6963 provider announced for ${network} and url ${authServerUrl}`,
   );
 }
