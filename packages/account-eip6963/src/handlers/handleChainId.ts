@@ -1,5 +1,8 @@
-import type { SophonNetworkType } from '@sophon-labs/account-core';
-import { MAINNET_CHAIN_ID, TESTNET_CHAIN_ID } from '../lib/constants';
+import {
+  MAINNET_HEX_CHAIN_ID,
+  type SophonNetworkType,
+  TESTNET_HEX_CHAIN_ID,
+} from '@sophon-labs/account-core';
 
 /**
  * Handle the eth_accounts request. We just support sophon mainnet and testnet.
@@ -9,7 +12,7 @@ import { MAINNET_CHAIN_ID, TESTNET_CHAIN_ID } from '../lib/constants';
  */
 export const handleChainId = async (network: SophonNetworkType) => {
   if (network === 'mainnet') {
-    return MAINNET_CHAIN_ID; // mainnet chain id
+    return MAINNET_HEX_CHAIN_ID; // mainnet chain id
   }
-  return TESTNET_CHAIN_ID; // testnet chain id
+  return TESTNET_HEX_CHAIN_ID; // testnet chain id
 };

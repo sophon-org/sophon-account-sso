@@ -23,9 +23,9 @@ export const handleRevokePermissions = async (
   eventEmitter: EventEmitter,
 ) => {
   const currentAccounts: string[] = [];
-  try {
-    setAccounts(network, currentAccounts);
+  setAccounts(network, currentAccounts);
 
+  try {
     // Send logout request to the account server popup
     await sender('wallet_revokePermissions');
   } catch (error) {

@@ -11,9 +11,9 @@ export const handlePersonalSign = async (
   sender: RequestSender<unknown>,
   params: unknown[],
 ) => {
-  const result = await sender('personal_sign', params);
-  if (result?.content?.error) {
-    throw new Error(result?.content?.error?.message);
+  const response = await sender('personal_sign', params);
+  if (response?.content?.error) {
+    throw new Error(response?.content?.error?.message);
   }
-  return result?.content?.result;
+  return response?.content?.result;
 };

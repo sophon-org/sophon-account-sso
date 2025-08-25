@@ -3,7 +3,7 @@ import {
   type SophonNetworkType,
 } from '@sophon-labs/account-core';
 import { EventEmitter } from 'eventemitter3';
-import { PopupCommunicator } from 'zksync-sso/communicator';
+import { type Communicator, PopupCommunicator } from 'zksync-sso/communicator';
 import { handleAccounts } from './handlers/handleAccounts';
 import { handleChainId } from './handlers/handleChainId';
 import { handlePersonalSign } from './handlers/handlePersonalSign';
@@ -20,19 +20,22 @@ import type { EIP1193Provider, RPCResponse } from './types';
 export function createSophonEIP1193Provider(
   network: SophonNetworkType = 'testnet',
   authServerUrl: string = AccountServerURL[network],
+  customCommunicator?: Communicator,
 ): EIP1193Provider {
   const eventEmitter = new EventEmitter();
 
-  const communicator = new PopupCommunicator(authServerUrl, {
-    width: 400,
-    height: 800,
-    calculatePosition(width, height) {
-      return {
-        left: window.screenX + (window.outerWidth - width) / 2,
-        top: window.screenY + (window.outerHeight - height) / 2,
-      };
-    },
-  });
+  const communicator =
+    customCommunicator ??
+    new PopupCommunicator(authServerUrl, {
+      width: 400,
+      height: 800,
+      calculatePosition(width, height) {
+        return {
+          left: window.screenX + (window.outerWidth - width) / 2,
+          top: window.screenY + (window.outerHeight - height) / 2,
+        };
+      },
+    });
 
   // Helper to make requests through the existing communicator, and coordinating the popup management
   async function executeRequest<T>(
@@ -57,9 +60,10 @@ export function createSophonEIP1193Provider(
 
     async request({ method, params }) {
       switch (method) {
-        case 'eth_requestAccounts':
+        case 'eth_requestAccounts': {
           console.log('EIP-1193 eth_requestAccounts:', method, params);
           return handleRequestAccounts(network, executeRequest, eventEmitter);
+        }
 
         case 'eth_accounts': {
           console.log('EIP-1193 eth_accounts:', method, params);
@@ -96,9 +100,10 @@ export function createSophonEIP1193Provider(
           return handleRevokePermissions(network, executeRequest, eventEmitter);
         }
 
-        case 'wallet_requestPermissions':
+        case 'wallet_requestPermissions': {
           console.log('EIP-1193 wallet_requestPermissions:', method, params);
           return handleRequestAccounts(network, executeRequest, eventEmitter);
+        }
 
         default: {
           // passthrough methods to the RPC client, no need for sending them to the account server

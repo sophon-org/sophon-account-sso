@@ -11,6 +11,15 @@ export default defineConfig({
     clearMocks: true,
     restoreMocks: true,
     mockReset: true,
+    coverage: {
+      exclude: [
+        'node_modules',
+        'dist',
+        'src/types.ts',
+        'tsup.config.ts',
+        'vitest.config.ts',
+      ],
+    },
   },
   resolve: {
     alias: {
