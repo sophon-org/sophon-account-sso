@@ -272,22 +272,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-api-sdk@npm:2.0.0-next.37":
-  version: 2.0.0-next.37
-  resolution: "@sophon-labs/account-api-sdk@npm:2.0.0-next.37"
+"@sophon-labs/account-api-sdk@npm:2.0.0-next.38":
+  version: 2.0.0-next.38
+  resolution: "@sophon-labs/account-api-sdk@npm:2.0.0-next.38"
   dependencies:
-    "@sophon-labs/account-core": "npm:2.0.0-next.37"
+    "@sophon-labs/account-core": "npm:2.0.0-next.38"
     axios: "npm:^1.11.0"
     jsonwebtoken: "npm:^9.0.2"
     jwks-rsa: "npm:^3.2.0"
-  checksum: 10c0/d82d82d506287a537357fa3729923dae7366d6584b90f20935f4db8d282759bd1860a099dbee576adca6a8e9f67454cb159421a3529be3c9e37a3439953a797b
+  checksum: 10c0/8913ebde8b788d4d49646a73e553e8327a7fb5a70e6adb3ca4457e35a51a37027361063cd7aefe2361037999a4e3cbca830deb1d697b2c985e363ad0250adb7a
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-core@npm:2.0.0-next.37":
-  version: 2.0.0-next.37
-  resolution: "@sophon-labs/account-core@npm:2.0.0-next.37"
-  checksum: 10c0/7a8541337663e6743dd1ead1a1d42cab8f1737807179ea0ae0b78953524a351467439cdbf3db42b2d199aa7927dcc80e5584350e8883d4086646cd3967d9c267
+"@sophon-labs/account-core@npm:2.0.0-next.38":
+  version: 2.0.0-next.38
+  resolution: "@sophon-labs/account-core@npm:2.0.0-next.38"
+  checksum: 10c0/2ba8f8bf3e6967f02e09bf1120c2151d6d9f54dc71de468c5f09320b1dd21f716f83fe4810f66dd9f51b98551a0ff571302ccf21082a950e2a9bec8afbd43ea7
   languageName: node
   linkType: hard
 
@@ -295,7 +295,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@sophon-labs/examples-backend-express@workspace:."
   dependencies:
-    "@sophon-labs/account-api-sdk": "npm:2.0.0-next.37"
+    "@sophon-labs/account-api-sdk": "npm:2.0.0-next.38"
     "@types/node": "npm:^24.3.0"
     express: "npm:^5.1.0"
     helmet: "npm:^8.1.0"

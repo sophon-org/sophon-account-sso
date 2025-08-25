@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 2.0.0-next.38
+
+### Patch Changes
+
+- Adding more constants and utils to core
+
 ## 2.0.0-next.37
 
 ### Patch Changes

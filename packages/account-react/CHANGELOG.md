@@ -1,5 +1,14 @@
 # @sophon-labs/account-react
 
+## 2.0.0-next.38
+
+### Patch Changes
+
+- Adding more constants and utils to core
+- Updated dependencies
+  - @sophon-labs/account-connector@2.0.0-next.38
+  - @sophon-labs/account-core@2.0.0-next.38
+
 ## 2.0.0-next.37
 
 ### Patch Changes
