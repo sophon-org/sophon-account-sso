@@ -15,3 +15,8 @@ export const setAccounts = (
   const key = `${STORAGE_KEY_PREFIX}${network}`;
   localStorage.setItem(key, JSON.stringify(accounts));
 };
+
+export const clearAccounts = (network: SophonNetworkType): void => {
+  const key = `${STORAGE_KEY_PREFIX}${network}`;
+  localStorage.removeItem(key);
+};

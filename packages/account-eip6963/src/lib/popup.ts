@@ -1,3 +1,6 @@
+export const DEFAULT_UNLOAD_TIMEOUT = 1000;
+export const DEFAULT_UNLOAD_DELAY = 500;
+
 // TODO: ideally we would stack requests on the server, and dont close the popup
 // while there's pending requests, for now we just wait a little bit to avoid getting the popup
 // blocked
@@ -5,7 +8,7 @@ export const awaitForPopupUnload = (authServerUrl: string) => {
   return new Promise((resolve) => {
     const waitLimitTimeout = setTimeout(() => {
       resolve(true);
-    }, 1000);
+    }, DEFAULT_UNLOAD_TIMEOUT);
 
     const listener = (event: MessageEvent) => {
       if (!authServerUrl.startsWith(event.origin)) {
@@ -17,7 +20,7 @@ export const awaitForPopupUnload = (authServerUrl: string) => {
         setTimeout(() => {
           clearTimeout(waitLimitTimeout);
           resolve(true);
-        }, 500);
+        }, DEFAULT_UNLOAD_DELAY);
       }
     };
 

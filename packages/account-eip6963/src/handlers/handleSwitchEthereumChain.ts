@@ -1,5 +1,8 @@
-import type { SophonNetworkType } from '@sophon-labs/account-core';
-import { MAINNET_CHAIN_ID, TESTNET_CHAIN_ID } from '../lib/constants';
+import {
+  MAINNET_HEX_CHAIN_ID,
+  type SophonNetworkType,
+  TESTNET_HEX_CHAIN_ID,
+} from '@sophon-labs/account-core';
 
 /**
  * Handle the wallet_switchEthereumChain request. We only support two networks:
@@ -19,7 +22,7 @@ export const handleSwitchEthereumChain = async (
   const firstParam = params?.[0] as { chainId: string };
   const targetChainId = firstParam?.chainId;
 
-  if ([MAINNET_CHAIN_ID, TESTNET_CHAIN_ID].includes(targetChainId)) {
+  if ([MAINNET_HEX_CHAIN_ID, TESTNET_HEX_CHAIN_ID].includes(targetChainId)) {
     return null; // Success
   } else {
     throw new Error(

@@ -22,28 +22,23 @@ export const handleRequestAccounts = async (
   sender: RequestSender<RequestAccountsResponse>,
   eventEmitter: EventEmitter,
 ) => {
-  try {
-    // If there are already accounts cached, return them, no need to ask for the
-    // account server again
-    const accounts = getAccounts(network);
-    if (accounts.length > 0) {
-      return accounts;
-    }
-
-    const response = await sender('eth_requestAccounts');
-
-    if (response?.content?.error) {
-      throw new Error(response?.content?.error?.message);
-    }
-    const address = response?.content?.result?.account?.address;
-    const currentAccounts = address ? [address] : [];
-
-    eventEmitter.emit('accountsChanged', currentAccounts);
-    setAccounts(network, currentAccounts);
-
-    return currentAccounts;
-  } catch (error) {
-    console.error('Failed to connect:', error);
-    throw error;
+  // If there are already accounts cached, return them, no need to ask for the
+  // account server again
+  const accounts = getAccounts(network);
+  if (accounts.length > 0) {
+    return accounts;
   }
+
+  const response = await sender('eth_requestAccounts');
+
+  if (response?.content?.error) {
+    throw new Error(response?.content?.error?.message);
+  }
+  const address = response?.content?.result?.account?.address;
+  const currentAccounts = address ? [address] : [];
+
+  eventEmitter.emit('accountsChanged', currentAccounts);
+  setAccounts(network, currentAccounts);
+
+  return currentAccounts;
 };
