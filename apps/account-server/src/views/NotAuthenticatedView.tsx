@@ -133,7 +133,7 @@ const WebView = ({
         <h2 className="text-2xl font-bold text-gray-900">Sign in</h2>
       </div>
 
-      <div className="flex flex-col gap-6 px-6">
+      <div className="flex flex-col gap-6">
         {error && (
           <div className="p-3 bg-red-50 border border-red-200 rounded">
             <p className="text-red-600 text-sm">{error}</p>

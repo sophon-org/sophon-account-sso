@@ -16,7 +16,7 @@ export default function WrongNetworkView() {
   }, [chainId]);
 
   return (
-    <div className="mt-6 flex flex-col gap-8 items-center justify-center text-center">
+    <div className="mt-3 flex flex-col gap-8 items-center justify-center text-center">
       <p className="text-gray-600 mb-4">
         Please connect your wallet to Sophon in order to proceed
       </p>

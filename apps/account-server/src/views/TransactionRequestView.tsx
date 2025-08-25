@@ -1,93 +1,25 @@
-import { useEffect } from 'react';
 import { IconSignature } from '@/components/icons/icon-signature';
 import { Loader } from '@/components/loader';
-import { Button } from '@/components/ui/button';
 import MessageContainer from '@/components/ui/messageContainer';
 import VerificationImage from '@/components/ui/verification-image';
-import { MainStateMachineContext } from '@/context/state-machine-context';
-import { useEnrichTransactionRequest } from '@/hooks/useEnrichTransactionRequest';
-import { useSignature } from '@/hooks/useSignature';
-import { useTransaction } from '@/hooks/useTransaction';
-import {
-  trackDialogInteraction,
-  trackSigningRequestResult,
-  trackTransactionRequest,
-  trackTransactionResult,
-} from '@/lib/analytics';
+import { useTransactionRequestActions } from '@/hooks/actions/useTransactionRequestActions';
 import { truncateName } from '@/lib/formatting';
-import { windowService } from '@/service/window.service';
-import {
-  type IncomingRequest,
-  type TransactionRequest,
-  TransactionType,
-} from '@/types/auth';
+import { TransactionType } from '@/types/auth';
 
 export default function TransactionRequestView() {
-  const { incoming: incomingRequest, transaction: transactionRequest } =
-    MainStateMachineContext.useSelector((state) => state.context.requests);
-  const actorRef = MainStateMachineContext.useActorRef();
-  const { isSigning, signTypeData, signingError } = useSignature();
-
-  const { enrichedTransactionRequest, isLoading, isEstimating } =
-    useEnrichTransactionRequest(transactionRequest);
-  const { isSending, sendTransaction, transactionError } = useTransaction();
-  console.log(enrichedTransactionRequest);
-  // Track transaction request received
-  useEffect(() => {
-    if (transactionRequest) {
-      trackTransactionRequest(windowService.name, transactionRequest.value);
-    }
-  }, [transactionRequest]);
+  const {
+    incomingRequest,
+    transactionRequest,
+    enrichedTransactionRequest,
+    isLoading,
+  } = useTransactionRequestActions();
 
   if (!transactionRequest || !incomingRequest) {
     return <div>No transaction request present</div>;
   }
 
-  const handleSend = async (
-    transactionRequest: TransactionRequest,
-    incomingRequest: IncomingRequest,
-  ) => {
-    // biome-ignore lint/suspicious/noExplicitAny: update to the proper type in the future
-    if ((transactionRequest as any).transactionType === 'eip712') {
-      // means we are showing as a tx, but we should actually do a typed data signature,
-      // as viem (or similar) will then get the signature and send as a raw tx
-
-      // biome-ignore lint/suspicious/noExplicitAny: update to the proper type in the future
-      const signingRequestData = (transactionRequest as any).signingRequestData;
-
-      try {
-        const signature = await signTypeData(signingRequestData);
-
-        // Track successful tx
-        trackTransactionRequest(windowService.name, transactionRequest.value);
-
-        // @Ramon: not sure why this is being handled different on useTransaction vs useSignature,
-        // so manually adding it here for now instead of refactoring
-        if (windowService.isManaged() && incomingRequest) {
-          const signResponse = {
-            id: crypto.randomUUID(),
-            requestId: incomingRequest.id,
-            content: {
-              result: signature,
-            },
-          };
-
-          windowService.sendMessage(signResponse);
-          actorRef.send({ type: 'ACCEPT' });
-        }
-      } catch (error) {
-        // Track signing error
-        const errorMessage =
-          error instanceof Error ? error.message : 'Signing failed';
-        trackSigningRequestResult('typed_data', false, errorMessage);
-      }
-    } else {
-      sendTransaction(transactionRequest, incomingRequest);
-    }
-  };
-
   return (
-    <div className="text-center flex flex-col items-center justify-center gap-8 px-6">
+    <div className="text-center flex flex-col items-center justify-center gap-8">
       <VerificationImage icon={<IconSignature className="w-24 h-24" />} />
       <div className="flex flex-col items-center justify-center">
         <h5 className="text-2xl font-bold">Transaction request</h5>
@@ -189,74 +121,9 @@ export default function TransactionRequestView() {
           </div>
         )}
       </MessageContainer>
-
-      <div className="w-full flex justify-between">
-        <p className="text-xs font-bold">Estimated fee:</p>
-        {isEstimating && (
-          <Loader className="w-4 h-4 border-black border-r-transparent" />
-        )}
-        {!isEstimating && enrichedTransactionRequest?.fee && (
-          <p className="text-sm text-black">
-            {enrichedTransactionRequest?.fee} SOPH
-          </p>
-        )}
-        {enrichedTransactionRequest?.paymaster &&
-          enrichedTransactionRequest?.paymaster !== '0x' && (
-            <p className="text-sm text-black">Sponsored</p>
-          )}
-      </div>
-
-      <div className="flex items-center justify-center gap-2 w-full">
-        <Button
-          variant="transparent"
-          disabled={isSending || isSigning}
-          onClick={() => {
-            trackTransactionResult(
-              false,
-              undefined,
-              'User cancelled transaction',
-            );
-            trackDialogInteraction('transaction_request', 'cancel');
-
-            if (windowService.isManaged() && incomingRequest) {
-              const signResponse = {
-                id: crypto.randomUUID(),
-                requestId: incomingRequest.id,
-                content: {
-                  result: null,
-                  error: {
-                    message: 'User cancelled transaction',
-                    code: -32002,
-                  },
-                },
-              };
-
-              windowService.sendMessage(signResponse);
-              actorRef.send({ type: 'CANCEL' });
-            }
-          }}
-        >
-          Cancel
-        </Button>
-        <Button
-          type="button"
-          disabled={isSending || isSigning}
-          onClick={() => handleSend(transactionRequest, incomingRequest)}
-        >
-          {isSending || isSigning ? (
-            <Loader className="w-4 h-4 border-white border-r-transparent" />
-          ) : (
-            'Approve'
-          )}
-        </Button>
-      </div>
-      {(transactionError || signingError) && (
-        <div className="p-3 bg-red-50 border border-red-200 rounded">
-          <p className="text-red-600 text-sm">
-            {transactionError || signingError}
-          </p>
-        </div>
-      )}
     </div>
   );
 }
+
+// Export the actions hook for the root component to use
+TransactionRequestView.useActions = useTransactionRequestActions;
