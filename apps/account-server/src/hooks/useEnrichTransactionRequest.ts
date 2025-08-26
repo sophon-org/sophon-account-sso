@@ -1,89 +1,21 @@
 import { useEffect, useState } from 'react';
-import { decodeFunctionData, erc20Abi, formatEther, formatUnits } from 'viem';
-import { BLOCK_EXPLORER_API_URL } from '@/lib/constants';
-import {
-  type ContractInfo,
-  type EnrichedTransactionRequest,
-  type TransactionRequest,
-  TransactionType,
+import { decodeFunctionData, formatEther } from 'viem';
+import type {
+  EnrichedTransactionRequest,
+  TransactionRequest,
 } from '@/types/auth';
+import {
+  enrichApprovalTransaction,
+  enrichContractTransaction,
+  enrichERC20Transaction,
+  enrichFallbackTransaction,
+  enrichSOPHTransaction,
+  getContractInfo,
+  getFunctionParameters,
+  getTokenBalance,
+  getTokenFromAddress,
+} from './enrichers';
 import { useEstimateFee } from './useEstimateFee';
-
-const getTokenFromAddress = async (address: string) => {
-  try {
-    const response = await fetch(
-      `${BLOCK_EXPLORER_API_URL}/api?module=token&action=tokeninfo&contractaddress=${address}`,
-    );
-    const data = await response.json();
-    return data.result[0];
-  } catch (error) {
-    console.warn('Failed to fetch token info:', error);
-    return null;
-  }
-};
-
-const getContractInfo = async (address: string): Promise<ContractInfo> => {
-  try {
-    const response = await fetch(
-      `${BLOCK_EXPLORER_API_URL}/api?module=contract&action=getsourcecode&address=${address}`,
-    );
-
-    const data = await response.json();
-
-    if (
-      data.status === '1' &&
-      data.result &&
-      data.result !== 'Contract source code not verified'
-    ) {
-      return {
-        abi: JSON.parse(data.result[0].ABI),
-        name: data.result[0].ContractName,
-      };
-    }
-    return {
-      abi: null,
-      name: null,
-    };
-  } catch (error) {
-    console.warn('Failed to fetch contract ABI:', error);
-    return {
-      abi: null,
-      name: null,
-    };
-  }
-};
-
-const getFunctionParameters = (
-  decodedData: { functionName: string; args: readonly unknown[] },
-  contractInfo: ContractInfo,
-): {
-  functionName: string;
-  args: Array<{ name: string; value: string; type: string }>;
-} | null => {
-  if (!contractInfo.abi) return null;
-
-  const functionAbi = contractInfo.abi.find(
-    (item) =>
-      item.type === 'function' &&
-      item.name === decodedData.functionName &&
-      item.inputs?.length === decodedData.args.length,
-  );
-
-  if (functionAbi?.inputs) {
-    const parameters = decodedData.args.map((arg: unknown, index: number) => ({
-      name: functionAbi.inputs?.[index]?.name || `param${index}`,
-      value: arg?.toString() || '',
-      type: functionAbi.inputs?.[index]?.type || 'unknown',
-    }));
-
-    return {
-      functionName: decodedData.functionName,
-      args: parameters,
-    };
-  }
-
-  return null;
-};
 
 export const useEnrichTransactionRequest = (
   transactionRequest: TransactionRequest | null | undefined,
@@ -112,10 +44,13 @@ export const useEnrichTransactionRequest = (
         !transactionRequest.paymaster ||
         transactionRequest.paymaster === '0x'
       ) {
-        const feeSOPH = formatEther((await estimateFee()) || BigInt(0)).slice(
-          0,
-          8,
-        );
+        const feeSOPH = formatEther(
+          (await estimateFee({
+            to: transactionRequest.to,
+            data: transactionRequest.data,
+            value: transactionRequest.value,
+          })) || BigInt(0),
+        ).slice(0, 8);
         fee = {
           SOPH: feeSOPH,
           USD:
@@ -131,21 +66,14 @@ export const useEnrichTransactionRequest = (
       try {
         // If the data is 0x, it's a SOPH transfer
         const isSophTransfer = transactionRequest.data === '0x';
-        const token = isSophTransfer
-          ? sophTokenDetails
-          : await getTokenFromAddress(transactionRequest.to);
 
         if (isSophTransfer) {
-          setEnrichedTransactionRequest({
-            ...transactionRequest,
-            transactionType: TransactionType.SOPH,
-            recipient: transactionRequest.to,
-            token,
-            displayValue: formatEther(BigInt(transactionRequest.value || '0')),
-            paymaster: transactionRequest.paymaster,
-            paymasterInput: transactionRequest.paymasterInput,
+          const enrichedTransaction = await enrichSOPHTransaction(
+            transactionRequest,
+            sophTokenDetails,
             fee,
-          });
+          );
+          setEnrichedTransactionRequest(enrichedTransaction);
         } else {
           const [token, contractInfo] = await Promise.all([
             getTokenFromAddress(transactionRequest.to),
@@ -175,54 +103,58 @@ export const useEnrichTransactionRequest = (
             }
           }
 
-          if (token && !decodedData) {
+          if (
+            token &&
+            (!decodedData || decodedData?.functionName === 'transfer')
+          ) {
             // ERC20 transfer
-            const decodedData = decodeFunctionData({
-              abi: erc20Abi,
-              data: transactionRequest.data as `0x${string}`,
-            });
-            setEnrichedTransactionRequest({
-              ...transactionRequest,
-              transactionType: TransactionType.ERC20,
-              recipient: decodedData.args[0]?.toString(),
+            const enrichedTransaction = await enrichERC20Transaction(
+              transactionRequest,
               token,
-              displayValue: formatUnits(
-                BigInt(decodedData.args[1]?.toString() || '0'),
-                18,
-              ),
-              paymaster: transactionRequest.paymaster,
-              paymasterInput: transactionRequest.paymasterInput,
               fee,
-            });
+            );
+            setEnrichedTransactionRequest(enrichedTransaction);
+          } else if (
+            token &&
+            decodedData &&
+            decodedData?.functionName === 'approve'
+          ) {
+            // ERC20 approve
+            const spenderAddress = decodedData?.args[0]?.value?.toString();
+            const spenderContractInfo = await getContractInfo(spenderAddress);
+            const currentBalance = await getTokenBalance(
+              transactionRequest.from,
+              token?.contractAddress || '',
+            );
+
+            const enrichedTransaction = await enrichApprovalTransaction(
+              transactionRequest,
+              token,
+              decodedData,
+              spenderContractInfo,
+              currentBalance,
+              fee,
+            );
+            setEnrichedTransactionRequest(enrichedTransaction);
           } else {
             // Contract interaction
-            setEnrichedTransactionRequest({
-              ...transactionRequest,
-              transactionType: TransactionType.CONTRACT,
-              recipient: transactionRequest.to,
-              displayValue: formatEther(
-                BigInt(transactionRequest.value || '0'),
-              ),
-              paymaster: transactionRequest.paymaster,
-              paymasterInput: transactionRequest.paymasterInput,
-              decodedData: decodedData || undefined,
-              contractName: contractInfo.name || undefined,
+            const enrichedTransaction = await enrichContractTransaction(
+              transactionRequest,
+              contractInfo,
+              decodedData || undefined,
               fee,
-            });
+            );
+            setEnrichedTransactionRequest(enrichedTransaction);
           }
         }
       } catch (error) {
         console.error('Failed to enrich transaction:', error);
         // Fallback to basic transaction data
-        setEnrichedTransactionRequest({
-          ...transactionRequest,
-          transactionType: TransactionType.UNKNOWN,
-          recipient: transactionRequest.to,
-          displayValue: formatEther(BigInt(transactionRequest.value || '0')),
-          paymaster: transactionRequest.paymaster,
-          paymasterInput: transactionRequest.paymasterInput,
+        const fallbackTransaction = await enrichFallbackTransaction(
+          transactionRequest,
           fee,
-        });
+        );
+        setEnrichedTransactionRequest(fallbackTransaction);
       } finally {
         setIsLoading(false);
       }
