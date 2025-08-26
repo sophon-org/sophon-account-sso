@@ -89,6 +89,7 @@ const MobileView = ({
               className="w-full h-14 p-3 bg-white border border-[#EBE9E6] rounded-md placeholder:text-[#CCCAC8] placeholder:text-lg mb-2"
               type="email"
               name="email"
+              data-testid="login-email-input"
               placeholder="Enter email"
               required
             />
@@ -167,10 +168,16 @@ const WebView = ({
               className="w-full h-14 p-3 bg-white border border-[#EBE9E6] rounded-md placeholder:text-[#CCCAC8] placeholder:text-lg mb-2"
               type="email"
               name="email"
+              data-testid="login-email-input"
               placeholder="Enter email"
               required
             />
-            <Button variant="primary" type="submit" disabled={emailLoading}>
+            <Button
+              variant="primary"
+              type="submit"
+              disabled={emailLoading}
+              data-testid="login-email-submit"
+            >
               {emailLoading ? (
                 <Loader className="w-4 h-4 border-white border-r-transparent" />
               ) : (

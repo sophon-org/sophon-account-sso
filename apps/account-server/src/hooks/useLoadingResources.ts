@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { MainStateMachineContext } from '@/context/state-machine-context';
 import { useAccountContext } from './useAccountContext';
 import { useMessageHandler } from './useMessageHandler';
+import { useAccount } from 'wagmi';
 
 export const useLoadingResources = () => {
   const actorRef = MainStateMachineContext.useActorRef();
@@ -21,14 +22,29 @@ export const useLoadingResources = () => {
   } = useMessageHandler();
 
   const { account } = useAccountContext();
+  const { isConnected: isConnectedWagmi } = useAccount();
 
   // Setup Dynamic Listening so we make sure that we got all the information before following up with the state machine
-  const { sdkHasLoaded } = useDynamicContext();
+  const { sdkHasLoaded, primaryWallet } = useDynamicContext();
   useEffect(() => {
     if (sdkHasLoaded && handlerInitialized) {
-      actorRef.send({ type: 'RESOURCES_LOADED', authenticated: !!account });
+      // important to ensure that we are connected to the provider, some providers may
+      // just disconnect the user after some idle time
+      const isConnectedOnProvider = !!primaryWallet || isConnectedWagmi;
+      const isAuthenticated = !!account && isConnectedOnProvider;
+      actorRef.send({
+        type: 'RESOURCES_LOADED',
+        authenticated: isAuthenticated,
+      });
     }
-  }, [sdkHasLoaded, actorRef, handlerInitialized, account]);
+  }, [
+    sdkHasLoaded,
+    actorRef,
+    handlerInitialized,
+    account,
+    primaryWallet,
+    isConnectedWagmi,
+  ]);
 
   return {
     incomingRequest,

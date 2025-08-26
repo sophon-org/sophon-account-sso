@@ -89,6 +89,7 @@ export default function DesktopRoot({ partnerId }: DesktopRootProps) {
         actions={
           <div className="flex items-center justify-center gap-2 w-full">
             <Button
+              data-testid="connect-cancel-button"
               variant="transparent"
               disabled={isLoading}
               onClick={onRefuseConnection}
@@ -96,6 +97,7 @@ export default function DesktopRoot({ partnerId }: DesktopRootProps) {
               Cancel
             </Button>
             <Button
+              data-testid="connect-accept-button"
               type="button"
               disabled={isLoading}
               onClick={onAcceptConnection}
