@@ -6,6 +6,13 @@ import {
   UnifiedTransactionResponse,
 } from '../types/unified.types';
 
+export interface HealthCheckResult {
+  healthy: boolean;
+  responseTime?: number;
+  error?: string;
+  timestamp: Date;
+}
+
 export interface ISwapProvider {
   readonly providerId: string;
   readonly name: string;
@@ -21,4 +28,5 @@ export interface ISwapProvider {
     request: UnifiedTransactionRequest,
   ): Promise<ValidationResult>;
   isEnabled(): boolean;
+  healthCheck(): Promise<HealthCheckResult>;
 }

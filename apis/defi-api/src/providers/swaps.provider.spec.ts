@@ -1,17 +1,45 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import axios from 'axios';
+import { ErrorCodes, SwapAPIError } from '../errors/swap-api.error';
 import { LoggingService } from '../services/logging.service';
 import { TransactionStatus, TransactionType } from '../types/common.types';
+import { SwapActionRequest } from '../types/swaps.types';
 import { UnifiedTransactionRequest } from '../types/unified.types';
 import { SwapsProvider } from './swaps.provider';
+
+interface MockAxiosInstance {
+  get: jest.Mock;
+  post: jest.Mock;
+  defaults: { headers: Record<string, unknown> };
+}
+
+// Mock axios completely to prevent real HTTP requests
+jest.mock('axios', () => ({
+  create: jest.fn(() => ({
+    get: jest.fn(),
+    post: jest.fn(),
+  })),
+}));
 
 describe('SwapsProvider', () => {
   let provider: SwapsProvider;
   let configService: jest.Mocked<ConfigService>;
   let loggingService: jest.Mocked<LoggingService>;
+  let mockAxios: jest.Mocked<typeof axios>;
 
   beforeEach(async () => {
+    mockAxios = axios as jest.Mocked<typeof axios>;
+
+    // Setup axios.create mock
+    const mockAxiosInstance = {
+      get: jest.fn(),
+      post: jest.fn(),
+      defaults: { headers: {} },
+    };
+
+    mockAxios.create = jest.fn().mockReturnValue(mockAxiosInstance);
     // Create mock config service with predefined implementation
     configService = {
       get: jest
@@ -59,6 +87,12 @@ describe('SwapsProvider', () => {
 
   afterEach(() => {
     jest.clearAllMocks();
+    jest.resetAllMocks();
+
+    // Default mock for callSwapAPI to prevent real HTTP requests
+    jest.spyOn(provider, 'callSwapAPI').mockImplementation(() => {
+      throw new Error('callSwapAPI should be mocked in individual tests');
+    });
   });
 
   describe('Basic Properties', () => {
@@ -392,6 +426,833 @@ describe('SwapsProvider', () => {
       testCases.forEach(({ input, expected }) => {
         const result = provider.parseAmountValue(input);
         expect(result).toBe(expected);
+      });
+    });
+  });
+
+  describe('prepareTransaction', () => {
+    const mockRequest: UnifiedTransactionRequest = {
+      actionType: 'evm-send-tx',
+      sender: '0x1234567890123456789012345678901234567890',
+      sourceChain: 1,
+      destinationChain: 10,
+      sourceToken: '0x0000000000000000000000000000000000000000',
+      destinationToken: '0x0000000000000000000000000000000000000000',
+      amount: BigInt('1000000000000000000'),
+      slippage: 1,
+      recipient: '0x9876543210987654321098765432109876543210',
+      options: {},
+    };
+
+    it('should handle validation errors', async () => {
+      // Mock validation to fail - this should prevent callSwapAPI from being called
+      jest.spyOn(provider, 'validateRequest').mockResolvedValue({
+        isValid: false,
+        errors: ['Invalid chain'],
+      });
+
+      await expect(provider.prepareTransaction(mockRequest)).rejects.toThrow(
+        'Validation failed: Invalid chain',
+      );
+
+      expect(loggingService.logProviderDebug).toHaveBeenCalledWith(
+        'swaps',
+        'Starting prepareTransaction',
+        expect.any(Object),
+      );
+    });
+
+    it('should throw validation error for invalid request', async () => {
+      // Mock validateRequest to return invalid result
+      jest.spyOn(provider, 'validateRequest').mockResolvedValue({
+        isValid: false,
+        errors: ['Invalid token address', 'Unsupported chain'],
+      });
+
+      const invalidRequest = { ...mockRequest };
+
+      await expect(provider.prepareTransaction(invalidRequest)).rejects.toThrow(
+        'Validation failed: Invalid token address, Unsupported chain',
+      );
+
+      expect(loggingService.logProviderDebug).toHaveBeenCalledWith(
+        'swaps',
+        'Request validation completed',
+        {
+          isValid: false,
+          errors: ['Invalid token address', 'Unsupported chain'],
+        },
+      );
+    });
+
+    it('should handle API errors during transaction preparation', async () => {
+      // Mock successful validation but API error
+      jest.spyOn(provider, 'validateRequest').mockResolvedValue({
+        isValid: true,
+        errors: [],
+      });
+
+      // Mock the callSwapAPI method to simulate network error
+      jest
+        .spyOn(provider, 'callSwapAPI')
+        .mockRejectedValue(new Error('Network error'));
+
+      await expect(provider.prepareTransaction(mockRequest)).rejects.toThrow(
+        'Failed to prepare transaction with Swaps.xyz',
+      );
+    });
+
+    it('should successfully prepare transaction with valid response', async () => {
+      // Mock successful validation
+      jest.spyOn(provider, 'validateRequest').mockResolvedValue({
+        isValid: true,
+        errors: [],
+      });
+
+      // Mock successful API response
+      const mockApiResponse = {
+        tx: {
+          to: '0x1234567890123456789012345678901234567890',
+          data: '0x123456789',
+          value: '1000000000000000000',
+          gasLimit: '21000',
+          chainId: 1,
+        },
+        txId: '0xabcdef1234567890',
+        VmId: 'evm',
+        amountIn: {
+          tokenAddress: '0x0000000000000000000000000000000000000000',
+          decimals: 18,
+          symbol: 'ETH',
+          name: 'Ethereum',
+          chainId: 1,
+          amount: '1000000000000000000',
+        },
+        amountInMax: {
+          tokenAddress: '0x0000000000000000000000000000000000000000',
+          decimals: 18,
+          symbol: 'ETH',
+          name: 'Ethereum',
+          chainId: 1,
+          amount: '1000000000000000000',
+        },
+        amountOut: {
+          tokenAddress: '0x0000000000000000000000000000000000000000',
+          decimals: 18,
+          symbol: 'ETH',
+          name: 'Ethereum',
+          chainId: 10,
+          amount: '990000000000000000',
+        },
+        amountOutMin: {
+          tokenAddress: '0x0000000000000000000000000000000000000000',
+          decimals: 18,
+          symbol: 'ETH',
+          name: 'Ethereum',
+          chainId: 10,
+          amount: '980000000000000000',
+        },
+        protocolFee: {
+          tokenAddress: '0x0000000000000000000000000000000000000000',
+          decimals: 18,
+          symbol: 'ETH',
+          name: 'Ethereum',
+          chainId: 1,
+          amount: '1000000000000000',
+        },
+        applicationFee: {
+          tokenAddress: '0x0000000000000000000000000000000000000000',
+          decimals: 18,
+          symbol: 'ETH',
+          name: 'Ethereum',
+          chainId: 1,
+          amount: '0',
+        },
+        bridgeFee: {
+          tokenAddress: '0x0000000000000000000000000000000000000000',
+          decimals: 18,
+          symbol: 'ETH',
+          name: 'Ethereum',
+          chainId: 1,
+          amount: '0',
+        },
+        exchangeRate: 0.99,
+        estimatedTxTime: 300,
+        estimatedPriceImpact: 0.01,
+      };
+
+      jest.spyOn(provider, 'callSwapAPI').mockResolvedValue(mockApiResponse);
+
+      const result = await provider.prepareTransaction(mockRequest);
+
+      expect(result).toEqual({
+        transactionId: '0xabcdef1234567890',
+        provider: 'swaps',
+        transaction: {
+          to: '0x1234567890123456789012345678901234567890',
+          data: '0x123456789',
+          value: '1000000000000000000',
+          chainId: 1,
+        },
+        fees: {
+          gas: '21000',
+          protocol: '1000000000000000',
+          total: '1000000000000000',
+        },
+        estimatedTime: 300,
+        exchangeRate: 0.99,
+        requiredApprovals: [],
+      });
+    });
+
+    it('should handle missing transaction data in response', async () => {
+      jest.spyOn(provider, 'validateRequest').mockResolvedValue({
+        isValid: true,
+        errors: [],
+      });
+
+      // Mock API response without tx field
+      const mockApiResponse = {
+        txId: '0xabcdef1234567890',
+        estimatedTxTime: 300,
+        // Missing tx field
+      };
+
+      jest.spyOn(provider, 'callSwapAPI').mockResolvedValue(mockApiResponse);
+
+      await expect(provider.prepareTransaction(mockRequest)).rejects.toThrow(
+        'Failed to prepare transaction with Swaps.xyz',
+      );
+    });
+
+    it('should handle API error responses', async () => {
+      jest.spyOn(provider, 'validateRequest').mockResolvedValue({
+        isValid: true,
+        errors: [],
+      });
+
+      // Mock API error response
+      const mockApiResponse = {
+        success: false,
+        error: {
+          message: 'Invalid token address',
+          code: 'INVALID_TOKEN',
+          details: { field: 'srcToken' },
+        },
+      };
+
+      jest.spyOn(provider, 'callSwapAPI').mockResolvedValue(mockApiResponse);
+
+      await expect(provider.prepareTransaction(mockRequest)).rejects.toThrow(
+        'Swaps.xyz API Error: Invalid token address',
+      );
+      expect(loggingService.logProviderDebug).toHaveBeenCalledWith(
+        'swaps',
+        'API returned error response',
+        { error: mockApiResponse.error },
+      );
+    });
+
+    it('should handle response with BigInt values', async () => {
+      jest.spyOn(provider, 'validateRequest').mockResolvedValue({
+        isValid: true,
+        errors: [],
+      });
+
+      // Mock API response with BigInt values
+      const mockApiResponse = {
+        tx: {
+          to: '0x1234567890123456789012345678901234567890',
+          data: '0x123456789',
+          value: BigInt('1000000000000000000').toString(), // This will test BigInt serialization
+          gasLimit: '21000',
+          chainId: 1,
+        },
+        txId: '0xabcdef1234567890',
+        VmId: 'evm',
+        amountIn: {
+          tokenAddress: '0x0000000000000000000000000000000000000000',
+          decimals: 18,
+          symbol: 'ETH',
+          name: 'Ethereum',
+          chainId: 1,
+          amount: BigInt('1000000000000000000'), // This will test BigInt handling
+        },
+        amountOut: {
+          tokenAddress: '0x0000000000000000000000000000000000000000',
+          decimals: 18,
+          symbol: 'ETH',
+          name: 'Ethereum',
+          chainId: 10,
+          amount: '990000000000000000',
+        },
+        amountInMax: {
+          tokenAddress: '0x0000000000000000000000000000000000000000',
+          decimals: 18,
+          symbol: 'ETH',
+          name: 'Ethereum',
+          chainId: 1,
+          amount: '1000000000000000000',
+        },
+        amountOutMin: {
+          tokenAddress: '0x0000000000000000000000000000000000000000',
+          decimals: 18,
+          symbol: 'ETH',
+          name: 'Ethereum',
+          chainId: 10,
+          amount: '980000000000000000',
+        },
+        protocolFee: {
+          tokenAddress: '0x0000000000000000000000000000000000000000',
+          decimals: 18,
+          symbol: 'ETH',
+          name: 'Ethereum',
+          chainId: 1,
+          amount: '1000000000000000',
+        },
+        applicationFee: {
+          tokenAddress: '0x0000000000000000000000000000000000000000',
+          decimals: 18,
+          symbol: 'ETH',
+          name: 'Ethereum',
+          chainId: 1,
+          amount: '0',
+        },
+        bridgeFee: {
+          tokenAddress: '0x0000000000000000000000000000000000000000',
+          decimals: 18,
+          symbol: 'ETH',
+          name: 'Ethereum',
+          chainId: 1,
+          amount: '0',
+        },
+        exchangeRate: 0.99,
+        estimatedTxTime: 300,
+        estimatedPriceImpact: 0.01,
+      };
+
+      jest.spyOn(provider, 'callSwapAPI').mockResolvedValue(mockApiResponse);
+
+      const result = await provider.prepareTransaction(mockRequest);
+      expect(result.transactionId).toBe('0xabcdef1234567890');
+      expect(result.transaction.value).toBe('1000000000000000000');
+    });
+
+    it('should rethrow SwapAPIError from prepareTransaction', async () => {
+      jest.spyOn(provider, 'validateRequest').mockResolvedValue({
+        isValid: true,
+        errors: [],
+      });
+
+      const swapApiError = new SwapAPIError(
+        'Network timeout',
+        ErrorCodes.NETWORK_ERROR,
+        'swaps',
+      );
+      jest.spyOn(provider, 'callSwapAPI').mockRejectedValue(swapApiError);
+
+      await expect(provider.prepareTransaction(mockRequest)).rejects.toThrow(
+        swapApiError,
+      );
+    });
+  });
+
+  describe('getTransactionStatus', () => {
+    const mockStatusRequest = {
+      transactionHash: '0xabcdef1234567890',
+      sourceChainId: 1,
+      provider: 'swaps',
+    };
+
+    it('should handle API errors gracefully', async () => {
+      const mockError = new Error('Network error');
+      jest.spyOn(provider, 'callSwapAPI').mockRejectedValue(mockError);
+
+      await expect(
+        provider.getTransactionStatus(mockStatusRequest),
+      ).rejects.toThrow();
+      // The error logging happens in the wrapped error, so let's just check the error is thrown
+    });
+
+    it('should handle empty response gracefully', async () => {
+      jest.spyOn(provider, 'callSwapAPI').mockResolvedValue({ data: null });
+
+      const result = await provider.getTransactionStatus(mockStatusRequest);
+      expect(result.found).toBe(false);
+      expect(result.status).toBe(TransactionStatus.PENDING);
+    });
+
+    it('should successfully get transaction status with complete data', async () => {
+      const mockResponse = {
+        tx: {
+          txId: 'swap-123',
+          status: 'success',
+          sender: '0x1234567890123456789012345678901234567890',
+          srcChainId: 1,
+          dstChainId: 10,
+          srcTxHash: '0xabcdef1234567890',
+          srcTx: {
+            gasUsed: '21000',
+            timestamp: '1640995200',
+            blockExplorer: 'https://etherscan.io/tx/0xabcdef1234567890',
+          },
+          dstTx: {
+            gasUsed: '50000',
+            timestamp: '1640995260',
+            txHash: '0x9876543210987654',
+          },
+          bridgeDetails: {
+            isBridge: true,
+            txPath: [
+              { chainId: 1, txHash: '0xabcdef1234567890' },
+              { chainId: 10, txHash: '0x9876543210987654' },
+            ],
+          },
+        },
+      };
+
+      jest.spyOn(provider, 'callSwapAPI').mockResolvedValue(mockResponse);
+
+      const result = await provider.getTransactionStatus(mockStatusRequest);
+
+      expect(result.found).toBe(true);
+      expect(result.status).toBe(TransactionStatus.CONFIRMED);
+      expect(result.transaction.sourceChain).toBe(1);
+      expect(result.transaction.destinationChain).toBe(10);
+      expect(result.links.explorer).toBe(
+        'https://etherscan.io/tx/0xabcdef1234567890',
+      );
+    });
+
+    it('should handle failed transaction status', async () => {
+      const mockResponse = {
+        tx: {
+          txId: 'swap-456',
+          status: 'failed',
+          sender: '0x1234567890123456789012345678901234567890',
+          srcChainId: 1,
+          dstChainId: 10,
+          srcTxHash: '0xabcdef1234567890',
+          bridgeDetails: {
+            isBridge: false,
+            txPath: [],
+          },
+        },
+      };
+
+      jest.spyOn(provider, 'callSwapAPI').mockResolvedValue(mockResponse);
+
+      const result = await provider.getTransactionStatus(mockStatusRequest);
+
+      expect(result.found).toBe(true);
+      expect(result.status).toBe(TransactionStatus.FAILED);
+    });
+
+    it('should handle pending transaction status', async () => {
+      const mockResponse = {
+        tx: {
+          txId: 'swap-789',
+          status: 'pending',
+          sender: '0x1234567890123456789012345678901234567890',
+          srcChainId: 1,
+          dstChainId: 10,
+          srcTxHash: '0xabcdef1234567890',
+          bridgeDetails: {
+            isBridge: false,
+            txPath: [],
+          },
+        },
+      };
+
+      jest.spyOn(provider, 'callSwapAPI').mockResolvedValue(mockResponse);
+
+      const result = await provider.getTransactionStatus(mockStatusRequest);
+
+      expect(result.found).toBe(true);
+      expect(result.status).toBe(TransactionStatus.PENDING);
+    });
+
+    it('should rethrow SwapAPIError from getTransactionStatus', async () => {
+      const swapApiError = new SwapAPIError(
+        'API limit exceeded',
+        ErrorCodes.RATE_LIMIT_EXCEEDED,
+        'swaps',
+      );
+      jest.spyOn(provider, 'callSwapAPI').mockRejectedValue(swapApiError);
+
+      await expect(
+        provider.getTransactionStatus(mockStatusRequest),
+      ).rejects.toThrow(swapApiError);
+      // SwapAPIError is rethrown directly, so logProviderError is not called
+    });
+
+    it('should handle missing tracker URL in status response', async () => {
+      const mockResponse = {
+        tx: {
+          txId: 'swap-no-tracker',
+          status: 'success',
+          sender: '0x1234567890123456789012345678901234567890',
+          srcChainId: 1,
+          dstChainId: 10,
+          // Remove srcTxHash to test missing tracker URL scenario
+          bridgeDetails: {
+            isBridge: false,
+            txPath: [],
+          },
+        },
+      };
+
+      jest.spyOn(provider, 'callSwapAPI').mockResolvedValue(mockResponse);
+
+      const result = await provider.getTransactionStatus(mockStatusRequest);
+
+      expect(result.found).toBe(true);
+      expect(result.links.providerTracker).toBe('');
+      expect(loggingService.logProviderDebug).toHaveBeenCalledWith(
+        'swaps',
+        'No tracker link generated - missing txHash',
+      );
+    });
+  });
+
+  describe('configuration edge cases', () => {
+    it('should handle missing base URL', async () => {
+      const configServiceNoUrl = {
+        get: jest
+          .fn()
+          .mockImplementation((key: string, defaultValue?: string) => {
+            const config: Record<string, string> = {
+              SWAPS_API_KEY: 'test-api-key',
+              SWAPS_ENABLED: 'true',
+              SWAPS_BASE_URL_ACTION: '',
+              SWAPS_BASE_URL_STATUS: '',
+            };
+            return config[key] !== undefined ? config[key] : defaultValue;
+          }),
+      } as jest.Mocked<ConfigService>;
+
+      const module: TestingModule = await Test.createTestingModule({
+        providers: [
+          SwapsProvider,
+          { provide: ConfigService, useValue: configServiceNoUrl },
+          { provide: LoggingService, useValue: loggingService },
+        ],
+      }).compile();
+
+      const providerNoUrl = module.get<SwapsProvider>(SwapsProvider);
+      expect(providerNoUrl.isEnabled()).toBe(true); // It's enabled because it has API key and is enabled
+    });
+
+    it('should handle default configuration values', async () => {
+      const configServiceDefaults = {
+        get: jest.fn().mockReturnValue(undefined),
+      } as jest.Mocked<ConfigService>;
+
+      const module: TestingModule = await Test.createTestingModule({
+        providers: [
+          SwapsProvider,
+          { provide: ConfigService, useValue: configServiceDefaults },
+          { provide: LoggingService, useValue: loggingService },
+        ],
+      }).compile();
+
+      const providerDefaults = module.get<SwapsProvider>(SwapsProvider);
+      expect(providerDefaults.isEnabled()).toBe(false);
+    });
+  });
+
+  describe('error handling', () => {
+    it('should handle malformed API responses', async () => {
+      const mockStatusRequest = {
+        transactionHash: '0xabcdef1234567890',
+        sourceChainId: 1,
+        provider: 'swaps',
+      };
+
+      jest.spyOn(provider, 'callSwapAPI').mockResolvedValue({
+        data: { malformed: true },
+      });
+
+      const result = await provider.getTransactionStatus(mockStatusRequest);
+      expect(result.found).toBe(false);
+    });
+  });
+
+  describe('Helper methods', () => {
+    it('should generate explorer link correctly', () => {
+      const result = provider.generateExplorerLink(1, '0xabcdef1234567890');
+      expect(result).toBe('https://etherscan.io/tx/0xabcdef1234567890');
+    });
+
+    it('should return empty string for unsupported chains', () => {
+      const result = provider.generateExplorerLink(999, '0xabcdef1234567890');
+      expect(result).toBe('');
+      expect(loggingService.logProviderDebug).toHaveBeenCalledWith(
+        'swaps',
+        'No explorer link could be generated',
+      );
+    });
+
+    describe('callSwapAPI method', () => {
+      // These tests directly test the callSwapAPI method, so they need to remove the global mock
+      beforeEach(() => {
+        // Remove the global mock for these specific tests
+        jest.restoreAllMocks();
+      });
+
+      it('should handle API key missing error', async () => {
+        const providerNoApiKey = new SwapsProvider(
+          {
+            get: jest.fn().mockImplementation((_key: string) => {
+              return ''; // No API key
+            }),
+          } as Partial<ConfigService>,
+          loggingService,
+        );
+
+        await expect(
+          providerNoApiKey.callSwapAPI('/getAction', {} as SwapActionRequest),
+        ).rejects.toThrow('Swaps.xyz API key not configured');
+      });
+
+      it('should handle GET requests successfully', async () => {
+        const mockResponse = { data: { success: true } };
+        jest.spyOn(axios, 'create').mockReturnValue({
+          get: jest.fn().mockResolvedValue(mockResponse),
+          post: jest.fn(),
+          defaults: { headers: {} },
+        } as MockAxiosInstance);
+
+        // Test simple GET path (not /getStatus which uses different configuration)
+        const result = await provider.callSwapAPI('/getStatus', {
+          chainId: 1,
+          txHash: '0x123',
+        });
+
+        expect(result).toEqual({ success: true });
+        expect(axios.create).toHaveBeenCalledWith({
+          headers: {
+            'x-api-key': 'test-api-key',
+          },
+          timeout: 30000,
+        });
+      });
+
+      it('should handle POST requests successfully', async () => {
+        const mockResponse = { data: { txId: 'test' } };
+        jest.spyOn(axios, 'create').mockReturnValue({
+          get: jest.fn(),
+          post: jest.fn().mockResolvedValue(mockResponse),
+          defaults: { headers: {} },
+        } as MockAxiosInstance);
+
+        const result = await provider.callSwapAPI('/someOtherEndpoint', {
+          amount: '100',
+        } as SwapActionRequest);
+
+        expect(result).toEqual({ txId: 'test' });
+      });
+
+      it('should handle network errors with response details', async () => {
+        const errorWithResponse = {
+          message: 'Request failed',
+          response: {
+            status: 400,
+            statusText: 'Bad Request',
+            headers: { 'content-type': 'application/json' },
+            data: { error: 'Invalid request' },
+          },
+          config: {
+            url: 'https://api.swaps.xyz/swap',
+            method: 'post',
+            timeout: 30000,
+          },
+        };
+
+        jest.spyOn(axios, 'create').mockReturnValue({
+          get: jest.fn().mockRejectedValue(errorWithResponse),
+          post: jest.fn(),
+          defaults: { headers: {} },
+        } as MockAxiosInstance);
+
+        await expect(
+          provider.callSwapAPI('/getAction', {
+            amount: '100',
+          } as SwapActionRequest),
+        ).rejects.toThrow('Swaps.xyz API call failed: Request failed');
+      });
+
+      it('should handle /getAction endpoint path', async () => {
+        const mockResponse = { data: { txId: '0xabc', tx: { to: '0x123' } } };
+        const mockActionData = {
+          sender: '0x123',
+          amount: BigInt('1000000000000000000'),
+          sourceToken: '0xA0b86a33E6416c3C91e01a2D2d40e0E9f1b25C81',
+        };
+
+        // Mock axios.create for actionClient
+        jest.spyOn(axios, 'create').mockReturnValue({
+          get: jest.fn().mockResolvedValue(mockResponse),
+          defaults: { headers: {} },
+        } as MockAxiosInstance);
+
+        const result = await provider.callSwapAPI('/getAction', mockActionData);
+
+        expect(result).toEqual({ txId: '0xabc', tx: { to: '0x123' } });
+        expect(axios.create).toHaveBeenCalledWith({
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': 'test-api-key',
+          },
+          timeout: 30000,
+        });
+      });
+
+      it('should handle /getStatus endpoint path', async () => {
+        const mockResponse = { data: { tx: { status: 'completed' } } };
+        const mockStatusData = {
+          chainId: 1,
+          txHash: '0xabcdef1234567890',
+        };
+
+        jest.spyOn(axios, 'create').mockReturnValue({
+          get: jest.fn().mockResolvedValue(mockResponse),
+          defaults: { headers: {} },
+        } as MockAxiosInstance);
+
+        const result = await provider.callSwapAPI('/getStatus', mockStatusData);
+
+        expect(result).toEqual({ tx: { status: 'completed' } });
+        expect(axios.create).toHaveBeenCalledWith({
+          headers: {
+            'x-api-key': 'test-api-key',
+          },
+          timeout: 30000,
+        });
+      });
+    });
+
+    describe('healthCheck', () => {
+      beforeEach(() => {
+        jest.restoreAllMocks();
+      });
+
+      it('should return unhealthy when provider is disabled', async () => {
+        const disabledProvider = new SwapsProvider(
+          {
+            get: jest.fn().mockImplementation((key: string) => {
+              if (key === 'SWAPS_API_KEY') return '';
+              return 'some-value';
+            }),
+          } as Partial<ConfigService>,
+          loggingService,
+        );
+
+        const result = await disabledProvider.healthCheck();
+
+        expect(result.healthy).toBe(false);
+        expect(result.error).toBe('Provider is disabled or missing API key');
+        expect(result.timestamp).toBeInstanceOf(Date);
+      });
+
+      it('should return healthy when API responds successfully', async () => {
+        const mockError = {
+          response: {
+            status: 401,
+            data: { error: 'Unauthorized: No API key provided.' },
+          },
+          message: 'Request failed with status code 401',
+        };
+        jest.spyOn(axios, 'create').mockReturnValue({
+          get: jest.fn().mockRejectedValue(mockError),
+          defaults: { headers: {} },
+        } as MockAxiosInstance);
+
+        const result = await provider.healthCheck();
+
+        expect(result.healthy).toBe(true);
+        expect(result.responseTime).toBeGreaterThanOrEqual(0);
+        expect(result.timestamp).toBeInstanceOf(Date);
+        expect(loggingService.logProviderDebug).toHaveBeenCalledWith(
+          'swaps',
+          'Health check passed (API responding with expected error)',
+          { responseTime: expect.any(Number), status: 401 },
+        );
+      });
+
+      it('should return healthy when API responds with 404 error', async () => {
+        const mockError = {
+          response: {
+            status: 404,
+            data: { error: 'Not found' },
+          },
+          message: 'Request failed with status code 404',
+        };
+        jest.spyOn(axios, 'create').mockReturnValue({
+          get: jest.fn().mockRejectedValue(mockError),
+          defaults: { headers: {} },
+        } as MockAxiosInstance);
+
+        const result = await provider.healthCheck();
+
+        expect(result.healthy).toBe(true);
+        expect(result.responseTime).toBeGreaterThanOrEqual(0);
+        expect(result.timestamp).toBeInstanceOf(Date);
+        expect(loggingService.logProviderDebug).toHaveBeenCalledWith(
+          'swaps',
+          'Health check passed (API responding with expected error)',
+          { responseTime: expect.any(Number), status: 404 },
+        );
+      });
+
+      it('should return healthy when API responds with 400 error (API is working)', async () => {
+        const mock400Error = {
+          response: {
+            status: 400,
+            data: { error: 'Bad Request' },
+          },
+          message: 'Request failed with status code 400',
+        };
+
+        jest.spyOn(axios, 'create').mockReturnValue({
+          get: jest.fn().mockRejectedValue(mock400Error),
+          defaults: { headers: {} },
+        } as MockAxiosInstance);
+
+        const result = await provider.healthCheck();
+
+        expect(result.healthy).toBe(true);
+        expect(result.responseTime).toBeGreaterThanOrEqual(0);
+        expect(result.timestamp).toBeInstanceOf(Date);
+        expect(loggingService.logProviderDebug).toHaveBeenCalledWith(
+          'swaps',
+          'Health check passed (API responding with expected error)',
+          { responseTime: expect.any(Number), status: 400 },
+        );
+      });
+
+      it('should return unhealthy when API call fails with network error', async () => {
+        const mockError = new Error('Network timeout');
+        jest.spyOn(axios, 'create').mockReturnValue({
+          get: jest.fn().mockRejectedValue(mockError),
+          defaults: { headers: {} },
+        } as MockAxiosInstance);
+
+        const result = await provider.healthCheck();
+
+        expect(result.healthy).toBe(false);
+        expect(result.error).toBe('Network timeout');
+        expect(result.responseTime).toBeGreaterThanOrEqual(0);
+        expect(result.timestamp).toBeInstanceOf(Date);
+        expect(loggingService.logProviderError).toHaveBeenCalledWith(
+          'swaps',
+          'Health check failed: Network timeout',
+          {
+            responseTime: expect.any(Number),
+            error: 'Network timeout',
+            status: undefined,
+          },
+        );
       });
     });
   });

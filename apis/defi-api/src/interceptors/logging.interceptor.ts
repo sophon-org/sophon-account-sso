@@ -50,7 +50,7 @@ export class LoggingInterceptor implements NestInterceptor {
     );
   }
 
-  private sanitizeBody(body: Record<string, unknown>): Record<string, unknown> {
+  public sanitizeBody(body: Record<string, unknown>): Record<string, unknown> {
     if (!body) return body;
 
     const sanitized = { ...body };
