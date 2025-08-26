@@ -8,7 +8,7 @@
     "postinstall": "npx playwright install",
     "----------------------- INTEGRATION TESTING ---------------------": "",
     "test:e2e:ci": "dotenvx run -- playwright test",
-    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:ui": "dotenvx run -- playwright test --ui",
     "test:e2e:dev": "npm-run-all --parallel dev test:e2e:ui"
   },
   "dependencies": {

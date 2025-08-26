@@ -88,10 +88,16 @@ export const useSigningRequestActions = () => {
           variant="transparent"
           disabled={isSigning}
           onClick={handleCancel}
+          data-testid="signing-cancel-button"
         >
           Cancel
         </Button>
-        <Button type="button" disabled={isSigning} onClick={handleSign}>
+        <Button
+          type="button"
+          disabled={isSigning}
+          onClick={handleSign}
+          data-testid="signing-accept-button"
+        >
           {isSigning ? (
             <Loader className="w-4 h-4 border-white border-r-transparent" />
           ) : (

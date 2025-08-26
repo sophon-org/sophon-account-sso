@@ -1,6 +1,7 @@
+import { accountServerTestCases, directCallTestCases } from '../functions';
 import { expect, test } from '../support/test-server/context';
 
-test('get started link', async ({ page, testServerPage }) => {
+test.beforeEach(async ({ page, testServerPage }) => {
   // given
   const email = process.env.USER_EMAIL as string;
   const otp = process.env.USER_OTP as string;
@@ -13,6 +14,63 @@ test('get started link', async ({ page, testServerPage }) => {
   const authorizationPage = await loginPage.login(email, otp);
   await authorizationPage.authorizeConnection();
 
-  // Expects page to have a heading with the name of Installation.
-  await expect(page.getByText('Connected to Sophon')).toBeVisible();
+  // confirm to be connected before running tests
+  await expect(page.getByText('Status: Connected')).toBeVisible();
 });
+
+[accountServerTestCases.map((testCase) => testCase.name)].forEach(
+  (testCaseName) => {
+    test(`Account Server: should be able execute ${testCaseName}`, async ({
+      page,
+      testServerPage,
+      context,
+    }) => {
+      await testServerPage.gotoHome();
+
+      for (const testCase of accountServerTestCases) {
+        const commandPagePromise = context.waitForEvent('page');
+        const executeCommandPromise = page.evaluate(
+          async (data) => {
+            return await window.executeWagmiAction(data.function, data.payload);
+          },
+          {
+            function: testCase.name,
+            payload: testCase.payload,
+          },
+        );
+
+        const commandPage = await commandPagePromise;
+        await testCase.accountServerActions(commandPage);
+
+        const response = await executeCommandPromise;
+        expect(testCase.isValidResponse(response)).toBe(true);
+      }
+    });
+  },
+);
+
+[directCallTestCases.map((testCase) => testCase.name)].forEach(
+  (testCaseName) => {
+    test(`Account Server: should be able execute ${testCaseName}`, async ({
+      page,
+      testServerPage,
+    }) => {
+      await testServerPage.gotoHome();
+
+      for (const testCase of directCallTestCases) {
+        const response = await page.evaluate(
+          async (data) => {
+            return await window.executeWagmiAction(data.function, data.payload);
+          },
+          {
+            function: testCase.name,
+            payload: testCase.payload,
+          },
+        );
+
+        console.log('response', response);
+        expect(testCase.isValidResponse(response)).toBe(true);
+      }
+    });
+  },
+);

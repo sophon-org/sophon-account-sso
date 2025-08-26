@@ -2,10 +2,10 @@
 
 import { useDynamicContext } from '@dynamic-labs/sdk-react-core';
 import { useEffect } from 'react';
+import { useAccount } from 'wagmi';
 import { MainStateMachineContext } from '@/context/state-machine-context';
 import { useAccountContext } from './useAccountContext';
 import { useMessageHandler } from './useMessageHandler';
-import { useAccount } from 'wagmi';
 
 export const useLoadingResources = () => {
   const actorRef = MainStateMachineContext.useActorRef();

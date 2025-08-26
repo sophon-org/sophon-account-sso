@@ -1,15 +1,31 @@
-import { signMessage, signTypedData } from 'wagmi/actions';
+'use client';
+
+import * as wagmiActions from 'wagmi/actions';
 import { wagmiConfig } from './wagmi';
 
-export const testableActions = {
-  signMessage,
-  signTypedData,
-};
+// biome-ignore lint/suspicious/noExplicitAny: ignore for sake of dynamic testing
+export const testableActions = { ...wagmiActions } as any;
+export type TestableActionsNames = keyof typeof wagmiActions;
+export const totalTestableActions = Object.keys(testableActions).length;
 
 export const executeWagmiAction = async (
-  action: keyof typeof testableActions,
+  action: TestableActionsNames,
   // biome-ignore lint/suspicious/noExplicitAny: ignore for sake of dynamic testing
   args: any,
 ) => {
   return await testableActions[action](wagmiConfig, args);
 };
+
+if (typeof window !== 'undefined') {
+  window.executeWagmiAction = executeWagmiAction;
+}
+
+declare global {
+  interface Window {
+    executeWagmiAction: (
+      action: TestableActionsNames,
+      // biome-ignore lint/suspicious/noExplicitAny: ignore for sake of dynamic testing
+      args: any,
+    ) => Promise<unknown>;
+  }
+}

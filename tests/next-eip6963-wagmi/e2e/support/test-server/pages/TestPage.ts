@@ -1,4 +1,4 @@
-import { BrowserContext, Locator, Page } from '@playwright/test';
+import type { BrowserContext, Locator, Page } from '@playwright/test';
 import { AccountServerLoginPage } from '../../account-server/pages/authentication/LoginPage';
 
 export class TestServerPage {
