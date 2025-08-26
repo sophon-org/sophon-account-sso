@@ -102,22 +102,37 @@ export const useEnrichTransactionRequest = (
     const enrichTransaction = async () => {
       setIsLoading(true);
 
-      let fee: string | undefined;
+      let fee: { SOPH: string; USD?: string } | undefined;
+
+      const sophTokenDetails = await getTokenFromAddress(
+        '0x000000000000000000000000000000000000800A',
+      );
 
       if (
         !transactionRequest.paymaster ||
         transactionRequest.paymaster === '0x'
       ) {
-        fee = formatEther((await estimateFee()) || BigInt(0)).slice(0, 8);
+        const feeSOPH = formatEther((await estimateFee()) || BigInt(0)).slice(
+          0,
+          8,
+        );
+        fee = {
+          SOPH: feeSOPH,
+          USD:
+            sophTokenDetails &&
+            !Number.isNaN(Number(sophTokenDetails?.tokenPriceUSD))
+              ? (
+                  Number(feeSOPH) * Number(sophTokenDetails?.tokenPriceUSD)
+                ).toFixed(3)
+              : undefined,
+        };
       }
 
       try {
         // If the data is 0x, it's a SOPH transfer
         const isSophTransfer = transactionRequest.data === '0x';
         const token = isSophTransfer
-          ? await getTokenFromAddress(
-              '0x000000000000000000000000000000000000800A',
-            )
+          ? sophTokenDetails
           : await getTokenFromAddress(transactionRequest.to);
 
         if (isSophTransfer) {

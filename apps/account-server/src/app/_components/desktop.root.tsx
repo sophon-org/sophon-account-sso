@@ -75,6 +75,8 @@ export default function DesktopRoot({ partnerId }: DesktopRootProps) {
     return (
       <Dialog
         className="relative"
+        title={shortenAddress(account?.address)}
+        showSettings={true}
         showLegalNotice={false}
         dialogType="transaction_request"
         actions={transactionActions.renderActions()}

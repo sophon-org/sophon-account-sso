@@ -13,6 +13,7 @@ import {
 } from '@/lib/analytics';
 import { windowService } from '@/service/window.service';
 import type { IncomingRequest, TransactionRequest } from '@/types/auth';
+import { Card } from '@/components/ui/card';
 
 export const useTransactionRequestActions = () => {
   const { incoming: incomingRequest, transaction: transactionRequest } =
@@ -97,21 +98,34 @@ export const useTransactionRequestActions = () => {
 
   const renderActions = () => (
     <div className="flex flex-col gap-4 w-full">
-      <div className="w-full flex justify-between">
-        <p className="text-xs font-bold">Estimated fee:</p>
+      <Card
+        small
+        elevated
+        className="w-full flex justify-between items-center gap-2 px-[16px] py-[8px]"
+      >
+        <p className="text-sm font-bold h-[36px] flex items-center">
+          Estimated fee
+        </p>
         {isEstimating && (
-          <Loader className="w-4 h-4 border-black border-r-transparent" />
+          <Loader className="w-4 h-4 border-black border-r-transparent " />
         )}
         {!isEstimating && enrichedTransactionRequest?.fee && (
-          <p className="text-sm text-black">
-            {enrichedTransactionRequest?.fee} SOPH
-          </p>
+          <div className="flex flex-col items-end">
+            <p className="text-sm text-black font-semibold">
+              {enrichedTransactionRequest?.fee?.SOPH} SOPH
+            </p>
+            {enrichedTransactionRequest?.fee?.USD && (
+              <p className="text-xs text-gray-500">
+                {enrichedTransactionRequest?.fee?.USD} USD
+              </p>
+            )}
+          </div>
         )}
         {enrichedTransactionRequest?.paymaster &&
           enrichedTransactionRequest?.paymaster !== '0x' && (
             <p className="text-sm text-black">Sponsored</p>
           )}
-      </div>
+      </Card>
 
       <div className="flex items-center justify-center gap-2 w-full">
         <Button

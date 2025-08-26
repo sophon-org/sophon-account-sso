@@ -71,7 +71,10 @@ export interface EnrichedTransactionRequest extends TransactionRequest {
   displayValue?: string;
   token?: Token;
   data?: string;
-  fee?: string;
+  fee?: {
+    SOPH: string;
+    USD?: string;
+  };
   decodedData?:
     | {
         args: {
