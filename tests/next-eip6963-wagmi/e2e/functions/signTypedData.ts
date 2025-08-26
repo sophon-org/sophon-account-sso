@@ -1,8 +1,9 @@
 import { sophonTestnet } from 'wagmi/chains';
 import type { AccountServerTestCase } from './types';
 
-export const signTypedDataTestCase: AccountServerTestCase = {
-  name: 'signTypedData',
+export const signTypedDataTestCase: AccountServerTestCase<'signTypedData'> = {
+  name: 'signTypedData-call',
+  method: 'signTypedData',
   payload: {
     domain: {
       name: 'Sophon SSO',
@@ -29,8 +30,6 @@ export const signTypedDataTestCase: AccountServerTestCase = {
     await page.getByTestId('signing-accept-button').click();
   },
   isValidResponse: (response) => {
-    if (!response) return false;
-    if (typeof response !== 'string') return false;
-    return response.startsWith('0x');
+    return response?.startsWith('0x');
   },
 };

@@ -1,13 +1,12 @@
-import type { AccountServerTestCase } from './types';
+import type { TestCase } from './types';
 
-export const switchChainTestCase: AccountServerTestCase = {
-  name: 'switchChain',
+export const switchChainTestCase: TestCase<'switchChain'> = {
+  name: 'switchChain-call',
+  method: 'switchChain',
   payload: {
     chainId: 531050104,
   },
-  accountServerActions: async () => {},
   isValidResponse: (response) => {
-    const typedResponse = response as { id: number };
-    return typedResponse.id === 531050104;
+    return response?.id === 531050104;
   },
 };

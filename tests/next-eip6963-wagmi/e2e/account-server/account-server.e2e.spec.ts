@@ -1,3 +1,4 @@
+import { safeStringify } from '../../lib/utils';
 import { accountServerTestCases, directCallTestCases } from '../functions';
 import { expect, test } from '../support/test-server/context';
 
@@ -31,10 +32,10 @@ test.beforeEach(async ({ page, testServerPage }) => {
         const commandPagePromise = context.waitForEvent('page');
         const executeCommandPromise = page.evaluate(
           async (data) => {
-            return await window.executeWagmiAction(data.function, data.payload);
+            return await window.executeWagmiAction(data.method, data.payload);
           },
           {
-            function: testCase.name,
+            method: testCase.method,
             payload: testCase.payload,
           },
         );
@@ -43,7 +44,9 @@ test.beforeEach(async ({ page, testServerPage }) => {
         await testCase.accountServerActions(commandPage);
 
         const response = await executeCommandPromise;
-        expect(testCase.isValidResponse(response)).toBe(true);
+        console.log(`${testCaseName} response: ${safeStringify(response)}`);
+        // biome-ignore lint/suspicious/noExplicitAny: dynamic testing
+        expect((testCase as any).isValidResponse(response)).toBe(true);
       }
     });
   },
@@ -51,7 +54,7 @@ test.beforeEach(async ({ page, testServerPage }) => {
 
 [directCallTestCases.map((testCase) => testCase.name)].forEach(
   (testCaseName) => {
-    test(`Account Server: should be able execute ${testCaseName}`, async ({
+    test(`Direct Access: should be able execute ${testCaseName}`, async ({
       page,
       testServerPage,
     }) => {
@@ -60,16 +63,17 @@ test.beforeEach(async ({ page, testServerPage }) => {
       for (const testCase of directCallTestCases) {
         const response = await page.evaluate(
           async (data) => {
-            return await window.executeWagmiAction(data.function, data.payload);
+            return await window.executeWagmiAction(data.method, data.payload);
           },
           {
-            function: testCase.name,
+            method: testCase.method,
             payload: testCase.payload,
           },
         );
 
-        console.log('response', response);
-        expect(testCase.isValidResponse(response)).toBe(true);
+        console.log(`${testCaseName} response: ${safeStringify(response)}`);
+        // biome-ignore lint/suspicious/noExplicitAny: dynamic testing
+        expect((testCase as any).isValidResponse(response)).toBe(true);
       }
     });
   },

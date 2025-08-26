@@ -8,11 +8,10 @@ export const testableActions = { ...wagmiActions } as any;
 export type TestableActionsNames = keyof typeof wagmiActions;
 export const totalTestableActions = Object.keys(testableActions).length;
 
-export const executeWagmiAction = async (
-  action: TestableActionsNames,
-  // biome-ignore lint/suspicious/noExplicitAny: ignore for sake of dynamic testing
-  args: any,
-) => {
+export const executeWagmiAction = async <T extends TestableActionsNames>(
+  action: T,
+  args: Parameters<(typeof wagmiActions)[T]>[1],
+): Promise<ReturnType<(typeof wagmiActions)[T]>> => {
   return await testableActions[action](wagmiConfig, args);
 };
 
