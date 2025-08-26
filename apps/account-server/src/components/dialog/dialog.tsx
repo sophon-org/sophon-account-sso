@@ -59,7 +59,7 @@ export const DialogHeader = ({
             <IconBack className="m-w-6 m-h-6" />
           </button>
         )}
-        <h2 className="text-2xl font-bold flex-grow text-center">{title}</h2>
+        <h2 className="text-xl font-bold flex-grow text-center">{title}</h2>
         {!!onClose && (
           <button
             type="button"
@@ -114,10 +114,10 @@ export const DialogFooter = ({
           : '',
       )}
     >
-      <div className="flex flex-col items-center justify-center w-full px-6 pt-4 pb-6">
+      <div className="flex flex-col items-center justify-center w-full px-6 py-4">
         {showLegalNotice && <LegalNotice />}
         {actions}
-        <div className="flex items-center justify-center gap-2 text-sm mt-3">
+        <div className="flex items-center justify-center gap-2 text-sm mt-3 -my-2">
           Powered by <IconSophon className="w-8 h-8" />
         </div>
       </div>
