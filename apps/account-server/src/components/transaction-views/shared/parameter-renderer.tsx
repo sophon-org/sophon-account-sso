@@ -1,6 +1,8 @@
 import { BLOCK_EXPLORER_URL } from '@/lib/constants';
 
-export const renderSimpleValue = (value: unknown): JSX.Element | string => {
+export const renderSimpleValue = (
+  value: unknown,
+): React.JSX.Element | string => {
   if (
     typeof value === 'string' &&
     value.startsWith('0x') &&
@@ -27,7 +29,10 @@ export const renderSimpleValue = (value: unknown): JSX.Element | string => {
   return String(value);
 };
 
-export const renderNestedValue = (obj: unknown, depth = 0): JSX.Element => {
+export const renderNestedValue = (
+  obj: unknown,
+  depth = 0,
+): React.JSX.Element => {
   const indentClass = depth > 0 ? 'ml-4' : '';
 
   if (Array.isArray(obj)) {
@@ -76,7 +81,7 @@ export const renderParameterValue = (arg: {
   name: string;
   value: string;
   type: string;
-}): JSX.Element | string => {
+}): React.JSX.Element | string => {
   if (arg.type === 'address') {
     return (
       <a
