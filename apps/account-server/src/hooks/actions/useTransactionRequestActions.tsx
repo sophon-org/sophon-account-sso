@@ -132,6 +132,7 @@ export const useTransactionRequestActions = () => {
           variant="transparent"
           disabled={isSending || isSigning}
           onClick={handleCancel}
+          data-testid="transaction-cancel-button"
         >
           Cancel
         </Button>
@@ -139,6 +140,7 @@ export const useTransactionRequestActions = () => {
           type="button"
           disabled={isSending || isSigning}
           onClick={() => handleSend(transactionRequest!, incomingRequest!)}
+          data-testid="transaction-accept-button"
         >
           {isSending || isSigning ? (
             <Loader className="w-4 h-4 border-white border-r-transparent" />

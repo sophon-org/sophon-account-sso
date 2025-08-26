@@ -50,6 +50,7 @@ export default function WaitOtpView() {
             maxLength={6}
             pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
             autoFocus
+            data-testid="login-otp-input"
           >
             <InputOTPGroup>
               <InputOTPSlot index={0} />
@@ -61,7 +62,11 @@ export default function WaitOtpView() {
             </InputOTPGroup>
           </InputOTP>
 
-          <Button type="submit" disabled={otpLoading}>
+          <Button
+            type="submit"
+            disabled={otpLoading}
+            data-testid="login-otp-submit"
+          >
             {otpLoading ? (
               <Loader className="w-4 h-4 border-white border-r-transparent" />
             ) : (
