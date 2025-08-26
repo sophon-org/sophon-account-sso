@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 2.0.0-next.39
+
+### Patch Changes
+
+- Fixing EOA missing error
+
 ## 2.0.0-next.38
 
 ### Patch Changes

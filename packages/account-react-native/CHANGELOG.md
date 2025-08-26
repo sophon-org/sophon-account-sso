@@ -1,5 +1,14 @@
 # @sophon-labs/account-react-native
 
+## 2.0.0-next.39
+
+### Patch Changes
+
+- Fixing EOA missing error
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.0-next.39
+  - @sophon-labs/account-message-bridge@2.0.0-next.39
+
 ## 2.0.0-next.38
 
 ### Patch Changes
