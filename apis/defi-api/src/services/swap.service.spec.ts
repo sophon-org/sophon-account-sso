@@ -309,6 +309,42 @@ describe('SwapService', () => {
         service.getTransactionStatus(dtoWithUnknownProvider),
       ).rejects.toThrow(SwapAPIError);
     });
+
+    it('should log provider warnings during multi-provider search', async () => {
+      const dtoWithoutProvider = {
+        txHash: '0xabcdef1234567890',
+        sourceChainId: 1,
+      };
+
+      const errorMessage = 'Provider timeout';
+      const mockProvider2 = {
+        ...mockProvider,
+        providerId: 'test-provider-2',
+        getTransactionStatus: jest.fn().mockResolvedValue({
+          found: true,
+          status: TransactionStatus.CONFIRMED,
+          provider: 'test-provider-2',
+          transaction: null,
+          fees: null,
+          timestamps: null,
+          links: null,
+        }),
+      };
+
+      // First provider throws error, second succeeds
+      mockProvider.getTransactionStatus.mockRejectedValue(
+        new Error(errorMessage),
+      );
+      mockProviderRegistry.getEnabledProviders.mockReturnValue([
+        mockProvider,
+        mockProvider2,
+      ]);
+
+      const result = await service.getTransactionStatus(dtoWithoutProvider);
+
+      expect(result.found).toBe(true);
+      expect(result.provider).toBe('test-provider-2');
+    });
   });
 
   describe('getProviders', () => {

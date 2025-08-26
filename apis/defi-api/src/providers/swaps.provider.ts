@@ -2,7 +2,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import { ErrorCodes, SwapAPIError } from '../errors/swap-api.error';
-import { ISwapProvider } from '../interfaces/swap-provider.interface';
+import {
+  HealthCheckResult,
+  ISwapProvider,
+} from '../interfaces/swap-provider.interface';
 import { LoggingService } from '../services/logging.service';
 import {
   ChainId,
@@ -316,7 +319,7 @@ export class SwapsProvider implements ISwapProvider {
     }
   }
 
-  async validateRequest(
+  public async validateRequest(
     request: UnifiedTransactionRequest,
   ): Promise<ValidationResult> {
     const errors: string[] = [];
@@ -675,7 +678,7 @@ export class SwapsProvider implements ISwapProvider {
     return '0';
   }
 
-  private generateExplorerLink(
+  public generateExplorerLink(
     chainId: ChainId,
     txHash: string,
     fallbackUrl?: string,
@@ -747,15 +750,15 @@ export class SwapsProvider implements ISwapProvider {
     return '';
   }
 
-  private async callSwapAPI(
+  public async callSwapAPI(
     endpoint: '/getAction',
     data: SwapActionRequest,
   ): Promise<ExtendedSwapActionResponse>;
-  private async callSwapAPI(
+  public async callSwapAPI(
     endpoint: '/getStatus',
     data: { chainId: number; txHash: string },
   ): Promise<SwapStatusResponse>;
-  private async callSwapAPI(
+  public async callSwapAPI(
     endpoint: string,
     data?: SwapActionRequest | { chainId: number; txHash: string },
   ): Promise<ExtendedSwapActionResponse | SwapStatusResponse> {
@@ -953,6 +956,93 @@ export class SwapsProvider implements ISwapProvider {
         this.providerId,
         error,
       );
+    }
+  }
+
+  async healthCheck(): Promise<HealthCheckResult> {
+    const startTime = Date.now();
+    const timestamp = new Date();
+
+    try {
+      if (!this.isEnabled()) {
+        return {
+          healthy: false,
+          error: 'Provider is disabled or missing API key',
+          timestamp,
+        };
+      }
+
+      // Check if the API is reachable by making a simple request to base URL
+      // This should return "Unauthorized: No API key provided." which means API is working
+      const statusBaseUrl =
+        this.configService.get<string>('SWAPS_BASE_URL_STATUS') || '';
+
+      const healthClient = axios.create({
+        timeout: 10000, // Shorter timeout for health check
+      });
+
+      await healthClient.get(statusBaseUrl);
+
+      const responseTime = Date.now() - startTime;
+
+      this.loggingService.logProviderDebug(
+        this.providerId,
+        'Health check passed',
+        { responseTime },
+      );
+
+      return {
+        healthy: true,
+        responseTime,
+        timestamp,
+      };
+    } catch (error) {
+      const responseTime = Date.now() - startTime;
+
+      // For Swaps API, many "errors" actually mean the API is working:
+      // - Unauthorized (401) - API is working but no key provided
+      // - Transaction not found (normal for dummy tx)
+      // - Invalid parameters (API is processing requests)
+      // - 404, 400 (API is responding)
+      const healthyErrorCodes = [400, 401, 404];
+      const isHealthyError =
+        (error.response?.status &&
+          healthyErrorCodes.includes(error.response.status)) ||
+        error.message?.includes('Transaction not found') ||
+        error.message?.includes('not found') ||
+        (error instanceof SwapAPIError &&
+          [
+            ErrorCodes.TRANSACTION_NOT_FOUND,
+            ErrorCodes.INVALID_PARAMETERS,
+          ].includes(error.code));
+
+      if (isHealthyError) {
+        this.loggingService.logProviderDebug(
+          this.providerId,
+          'Health check passed (API responding with expected error)',
+          { responseTime, status: error.response?.status },
+        );
+
+        return {
+          healthy: true,
+          responseTime,
+          timestamp,
+        };
+      }
+
+      // Real network/API errors
+      this.loggingService.logProviderError(
+        this.providerId,
+        `Health check failed: ${error.message}`,
+        { responseTime, error: error.message, status: error.response?.status },
+      );
+
+      return {
+        healthy: false,
+        responseTime,
+        error: error.message,
+        timestamp,
+      };
     }
   }
 }

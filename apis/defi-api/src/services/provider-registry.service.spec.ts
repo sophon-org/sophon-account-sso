@@ -109,6 +109,27 @@ describe('ProviderRegistryService', () => {
         expect(error.code).toBe(ErrorCodes.UNSUPPORTED_ROUTE);
       }
     });
+
+    it('should throw error when no enabled providers are available', () => {
+      // Register disabled provider
+      const disabledProvider = {
+        ...mockProvider,
+        isEnabled: jest.fn(() => false),
+      };
+
+      // Clear existing providers and register disabled one
+      service = new ProviderRegistryService();
+      service.registerProvider(disabledProvider);
+
+      expect(() => service.selectBestProvider(mockRequest)).toThrow(
+        'No enabled providers available',
+      );
+      try {
+        service.selectBestProvider(mockRequest);
+      } catch (error) {
+        expect(error.code).toBe(ErrorCodes.PROVIDER_ERROR);
+      }
+    });
   });
 
   describe('getProviderSummary', () => {
