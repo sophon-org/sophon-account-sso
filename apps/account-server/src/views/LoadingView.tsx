@@ -25,7 +25,7 @@ export const LoadingView = ({ message }: { message?: string }) => {
 
   return (
     <div
-      className={`flex flex-col items-center justify-center gap-8 mt-6 flex-grow ${
+      className={`flex flex-col items-center justify-center gap-8 mt-3 flex-grow ${
         !isMobile ? 'h-full' : ''
       }`}
     >
