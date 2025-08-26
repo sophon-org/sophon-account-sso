@@ -1,22 +1,14 @@
 import { CoinsIcon, ReceiptIcon } from '@phosphor-icons/react';
 import TokenIcon from '@/components/ui/token-icon';
-import {
-  type EnrichedApprovalTransaction,
-  type EnrichedERC20Transaction,
-  type EnrichedSOPHTransaction,
-  TransactionType,
-} from '@/types/auth';
+import { type EnrichedTransactionRequest, TransactionType } from '@/types/auth';
 
 interface TransactionIconProps {
-  transaction:
-    | EnrichedSOPHTransaction
-    | EnrichedERC20Transaction
-    | EnrichedApprovalTransaction;
+  transaction: EnrichedTransactionRequest;
 }
 
 export default function TransactionIcon({ transaction }: TransactionIconProps) {
   // For transactions with tokens, show the token icon if available
-  if (transaction.token?.iconURL) {
+  if ('token' in transaction && transaction.token?.iconURL) {
     return (
       <TokenIcon
         iconURL={transaction.token.iconURL}
