@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Loader } from '@/components/loader';
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { MainStateMachineContext } from '@/context/state-machine-context';
 import { useEnrichTransactionRequest } from '@/hooks/useEnrichTransactionRequest';
 import { useSignature } from '@/hooks/useSignature';
@@ -13,7 +14,6 @@ import {
 } from '@/lib/analytics';
 import { windowService } from '@/service/window.service';
 import type { IncomingRequest, TransactionRequest } from '@/types/auth';
-import { Card } from '@/components/ui/card';
 
 export const useTransactionRequestActions = () => {
   const { incoming: incomingRequest, transaction: transactionRequest } =
