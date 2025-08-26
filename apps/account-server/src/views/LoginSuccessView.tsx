@@ -33,7 +33,7 @@ export default function LoginSuccessView() {
   }, [state]);
 
   return (
-    <div className="flex flex-col items-center justify-center gap-8 mt-6 flex-grow">
+    <div className="flex flex-col items-center justify-center gap-8 mt-3 flex-grow">
       <VerificationImage image="/images/avatar-example.png" />
       <div className="flex flex-row items-center gap-2">
         <h5 className="text-lg font-bold">

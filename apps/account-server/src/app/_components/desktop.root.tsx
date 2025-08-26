@@ -3,11 +3,10 @@
 import { shortenAddress } from '@sophon-labs/account-core';
 
 import { Dialog } from '@/components/dialog';
-import { Loader } from '@/components/loader';
 import { Button } from '@/components/ui/button';
 import { MainStateMachineContext } from '@/context/state-machine-context';
 import { sendMessage } from '@/events';
-import { useConnectionAuthorization } from '@/hooks/auth/useConnectionAuthorization';
+
 import { useAccountContext } from '@/hooks/useAccountContext';
 import { useUserIdentification } from '@/hooks/useUserIdentification';
 import { useWalletConnection } from '@/hooks/useWalletConnection';
@@ -34,9 +33,11 @@ export default function DesktopRoot({ partnerId }: DesktopRootProps) {
 
   const { account } = useAccountContext();
   const { disconnect } = useWalletConnection();
-  const { onRefuseConnection, onAcceptConnection, isLoading } =
-    useConnectionAuthorization();
   useUserIdentification();
+
+  const signingActions = SigningRequestView.useActions();
+  const transactionActions = TransactionRequestView.useActions();
+  const connectActions = ConnectAuthorizationView.useActions();
 
   /***************************
    * LOADING RESOURCES STATE *
@@ -63,6 +64,7 @@ export default function DesktopRoot({ partnerId }: DesktopRootProps) {
         showSettings={true}
         showLegalNotice={false}
         dialogType="signing_request"
+        actions={signingActions.renderActions()}
       >
         <SigningRequestView />
       </Dialog>
@@ -75,6 +77,7 @@ export default function DesktopRoot({ partnerId }: DesktopRootProps) {
         className="relative"
         showLegalNotice={false}
         dialogType="transaction_request"
+        actions={transactionActions.renderActions()}
       >
         <TransactionRequestView />
       </Dialog>
@@ -86,30 +89,7 @@ export default function DesktopRoot({ partnerId }: DesktopRootProps) {
       <Dialog
         className="relative"
         dialogType="connection_authorization"
-        actions={
-          <div className="flex items-center justify-center gap-2 w-full">
-            <Button
-              data-testid="connect-cancel-button"
-              variant="transparent"
-              disabled={isLoading}
-              onClick={onRefuseConnection}
-            >
-              Cancel
-            </Button>
-            <Button
-              data-testid="connect-accept-button"
-              type="button"
-              disabled={isLoading}
-              onClick={onAcceptConnection}
-            >
-              {isLoading ? (
-                <Loader className="w-4 h-4 border-white border-r-transparent" />
-              ) : (
-                'Connect'
-              )}
-            </Button>
-          </div>
-        }
+        actions={connectActions.renderActions()}
         showLegalNotice={false}
       >
         <ConnectAuthorizationView partnerId={partnerId} />
