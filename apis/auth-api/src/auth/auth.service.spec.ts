@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import { TypedDataDefinition } from "viem";
 import { PartnerRegistryService } from "../partners/partner-registry.service";
 import { AuthService } from "./auth.service";
+import { SessionsRepository } from "../sessions/sessions.repository";
 
 // --- jsonwebtoken mocks ---
 jest.mock("jsonwebtoken", () => ({
@@ -51,11 +52,20 @@ describe("AuthService", () => {
 		exists: jest.fn().mockResolvedValue(true),
 	};
 
+	const sessionsRepositoryMock = {
+		create: jest.fn(),
+		getBySid: jest.fn(),
+		isActive: jest.fn(),
+		revokeSid: jest.fn(),
+		rotateRefreshJti: jest.fn(),
+	};
+
 	beforeEach(async () => {
 		const module = await Test.createTestingModule({
 			providers: [
 				AuthService,
 				{ provide: PartnerRegistryService, useValue: partnerRegistryMock },
+				{ provide: SessionsRepository, useValue: sessionsRepositoryMock },
 			],
 		}).compile();
 

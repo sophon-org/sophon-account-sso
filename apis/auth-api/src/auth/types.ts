@@ -10,8 +10,8 @@ export type RefreshTokenPayload = JwtPayload & {
 	aud: string;
 	userId: string;
 	scope: string;
-	sid?: string;
-	jti?: string;
+	sid: string;
+	jti: string;
 };
 
 export interface AuthenticatedRequest extends Request {

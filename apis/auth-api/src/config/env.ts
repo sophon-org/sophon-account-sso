@@ -14,6 +14,7 @@ export type AppEnv = {
 	COOKIE_DOMAIN?: string;
 	JWT_AUDIENCE?: string;
 	PARTNER_CDN: string;
+	DATABASE_URL: string;
 };
 
 function reqStr(name: keyof AppEnv & string): string {
@@ -51,6 +52,7 @@ export function getEnv(): Readonly<AppEnv> {
 		JWT_AUDIENCE: process.env.JWT_AUDIENCE || undefined,
 		PARTNER_CDN:
 			process.env.PARTNER_CDN || "https://cdn.sophon.xyz/partners/sdk",
+		DATABASE_URL: reqStr("DATABASE_URL"),
 	});
 	return cached;
 }
@@ -63,3 +65,4 @@ export function getJwtIssuer(): string {
 }
 export const COOKIE_DOMAIN = () => getEnv().COOKIE_DOMAIN;
 export const JWT_AUDIENCE = () => getEnv().JWT_AUDIENCE;
+export const DATABASE_URL = () => getEnv().DATABASE_URL;
