@@ -5,13 +5,14 @@ export const useModalVisibility = () => {
   const [visible, setVisible] = useState(false);
 
   useUIEventHandler('showModal', () => {
+    console.log('🔥 FLOW COMPLETE - WebView SHOWING!', new Date().toLocaleTimeString());
     setVisible(true);
     setTimeout(() => {
-      //TODO: remove this
       sendUIMessage('modalReady', {});
-    }, 1000);
+    }, 1000); //TODO: remove this
   });
   useUIEventHandler('hideModal', () => {
+    console.log('🔥 FLOW COMPLETE - WebView HIDING!', new Date().toLocaleTimeString());
     setVisible(false);
   });
 

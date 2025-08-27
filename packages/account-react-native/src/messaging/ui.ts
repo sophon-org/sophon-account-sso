@@ -12,6 +12,8 @@ export type SophonUIActions = {
   outgoingRpc: Message;
   setToken: string;
   logout: unknown;
+  // 🚀 Status/result from wallet web app 
+  webWalletStatus: { success: boolean; error?: string; account?: any };
 };
 
 export type SophonUIActionsName = keyof SophonUIActions;

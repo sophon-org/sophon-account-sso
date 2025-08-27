@@ -139,7 +139,6 @@ export const SophonContextProvider = ({
 
   const contextValue = useMemo<SophonContextConfig>(
     () => ({
-      mainnet: network === 'mainnet',
       chain,
       authServerUrl: serverUrl,
       walletClient,
