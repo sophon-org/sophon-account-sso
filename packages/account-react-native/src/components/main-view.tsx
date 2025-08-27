@@ -28,7 +28,7 @@ export const SophonMainView = ({
   const webViewRef = useRef<WebView>(null);
   const { visible } = useModalVisibility();
   const [isReady, setIsReady] = useState(false);
-  const [siteLoaded, setSiteLoaded] = useState(false); // ← САЙТ ДЕЙСТВИТЕЛЬНО ЗАГРУЖЕН?
+  const [siteLoaded, setSiteLoaded] = useState(false); // ← SITE ACTUALLY LOADED?
 
   const containerStyles = {
     ...styles.container,
