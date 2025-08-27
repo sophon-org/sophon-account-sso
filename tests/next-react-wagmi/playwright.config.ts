@@ -33,7 +33,7 @@ export default defineConfig({
   },
   webServer: {
     command: 'yarn run dev',
-    url: 'http://localhost:3100',
+    url: 'http://localhost:3200',
     reuseExistingServer: !process.env.CI,
   },
   /* Configure projects for major browsers */
