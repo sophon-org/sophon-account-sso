@@ -84,3 +84,6 @@ nitrogen/
 node_modules/
 dist/
 database.json
+
+# Test coverage
+coverage/

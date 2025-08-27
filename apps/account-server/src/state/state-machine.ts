@@ -153,6 +153,9 @@ export const userWalletRequestStateMachine = createMachine({
               target: '#userWalletRequestStateMachine.completed',
               actions: 'clearRequests',
             },
+            GO_BACK: {
+              target: 'idle',
+            },
             WALLET_SELECTED: {
               target: 'started',
             },

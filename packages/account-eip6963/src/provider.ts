@@ -54,7 +54,9 @@ export function createSophonEIP1193Provider(
         case 'eth_requestAccounts':
           try {
             const result = await makeAuthRequest('eth_requestAccounts');
-            console.log('EIP-1193 request result:', result);
+            if (result?.content?.error) {
+              throw new Error(result?.content?.error?.message);
+            }
             const address = result?.content?.result?.account?.address;
             currentAccounts = address ? [address] : [];
 
@@ -98,18 +100,28 @@ export function createSophonEIP1193Provider(
         case 'personal_sign': {
           console.log('EIP-1193 personal_sign:', method, params);
           const result = await makeAuthRequest('personal_sign', params);
+          if (result?.content?.error) {
+            throw new Error(result?.content?.error?.message);
+          }
           return result?.content?.result;
         }
 
         case 'eth_signTypedData_v4': {
           console.log('EIP-1193 eth_signTypedData_v4:', method, params);
           const result = await makeAuthRequest('eth_signTypedData_v4', params);
+          if (result?.content?.error) {
+            throw new Error(result?.content?.error?.message);
+          }
           return result?.content?.result;
         }
 
         case 'eth_sendTransaction': {
           console.log('EIP-1193 eth_sendTransaction:', method, params);
-          return await makeAuthRequest('eth_sendTransaction', params);
+          const result = await makeAuthRequest('eth_sendTransaction', params);
+          if (result?.content?.error) {
+            throw new Error(result?.content?.error?.message);
+          }
+          return result?.content?.result;
         }
 
         case 'wallet_revokePermissions': {

@@ -3,7 +3,15 @@ export const GetAppConfiguration = () => {
     port: process.env.PORT ? parseInt(process.env.PORT, 10) : 4001,
     bind: process.env.BIND_ADDR || '0.0.0.0',
     pathPrefix: process.env.PATH_PREFIX || '',
-    exampleSecret: process.env.EXAMPLE_SECRET,
+    providers: {
+      swaps: {
+        enabled: process.env.SWAPS_ENABLED === 'true',
+        apiKey: process.env.SWAPS_API_KEY || '',
+        baseUrlAction: process.env.SWAPS_BASE_URL_ACTION || '',
+        baseUrlStatus: process.env.SWAPS_BASE_URL_STATUS || '',
+        priority: parseInt(process.env.SWAPS_PRIORITY || '1', 10),
+      },
+    },
   };
 };
 

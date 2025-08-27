@@ -16,7 +16,7 @@ export default function WaitOtpView() {
   const email = MainStateMachineContext.useSelector(
     (state) => state.context.email,
   );
-  const { verifyOTP, resendOTP } = useAuthCallbacks();
+  const { verifyOTP, resendOTP, otpError } = useAuthCallbacks();
   const isMobile = windowService.name === 'webview';
   const [otpLoading, setOtpLoading] = useState(false);
 
@@ -42,7 +42,7 @@ export default function WaitOtpView() {
               setOtpLoading(false);
             }
           }}
-          className="space-y-6"
+          className="space-y-6 flex flex-col items-center justify-center"
         >
           <InputOTP
             name="otp"
@@ -79,6 +79,13 @@ export default function WaitOtpView() {
             </button>
           </p>
         </form>
+        <div className="mt-4 px-2">
+          {otpError && (
+            <p className="text-red-500 text-xs whitespace-pre-wrap break-words line-clamp-3 text-left">
+              {otpError}
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );
