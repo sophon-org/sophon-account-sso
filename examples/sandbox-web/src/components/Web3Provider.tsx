@@ -9,7 +9,9 @@ import { createConfig, http, WagmiProvider } from 'wagmi';
 const wagmiConfig = createConfig({
   chains: [sophonTestnet],
   connectors: [
-    sophonSsoConnector('testnet', { authServerUrl: 'http://localhost:3000' }),
+    sophonSsoConnector('123b216c-678e-4611-af9a-2d5b7b061258', 'testnet', {
+      authServerUrl: 'http://localhost:3000',
+    }),
   ],
   transports: {
     [sophonTestnet.id]: http(),

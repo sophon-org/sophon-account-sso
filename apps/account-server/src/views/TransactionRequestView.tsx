@@ -21,7 +21,7 @@ export default function TransactionRequestView() {
   const actorRef = MainStateMachineContext.useActorRef();
   const { enrichedTransactionRequest, isLoading, isEstimating } =
     useEnrichTransactionRequest(transactionRequest);
-  const { isSending, sendTransaction } = useTransaction();
+  const { isSending, sendTransaction, transactionError } = useTransaction();
   console.log(enrichedTransactionRequest);
   // Track transaction request received
   useEffect(() => {
@@ -193,6 +193,11 @@ export default function TransactionRequestView() {
           )}
         </Button>
       </div>
+      {transactionError && (
+        <p className="text-red-500 text-xs whitespace-pre-wrap break-words line-clamp-3 text-left">
+          {transactionError}
+        </p>
+      )}
     </div>
   );
 }

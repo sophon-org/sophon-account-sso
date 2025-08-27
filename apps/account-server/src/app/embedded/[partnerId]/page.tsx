@@ -1,5 +1,5 @@
 import type { Viewport } from 'next';
-import EmbeddedPage from './page.client';
+import EmbeddedRoot from '../../_components/embedded.root';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -8,6 +8,11 @@ export const viewport: Viewport = {
   userScalable: false,
 };
 
-export default function EmbeddedPageRoot() {
-  return <EmbeddedPage />;
+export default async function EmbeddedPageRoot({
+  params,
+}: {
+  params: Promise<{ partnerId: string }>;
+}) {
+  const { partnerId } = await params;
+  return <EmbeddedRoot partnerId={partnerId} />;
 }

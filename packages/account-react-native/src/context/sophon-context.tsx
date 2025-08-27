@@ -18,6 +18,7 @@ import {
   type WalletClient,
 } from 'viem';
 import { sophon, sophonTestnet } from 'viem/chains';
+import { erc7846Actions } from 'viem/experimental';
 import type { WalletProvider } from 'zksync-sso';
 import { SophonMainView, type SophonMainViewProps } from '../components';
 import { useUIEventHandler } from '../messaging';
@@ -26,7 +27,6 @@ import {
   SophonAppStorage,
   StorageKeys,
 } from '../provider';
-import { erc7846Actions } from 'viem/experimental'
 
 export interface SophonContextConfig {
   partnerId: string;
@@ -128,8 +128,7 @@ export const SophonContextProvider = ({
         return await provider?.request({ method, params });
       },
     }),
-  }).extend(erc7846Actions())
-  ;
+  }).extend(erc7846Actions());
 
   const disconnect = useCallback(async () => {
     await walletClient.disconnect();

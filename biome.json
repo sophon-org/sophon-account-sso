@@ -7,7 +7,7 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": ["**", "!.changeset"]
+    "includes": ["**", "!.changeset", "!apis/defi-api"]
   },
   "formatter": {
     "enabled": true,

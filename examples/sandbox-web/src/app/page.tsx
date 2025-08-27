@@ -43,6 +43,18 @@ export default function Home() {
     setMounted(true);
   }, []);
 
+  useEffect(() => {
+    window.addEventListener('message', (event) => {
+      if (event.origin !== 'http://localhost:3000') {
+        return;
+      }
+
+      if (event.data.type === 'token') {
+        console.log('token', event.data.payload);
+      }
+    });
+  }, []);
+
   // Prevent hydration mismatch
   if (!mounted) {
     return null;

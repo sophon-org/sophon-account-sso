@@ -20,6 +20,7 @@ export function useTransaction() {
   const { data: walletClient } = useWalletClient();
   const { primaryWallet } = useDynamicContext();
   const [isSending, setIsSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const actorRef = MainStateMachineContext.useActorRef();
 
   const sendTransaction = async (
@@ -219,7 +220,7 @@ export function useTransaction() {
       }
     } catch (error) {
       console.error('Transaction failed:', error);
-
+      setError(error instanceof Error ? error.message : 'Transaction failed');
       // Track failed transaction
       const errorMessage =
         error instanceof Error ? error.message : 'Transaction failed';
@@ -232,5 +233,6 @@ export function useTransaction() {
   return {
     isSending,
     sendTransaction,
+    transactionError: error,
   };
 }

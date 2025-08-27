@@ -13,9 +13,11 @@
     "@simplewebauthn/server": "^13.1.2",
     "@sophon-labs/account-connector": "file:../../packages/account-connector",
     "@tanstack/react-query": "^5.80.7",
+    "@wagmi/core": "^2.19.0",
     "next": "15.3.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "viem": "^2.34.0",
     "wagmi": "^2.15.6"
   },
   "devDependencies": {

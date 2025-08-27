@@ -13,20 +13,30 @@ interface SophonSsoConnectorOptions {
   authServerUrl: string;
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: TODO remove later
-export const sophonSsoConnector: any = (
+export const sophonSsoConnector = (
+  partnerId: string,
   network: SophonNetworkType = 'testnet',
   options?: SophonSsoConnectorOptions,
 ) => {
+  if (!partnerId) {
+    throw new Error('partnerId is required');
+  }
+  const authServerUrl = options?.authServerUrl ?? AccountServerURL[network];
+  const finalAuthServerUrl = partnerId
+    ? `${authServerUrl}/${partnerId}`
+    : authServerUrl;
+
   console.log(
-    'creating',
+    'connecting',
+    partnerId,
     network,
-    AccountServerURL,
+    authServerUrl,
     options?.authServerUrl,
-    AccountServerURL[network],
   );
+  console.log('finalAuthServerUrl', finalAuthServerUrl);
+
   const connector = zksyncSsoConnector({
-    authServerUrl: options?.authServerUrl ?? AccountServerURL[network],
+    authServerUrl: finalAuthServerUrl,
     metadata: {
       name: network === 'mainnet' ? 'Sophon Wallet' : 'Sophon Testnet Wallet',
       icon: '/sophon-icon.png',
@@ -49,19 +59,16 @@ export const sophonSsoConnector: any = (
     // },
     communicator:
       options?.communicator ||
-      new PopupCommunicator(
-        options?.authServerUrl ?? AccountServerURL[network],
-        {
-          width: 360,
-          height: 800,
-          calculatePosition(width, height) {
-            return {
-              left: window.screenX + (window.outerWidth - width) / 2,
-              top: window.screenY + (window.outerHeight - height) / 2,
-            };
-          },
+      new PopupCommunicator(finalAuthServerUrl, {
+        width: 360,
+        height: 800,
+        calculatePosition(width, height) {
+          return {
+            left: window.screenX + (window.outerWidth - width) / 2,
+            top: window.screenY + (window.outerHeight - height) / 2,
+          };
         },
-      ),
+      }),
   });
 
   return connector;
