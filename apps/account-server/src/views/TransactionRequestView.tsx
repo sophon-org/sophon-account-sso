@@ -8,11 +8,14 @@ import {
   TransactionRequestSkeleton,
   TransactionTitle,
 } from '@/components/transaction-views';
+import MessageContainerButton from '@/components/ui/message-container-button';
 import MessageContainer from '@/components/ui/messageContainer';
 import VerificationImage from '@/components/ui/verification-image';
 import { useTransactionRequestActions } from '@/hooks/actions/useTransactionRequestActions';
 import type { EnrichedTransactionRequest } from '@/types/auth';
 import { TransactionType } from '@/types/auth';
+
+type DrawerContentType = 'raw-transaction' | 'fee-details' | 'error' | null;
 
 function renderTransactionContent(transaction: EnrichedTransactionRequest) {
   switch (transaction.transactionType) {
@@ -33,13 +36,19 @@ function renderTransactionContent(transaction: EnrichedTransactionRequest) {
   }
 }
 
-export default function TransactionRequestView() {
+interface TransactionRequestViewProps {
+  openDrawer?: (type: DrawerContentType, data?: string | object) => void;
+}
+
+export default function TransactionRequestView({
+  openDrawer,
+}: TransactionRequestViewProps = {}) {
   const {
     incomingRequest,
     transactionRequest,
     enrichedTransactionRequest,
     isLoading,
-  } = useTransactionRequestActions();
+  } = useTransactionRequestActions({ openDrawer });
 
   if (!transactionRequest || !incomingRequest) {
     return <div>No transaction request present</div>;
@@ -61,8 +70,15 @@ export default function TransactionRequestView() {
 
       <div className="w-full">
         <ContractWarning transaction={enrichedTransactionRequest} />
-        <MessageContainer>
+        <MessageContainer showBottomButton={!!openDrawer}>
           {renderTransactionContent(enrichedTransactionRequest)}
+          {openDrawer && (
+            <MessageContainerButton
+              onClick={() => openDrawer('raw-transaction')}
+            >
+              View raw transaction details
+            </MessageContainerButton>
+          )}
         </MessageContainer>
       </div>
     </div>
