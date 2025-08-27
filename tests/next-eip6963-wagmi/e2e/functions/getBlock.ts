@@ -14,6 +14,8 @@ export const getBlockByNumberTestCase: TestCase<'getBlock'> = {
   method: 'getBlock',
   payload: { blockNumber: BigInt(1) },
   isValidResponse: (response) => {
-    return response?.hash === process.env.FIRST_BLOCK_HASH;
+    return (
+      response?.hash !== null && response?.hash === process.env.FIRST_BLOCK_HASH
+    );
   },
 };

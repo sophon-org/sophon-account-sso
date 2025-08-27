@@ -6,7 +6,7 @@ export const mintSimpleNFTTestCase: AccountServerTestCase<'writeContract'> = {
   name: 'writeContract-simpleNFT',
   method: 'writeContract',
   payload: {
-    address: process.env.NFT_ADDRESS as `0x${string}`,
+    address: process.env.NEXT_PUBLIC_NFT_ADDRESS as `0x${string}`,
     abi: nftAbi,
     functionName: 'mint',
     args: [process.env.USER_WALLET as `0x${string}`],
@@ -27,7 +27,7 @@ export const mintPaidNFTTestCase: AccountServerTestCase<'writeContract'> = {
   name: 'writeContract-paidNFT',
   method: 'writeContract',
   payload: {
-    address: process.env.NFT_ADDRESS as `0x${string}`,
+    address: process.env.NEXT_PUBLIC_NFT_ADDRESS as `0x${string}`,
     abi: nftAbi,
     functionName: 'paidMint',
     value: parseEther('1') as unknown as undefined,

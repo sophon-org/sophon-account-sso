@@ -1,3 +1,4 @@
+import { parseEther } from 'viem';
 import { safeStringify } from '../../lib/utils';
 import { accountServerTestCases, directCallTestCases } from '../functions';
 import { expect, test } from '../support/test-server/context';
@@ -78,3 +79,34 @@ test.beforeEach(async ({ page, testServerPage }) => {
     });
   },
 );
+
+test.skip(`Account Server: should be able execute signTransaction and send it via eth_sendRawTransaction`, async ({
+  page,
+  testServerPage,
+  context,
+}) => {
+  await testServerPage.gotoHome();
+
+  const transactionRequest = {
+    to: process.env.TRANSFER_TARGET_WALLET as `0x${string}`,
+    value: parseEther('0.1'),
+  };
+
+  // // Signature flow
+  const commandPagePromise = context.waitForEvent('page');
+  const executeCommandPromise = page.evaluate(async (data) => {
+    return await window.signTransaction(data);
+  }, transactionRequest);
+
+  const commandPage = await commandPagePromise;
+
+  await commandPage
+    .locator('text=Signature Request')
+    .waitFor({ state: 'visible' });
+  await commandPage.screenshot();
+  await commandPage.getByTestId('signing-accept-button').click();
+
+  const response = await executeCommandPromise;
+
+  console.log(`Transaction Signature Response: ${safeStringify(response)}`);
+});
