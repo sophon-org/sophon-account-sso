@@ -192,6 +192,13 @@ export enum TransactionType {
   UNKNOWN = 'unknown',
 }
 
+export enum ERC20FunctionName {
+  TRANSFER = 'transfer',
+  APPROVE = 'approve',
+  TRANSFER_FROM = 'transferFrom',
+  ALLOWANCE = 'allowance',
+}
+
 export interface AuthContext {
   account?: SmartAccount;
   accountAddress?: string;

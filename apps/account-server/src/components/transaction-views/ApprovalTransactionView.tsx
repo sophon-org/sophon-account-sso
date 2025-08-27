@@ -1,4 +1,3 @@
-import { BLOCK_EXPLORER_URL } from '@/lib/constants';
 import { truncateName } from '@/lib/formatting';
 import type { EnrichedApprovalTransaction } from '@/types/auth';
 import { AddressLink } from './shared';
@@ -18,18 +17,7 @@ export default function ApprovalTransactionView({
           <span className="">
             {truncateName(transaction.spender.name || '')}
           </span>{' '}
-          @{' '}
-          <a
-            href={`${BLOCK_EXPLORER_URL}/address/${transaction.spender.address}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:underline"
-          >
-            {transaction.spender.address.slice(0, 6)}
-            ...
-            {transaction.spender.address.slice(-6)}
-            <span className="text-sm underline ml-0.5">{'\u2197'}</span>
-          </a>
+          @ <AddressLink address={transaction.spender.address} />
         </p>
       </div>
 

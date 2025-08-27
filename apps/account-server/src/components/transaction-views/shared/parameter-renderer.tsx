@@ -1,4 +1,4 @@
-import { BLOCK_EXPLORER_URL } from '@/lib/constants';
+import AddressLink from './AddressLink';
 
 export const renderSimpleValue = (
   value: unknown,
@@ -9,17 +9,7 @@ export const renderSimpleValue = (
     value.length === 42
   ) {
     // It's an address
-    return (
-      <a
-        href={`${BLOCK_EXPLORER_URL}/address/${value}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="hover:underline"
-      >
-        {value}
-        <span className="text-sm underline ml-0.5">{'\u2197'}</span>
-      </a>
-    );
+    return <AddressLink address={value} />;
   }
 
   if (typeof value === 'string') {
@@ -83,17 +73,7 @@ export const renderParameterValue = (arg: {
   type: string;
 }): React.JSX.Element | string => {
   if (arg.type === 'address') {
-    return (
-      <a
-        href={`${BLOCK_EXPLORER_URL}/address/${arg.value}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="hover:underline"
-      >
-        {arg.value.slice(0, 6)}...{arg.value.slice(-6)}
-        <span className="text-sm underline ml-0.5">{'\u2197'}</span>
-      </a>
-    );
+    return <AddressLink address={arg.value} />;
   }
 
   // Check if it's a complex object (starts with { or [)

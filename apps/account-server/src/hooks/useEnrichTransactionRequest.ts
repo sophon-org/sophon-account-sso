@@ -4,6 +4,7 @@ import type {
   EnrichedTransactionRequest,
   TransactionRequest,
 } from '@/types/auth';
+import { ERC20FunctionName } from '@/types/auth';
 import {
   enrichApprovalTransaction,
   enrichContractTransaction,
@@ -105,7 +106,8 @@ export const useEnrichTransactionRequest = (
 
           if (
             token &&
-            (!decodedData || decodedData?.functionName === 'transfer')
+            (!decodedData ||
+              decodedData?.functionName === ERC20FunctionName.TRANSFER)
           ) {
             // ERC20 transfer
             const enrichedTransaction = await enrichERC20Transaction(
@@ -117,7 +119,7 @@ export const useEnrichTransactionRequest = (
           } else if (
             token &&
             decodedData &&
-            decodedData?.functionName === 'approve'
+            decodedData?.functionName === ERC20FunctionName.APPROVE
           ) {
             // ERC20 approve
             const spenderAddress = decodedData?.args[0]?.value?.toString();
