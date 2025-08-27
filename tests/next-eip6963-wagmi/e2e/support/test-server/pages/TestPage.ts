@@ -23,6 +23,5 @@ export class TestServerPage {
     await this.connectButton.click();
     const loginPage = new AccountServerLoginPage(await authServerPromise);
     return loginPage;
-    // return new AccountServerAuthenticationRequestPage(this.page);
   }
 }

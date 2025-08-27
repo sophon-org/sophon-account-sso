@@ -51,7 +51,7 @@ export const writeContractTransferTestCase: AccountServerTestCase<'writeContract
     },
     accountServerActions: async (page) => {
       await page
-        .locator('text=Transaction Request')
+        .locator(`text=Transfer ${process.env.TOKEN_ERC20_SYMBOL}`)
         .waitFor({ state: 'visible' });
       await page.screenshot();
       await page.getByTestId('transaction-accept-button').click();
@@ -76,7 +76,7 @@ export const writeContractApproveTestCase: AccountServerTestCase<'writeContract'
     },
     accountServerActions: async (page) => {
       await page
-        .locator('text=Transaction Request')
+        .locator(`text=Spending request for ${process.env.TOKEN_ERC20_SYMBOL}`)
         .waitFor({ state: 'visible' });
       await page.screenshot();
       await page.getByTestId('transaction-accept-button').click();

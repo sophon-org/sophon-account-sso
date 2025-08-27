@@ -32,7 +32,7 @@ export default defineConfig({
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
   },
-  timeout: 90000,
+  timeout: 30 * 1000,
   expect: {
     timeout: 5000,
   },
@@ -43,9 +43,24 @@ export default defineConfig({
   },
   /* Configure projects for major browsers */
   projects: [
+    { name: 'setup', testMatch: /.*\.setup\.ts/ },
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'], headless: false },
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: 'playwright/.auth/user.json',
+        headless: false,
+      },
+      dependencies: ['setup'],
     },
+    // {
+    //   name: 'firefox',
+    //   use: {
+    //     ...devices['Desktop Firefox'],
+    //     storageState: 'playwright/.auth/user.json',
+    //     headless: false,
+    //   },
+    //   dependencies: ['setup'],
+    // },
   ],
 });

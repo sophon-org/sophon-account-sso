@@ -11,9 +11,7 @@ export const sendTransactionSOPTestCase: AccountServerTestCase<'sendTransaction'
       data: '0x',
     },
     accountServerActions: async (page) => {
-      await page
-        .locator('text=Transaction Request')
-        .waitFor({ state: 'visible' });
+      await page.locator('text=Transfer SOPH').waitFor({ state: 'visible' });
       await page.screenshot();
       await page.getByTestId('transaction-accept-button').click();
     },

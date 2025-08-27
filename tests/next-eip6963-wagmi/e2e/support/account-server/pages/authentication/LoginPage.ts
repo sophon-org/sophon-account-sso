@@ -19,7 +19,6 @@ export class AccountServerLoginPage {
   }
 
   async login(email: string, otp: string) {
-    console.log('Authenticating with email', email, otp);
     await this.emailInput.fill(email);
     await this.emailSubmitButton.click();
     await this.passwordInput.fill(otp);
