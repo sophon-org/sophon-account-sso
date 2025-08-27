@@ -21,6 +21,7 @@ describe("AuthController (new flows)", () => {
 			accessToken: "new.access.jwt",
 			refreshToken: "new.refresh.jwt",
 		}),
+		revokeByRefreshToken: jest.fn().mockResolvedValue(undefined),
 		cookieOptions: jest.fn().mockReturnValue({
 			httpOnly: true,
 			secure: true,
@@ -145,10 +146,40 @@ describe("AuthController (new flows)", () => {
 		expect(authServiceMock.refresh).not.toHaveBeenCalled();
 	});
 
-	it("POST /auth/logout clears both cookies", async () => {
+	it("POST /auth/logout revokes session if refresh token present and clears both cookies", async () => {
 		const res = mockRes();
-		controller.logout(res);
+		const req = {
+			cookies: { refresh_token: "refresh.jwt" },
+			headers: {},
+		} as unknown as Request;
 
+		await controller.logout(req, res);
+
+		expect(authServiceMock.revokeByRefreshToken).toHaveBeenCalledWith(
+			"refresh.jwt",
+		);
+		expect(res.clearCookie).toHaveBeenCalledWith(
+			"access_token",
+			expect.objectContaining({ maxAge: 0 }),
+		);
+		expect(res.clearCookie).toHaveBeenCalledWith(
+			"refresh_token",
+			expect.objectContaining({ maxAge: 0 }),
+		);
+		expect(res.status).toHaveBeenCalledWith(200);
+		expect(res.json).toHaveBeenCalledWith({ ok: true });
+	});
+
+	it("POST /auth/logout still clears cookies when no refresh token is provided", async () => {
+		const res = mockRes();
+		const req = {
+			cookies: {},
+			headers: {},
+		} as unknown as Request;
+
+		await controller.logout(req, res);
+
+		expect(authServiceMock.revokeByRefreshToken).not.toHaveBeenCalled();
 		expect(res.clearCookie).toHaveBeenCalledWith(
 			"access_token",
 			expect.objectContaining({ maxAge: 0 }),

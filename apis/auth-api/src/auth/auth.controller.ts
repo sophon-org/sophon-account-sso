@@ -102,7 +102,11 @@ export class AuthController {
 
 	@Post("logout")
 	@ApiOkResponse({ description: "Clears JWT cookies" })
-	async logout(@Res() res: Response) {
+	async logout(@Req() req: Request, @Res() res: Response) {
+		const rt = extractRefreshToken(req);
+		if (rt) {
+			await this.authService.revokeByRefreshToken(rt).catch(() => {});
+		}
 		res
 			.clearCookie("access_token", {
 				...this.authService.cookieOptions(),

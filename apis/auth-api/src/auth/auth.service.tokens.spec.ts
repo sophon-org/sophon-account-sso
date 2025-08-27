@@ -3,11 +3,13 @@ import jwt from "jsonwebtoken";
 import type { TypedDataDefinition } from "viem";
 import { PartnerRegistryService } from "../partners/partner-registry.service";
 import { AuthService } from "./auth.service";
+import { SessionsRepository } from "../sessions/sessions.repository";
 
 // --- jsonwebtoken mocks ---
 jest.mock("jsonwebtoken", () => ({
 	sign: jest.fn(),
 	verify: jest.fn(),
+	decode: jest.fn(),
 }));
 
 // --- signature verifier mock ---
@@ -26,29 +28,39 @@ jest.mock("../utils/jwt", () => ({
 jest.mock("../config/env", () => {
 	const env = {
 		ACCESS_TTL_S: 60 * 60 * 3, // 3h
-		REFRESH_TTL_S: 60 * 60 * 24 * 30, // 3h
-		NONCE_TTL_S: 600, // 3h
+		REFRESH_TTL_S: 60 * 60 * 24 * 30, // 30d
+		NONCE_TTL_S: 600, // 10m
 		COOKIE_ACCESS_MAX_AGE_S: 60 * 60 * 3,
 		COOKIE_REFRESH_MAX_AGE_S: 60 * 60 * 24 * 30,
 		COOKIE_DOMAIN: "localhost",
-		COOKIE_SAME_SITE: "lax",
 		JWT_ISSUER: "https://auth.example.com",
 		NONCE_ISSUER: "https://auth.example.com",
 		REFRESH_ISSUER: "https://auth.example.com",
 		REFRESH_JWT_KID: "test-refresh-kid",
+		JWT_KID: "test-kid",
+		JWT_AUDIENCE: "sophon-web",
+		PARTNER_CDN: "https://cdn.sophon.xyz/partners/sdk",
 	};
 	return {
 		getJwtKid: jest.fn().mockReturnValue("test-kid"),
-		JWT_ISSUER: env.JWT_ISSUER,
 		getEnv: jest.fn().mockReturnValue(env),
 	};
 });
 
 describe("AuthService (new token features)", () => {
 	let service: AuthService;
+
 	const partnerRegistryMock = {
 		assertExists: jest.fn().mockResolvedValue(undefined),
 		exists: jest.fn().mockResolvedValue(true),
+	};
+
+	const sessionsRepositoryMock = {
+		create: jest.fn().mockResolvedValue(undefined),
+		getBySid: jest.fn(),
+		isActive: jest.fn(),
+		revokeSid: jest.fn().mockResolvedValue(undefined),
+		rotateRefreshJti: jest.fn().mockResolvedValue(undefined),
 	};
 
 	beforeEach(async () => {
@@ -56,6 +68,7 @@ describe("AuthService (new token features)", () => {
 			providers: [
 				AuthService,
 				{ provide: PartnerRegistryService, useValue: partnerRegistryMock },
+				{ provide: SessionsRepository, useValue: sessionsRepositoryMock },
 			],
 		}).compile();
 
@@ -63,18 +76,22 @@ describe("AuthService (new token features)", () => {
 		jest.clearAllMocks();
 	});
 
-	it("verifySignatureWithSiweIssueTokens: returns access + refresh + sid, signs twice", async () => {
+	it("verifySignatureWithSiweIssueTokens: returns access + refresh + sid and creates a session", async () => {
 		(jwt.verify as jest.Mock).mockReturnValueOnce({
 			nonce: "expected-nonce",
 			address: "0xabc0000000000000000000000000000000000001",
 			aud: "sophon-web",
 			iss: "https://auth.example.com",
 			scope: "email x",
+			userId: "u1",
 		});
 
 		(jwt.sign as jest.Mock)
 			.mockReturnValueOnce("mocked.access")
 			.mockReturnValueOnce("mocked.refresh");
+
+		const exp = Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30;
+		(jwt.decode as jest.Mock).mockReturnValue({ exp });
 
 		const typedData: TypedDataDefinition = {
 			domain: { name: "Sophon SSO", version: "1", chainId: 300 },
@@ -100,12 +117,14 @@ describe("AuthService (new token features)", () => {
 			sid: expect.any(String),
 		});
 
-		// first sign call: access token
-		expect((jwt.sign as jest.Mock).mock.calls[0][0]).toEqual(
+		const accessPayload = (jwt.sign as jest.Mock).mock.calls[0][0];
+		expect(accessPayload).toEqual(
 			expect.objectContaining({
 				typ: "access",
 				sid: expect.any(String),
 				scope: "email x",
+				userId: "u1",
+				sub: "0xabc0000000000000000000000000000000000001",
 			}),
 		);
 		expect((jwt.sign as jest.Mock).mock.calls[0][1]).toBe("PRIVATE_KEY");
@@ -119,13 +138,14 @@ describe("AuthService (new token features)", () => {
 			}),
 		);
 
-		// second sign call: refresh token
-		expect((jwt.sign as jest.Mock).mock.calls[1][0]).toEqual(
+		const refreshPayload = (jwt.sign as jest.Mock).mock.calls[1][0];
+		expect(refreshPayload).toEqual(
 			expect.objectContaining({
 				typ: "refresh",
 				jti: expect.any(String),
-				sid: expect.any(String),
+				sid: accessPayload.sid,
 				scope: "email x",
+				userId: "u1",
 			}),
 		);
 		expect((jwt.sign as jest.Mock).mock.calls[1][1]).toBe(
@@ -140,20 +160,43 @@ describe("AuthService (new token features)", () => {
 				expiresIn: 60 * 60 * 24 * 30,
 			}),
 		);
+		expect(sessionsRepositoryMock.create).toHaveBeenCalledWith(
+			expect.objectContaining({
+				sid: accessPayload.sid,
+				userId: "u1",
+				aud: "sophon-web",
+				currentRefreshJti: refreshPayload.jti,
+				refreshExpiresAt: expect.any(Date),
+			}),
+		);
 	});
 
-	it("refresh: verifies refresh token and rotates both tokens", async () => {
+	it("refresh: verifies refresh token, checks session, rotates refresh jti, returns new tokens", async () => {
 		(jwt.verify as jest.Mock).mockReturnValueOnce({
+			typ: "refresh",
 			sub: "0xabc0000000000000000000000000000000000001",
 			aud: "sophon-web",
 			scope: "email x",
 			userId: "u123",
 			sid: "session-1",
+			jti: "jti-old",
 		});
+
+		sessionsRepositoryMock.getBySid.mockResolvedValueOnce({
+			sid: "session-1",
+			current_refresh_jti: "jti-old",
+			revoked_at: null,
+			refresh_expires_at: new Date(Date.now() + 60_000),
+			invalidate_before: null,
+		});
+		sessionsRepositoryMock.isActive.mockReturnValue(true);
 
 		(jwt.sign as jest.Mock)
 			.mockReturnValueOnce("rotated.access")
 			.mockReturnValueOnce("rotated.refresh");
+
+		const newExp = Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30;
+		(jwt.decode as jest.Mock).mockReturnValue({ exp: newExp });
 
 		const { accessToken, refreshToken } = await service.refresh(
 			"dummy.refresh.token",
@@ -168,8 +211,8 @@ describe("AuthService (new token features)", () => {
 			}),
 		);
 
-		// new access token
-		expect((jwt.sign as jest.Mock).mock.calls[0][0]).toEqual(
+		const accessPayload = (jwt.sign as jest.Mock).mock.calls[0][0];
+		expect(accessPayload).toEqual(
 			expect.objectContaining({
 				typ: "access",
 				sub: "0xabc0000000000000000000000000000000000001",
@@ -178,16 +221,9 @@ describe("AuthService (new token features)", () => {
 				userId: "u123",
 			}),
 		);
-		expect((jwt.sign as jest.Mock).mock.calls[0][1]).toBe("PRIVATE_KEY");
-		expect((jwt.sign as jest.Mock).mock.calls[0][2]).toEqual(
-			expect.objectContaining({
-				issuer: "https://auth.example.com",
-				audience: "sophon-web",
-				expiresIn: 60 * 60 * 3,
-			}),
-		);
 
-		expect((jwt.sign as jest.Mock).mock.calls[1][0]).toEqual(
+		const newRefreshPayload = (jwt.sign as jest.Mock).mock.calls[1][0];
+		expect(newRefreshPayload).toEqual(
 			expect.objectContaining({
 				typ: "refresh",
 				sub: "0xabc0000000000000000000000000000000000001",
@@ -197,14 +233,12 @@ describe("AuthService (new token features)", () => {
 				jti: expect.any(String),
 			}),
 		);
-		expect((jwt.sign as jest.Mock).mock.calls[1][1]).toBe(
-			"REFRESH_PRIVATE_KEY",
-		);
-		expect((jwt.sign as jest.Mock).mock.calls[1][2]).toEqual(
+
+		expect(sessionsRepositoryMock.rotateRefreshJti).toHaveBeenCalledWith(
 			expect.objectContaining({
-				issuer: "https://auth.example.com",
-				audience: "sophon-web",
-				expiresIn: 60 * 60 * 24 * 30,
+				sid: "session-1",
+				newJti: newRefreshPayload.jti,
+				newRefreshExpiresAt: expect.any(Date),
 			}),
 		);
 

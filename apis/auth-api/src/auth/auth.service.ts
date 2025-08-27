@@ -31,6 +31,7 @@ import {
 } from "../utils/jwt";
 import { verifyEIP1271Signature } from "../utils/signature";
 import type { AccessTokenPayload, RefreshTokenPayload } from "./types";
+import { SessionsRepository } from "../sessions/sessions.repository";
 
 type NoncePayload = JwtPayload & {
 	address: string;
@@ -44,7 +45,10 @@ type NoncePayload = JwtPayload & {
 
 @Injectable()
 export class AuthService {
-	constructor(private readonly partnerRegistry: PartnerRegistryService) {
+	constructor(
+		private readonly partnerRegistry: PartnerRegistryService,
+		private readonly sessions: SessionsRepository,
+	) {
 		this.E = getEnv();
 	}
 
@@ -86,7 +90,7 @@ export class AuthService {
 				{
 					algorithm: "RS256",
 					keyid: getJwtKid(),
-					issuer: this.E.JWT_ISSUER,
+					issuer: this.E.NONCE_ISSUER,
 					audience,
 					subject: address,
 					expiresIn: this.E.NONCE_TTL_S,
@@ -166,7 +170,7 @@ export class AuthService {
 				{
 					algorithm: "RS256",
 					keyid: getJwtKid(),
-					issuer: payload.iss,
+					issuer: this.E.JWT_ISSUER,
 					audience: payload.aud,
 					expiresIn: expiresInSeconds,
 				},
@@ -248,12 +252,13 @@ export class AuthService {
 			{
 				algorithm: "RS256",
 				keyid: getJwtKid(),
-				issuer: payload.iss,
+				issuer: this.E.JWT_ISSUER,
 				audience: payload.aud,
 				expiresIn: accessExp,
 			},
 		);
 
+		const refreshJti = randomUUID();
 		const refreshToken = jwt.sign(
 			{
 				sub: address,
@@ -261,7 +266,7 @@ export class AuthService {
 				scope,
 				userId: payload.userId,
 				sid,
-				jti: randomUUID(),
+				jti: refreshJti,
 				typ: "refresh",
 			},
 			await getRefreshPrivateKey(),
@@ -273,6 +278,18 @@ export class AuthService {
 				expiresIn: refreshExp,
 			},
 		);
+
+		const decoded = jwt.decode(refreshToken) as { exp?: number } | null;
+		await this.sessions.create({
+			sid,
+			userId: payload.userId ?? address,
+			aud: payload.aud,
+			currentRefreshJti: refreshJti,
+			refreshExpiresAt:
+				decoded?.exp != null
+					? new Date(decoded.exp * 1000)
+					: new Date(Date.now() + refreshExp * 1000),
+		});
 
 		return { accessToken, refreshToken, sid };
 	}
@@ -314,8 +331,42 @@ export class AuthService {
 		}
 
 		await this.partnerRegistry.assertExists(payload.aud);
-
+		const rowSid = (payload as AccessTokenPayload & { sid?: string }).sid;
+		if (rowSid) {
+			const row = await this.sessions.getBySid(rowSid);
+			if (!this.sessions.isActive(row)) {
+				throw new UnauthorizedException("session revoked or expired");
+			}
+			if (row.invalidate_before) {
+				const iatSec = payload.iat ?? 0;
+				const cut = Math.floor(
+					new Date(row.invalidate_before).getTime() / 1000,
+				);
+				if (iatSec < cut) {
+					throw new UnauthorizedException(
+						"access token is too old (invalidated)",
+					);
+				}
+			}
+		}
 		return payload as AccessTokenPayload;
+	}
+
+	async revokeByRefreshToken(refreshToken: string): Promise<void> {
+		let r!: RefreshTokenPayload;
+		try {
+			r = jwt.verify(refreshToken, await getRefreshPublicKey(), {
+				algorithms: ["RS256"],
+				issuer: this.E.REFRESH_ISSUER,
+			}) as RefreshTokenPayload;
+		} catch {
+			return;
+		}
+		const rTyp = (r as RefreshTokenPayload & { typ?: string }).typ;
+		if (rTyp && rTyp !== "refresh") {
+			return;
+		}
+		await this.sessions.revokeSid(r.sid);
 	}
 
 	async refresh(
@@ -331,7 +382,22 @@ export class AuthService {
 			this.mapJwtError(e, "refresh");
 		}
 
+		const rTyp = (r as RefreshTokenPayload & { typ?: string }).typ;
+		if (rTyp && rTyp !== "refresh") {
+			throw new UnauthorizedException("invalid refresh token");
+		}
+
 		await this.partnerRegistry.assertExists(r.aud);
+
+		const row = await this.sessions.getBySid(r.sid);
+		if (!this.sessions.isActive(row)) {
+			throw new UnauthorizedException("session revoked or expired");
+		}
+
+		if (row.current_refresh_jti !== r.jti) {
+			await this.sessions.revokeSid(r.sid);
+			throw new UnauthorizedException("refresh token reuse detected");
+		}
 
 		const iat = Math.floor(Date.now() / 1000);
 
@@ -354,6 +420,8 @@ export class AuthService {
 			},
 		);
 
+		const newJti = randomUUID();
+
 		const newRefresh = jwt.sign(
 			{
 				sub: r.sub,
@@ -361,7 +429,7 @@ export class AuthService {
 				scope: r.scope,
 				userId: r.userId,
 				sid: r.sid,
-				jti: randomUUID(),
+				jti: newJti,
 				typ: "refresh",
 			},
 			await getRefreshPrivateKey(),
@@ -373,6 +441,18 @@ export class AuthService {
 				expiresIn: this.E.REFRESH_TTL_S,
 			},
 		);
+
+		const decoded = jwt.decode(newRefresh) as { exp?: number } | null;
+		const newRefreshExpiresAt =
+			decoded?.exp != null
+				? new Date(decoded.exp * 1000)
+				: new Date((iat + this.E.REFRESH_TTL_S) * 1000);
+
+		await this.sessions.rotateRefreshJti({
+			sid: r.sid,
+			newJti,
+			newRefreshExpiresAt,
+		});
 
 		return { accessToken: newAccess, refreshToken: newRefresh };
 	}

@@ -19,8 +19,12 @@ describe("PartnerRegistryService", () => {
 	beforeEach(() => {
 		process.env.NODE_ENV = "production";
 		process.env.PARTNER_CDN = CDN;
+		process.env.DATABASE_URL =
+			process.env.DATABASE_URL;
 
-		// Seed all env vars required by getEnv()
+		process.env.JWT_KID = process.env.JWT_KID ?? "test-kid";
+		process.env.REFRESH_JWT_KID =
+			process.env.REFRESH_JWT_KID ?? "test-refresh-kid";
 		process.env.JWT_KID = process.env.JWT_KID ?? "test-kid";
 		process.env.REFRESH_JWT_KID =
 			process.env.REFRESH_JWT_KID ?? "test-refresh-kid";
