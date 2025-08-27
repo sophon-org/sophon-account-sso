@@ -20,7 +20,7 @@ describe("PartnerRegistryService", () => {
 		process.env.NODE_ENV = "production";
 		process.env.PARTNER_CDN = CDN;
 		process.env.DATABASE_URL =
-			process.env.DATABASE_URL;
+			process.env.DATABASE_URL ?? "postgres://user:pass@localhost:5432/testdb";
 
 		process.env.JWT_KID = process.env.JWT_KID ?? "test-kid";
 		process.env.REFRESH_JWT_KID =
