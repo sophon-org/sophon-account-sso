@@ -15,7 +15,16 @@ import {
 import { windowService } from '@/service/window.service';
 import type { IncomingRequest, TransactionRequest } from '@/types/auth';
 
-export const useTransactionRequestActions = () => {
+type DrawerContentType = 'raw-transaction' | 'fee-details' | 'error' | null;
+
+interface UseTransactionRequestActionsProps {
+  openDrawer?: (type: DrawerContentType, data?: string | object) => void;
+}
+
+export const useTransactionRequestActions = (
+  props: UseTransactionRequestActionsProps = {},
+) => {
+  const { openDrawer } = props;
   const { incoming: incomingRequest, transaction: transactionRequest } =
     MainStateMachineContext.useSelector((state) => state.context.requests);
   const actorRef = MainStateMachineContext.useActorRef();
@@ -101,7 +110,15 @@ export const useTransactionRequestActions = () => {
       <Card
         small
         elevated
-        className="w-full flex justify-between items-center gap-2 px-[16px] py-[8px]"
+        className={`w-full flex justify-between items-center gap-2 px-[16px] py-[8px] ${
+          openDrawer ? 'cursor-pointer hover:bg-gray-50' : ''
+        }`}
+        onClick={() =>
+          openDrawer?.('fee-details', {
+            fee: enrichedTransactionRequest?.fee,
+            paymaster: enrichedTransactionRequest?.paymaster,
+          })
+        }
       >
         <p className="text-sm font-bold h-[36px] flex items-center">
           Estimated fee
@@ -152,9 +169,25 @@ export const useTransactionRequestActions = () => {
 
       {(transactionError || signingError) && (
         <div className="p-3 bg-red-50 border border-red-200 rounded">
-          <p className="text-red-600 text-sm">
-            {transactionError || signingError}
-          </p>
+          <div className="flex justify-between items-start">
+            <p className="text-red-600 text-sm flex-1">
+              {transactionError || signingError}
+            </p>
+            {openDrawer && (
+              <button
+                type="button"
+                onClick={() =>
+                  openDrawer(
+                    'error',
+                    transactionError || signingError || 'Unknown error',
+                  )
+                }
+                className="ml-2 text-xs text-red-600 hover:text-red-800 underline"
+              >
+                Details
+              </button>
+            )}
+          </div>
         </div>
       )}
     </div>

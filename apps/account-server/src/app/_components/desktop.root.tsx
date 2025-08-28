@@ -8,6 +8,7 @@ import { MainStateMachineContext } from '@/context/state-machine-context';
 import { sendMessage } from '@/events';
 
 import { useAccountContext } from '@/hooks/useAccountContext';
+import { useRequestDrawer } from '@/hooks/useRequestDrawer';
 import { useUserIdentification } from '@/hooks/useUserIdentification';
 import { useWalletConnection } from '@/hooks/useWalletConnection';
 import { windowService } from '@/service/window.service';
@@ -34,10 +35,13 @@ export default function DesktopRoot({ partnerId }: DesktopRootProps) {
   const { account } = useAccountContext();
   const { disconnect } = useWalletConnection();
   useUserIdentification();
+  const { openDrawer, DrawerComponent } = useRequestDrawer();
 
-  const signingActions = SigningRequestView.useActions();
-  const transactionActions = TransactionRequestView.useActions();
+  const signingActions = SigningRequestView.useActions({ openDrawer });
   const connectActions = ConnectAuthorizationView.useActions();
+  const transactionActions = TransactionRequestView.useActions({
+    openDrawer,
+  });
 
   /***************************
    * LOADING RESOURCES STATE *
@@ -58,31 +62,37 @@ export default function DesktopRoot({ partnerId }: DesktopRootProps) {
     state.matches('incoming-message-signature')
   ) {
     return (
-      <Dialog
-        className="relative"
-        title={shortenAddress(account?.address)}
-        showSettings={true}
-        showLegalNotice={false}
-        dialogType="signing_request"
-        actions={signingActions.renderActions()}
-      >
-        <SigningRequestView />
-      </Dialog>
+      <>
+        <Dialog
+          className="relative"
+          title={shortenAddress(account?.address)}
+          showSettings={true}
+          showLegalNotice={false}
+          dialogType="signing_request"
+          actions={signingActions.renderActions()}
+        >
+          <SigningRequestView openDrawer={openDrawer} />
+        </Dialog>
+        <DrawerComponent />
+      </>
     );
   }
 
   if (state.matches('incoming-transaction')) {
     return (
-      <Dialog
-        className="relative"
-        title={shortenAddress(account?.address)}
-        showSettings={true}
-        showLegalNotice={false}
-        dialogType="transaction_request"
-        actions={transactionActions.renderActions()}
-      >
-        <TransactionRequestView />
-      </Dialog>
+      <>
+        <Dialog
+          className="relative"
+          title={shortenAddress(account?.address)}
+          showSettings={true}
+          showLegalNotice={false}
+          dialogType="transaction_request"
+          actions={transactionActions.renderActions()}
+        >
+          <TransactionRequestView openDrawer={openDrawer} />
+        </Dialog>
+        <DrawerComponent />
+      </>
     );
   }
 
