@@ -11,10 +11,10 @@ export default function MessageContainer({
     <Card
       elevated
       className={`mt-4 px-6 pt-6 ${
-        showBottomButton ? 'pb-[4.5rem]' : 'pb-6'
-      } overflow-y-auto text-left w-full relative`}
+        showBottomButton ? 'pb-[3.5rem]' : 'pb-6'
+      } overflow-y-auto text-left w-full relative max-w-[352px]`}
     >
-      <div className="text-sm text-black h-full break-all">{children}</div>
+      <div className="text-sm text-black h-full break-words">{children}</div>
     </Card>
   );
 }

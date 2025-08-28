@@ -69,7 +69,7 @@ export const useRequestDrawer = () => {
               {isSponsored ? (
                 <div className=" rounded-lg p-3">
                   <div className="text-sm break-all">
-                    <span className="mr-1">Sponsored by Paymaster at:</span>
+                    <span className="mr-1">Sponsored by Paymaster @</span>
                     <AddressLink address={data.paymaster || ''} />
                   </div>
                 </div>
@@ -109,6 +109,7 @@ export const useRequestDrawer = () => {
   };
 
   const DrawerComponent = () => {
+    const [isOpen, setIsOpen] = useState(drawerState.isOpen);
     const title =
       drawerState.contentType === 'raw-transaction'
         ? 'Raw Transaction'
@@ -121,18 +122,23 @@ export const useRequestDrawer = () => {
               : '';
 
     return (
-      <VaulDrawer.Root open={drawerState.isOpen} onOpenChange={closeDrawer}>
+      <VaulDrawer.Root open={isOpen} onOpenChange={setIsOpen}>
         <VaulDrawer.Portal>
           <VaulDrawer.Overlay className="fixed inset-0 bg-black/40" />
-          <VaulDrawer.Content className="bg-white h-fit max-h-[80vh] fixed bottom-0 left-0 right-0 outline-none rounded-t-3xl overflow-hidden">
+          <VaulDrawer.Content className="bg-white h-fit max-h-[80vh] fixed bottom-0 left-0 right-0 outline-none rounded-t-3xl overflow-hidden z-50">
             <VaulDrawer.Handle className="mt-4 w-[67px]" />
             <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
               <VaulDrawer.Title className="text-xl font-semibold text-center flex-1">
                 {title}
               </VaulDrawer.Title>
-              <VaulDrawer.Close asChild>
-                <XIcon size={16} className="text-black cursor-pointer" />
-              </VaulDrawer.Close>
+              <button
+                onClick={() => setIsOpen(false)}
+                type="button"
+                className="text-black hover:opacity-70 transition-opacity"
+                aria-label="Close drawer"
+              >
+                <XIcon size={16} className="cursor-pointer" />
+              </button>
             </div>
 
             <div className="overflow-auto max-h-[60vh]">

@@ -99,18 +99,18 @@ export const DialogHeader = ({
 export const DialogFooter = ({
   showLegalNotice,
   actions,
-  isFixed,
+  addBackground,
 }: {
   showLegalNotice: boolean;
   actions: React.ReactNode;
-  isFixed: boolean;
+  addBackground: boolean;
 }) => {
   return (
     <div
       className={cn(
-        'mt-6 max-w-[400px]',
-        isFixed
-          ? 'fixed bottom-0 left-0 right-0 bg-white z-10 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] mx-auto'
+        'mt-6 max-w-[400px] fixed bottom-0 left-0 right-0',
+        addBackground
+          ? ' bg-white z-10 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] mx-auto'
           : '',
       )}
     >
@@ -118,7 +118,14 @@ export const DialogFooter = ({
         {showLegalNotice && <LegalNotice />}
         {actions}
         <div className="flex items-center justify-center gap-2 text-sm mt-3 -my-2">
-          Powered by <IconSophon className="w-8 h-8" />
+          <a
+            className="flex items-center gap-2"
+            href="https://sophon.xyz"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Powered by <IconSophon className="w-8 h-8" />
+          </a>
         </div>
       </div>
     </div>
@@ -233,7 +240,7 @@ export function Dialog({
         <DialogFooter
           showLegalNotice={showLegalNotice}
           actions={actions}
-          isFixed={isScrollable}
+          addBackground={isScrollable}
         />
       </div>
     </div>
