@@ -1,6 +1,6 @@
 {
   "name": "@sophon-labs/account-eip6963",
-  "version": "2.0.0-next.38",
+  "version": "2.0.0-next.39",
   "description": "EIP-6963 provider for Sophon SSO",
   "license": "MIT",
   "author": "Sophon Team",
@@ -43,19 +43,25 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
+    "------------------------- UNIT TESTING -------------------------": "",
     "test": "vitest",
     "test:watch": "vitest --watch",
-    "test:ci": "vitest run --coverage"
+    "test:ci": "vitest run --coverage",
+    "----------------------- INTEGRATION TESTING ---------------------": "",
+    "test:e2e:ci": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:dev": "npm-run-all --parallel dev test:e2e:ui"
   },
   "devDependencies": {
     "@faker-js/faker": "^10.0.0",
+    "@playwright/test": "^1.54.1",
     "@types/node": "^20.0.0",
     "tsup": "^8.5.0",
     "typescript": "^5.0.0",
     "vitest": "^3.2.4"
   },
   "dependencies": {
-    "@sophon-labs/account-core": "2.0.0-next.38",
+    "@sophon-labs/account-core": "2.0.0-next.39",
     "eventemitter3": "^5.0.1",
     "json-rpc-2.0": "^1.7.1",
     "zksync-sso": "0.4.1"

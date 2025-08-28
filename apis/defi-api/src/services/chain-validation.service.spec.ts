@@ -143,5 +143,42 @@ describe('ChainValidationService', () => {
         "Provider 'nonexistent' not found or disabled",
       );
     });
+
+    it('should validate chain without specific provider', () => {
+      providerRegistry.getEnabledProviders.mockReturnValue([
+        mockProvider1,
+        mockProvider2,
+      ]);
+
+      const result = service.validateChainForProvider(1);
+
+      expect(result.isValid).toBe(true);
+    });
+
+    it('should return error for unsupported chain without specific provider', () => {
+      providerRegistry.getEnabledProviders.mockReturnValue([
+        mockProvider1,
+        mockProvider2,
+      ]);
+
+      const result = service.validateChainForProvider(999);
+
+      expect(result.isValid).toBe(false);
+      expect(result.error).toContain(
+        'Chain 999 is not supported by any enabled provider',
+      );
+    });
+
+    it('should handle provider registry errors gracefully', () => {
+      providerRegistry.getProvider.mockImplementation(() => {
+        throw new Error('Provider error');
+      });
+
+      const result = service.validateChainForProvider(1, 'error-provider');
+      expect(result.isValid).toBe(false);
+      expect(result.error).toContain(
+        "Provider 'error-provider' not found or disabled",
+      );
+    });
   });
 });
