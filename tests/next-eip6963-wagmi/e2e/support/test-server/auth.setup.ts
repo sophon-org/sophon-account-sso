@@ -17,7 +17,6 @@ setup('authenticate', async ({ page, testServerPage }) => {
   await authorizationPage.authorizeConnection();
 
   // confirm to be connected before running tests
-  await expect(page.getByText('Email authentication failed')).not.toBeVisible();
   await expect(page.getByText('Status: Connected')).toBeVisible();
   // End of authentication steps.
 

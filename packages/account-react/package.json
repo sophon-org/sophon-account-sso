@@ -20,11 +20,13 @@
     "@sophon-labs/account-connector": "2.0.0-next.39",
     "@sophon-labs/account-core": "2.0.0-next.39",
     "axios": "^1.11.0",
-    "clsx": "^2.1.1"
+    "clsx": "^2.1.1",
+    "js-cookie": "^3.0.5"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.1.0",
     "@testing-library/react": "^14.1.0",
+    "@types/js-cookie": "^3",
     "@types/node": "^20.0.0",
     "@types/react": "^18.1.0",
     "@vitest/coverage-v8": "^1.0.0",
@@ -56,6 +58,16 @@
       "import": {
         "types": "./dist/hooks/index.d.ts",
         "import": "./dist/hooks/index.js"
+      },
+      "require": {
+        "types": "./dist/hooks/index.d.cts",
+        "require": "./dist/hooks/index.cjs"
+      }
+    },
+    "./sns": {
+      "import": {
+        "types": "./dist/sns/index.d.ts",
+        "import": "./dist/sns/index.js"
       },
       "require": {
         "types": "./dist/hooks/index.d.cts",

@@ -2,10 +2,13 @@
  * Swap functionality hooks
  */
 
-export * from './use-sophon-account';
-export * from './use-sophon-context';
-export * from './use-sophon-token';
 export * from './useERC20Approval';
 export * from './useGasEstimation';
 export * from './useGetSwapStatus';
 export * from './useGetSwapTransaction';
+export * from './useSocialAccounts';
+export * from './useSophonAccount';
+export * from './useSophonActions';
+export * from './useSophonConnector';
+export * from './useSophonContext';
+export * from './useSophonToken';
