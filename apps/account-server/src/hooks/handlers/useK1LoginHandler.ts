@@ -1,9 +1,11 @@
 'use client';
 
+import type { Address } from 'viem';
 import { MainStateMachineContext } from '@/context/state-machine-context';
 import { useEventHandler } from '@/events/hooks';
 import { useAccountContext } from '@/hooks/useAccountContext';
 import { deployAccount, getsSmartAccounts } from '@/service/account.service';
+import { AccountType } from '@/types/smart-account';
 
 /**
  * Handles every login request from k1, being possible right now
@@ -35,10 +37,9 @@ export const useK1LoginHandler = () => {
       {
         address: smartAccountAddress,
         username: 'k1',
-        owner: {
-          address: payload.address,
-          passkey: null,
-          privateKey: null,
+        signer: {
+          address: payload.address as Address,
+          accountType: payload.wallet ? AccountType.EMBEDDED : AccountType.EOA,
         },
       },
       payload.wallet,

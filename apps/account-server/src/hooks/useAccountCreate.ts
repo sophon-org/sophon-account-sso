@@ -6,8 +6,9 @@ import { eip712WalletActions } from 'viem/zksync';
 import { useWalletClient } from 'wagmi';
 import { deployModularAccount } from 'zksync-sso/client';
 import { registerNewPasskey } from 'zksync-sso/client/passkey';
-import { CONTRACTS, VIEM_CHAIN } from '@/lib/constants';
+import { CONTRACTS, SOPHON_VIEM_CHAIN } from '@/lib/constants';
 import { deployAccount, getsSmartAccounts } from '@/service/account.service';
+import { AccountType } from '@/types/smart-account';
 import { useAccountContext } from './useAccountContext';
 
 export const useAccountCreate = () => {
@@ -24,71 +25,7 @@ export const useAccountCreate = () => {
     connectedAddress?: string,
   ) => {
     if (accountType === 'passkey') {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const passkeyName = `Sophon Account ${new Date().toLocaleString()}`;
-
-        const passkeyResult = await registerNewPasskey({
-          userName: passkeyName,
-          userDisplayName: passkeyName,
-        });
-
-        const ownerKey = generatePrivateKey();
-        const ownerAccount = privateKeyToAccount(ownerKey);
-        const ownerAddress = ownerAccount.address;
-
-        const deployerClient = createWalletClient({
-          account: ownerAccount,
-          chain: VIEM_CHAIN,
-          transport: http(),
-        }).extend(eip712WalletActions());
-
-        try {
-          const deployedAccount = await deployModularAccount(deployerClient, {
-            accountFactory: CONTRACTS.accountFactory as `0x${string}`,
-            passkeyModule: {
-              location: CONTRACTS.passkey as `0x${string}`,
-              credentialId: passkeyResult.credentialId,
-              credentialPublicKey: passkeyResult.credentialPublicKey,
-            },
-            paymaster: {
-              location: CONTRACTS.accountPaymaster as `0x${string}`,
-            },
-            uniqueAccountId: passkeyResult.credentialId,
-            sessionModule: {
-              location: CONTRACTS.session as `0x${string}`,
-              initialSession: undefined,
-            },
-            owners: [ownerAddress],
-            installNoDataModules: [CONTRACTS.recovery as `0x${string}`],
-          });
-
-          setAccountAddress(deployedAccount.address);
-
-          login({
-            username: passkeyName,
-            address: deployedAccount.address,
-            owner: {
-              address: ownerAddress,
-              passkey: passkeyResult.credentialPublicKey,
-            },
-          });
-
-          setSuccess(true);
-        } catch (deployError: unknown) {
-          console.error('deployModularAccount failed:', deployError);
-          throw deployError;
-        }
-      } catch (err: unknown) {
-        console.error('Account creation failed:', err);
-        setError(
-          err instanceof Error ? err.message : 'Failed to create account',
-        );
-      } finally {
-        setLoading(false);
-      }
+      throw new Error('Passkey account creation are not supported yet');
     } else {
       try {
         setLoading(true);
@@ -113,10 +50,9 @@ export const useAccountCreate = () => {
           login({
             username: `EOA Account ${connectedAddress.slice(0, 8)}...`,
             address: accounts[0],
-            owner: {
+            signer: {
               address: connectedAddress as `0x${string}`,
-              passkey: null,
-              privateKey: null,
+              accountType: AccountType.EOA,
             },
           });
           setAccountAddress(accounts[0]);
@@ -131,10 +67,9 @@ export const useAccountCreate = () => {
           login({
             username: `EOA Account ${connectedAddress!.slice(0, 8)}...`,
             address: smartAccountAddress,
-            owner: {
+            signer: {
               address: smartAccountAddress,
-              passkey: null,
-              privateKey: null,
+              accountType: AccountType.EOA,
             },
           });
           setSuccess(true);

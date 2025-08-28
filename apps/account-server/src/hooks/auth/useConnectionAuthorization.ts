@@ -5,7 +5,7 @@ import { sendMessage } from '@/events';
 import { useAccountContext } from '@/hooks/useAccountContext';
 import { useAuthResponse } from '@/hooks/useAuthResponse';
 import { useSignature } from '@/hooks/useSignature';
-import { VIEM_CHAIN } from '@/lib/constants';
+import { SOPHON_VIEM_CHAIN } from '@/lib/constants';
 import { serverLog } from '@/lib/server-log';
 import { requestNonce, verifyAuthorization } from '@/service/token.service';
 import { windowService } from '@/service/window.service';
@@ -88,7 +88,7 @@ export function useConnectionAuthorization() {
           domain: {
             name: 'Sophon SSO',
             version: '1',
-            chainId: VIEM_CHAIN.id,
+            chainId: SOPHON_VIEM_CHAIN.id,
           },
           types: {
             Message: user?.userId

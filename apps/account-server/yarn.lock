@@ -5801,7 +5801,7 @@ __metadata:
     vitest: "npm:^3.2.4"
     wagmi: "npm:^2.15.6"
     xstate: "npm:5.20.1"
-    zksync-sso: "npm:0.4.1"
+    zksync-sso: "file:../../../zksync-sso/packages/sdk"
     zod: "npm:^3.25.71"
   languageName: unknown
   linkType: soft
@@ -16210,9 +16210,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zksync-sso@npm:0.4.1":
-  version: 0.4.1
-  resolution: "zksync-sso@npm:0.4.1"
+"zksync-sso@file:../../../zksync-sso/packages/sdk::locator=%40sophon-labs%2Faccount-server%40workspace%3A.":
+  version: 0.0.0-development
+  resolution: "zksync-sso@file:../../../zksync-sso/packages/sdk#../../../zksync-sso/packages/sdk::hash=be23f6&locator=%40sophon-labs%2Faccount-server%40workspace%3A."
   dependencies:
     "@peculiar/asn1-ecc": "npm:^2.3.13"
     "@peculiar/asn1-schema": "npm:^2.3.13"
@@ -16233,7 +16233,7 @@ __metadata:
       optional: true
     typescript:
       optional: true
-  checksum: 10c0/2a7446a7e5af2acb12e5e7ec8ee01fd0461d804c06de18497a7c1c9327a52df89ca09442c39ac83e1d1f2d6af862dbcf7fc7e1043b4c6d3066dedf986a93c8a7
+  checksum: 10c0/f9484afa6cbe27a46ae47a7dadd2727627c4d4fc4dc6f1f9012d63622eab87748af210d4c5fb94e5882919bb5242fe4f30de8789ba6454369289db76da76a8be
   languageName: node
   linkType: hard
 

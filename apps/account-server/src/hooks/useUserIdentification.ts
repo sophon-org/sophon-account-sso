@@ -58,7 +58,14 @@ export const useUserIdentification = () => {
 const getAuthMethodFromAccount = (
   account: SmartAccount,
 ): 'wallet' | 'passkey' | 'social' => {
-  if (account.owner.accountType === AccountType.Passkey) return 'passkey';
-  if (account.owner.accountType === AccountType.EMBEDDED) return 'social';
+  if (account.signer?.accountType === AccountType.Passkey) return 'passkey';
+  if (account.signer?.accountType === AccountType.EMBEDDED) return 'social';
   return 'wallet'; // fallback
+};
+
+export const isEOABasedAccount = (account: SmartAccount) => {
+  return (
+    account.signer?.accountType === AccountType.EOA ||
+    account.signer?.accountType === AccountType.EMBEDDED
+  );
 };

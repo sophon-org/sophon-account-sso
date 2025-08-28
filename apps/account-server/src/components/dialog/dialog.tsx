@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { sendMessage } from '@/events';
+import { usePasskeyRegistration } from '@/hooks/usePasskeyRegistration';
 import { trackDialogInteraction } from '@/lib/analytics';
 import { cn } from '@/lib/cn';
 import { IconBack } from '../icons/icon-back';
@@ -29,6 +30,11 @@ export const DialogHeader = ({
   dialogType?: string;
   isFixed?: boolean;
 }) => {
+  const { addPasskey } = usePasskeyRegistration();
+  const handleAddPasskey = async () => {
+    addPasskey();
+  };
+
   const handleDisconnect = () => {
     sendMessage('smart-contract.logout', null);
   };
@@ -87,6 +93,9 @@ export const DialogHeader = ({
               </DropdownMenuItem>
               <DropdownMenuItem onClick={handleDisconnect}>
                 Log out
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleAddPasskey}>
+                Add passkey
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

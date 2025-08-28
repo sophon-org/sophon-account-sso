@@ -8,13 +8,16 @@ import { toAccount } from 'viem/accounts';
 import { http, useAccount, useWalletClient } from 'wagmi';
 import { createZksyncEcdsaClient } from 'zksync-sso/client/ecdsa';
 import { createZksyncPasskeyClient } from 'zksync-sso/client/passkey';
-import { CONTRACTS, VIEM_CHAIN } from '@/lib/constants';
+import { CONTRACTS, SOPHON_VIEM_CHAIN } from '@/lib/constants';
+import { stringToU8 } from '@/lib/passkey';
 import { verifySignature } from '@/lib/smart-contract';
 import type {
   MessageSigningRequest,
   TypedDataSigningRequest,
 } from '@/types/auth';
+import { AccountType, type PasskeySigner } from '@/types/smart-account';
 import { useAccountContext } from './useAccountContext';
+import { isEOABasedAccount } from './useUserIdentification';
 
 // TODO: remove this in the future, no need for extra calls on RPC
 const VERIFY_SIGNATURE = false;
@@ -36,7 +39,7 @@ export const useSignature = () => {
         throw new Error('No account address available');
       }
 
-      const isEOAAccount = !account?.owner.passkey;
+      const isEOAAccount = isEOABasedAccount(account!);
 
       let signature: string;
 
@@ -101,7 +104,7 @@ export const useSignature = () => {
         const client = await createZksyncEcdsaClient({
           address: account!.address,
           owner: localAccount,
-          chain: VIEM_CHAIN,
+          chain: SOPHON_VIEM_CHAIN,
           transport: http(),
           contracts: {
             session: CONTRACTS.session,
@@ -129,17 +132,17 @@ export const useSignature = () => {
           if (!verified) throw new Error('Failed to verify message');
         }
       } else {
-        if (!account.owner.passkey) {
+        if (account?.signer?.accountType !== AccountType.Passkey) {
           throw new Error('No passkey data available for signing');
         }
 
         const client = createZksyncPasskeyClient({
           address: account.address,
-          credentialPublicKey: account.owner.passkey,
-          userName: account.username || 'Sophon User',
-          userDisplayName: account.username || 'Sophon User',
+          credentialPublicKey: (account.signer as PasskeySigner).passkey,
+          userName: (account.signer as PasskeySigner).username,
+          userDisplayName: (account.signer as PasskeySigner).userDisplayName,
           contracts: CONTRACTS,
-          chain: VIEM_CHAIN,
+          chain: SOPHON_VIEM_CHAIN,
           transport: http(),
         });
 
@@ -184,7 +187,7 @@ export const useSignature = () => {
         throw new Error('No account address available');
       }
 
-      const isEOAAccount = !account?.owner.passkey;
+      const isEOAAccount = isEOABasedAccount(account!);
 
       let signature: string;
 
@@ -250,7 +253,7 @@ export const useSignature = () => {
         const client = await createZksyncEcdsaClient({
           address: account!.address,
           owner: localAccount,
-          chain: VIEM_CHAIN,
+          chain: SOPHON_VIEM_CHAIN,
           transport: http(),
           contracts: {
             session: CONTRACTS.session,
@@ -259,21 +262,22 @@ export const useSignature = () => {
 
         signature = await client.signMessage({ message: payload.message });
       } else {
-        if (!account.owner.passkey) {
+        if (account!.signer?.accountType !== AccountType.Passkey) {
           throw new Error('No passkey data available for signing');
         }
 
+        const signer = account!.signer as PasskeySigner;
         const client = createZksyncPasskeyClient({
-          address: account.address,
-          credentialPublicKey: account.owner.passkey,
-          userName: account.username || 'Sophon User',
-          userDisplayName: account.username || 'Sophon User',
+          address: account!.address,
+          credential: signer.credential,
+          credentialPublicKey: stringToU8(signer.passkey),
+          userName: signer.username,
+          userDisplayName: signer.userDisplayName,
           contracts: CONTRACTS,
-          chain: VIEM_CHAIN,
+          chain: SOPHON_VIEM_CHAIN,
           transport: http(),
         });
 
-        console.log('passkey signature');
         signature = await client.signMessage({ message: payload.message });
 
         if (VERIFY_SIGNATURE) {

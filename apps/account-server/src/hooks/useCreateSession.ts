@@ -1,7 +1,8 @@
 import { http, parseEther } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { createZksyncPasskeyClient } from 'zksync-sso/client/passkey';
-import { CONTRACTS, VIEM_CHAIN } from '@/lib/constants';
+import { CONTRACTS, SOPHON_VIEM_CHAIN } from '@/lib/constants';
+import { AccountType, type PasskeySigner } from '@/types/smart-account';
 import { useAccountContext } from './useAccountContext';
 
 export const useCreateSession = () => {
@@ -17,7 +18,11 @@ export const useCreateSession = () => {
       const sessionSigner = privateKeyToAccount(sessionKey);
 
       // ✅ Get passkey data from account store (now stored as hex, retrieved as bytes)
-      if (!account || !account.owner.passkey || !account.address) {
+      if (
+        !account ||
+        account.signer?.accountType !== AccountType.Passkey ||
+        !account.address
+      ) {
         throw new Error(
           'No passkey data available - account may not be fully created yet',
         );
@@ -27,11 +32,11 @@ export const useCreateSession = () => {
 
       const client = createZksyncPasskeyClient({
         address: accountAddress,
-        credentialPublicKey: account.owner.passkey,
-        userName: account.username || 'Sophon User',
-        userDisplayName: account.username || 'Sophon User',
+        credentialPublicKey: (account.signer as PasskeySigner).passkey,
+        userName: (account.signer as PasskeySigner).username,
+        userDisplayName: (account.signer as PasskeySigner).userDisplayName,
         contracts: CONTRACTS,
-        chain: VIEM_CHAIN,
+        chain: SOPHON_VIEM_CHAIN,
         transport: http(),
       });
 

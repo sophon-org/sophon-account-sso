@@ -7,7 +7,9 @@ import { useAccount, useWalletClient } from 'wagmi';
 import { createZksyncEcdsaClient } from 'zksync-sso/client/ecdsa';
 import { createZksyncPasskeyClient } from 'zksync-sso/client/passkey';
 import { useAccountContext } from '@/hooks/useAccountContext';
-import { CONTRACTS, VIEM_CHAIN } from '@/lib/constants';
+import { CONTRACTS, SOPHON_VIEM_CHAIN } from '@/lib/constants';
+import { AccountType, type PasskeySigner } from '@/types/smart-account';
+import { isEOABasedAccount } from './useUserIdentification';
 
 export function useEstimateFee() {
   const { account } = useAccountContext();
@@ -24,7 +26,7 @@ export function useEstimateFee() {
       throw new Error('No account address available');
     }
     try {
-      const isEOAAccount = !account?.owner.passkey;
+      const isEOAAccount = isEOABasedAccount(account!);
       let gasPrice: bigint = BigInt(0);
       if (primaryWallet && isEthereumWallet(primaryWallet)) {
         try {
@@ -60,7 +62,7 @@ export function useEstimateFee() {
           const ecdsaClient = await createZksyncEcdsaClient({
             address: account?.address as `0x${string}`,
             owner: localAccount,
-            chain: VIEM_CHAIN,
+            chain: SOPHON_VIEM_CHAIN,
             transport: http(),
             contracts: {
               session: CONTRACTS.session,
@@ -102,7 +104,7 @@ export function useEstimateFee() {
         const client = await createZksyncEcdsaClient({
           address: account?.address as `0x${string}`,
           owner: localAccount,
-          chain: VIEM_CHAIN,
+          chain: SOPHON_VIEM_CHAIN,
           transport: http(),
           contracts: {
             session: CONTRACTS.session,
@@ -111,17 +113,17 @@ export function useEstimateFee() {
 
         gasPrice = await client.getGasPrice();
       } else {
-        if (!account.owner.passkey) {
+        if (account?.signer?.accountType !== AccountType.Passkey) {
           throw new Error('No passkey data available');
         }
 
         const client = createZksyncPasskeyClient({
           address: account.address,
-          credentialPublicKey: account.owner.passkey,
-          userName: account.username || 'Sophon User',
-          userDisplayName: account.username || 'Sophon User',
+          credentialPublicKey: (account.signer as PasskeySigner).passkey,
+          userName: (account.signer as PasskeySigner).username,
+          userDisplayName: (account.signer as PasskeySigner).userDisplayName,
           contracts: CONTRACTS,
-          chain: VIEM_CHAIN,
+          chain: SOPHON_VIEM_CHAIN,
           transport: http(),
         });
 

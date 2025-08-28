@@ -75,7 +75,6 @@ export default function TransactionRequestView() {
         ) : enrichedTransactionRequest?.transactionType ===
           TransactionType.CONTRACT ? (
           // Contract transaction display
-          // Contract transaction display
           <div className="text-sm text-black flex flex-col gap-3">
             <div className="text-left">
               <p className="text-sm font-bold">Interacting with:</p>

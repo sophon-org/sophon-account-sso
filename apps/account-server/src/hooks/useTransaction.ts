@@ -9,9 +9,12 @@ import { createZksyncPasskeyClient } from 'zksync-sso/client/passkey';
 import { MainStateMachineContext } from '@/context/state-machine-context';
 import { useAccountContext } from '@/hooks/useAccountContext';
 import { trackTransactionResult } from '@/lib/analytics';
-import { CONTRACTS, VIEM_CHAIN } from '@/lib/constants';
+import { CONTRACTS, SOPHON_VIEM_CHAIN } from '@/lib/constants';
+import { stringToU8 } from '@/lib/passkey';
 import { windowService } from '@/service/window.service';
 import type { IncomingRequest, TransactionRequest } from '@/types/auth';
+import { AccountType, type PasskeySigner } from '@/types/smart-account';
+import { isEOABasedAccount } from './useUserIdentification';
 
 export function useTransaction() {
   const { account } = useAccountContext();
@@ -32,7 +35,7 @@ export function useTransaction() {
       throw new Error('No account address available');
     }
     try {
-      const isEOAAccount = !account?.owner.passkey;
+      const isEOAAccount = isEOABasedAccount(account!);
       let txHash: string = '';
       if (primaryWallet && isEthereumWallet(primaryWallet)) {
         try {
@@ -68,7 +71,7 @@ export function useTransaction() {
           const ecdsaClient = await createZksyncEcdsaClient({
             address: account?.address as `0x${string}`,
             owner: localAccount,
-            chain: VIEM_CHAIN,
+            chain: SOPHON_VIEM_CHAIN,
             transport: http(),
             contracts: {
               session: CONTRACTS.session,
@@ -126,7 +129,7 @@ export function useTransaction() {
         const client = await createZksyncEcdsaClient({
           address: account?.address as `0x${string}`,
           owner: localAccount,
-          chain: VIEM_CHAIN,
+          chain: SOPHON_VIEM_CHAIN,
           transport: http(),
           contracts: {
             session: CONTRACTS.session,
@@ -173,17 +176,20 @@ export function useTransaction() {
         txHash = await client.sendTransaction(txData);
       } else {
         console.log('Sending transaction with Passkey...');
-        if (!account.owner.passkey) {
+        if (account!.signer?.accountType !== AccountType.Passkey) {
           throw new Error('No passkey data available');
         }
 
+        const signer = account!.signer as PasskeySigner;
+        console.log('signer', signer);
         const client = createZksyncPasskeyClient({
-          address: account.address,
-          credentialPublicKey: account.owner.passkey,
-          userName: account.username || 'Sophon User',
-          userDisplayName: account.username || 'Sophon User',
+          address: account!.address,
+          credentialPublicKey: stringToU8(signer.passkey),
+          credential: signer.credential,
+          userName: signer.username,
+          userDisplayName: signer.userDisplayName,
           contracts: CONTRACTS,
-          chain: VIEM_CHAIN,
+          chain: SOPHON_VIEM_CHAIN,
           transport: http(),
         });
 
