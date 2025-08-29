@@ -270,7 +270,7 @@ export const useSignature = () => {
         const signer = account!.signer as PasskeySigner;
         const client = createZksyncPasskeyClient({
           address: account!.address,
-          credential: signer.credential,
+          //credential: signer.credential,
           credentialPublicKey: stringToU8(signer.passkey),
           userName: signer.username,
           userDisplayName: signer.userDisplayName,
