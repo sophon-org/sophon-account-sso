@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { hexToString, toHex } from 'viem';
+import { isValidPaymaster } from '@/lib/paymaster';
 import { windowService } from '@/service/window.service';
 import type {
   AuthenticationRequest,
@@ -122,11 +123,37 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
               ) {
                 // ZKsync Transaction Type has addresses as uint, and this breaks the rest of the flow. So we convert here
                 const transactionData = { ...typedData.message };
-                transactionData.from = toHex(BigInt(transactionData.from));
-                transactionData.to = toHex(BigInt(transactionData.to));
-                transactionData.paymaster = toHex(
-                  BigInt(transactionData.paymaster),
-                );
+                transactionData.from = toHex(BigInt(transactionData.from), {
+                  size: 20,
+                });
+                transactionData.to = toHex(BigInt(transactionData.to), {
+                  size: 20,
+                });
+                transactionData.value = toHex(BigInt(transactionData.value));
+
+                // Handle paymaster conversion with error handling
+                let convertedPaymaster: string | undefined;
+                try {
+                  if (transactionData.paymaster) {
+                    convertedPaymaster = toHex(
+                      BigInt(transactionData.paymaster),
+                      { size: 20 },
+                    );
+                  }
+                } catch (error) {
+                  console.warn(
+                    'Invalid paymaster value:',
+                    transactionData.paymaster,
+                    error,
+                  );
+                  convertedPaymaster = undefined;
+                }
+
+                // only use the converted paymaster if it's valid
+                transactionData.paymaster =
+                  convertedPaymaster && isValidPaymaster(convertedPaymaster)
+                    ? convertedPaymaster
+                    : undefined;
 
                 // not elegant, but it works
                 transactionData.transactionType = 'eip712';
