@@ -18,7 +18,7 @@ export const isValidPartner = async (
   const baseDns = AvailableCDNURL[network];
 
   try {
-    const url = `https://${baseDns}/partners/sdk/${partnerId}.json`;
+    const url = `${baseDns}/partners/sdk/${partnerId}.json`;
     const response = await fetch(url);
     return response.ok;
   } catch (error) {

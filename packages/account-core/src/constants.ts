@@ -31,6 +31,14 @@ export const AvailableCDNURL: Record<SophonNetworkType, string> = {
 };
 
 /**
+ * Mapping of possivle swap urls
+ */
+export const SwapAPIURL: Record<SophonNetworkType, string> = {
+  mainnet: 'https://api.swap.sophon.xyz',
+  testnet: 'https://api.swap.staging.sophon.xyz',
+};
+
+/**
  * Inline Sophon icon for mainnet
  */
 export const SophonIcon =
@@ -61,3 +69,5 @@ export const MAINNET_HEX_CHAIN_ID = `0x${Number(MAINNET_CHAIN_ID).toString(16)}`
  * Sophon TestNet chain ID in hex, helpful for direct RPC calls
  */
 export const TESTNET_HEX_CHAIN_ID = `0x${Number(TESTNET_CHAIN_ID).toString(16)}`;
+
+export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';

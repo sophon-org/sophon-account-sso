@@ -60,17 +60,12 @@ export const signTransaction = async (
       txType: 0x71,
       from: preparedTransaction.from,
       to: preparedTransaction.to,
-      // gasLimit:  || 0,
       gasPerPubdataByteLimit: gasPerPubdataByteLimit,
       maxFeePerGas,
       maxPriorityFeePerGas,
-      // paymaster:
-      //   preparedTransaction.customData?.paymasterParams?.paymaster || 0,
       nonce: preparedTransaction.nonce || 0,
       value: preparedTransaction.value || 0,
       data: preparedTransaction.data || '0x',
-      // paymasterInput:
-      //   preparedTransaction.customData?.paymasterParams?.paymasterInput || '0x',
     },
   };
 

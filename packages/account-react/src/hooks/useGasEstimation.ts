@@ -20,7 +20,7 @@ export function useGasEstimation(
     account: from,
     to,
     data: data as `0x${string}` | undefined,
-    value: value as bigint | undefined,
+    value: value,
     chainId,
     query: {
       enabled: enabled && !!to && !!data,

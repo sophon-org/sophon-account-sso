@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useSophonContext } from '../hooks/use-sophon-context';
+import { useSophonContext } from '../hooks/useSophonContext';
 
 export const SophonMessageHandler = () => {
   const { updateToken, authServerUrl } = useSophonContext();
