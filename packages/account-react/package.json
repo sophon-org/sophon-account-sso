@@ -70,8 +70,8 @@
         "import": "./dist/sns/index.js"
       },
       "require": {
-        "types": "./dist/hooks/index.d.cts",
-        "require": "./dist/hooks/index.cjs"
+        "types": "./dist/sns/index.d.cts",
+        "require": "./dist/sns/index.cjs"
       }
     },
     "./components": {
