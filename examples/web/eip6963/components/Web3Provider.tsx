@@ -7,7 +7,7 @@ import type { ReactNode } from 'react';
 import { sophonTestnet } from 'viem/chains';
 import { createConfig, http, type State, WagmiProvider } from 'wagmi';
 
-createSophonEIP6963Emitter('testnet');
+createSophonEIP6963Emitter('testnet', 'http://localhost:3000');
 
 export const projectId = '760fb7a448e58431c9cfbab80743ab1c';
 

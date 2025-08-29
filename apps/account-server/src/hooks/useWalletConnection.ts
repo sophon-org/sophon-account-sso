@@ -102,6 +102,11 @@ export const useWalletConnection = () => {
 
             trackAuthCompleted('wallet');
 
+            // Send login message since onConnect callback won't fire for already connected wallets
+            sendMessage('k1.login', {
+              address: address!,
+            });
+
             // Update user properties with wallet type
             updateUserProperties({
               walletType: connectorName,
