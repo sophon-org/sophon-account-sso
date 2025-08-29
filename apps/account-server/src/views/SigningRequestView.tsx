@@ -37,8 +37,8 @@ export default function SigningRequestView({
       {typedDataSigning && (
         <div>
           <Card>
-            <div className="w-full flex justify-between px-6 py-4">
-              <p className="text-xs font-bold">Primary Type</p>
+            <div className="w-full flex justify-between items-center px-6 py-4">
+              <p className="text-sm font-bold">Primary Type</p>
               <p className="text-sm text-black">
                 {typedDataSigning.primaryType}
               </p>

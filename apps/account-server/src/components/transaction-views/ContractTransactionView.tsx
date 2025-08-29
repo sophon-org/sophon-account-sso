@@ -1,4 +1,4 @@
-import { truncateName } from '@/lib/formatting';
+import { truncateContractName } from '@/lib/formatting';
 import type { EnrichedContractTransaction } from '@/types/auth';
 import { AddressLink, renderParameterValue } from './shared';
 
@@ -14,10 +14,8 @@ export default function ContractTransactionView({
       <div className="text-left flex flex-col gap-1">
         <p className="text-sm font-bold">Interacting with:</p>
         <p className="text-sm text-black">
-          <span className="font-bold truncate block">
-            {truncateName(transaction.contractName || '')}
-          </span>{' '}
-          @ <AddressLink address={transaction.recipient} />
+          <span>{truncateContractName(transaction.contractName || '')}</span> @{' '}
+          <AddressLink address={transaction.recipient} />
         </p>
       </div>
 
@@ -44,8 +42,9 @@ export default function ContractTransactionView({
       {transaction.displayValue !== '0' && (
         <div className="text-left">
           <p className="text-sm text-black">
-            You are sending {transaction.displayValue} SOPH for this transaction
-            to the contract above.
+            You are sending{' '}
+            <span className="font-bold">{transaction.displayValue} SOPH</span>{' '}
+            for this transaction to the contract above.
           </p>
         </div>
       )}

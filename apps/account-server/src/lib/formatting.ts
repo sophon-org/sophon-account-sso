@@ -19,11 +19,7 @@ export function maskEmail(email: string) {
   return `${localPart.slice(0, 2)}...${localPart.slice(-1)}@${domain}`;
 }
 
-export function truncateName(
-  text: string,
-  startLength: number = 10,
-  endLength: number = 10,
-) {
-  if (text.length <= startLength + endLength + 3) return text;
-  return `${text.slice(0, startLength)}...${text.slice(-endLength)}`;
+export function truncateContractName(text: string) {
+  const name = text.replace(/.*\.(sol|vy):/, '');
+  return name;
 }

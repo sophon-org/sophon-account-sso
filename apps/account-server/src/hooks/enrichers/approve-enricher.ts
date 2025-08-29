@@ -1,4 +1,4 @@
-import { formatEther } from 'viem';
+import { formatEther, formatUnits } from 'viem';
 import type {
   EnrichedApprovalTransaction,
   TransactionRequest,
@@ -22,7 +22,10 @@ export const enrichApprovalTransaction = async (
     recipient: transactionRequest.to,
     token: {
       ...token,
-      currentBalance: currentBalance || '0',
+      currentBalance: formatUnits(
+        BigInt(currentBalance || '0'),
+        Number(token.tokenDecimal),
+      ),
     },
     displayValue: formatEther(BigInt(transactionRequest.value || '0')),
     spender: {

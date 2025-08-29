@@ -9,9 +9,9 @@ interface ContractWarningProps {
 export default function ContractWarning({ transaction }: ContractWarningProps) {
   if (transaction.transactionType === TransactionType.APPROVE) {
     return (
-      <Card elevated className="p-4 flex items-center gap-5 w-full">
+      <Card elevated className="py-4 px-6 flex items-center gap-4 w-full">
         <InfoIcon weight="fill" className="w-6 h-6 text-[#A3A2A0]" />
-        <p className="text-xs text-black flex-1 text-left">
+        <p className="text-xs text-black flex-1 text-left max-w-[264px]">
           You will give permission for the following contract to spend tokens on
           your behalf.
         </p>
@@ -25,9 +25,9 @@ export default function ContractWarning({ transaction }: ContractWarningProps) {
     }
 
     return (
-      <Card elevated className="p-4 flex items-center gap-5 w-full">
+      <Card elevated className="py-4 px-6 flex items-center gap-4 w-full">
         <WarningCircleIcon weight="fill" className="w-6 h-6 text-red-500" />
-        <p className="text-xs text-black flex-1 text-left">
+        <p className="text-xs text-black flex-1 text-left max-w-[264px]">
           This contract is not verified, and for this reason it is not possible
           to show the transaction details. Make sure you trust it before
           proceeding.
