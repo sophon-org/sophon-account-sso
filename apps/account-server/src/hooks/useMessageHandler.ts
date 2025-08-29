@@ -43,6 +43,8 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
   useEffect(() => {
     // biome-ignore lint/suspicious/noExplicitAny: review that in the future TODO
     const messageHandler = (data: any) => {
+      console.log('🔥 WebView messageHandler received:', JSON.stringify(data, null, 2));
+      
       // Store the incoming request if it's an RPC request
       if (data?.id && data?.content) {
         const method = data.content?.action?.method;
@@ -178,7 +180,9 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
             console.error('Invalid params for eth_signTypedData_v4:', params);
           }
         } else if (method === 'eth_sendTransaction') {
+          console.log('🔥 Processing eth_sendTransaction!');
           const params = data.content.action?.params;
+          console.log('🔥 Transaction params:', JSON.stringify(params, null, 2));
 
           if (params && params.length >= 1) {
             let txData = params[0];

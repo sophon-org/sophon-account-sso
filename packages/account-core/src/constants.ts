@@ -9,7 +9,7 @@ export type SophonNetworkType = 'mainnet' | 'testnet';
  */
 export const AccountServerURL: Record<SophonNetworkType, string> = {
   mainnet: 'https://my.sophon.xyz',
-  testnet: 'https://my.staging.sophon.xyz',
+  testnet: 'http://localhost:3000',
 };
 
 /**

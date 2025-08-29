@@ -16,6 +16,12 @@ export class WebViewCommunicator implements Communicator {
   >();
 
   postMessage = (message: Message) => {
+    console.log('🔥 WebViewCommunicator.postMessage called:', {
+      messageId: message.id,
+      messageMethod: (message as any).method, // Fix TypeScript error
+      timestamp: new Date().toISOString()
+    });
+    
     this.waitContextToBeReady().then(() => {
       sendUIMessage('outgoingRpc', message);
     });
@@ -62,7 +68,10 @@ export class WebViewCommunicator implements Communicator {
   };
 
   private readonly waitContextToBeReady = async () => {
+    console.log('🔥 waitContextToBeReady called - isReady:', this.isReady);
+    
     if (this.isReady) {
+      console.log('🔥 Context ready - showing modal');
       sendUIMessage('showModal', {});
       return;
     }
@@ -74,6 +83,7 @@ export class WebViewCommunicator implements Communicator {
         this.isReady = true;
       });
 
+      console.log('🔥 Context not ready - showing modal and waiting');
       sendUIMessage('showModal', {});
 
       setTimeout(() => {

@@ -39,19 +39,23 @@ export default function EmbeddedRoot({ partnerId }: EmbeddedRootProps) {
   useRNHandler(
     'openModal',
     useCallback(() => {
+      console.log('🔥 OPEN MODAL');
       setOpen(true);
     }, []),
   );
 
   useEffect(() => {
+    console.log('🔥 STATE', state);
     serverLog(`>>> 🔥 <<< STATE ${JSON.stringify(state, null, 2)}`);
   }, [state]);
 
   useEventHandler('flow.complete', () => {
+    console.log('🔥 FLOW COMPLETE');
     setOpen(false);
   });
 
   useEventHandler('modal.open', () => {
+    console.log('🔥 MODAL OPEN');
     setOpen(true);
   });
 
@@ -60,6 +64,7 @@ export default function EmbeddedRoot({ partnerId }: EmbeddedRootProps) {
   const handleCloseModal = (isOpen: boolean) => {
     setOpen(isOpen);
     if (!isOpen) {
+      console.log('🔥 CANCEL FLOW');
       actorRef.send({ type: 'CANCEL' });
     }
   };
