@@ -1,7 +1,7 @@
 import { http, parseEther } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { createZksyncPasskeyClient } from 'zksync-sso/client/passkey';
-import { CONTRACTS, VIEM_CHAIN } from '@/lib/constants';
+import { CONTRACTS, SOPHON_VIEM_CHAIN } from '@/lib/constants';
 import { useAccountContext } from './useAccountContext';
 
 export const useCreateSession = () => {
@@ -31,7 +31,7 @@ export const useCreateSession = () => {
         userName: account.username || 'Sophon User',
         userDisplayName: account.username || 'Sophon User',
         contracts: CONTRACTS,
-        chain: VIEM_CHAIN,
+        chain: SOPHON_VIEM_CHAIN,
         transport: http(),
       });
 

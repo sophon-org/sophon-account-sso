@@ -8,7 +8,7 @@ import { toAccount } from 'viem/accounts';
 import { http, useAccount, useWalletClient } from 'wagmi';
 import { createZksyncEcdsaClient } from 'zksync-sso/client/ecdsa';
 import { createZksyncPasskeyClient } from 'zksync-sso/client/passkey';
-import { CONTRACTS, VIEM_CHAIN } from '@/lib/constants';
+import { CONTRACTS, SOPHON_VIEM_CHAIN } from '@/lib/constants';
 import { verifySignature } from '@/lib/smart-contract';
 import type {
   MessageSigningRequest,
@@ -101,7 +101,7 @@ export const useSignature = () => {
         const client = await createZksyncEcdsaClient({
           address: account!.address,
           owner: localAccount,
-          chain: VIEM_CHAIN,
+          chain: SOPHON_VIEM_CHAIN,
           transport: http(),
           contracts: {
             session: CONTRACTS.session,
@@ -139,7 +139,7 @@ export const useSignature = () => {
           userName: account.username || 'Sophon User',
           userDisplayName: account.username || 'Sophon User',
           contracts: CONTRACTS,
-          chain: VIEM_CHAIN,
+          chain: SOPHON_VIEM_CHAIN,
           transport: http(),
         });
 
@@ -250,7 +250,7 @@ export const useSignature = () => {
         const client = await createZksyncEcdsaClient({
           address: account!.address,
           owner: localAccount,
-          chain: VIEM_CHAIN,
+          chain: SOPHON_VIEM_CHAIN,
           transport: http(),
           contracts: {
             session: CONTRACTS.session,
@@ -269,7 +269,7 @@ export const useSignature = () => {
           userName: account.username || 'Sophon User',
           userDisplayName: account.username || 'Sophon User',
           contracts: CONTRACTS,
-          chain: VIEM_CHAIN,
+          chain: SOPHON_VIEM_CHAIN,
           transport: http(),
         });
 

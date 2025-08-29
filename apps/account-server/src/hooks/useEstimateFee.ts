@@ -2,7 +2,7 @@ import { useDynamicContext } from '@dynamic-labs/sdk-react-core';
 import { useCallback, useState } from 'react';
 import { createPublicClient, http } from 'viem';
 import { useAccountContext } from '@/hooks/useAccountContext';
-import { VIEM_CHAIN } from '@/lib/constants';
+import { SOPHON_VIEM_CHAIN } from '@/lib/constants';
 
 interface EstimateFeeParams {
   to: string;
@@ -24,7 +24,7 @@ export function useEstimateFee() {
       }
       try {
         const publicClient = createPublicClient({
-          chain: VIEM_CHAIN,
+          chain: SOPHON_VIEM_CHAIN,
           transport: http(),
         });
 

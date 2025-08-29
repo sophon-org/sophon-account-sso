@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { createPublicClient, http } from 'viem';
 import { fetchAccount } from 'zksync-sso/client';
-import { CONTRACTS, VIEM_CHAIN } from '@/lib/constants';
+import { CONTRACTS, SOPHON_VIEM_CHAIN } from '@/lib/constants';
 import { useAccountContext } from './useAccountContext';
 
 export const useAccountLogin = () => {
@@ -36,7 +36,7 @@ export const useAccountLogin = () => {
       }
 
       const publicClient = createPublicClient({
-        chain: VIEM_CHAIN,
+        chain: SOPHON_VIEM_CHAIN,
         transport: http(),
       });
 

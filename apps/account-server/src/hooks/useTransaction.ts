@@ -9,7 +9,7 @@ import { createZksyncPasskeyClient } from 'zksync-sso/client/passkey';
 import { MainStateMachineContext } from '@/context/state-machine-context';
 import { useAccountContext } from '@/hooks/useAccountContext';
 import { trackTransactionResult } from '@/lib/analytics';
-import { CONTRACTS, VIEM_CHAIN } from '@/lib/constants';
+import { CONTRACTS, SOPHON_VIEM_CHAIN } from '@/lib/constants';
 import { windowService } from '@/service/window.service';
 import type { IncomingRequest, TransactionRequest } from '@/types/auth';
 
@@ -68,7 +68,7 @@ export function useTransaction() {
           const ecdsaClient = await createZksyncEcdsaClient({
             address: account?.address as `0x${string}`,
             owner: localAccount,
-            chain: VIEM_CHAIN,
+            chain: SOPHON_VIEM_CHAIN,
             transport: http(),
             contracts: {
               session: CONTRACTS.session,
@@ -126,7 +126,7 @@ export function useTransaction() {
         const client = await createZksyncEcdsaClient({
           address: account?.address as `0x${string}`,
           owner: localAccount,
-          chain: VIEM_CHAIN,
+          chain: SOPHON_VIEM_CHAIN,
           transport: http(),
           contracts: {
             session: CONTRACTS.session,
@@ -183,7 +183,7 @@ export function useTransaction() {
           userName: account.username || 'Sophon User',
           userDisplayName: account.username || 'Sophon User',
           contracts: CONTRACTS,
-          chain: VIEM_CHAIN,
+          chain: SOPHON_VIEM_CHAIN,
           transport: http(),
         });
 

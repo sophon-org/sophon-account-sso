@@ -14,7 +14,7 @@ import { eip712WalletActions } from 'viem/zksync';
 import { createZksyncPasskeyClient } from 'zksync-sso/client/passkey';
 import { createZksyncRecoveryGuardianClient } from 'zksync-sso/client/recovery';
 import { env } from '@/env';
-import { CONTRACTS, VIEM_CHAIN } from '@/lib/constants';
+import { CONTRACTS, SOPHON_VIEM_CHAIN } from '@/lib/constants';
 import { useAccountContext } from './useAccountContext';
 
 // Extend Window interface for ethereum provider
@@ -27,7 +27,7 @@ declare global {
 }
 
 // Supported chains for Sophon
-export const supportedChains = [VIEM_CHAIN];
+export const supportedChains = [SOPHON_VIEM_CHAIN];
 export type SupportedChainId = (typeof supportedChains)[number]['id'];
 
 // Chain parameters
