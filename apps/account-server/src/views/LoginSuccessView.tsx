@@ -9,6 +9,7 @@ import {
 import VerificationImage from '@/components/ui/verification-image';
 import { useAccountContext } from '@/hooks/useAccountContext';
 import TestSessionView from './TestSessionView';
+import { env } from '@/env';
 
 export default function LoginSuccessView() {
   const { account } = useAccountContext();
@@ -38,7 +39,7 @@ export default function LoginSuccessView() {
           <TooltipContent>Copied!</TooltipContent>
         </Tooltip>
       </div>
-      <TestSessionView />
+      {env.NEXT_PUBLIC_SHOW_TEST_SCREEN && <TestSessionView />}
     </div>
   );
 }

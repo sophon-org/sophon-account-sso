@@ -29,6 +29,10 @@ export const env = createEnv({
     NEXT_PUBLIC_SERVER_LOGS_ENABLED: z
       .string()
       .transform((it) => it === 'true'),
+    NEXT_PUBLIC_SHOW_TEST_SCREEN: z
+      .string()
+      .optional()
+      .transform((it) => it === 'true'),
   },
 
   /**
@@ -48,6 +52,7 @@ export const env = createEnv({
       process.env.NEXT_PUBLIC_AUTH_SERVER_ENDPOINT,
     NEXT_PUBLIC_SERVER_LOGS_ENABLED:
       process.env.NEXT_PUBLIC_SERVER_LOGS_ENABLED,
+    NEXT_PUBLIC_SHOW_TEST_SCREEN: process.env.NEXT_PUBLIC_SHOW_TEST_SCREEN,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
