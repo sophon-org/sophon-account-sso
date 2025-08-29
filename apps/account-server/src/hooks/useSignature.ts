@@ -30,7 +30,7 @@ export const useSignature = () => {
   const { data: walletClient } = useWalletClient();
   const { primaryWallet } = useDynamicContext();
 
-  const signTypeData = async (payload: TypedDataSigningRequest) => {
+  const signTypedData = async (payload: TypedDataSigningRequest) => {
     try {
       setIsSigning(true);
 
@@ -132,21 +132,22 @@ export const useSignature = () => {
           if (!verified) throw new Error('Failed to verify message');
         }
       } else {
-        if (account?.signer?.accountType !== AccountType.Passkey) {
+        if (account?.signer?.accountType !== AccountType.PASSKEY) {
           throw new Error('No passkey data available for signing');
         }
 
+        const signer = account!.signer as PasskeySigner;
         const client = createZksyncPasskeyClient({
-          address: account.address,
-          credentialPublicKey: (account.signer as PasskeySigner).passkey,
-          userName: (account.signer as PasskeySigner).username,
-          userDisplayName: (account.signer as PasskeySigner).userDisplayName,
+          address: account!.address,
+          credentialPublicKey: stringToU8(signer.passkey),
+          //credential: signer.credential,
+          userName: signer.username,
+          userDisplayName: signer.userDisplayName,
           contracts: CONTRACTS,
           chain: SOPHON_VIEM_CHAIN,
           transport: http(),
         });
 
-        console.log('passkey signature');
         signature = await client.signTypedData({
           domain: payload.domain,
           types: payload.types,
@@ -262,7 +263,7 @@ export const useSignature = () => {
 
         signature = await client.signMessage({ message: payload.message });
       } else {
-        if (account!.signer?.accountType !== AccountType.Passkey) {
+        if (account!.signer?.accountType !== AccountType.PASSKEY) {
           throw new Error('No passkey data available for signing');
         }
 
@@ -302,7 +303,7 @@ export const useSignature = () => {
   };
 
   return {
-    signTypeData,
+    signTypedData,
     signMessage,
     isSigning,
     signingError: error,

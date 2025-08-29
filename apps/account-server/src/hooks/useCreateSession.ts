@@ -20,7 +20,7 @@ export const useCreateSession = () => {
       // ✅ Get passkey data from account store (now stored as hex, retrieved as bytes)
       if (
         !account ||
-        account.signer?.accountType !== AccountType.Passkey ||
+        account.signer?.accountType !== AccountType.PASSKEY ||
         !account.address
       ) {
         throw new Error(

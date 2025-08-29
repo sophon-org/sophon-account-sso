@@ -176,16 +176,15 @@ export function useTransaction() {
         txHash = await client.sendTransaction(txData);
       } else {
         console.log('Sending transaction with Passkey...');
-        if (account!.signer?.accountType !== AccountType.Passkey) {
+        if (account!.signer?.accountType !== AccountType.PASSKEY) {
           throw new Error('No passkey data available');
         }
 
         const signer = account!.signer as PasskeySigner;
-        console.log('signer', signer);
         const client = createZksyncPasskeyClient({
           address: account!.address,
           credentialPublicKey: stringToU8(signer.passkey),
-          credential: signer.credential,
+          //credential: signer.credential,
           userName: signer.username,
           userDisplayName: signer.userDisplayName,
           contracts: CONTRACTS,

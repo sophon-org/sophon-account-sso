@@ -28,7 +28,7 @@ export const useTransactionRequestActions = (
   const { incoming: incomingRequest, transaction: transactionRequest } =
     MainStateMachineContext.useSelector((state) => state.context.requests);
   const actorRef = MainStateMachineContext.useActorRef();
-  const { isSigning, signTypeData, signingError } = useSignature();
+  const { isSigning, signTypedData, signingError } = useSignature();
 
   const { enrichedTransactionRequest, isLoading, isEstimating } =
     useEnrichTransactionRequest(transactionRequest);
@@ -53,7 +53,7 @@ export const useTransactionRequestActions = (
       const signingRequestData = (transactionRequest as any).signingRequestData;
 
       try {
-        const signature = await signTypeData(signingRequestData);
+        const signature = await signTypedData(signingRequestData);
 
         // Track successful tx
         trackTransactionRequest(windowService.name, transactionRequest.value);

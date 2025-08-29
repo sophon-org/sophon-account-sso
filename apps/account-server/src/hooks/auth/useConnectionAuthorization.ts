@@ -23,7 +23,7 @@ export function useConnectionAuthorization() {
   );
   const { account } = useAccountContext();
   const actorRef = MainStateMachineContext.useActorRef();
-  const { isSigning, signTypeData } = useSignature();
+  const { isSigning, signTypedData } = useSignature();
   const [authorizing, setAuthorizing] = useState(false);
   const { user } = useDynamicContext();
 
@@ -100,7 +100,7 @@ export function useConnectionAuthorization() {
           message: user?.userId ? { ...message, userId: user.userId } : message,
         };
 
-        const authSignature = await signTypeData(signAuth);
+        const authSignature = await signTypedData(signAuth);
 
         const token = await verifyAuthorization(
           account.address,

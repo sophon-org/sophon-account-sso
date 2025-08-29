@@ -58,7 +58,7 @@ export const useUserIdentification = () => {
 const getAuthMethodFromAccount = (
   account: SmartAccount,
 ): 'wallet' | 'passkey' | 'social' => {
-  if (account.signer?.accountType === AccountType.Passkey) return 'passkey';
+  if (account.signer?.accountType === AccountType.PASSKEY) return 'passkey';
   if (account.signer?.accountType === AccountType.EMBEDDED) return 'social';
   return 'wallet'; // fallback
 };

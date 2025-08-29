@@ -3,6 +3,7 @@ import {
   ContractTransactionView,
   ContractWarning,
   ERC20TransactionView,
+  NewSignerTransactionView,
   SOPHTransactionView,
   TransactionIcon,
   TransactionRequestSkeleton,
@@ -27,6 +28,8 @@ function renderTransactionContent(transaction: EnrichedTransactionRequest) {
       return <ApprovalTransactionView transaction={transaction} />;
     case TransactionType.CONTRACT:
       return <ContractTransactionView transaction={transaction} />;
+    case TransactionType.SIGNER:
+      return <NewSignerTransactionView transaction={transaction} />;
     default:
       return (
         <div className="text-sm text-black">
@@ -58,6 +61,20 @@ export default function TransactionRequestView({
     return <TransactionRequestSkeleton />;
   }
 
+  return (
+    <BaseTransactionRequestView
+      openDrawer={openDrawer}
+      enrichedTransactionRequest={enrichedTransactionRequest}
+    />
+  );
+}
+
+export function BaseTransactionRequestView({
+  openDrawer,
+  enrichedTransactionRequest,
+}: TransactionRequestViewProps & {
+  enrichedTransactionRequest: EnrichedTransactionRequest;
+}) {
   return (
     <div className="text-center flex flex-col items-center justify-center gap-8">
       <VerificationImage

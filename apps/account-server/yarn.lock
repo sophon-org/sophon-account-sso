@@ -16212,7 +16212,7 @@ __metadata:
 
 "zksync-sso@file:../../../zksync-sso/packages/sdk::locator=%40sophon-labs%2Faccount-server%40workspace%3A.":
   version: 0.0.0-development
-  resolution: "zksync-sso@file:../../../zksync-sso/packages/sdk#../../../zksync-sso/packages/sdk::hash=be23f6&locator=%40sophon-labs%2Faccount-server%40workspace%3A."
+  resolution: "zksync-sso@file:../../../zksync-sso/packages/sdk#../../../zksync-sso/packages/sdk::hash=7bdd3e&locator=%40sophon-labs%2Faccount-server%40workspace%3A."
   dependencies:
     "@peculiar/asn1-ecc": "npm:^2.3.13"
     "@peculiar/asn1-schema": "npm:^2.3.13"
@@ -16233,7 +16233,7 @@ __metadata:
       optional: true
     typescript:
       optional: true
-  checksum: 10c0/f9484afa6cbe27a46ae47a7dadd2727627c4d4fc4dc6f1f9012d63622eab87748af210d4c5fb94e5882919bb5242fe4f30de8789ba6454369289db76da76a8be
+  checksum: 10c0/8478986c07533596f8e6d2db39fded02a34da9d35f4795f44c71528f03fa7549905a1488039aeb17adcbc502705a76d533670ab210edb7a735f0dab74d821cdc
   languageName: node
   linkType: hard
 

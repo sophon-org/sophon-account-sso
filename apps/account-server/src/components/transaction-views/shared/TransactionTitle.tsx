@@ -33,6 +33,9 @@ export default function TransactionTitle({
     case TransactionType.CONTRACT:
       return <h5 className="text-2xl font-bold">Transaction request</h5>;
 
+    case TransactionType.SIGNER:
+      return <h5 className="text-2xl font-bold">Add signer</h5>;
+
     default:
       return <h5 className="text-2xl font-bold">Unknown transaction</h5>;
   }

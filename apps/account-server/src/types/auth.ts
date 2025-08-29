@@ -1,5 +1,5 @@
 import type { Address, Hash, TypedDataParameter } from 'viem';
-import type { SmartAccount } from './smart-account';
+import type { k1Signer, PasskeySigner, SmartAccount } from './smart-account';
 
 export type TypedDataDomain = {
   name?: string;
@@ -107,6 +107,11 @@ export interface EnrichedContractTransaction extends BaseEnrichedTransaction {
   isVerified: boolean;
 }
 
+export interface EnrichedSignerTransaction extends BaseEnrichedTransaction {
+  transactionType: TransactionType.SIGNER;
+  signer: k1Signer | PasskeySigner;
+}
+
 export interface EnrichedUnknownTransaction extends BaseEnrichedTransaction {
   transactionType: TransactionType.UNKNOWN;
 }
@@ -116,7 +121,8 @@ export type EnrichedTransactionRequest =
   | EnrichedERC20Transaction
   | EnrichedApprovalTransaction
   | EnrichedContractTransaction
-  | EnrichedUnknownTransaction;
+  | EnrichedUnknownTransaction
+  | EnrichedSignerTransaction;
 
 export type AbiFunction = {
   type: 'function';
@@ -189,6 +195,7 @@ export enum TransactionType {
   ERC20 = 'erc20',
   CONTRACT = 'contract',
   APPROVE = 'approve',
+  SIGNER = 'signer',
   UNKNOWN = 'unknown',
 }
 

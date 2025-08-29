@@ -7,7 +7,7 @@ export enum Platform {
 }
 
 export enum AccountType {
-  Passkey = 'passkey',
+  PASSKEY = 'passkey',
   EOA = 'eoa',
   EMBEDDED = 'embedded',
 }
