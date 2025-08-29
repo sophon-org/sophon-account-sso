@@ -1,4 +1,4 @@
-import { truncateName } from '@/lib/formatting';
+import { truncateContractName } from '@/lib/formatting';
 import type { EnrichedApprovalTransaction } from '@/types/auth';
 import { AddressLink } from './shared';
 
@@ -14,20 +14,16 @@ export default function ApprovalTransactionView({
       <div className="text-left flex flex-col gap-1">
         <p className="text-xs font-bold">Contract:</p>
         <p className="text-sm text-black">
-          <span className="">
-            {truncateName(transaction.spender.name || '')}
-          </span>{' '}
-          @ <AddressLink address={transaction.spender.address} />
+          <span>{truncateContractName(transaction.spender.name || '')}</span> @{' '}
+          <AddressLink address={transaction.spender.address} />
         </p>
       </div>
 
       <div className="text-left flex flex-col gap-1">
         <p className="text-xs font-bold">Token:</p>
         <p className="text-sm text-black">
-          <span className="">
-            {truncateName(transaction.token.tokenName || '')}
-          </span>{' '}
-          @ <AddressLink address={transaction.token.contractAddress} />
+          <span>{transaction.token.tokenName || ''}</span> @{' '}
+          <AddressLink address={transaction.token.contractAddress} />
         </p>
       </div>
 

@@ -20,6 +20,7 @@ export default function TransactionIcon({ transaction }: TransactionIconProps) {
   // Fall back to transaction type-specific icons
   switch (transaction.transactionType) {
     case TransactionType.APPROVE:
+    case TransactionType.ERC20:
       return <CoinsIcon weight="fill" className="w-10 h-10 text-white" />;
     default:
       return <ReceiptIcon weight="fill" className="w-10 h-10 text-white" />;

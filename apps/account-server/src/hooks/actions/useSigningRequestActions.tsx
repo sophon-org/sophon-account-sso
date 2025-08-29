@@ -11,7 +11,21 @@ import {
 } from '@/lib/analytics';
 import { windowService } from '@/service/window.service';
 
-export const useSigningRequestActions = () => {
+type DrawerContentType =
+  | 'raw-transaction'
+  | 'raw-signing'
+  | 'fee-details'
+  | 'error'
+  | null;
+
+interface UseSigningRequestActionsProps {
+  openDrawer?: (type: DrawerContentType, data?: string | object) => void;
+}
+
+export const useSigningRequestActions = (
+  props: UseSigningRequestActionsProps = {},
+) => {
+  const { openDrawer } = props;
   const { account } = useAccountContext();
   const { incoming, typedDataSigning, messageSigning } =
     MainStateMachineContext.useSelector((state) => state.context.requests);
@@ -108,7 +122,20 @@ export const useSigningRequestActions = () => {
       {signingError && (
         <div className="flex items-center justify-center gap-2 w-full">
           <div className="p-3 bg-red-50 border border-red-200 rounded">
-            <p className="text-red-600 text-sm">{signingError}</p>
+            <div className="flex justify-between items-start">
+              <p className="text-red-600 text-sm flex-1">{signingError}</p>
+              {openDrawer && (
+                <button
+                  type="button"
+                  onClick={() =>
+                    openDrawer('error', signingError || 'Unknown error')
+                  }
+                  className="ml-2 text-xs text-red-600 hover:text-red-800 underline"
+                >
+                  Details
+                </button>
+              )}
+            </div>
           </div>
         </div>
       )}

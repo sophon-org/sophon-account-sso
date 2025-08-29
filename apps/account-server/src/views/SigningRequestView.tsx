@@ -1,11 +1,27 @@
 import { IconSignature } from '@/components/icons/icon-signature';
+import { Card } from '@/components/ui/card';
+import MessageContainerButton from '@/components/ui/message-container-button';
 import MessageContainer from '@/components/ui/messageContainer';
+import TypedDataDisplay from '@/components/ui/typed-data-display';
 import VerificationImage from '@/components/ui/verification-image';
 import { useSigningRequestActions } from '@/hooks/actions/useSigningRequestActions';
 
-export default function SigningRequestView() {
+type DrawerContentType =
+  | 'raw-transaction'
+  | 'raw-signing'
+  | 'fee-details'
+  | 'error'
+  | null;
+
+interface SigningRequestViewProps {
+  openDrawer?: (type: DrawerContentType, data?: string | object) => void;
+}
+
+export default function SigningRequestView({
+  openDrawer,
+}: SigningRequestViewProps = {}) {
   const { account, incoming, typedDataSigning, messageSigning } =
-    useSigningRequestActions();
+    useSigningRequestActions({ openDrawer });
 
   if ((!typedDataSigning && !messageSigning) || !incoming || !account) {
     return <div>No signing request or account present</div>;
@@ -19,24 +35,39 @@ export default function SigningRequestView() {
         <p className="hidden">https://my.staging.sophon.xyz</p>
       </div>
       {typedDataSigning && (
-        <MessageContainer>
-          <div className="text-sm text-black">
-            <p>
-              {typedDataSigning.domain.name} v{typedDataSigning.domain.version}
-            </p>
-            <pre className="text-xs mt-2 whitespace-pre-wrap break-words">
-              {JSON.stringify(typedDataSigning.message, null, 2)}
-            </pre>
-          </div>
-        </MessageContainer>
+        <div>
+          <Card>
+            <div className="w-full flex justify-between items-center px-6 py-4">
+              <p className="text-sm font-bold">Primary Type</p>
+              <p className="text-sm text-black">
+                {typedDataSigning.primaryType}
+              </p>
+            </div>
+          </Card>
+          <MessageContainer showBottomButton={!!openDrawer}>
+            <div className="text-sm text-black">
+              <TypedDataDisplay data={typedDataSigning.message} />
+            </div>
+            {openDrawer && (
+              <MessageContainerButton onClick={() => openDrawer('raw-signing')}>
+                View raw signing data
+              </MessageContainerButton>
+            )}
+          </MessageContainer>
+        </div>
       )}
       {messageSigning && (
-        <MessageContainer>
+        <MessageContainer showBottomButton={!!openDrawer}>
           <div className="text-sm text-black">
             <pre className="text-xs mt-2 whitespace-pre-wrap break-words">
               {messageSigning.message}
             </pre>
           </div>
+          {openDrawer && (
+            <MessageContainerButton onClick={() => openDrawer('raw-signing')}>
+              View raw signing data
+            </MessageContainerButton>
+          )}
         </MessageContainer>
       )}
     </div>
