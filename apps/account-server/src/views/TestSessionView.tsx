@@ -21,7 +21,7 @@ export default function TestSessionView() {
 
   const { sendTransaction, transactionError } = useTransaction();
 
-  const useAllowedSessions = false;
+  const useAllowedSessions = true;
 
   const signerPrivateKey =
     '0x7726827caac94a7f9e1b160f7ea819f172f7b6f9d2a97f992c38edeab82d4110';
@@ -88,8 +88,7 @@ export default function TestSessionView() {
       account!.address,
       useAllowedSessions,
     );
-    const txHash = await sendTransaction(createSessionTx, null);
-    console.log(txHash);
+    await sendTransaction(createSessionTx, null);
 
     console.log('done');
   };

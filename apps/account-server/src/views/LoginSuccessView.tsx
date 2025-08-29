@@ -7,9 +7,9 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import VerificationImage from '@/components/ui/verification-image';
+import { env } from '@/env';
 import { useAccountContext } from '@/hooks/useAccountContext';
 import TestSessionView from './TestSessionView';
-import { env } from '@/env';
 
 export default function LoginSuccessView() {
   const { account } = useAccountContext();
