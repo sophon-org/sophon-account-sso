@@ -1,6 +1,6 @@
+import { CHAIN_CONTRACTS, type ChainId } from '@sophon-labs/account-core';
 import { type Chain, sophon, sophonTestnet } from 'viem/chains';
 import { env } from '@/env';
-import { CHAIN_CONTRACTS, type ChainId } from '@sophon-labs/account-core';
 
 /**
  * Helper to get the contract addresses for the current chain.

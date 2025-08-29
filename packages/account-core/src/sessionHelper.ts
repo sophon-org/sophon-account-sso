@@ -1,6 +1,5 @@
 import {
   type Address,
-  type Chain,
   createPublicClient,
   encodeAbiParameters,
   encodeFunctionData,
@@ -10,7 +9,7 @@ import {
   http,
   keccak256,
 } from 'viem';
-import { sophon, sophonTestnet } from 'viem/chains';
+import { type Chain, sophon, sophonTestnet } from 'viem/chains';
 import { getGeneralPaymasterInput } from 'viem/zksync';
 import { SessionKeyValidatorAbi } from './abis/SessionKeyValidatorAbi';
 import { SophonAccountAbi } from './abis/SophonAccountAbi';
@@ -46,6 +45,7 @@ export function getSessionHash(sessionConfig: SessionConfig): `0x${string}` {
 
 export const getSessionActionsHash = (sessionSpec: SessionConfig) => {
   let callPoliciesEncoded: any;
+
   for (const callPolicy of sessionSpec.callPolicies) {
     callPoliciesEncoded = encodePacked(
       callPoliciesEncoded !== undefined
@@ -83,12 +83,50 @@ export const getSessionActionsHash = (sessionSpec: SessionConfig) => {
   return keccak256(
     encodeAbiParameters(
       [
-        'tuple(uint256 limitType, uint256 limit, uint256 period)',
-        'tuple(address target, uint256 maxValuePerUse, tuple(uint256 limitType, uint256 limit, uint256 period) valueLimit)[]',
-        'bytes',
+        {
+          type: 'tuple',
+          components: [
+            { type: 'uint256', name: 'limitType' },
+            { type: 'uint256', name: 'limit' },
+            { type: 'uint256', name: 'period' },
+          ],
+        },
+        {
+          type: 'tuple[]',
+          components: [
+            { type: 'address', name: 'target' },
+            { type: 'uint256', name: 'maxValuePerUse' },
+            {
+              type: 'tuple',
+              components: [
+                { type: 'uint256', name: 'limitType' },
+                { type: 'uint256', name: 'limit' },
+                { type: 'uint256', name: 'period' },
+              ],
+              name: 'valueLimit',
+            },
+          ],
+        },
+        { type: 'bytes', name: 'callPolicies' },
       ],
       // @ts-ignore
-      [sessionSpec.feeLimit, sessionSpec.transferPolicies, callPoliciesEncoded],
+      [
+        {
+          limitType: BigInt(sessionSpec.feeLimit.limitType),
+          limit: BigInt(sessionSpec.feeLimit.limit),
+          period: BigInt(sessionSpec.feeLimit.period),
+        },
+        sessionSpec.transferPolicies.map((policy) => ({
+          target: policy.target,
+          maxValuePerUse: BigInt(policy.maxValuePerUse),
+          valueLimit: {
+            limitType: BigInt(policy.valueLimit.limitType),
+            limit: BigInt(policy.valueLimit.limit),
+            period: BigInt(policy.valueLimit.period),
+          },
+        })),
+        callPoliciesEncoded || '',
+      ],
     ),
   );
 };

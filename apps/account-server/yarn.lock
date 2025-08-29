@@ -5726,10 +5726,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-core@npm:2.0.0-next.39":
+"@sophon-labs/account-core@file:../../packages/account-core::locator=%40sophon-labs%2Faccount-server%40workspace%3A.":
   version: 2.0.0-next.39
-  resolution: "@sophon-labs/account-core@npm:2.0.0-next.39"
-  checksum: 10c0/3a2f532ee1ad7aba14955803f4939a9993af6e92e70cabc05f9988c76f5f3a951c5ad39f5fa727f26fa935ab68e7030989858427bf51e244cc7a62c11098f652
+  resolution: "@sophon-labs/account-core@file:../../packages/account-core#../../packages/account-core::hash=ba36ac&locator=%40sophon-labs%2Faccount-server%40workspace%3A."
+  peerDependencies:
+    viem: ">=2"
+  checksum: 10c0/0bebbf3ef6f860c30458638ca65b1d4f0b9c2de3b33483abd3ffd6f1440cc808bd8800cb1fa7a290467ce9766d21835ca3896bd8289c466d05981c6e273a0044
   languageName: node
   linkType: hard
 
@@ -5761,7 +5763,7 @@ __metadata:
     "@radix-ui/react-tooltip": "npm:^1.2.7"
     "@sentry/nextjs": "npm:^10"
     "@simplewebauthn/server": "npm:^13.1.2"
-    "@sophon-labs/account-core": "npm:2.0.0-next.39"
+    "@sophon-labs/account-core": "file:../../packages/account-core"
     "@sophon-labs/account-message-bridge": "npm:2.0.0-next.39"
     "@t3-oss/env-nextjs": "npm:^0.13.8"
     "@tailwindcss/postcss": "npm:^4"
@@ -5801,7 +5803,7 @@ __metadata:
     vitest: "npm:^3.2.4"
     wagmi: "npm:^2.15.6"
     xstate: "npm:5.20.1"
-    zksync-sso: "npm:0.4.1"
+    zksync-sso: "file:../../../zksync-sso/packages/sdk"
     zod: "npm:^3.25.71"
   languageName: unknown
   linkType: soft
@@ -16210,9 +16212,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zksync-sso@npm:0.4.1":
-  version: 0.4.1
-  resolution: "zksync-sso@npm:0.4.1"
+"zksync-sso@file:../../../zksync-sso/packages/sdk::locator=%40sophon-labs%2Faccount-server%40workspace%3A.":
+  version: 0.0.0-development
+  resolution: "zksync-sso@file:../../../zksync-sso/packages/sdk#../../../zksync-sso/packages/sdk::hash=c97b48&locator=%40sophon-labs%2Faccount-server%40workspace%3A."
   dependencies:
     "@peculiar/asn1-ecc": "npm:^2.3.13"
     "@peculiar/asn1-schema": "npm:^2.3.13"
@@ -16233,7 +16235,7 @@ __metadata:
       optional: true
     typescript:
       optional: true
-  checksum: 10c0/2a7446a7e5af2acb12e5e7ec8ee01fd0461d804c06de18497a7c1c9327a52df89ca09442c39ac83e1d1f2d6af862dbcf7fc7e1043b4c6d3066dedf986a93c8a7
+  checksum: 10c0/0ff8ff1991b367bc9dd50b239b2fed68b2f09a11292dfb8cfeafcd76cf2af80a568f913805801fe76f24e378a5ffc48908c28cece9aee2b9921ec9e6df21ed0b
   languageName: node
   linkType: hard
 

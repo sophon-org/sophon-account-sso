@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/tooltip';
 import VerificationImage from '@/components/ui/verification-image';
 import { useAccountContext } from '@/hooks/useAccountContext';
+import TestSessionView from './TestSessionView';
 
 export default function LoginSuccessView() {
   const { account } = useAccountContext();
@@ -37,6 +38,7 @@ export default function LoginSuccessView() {
           <TooltipContent>Copied!</TooltipContent>
         </Tooltip>
       </div>
+      <TestSessionView />
     </div>
   );
 }
