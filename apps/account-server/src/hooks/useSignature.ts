@@ -9,6 +9,7 @@ import { http, useAccount, useWalletClient } from 'wagmi';
 import { createZksyncEcdsaClient } from 'zksync-sso/client/ecdsa';
 import { createZksyncPasskeyClient } from 'zksync-sso/client/passkey';
 import { CONTRACTS, VIEM_CHAIN } from '@/lib/constants';
+import { safeParseTypedData } from '@/lib/helpers';
 import { verifySignature } from '@/lib/smart-contract';
 import type {
   MessageSigningRequest,
@@ -43,11 +44,13 @@ export const useSignature = () => {
       if (primaryWallet && isEthereumWallet(primaryWallet)) {
         try {
           const client = await primaryWallet.getWalletClient();
+          const safePayload = safeParseTypedData(payload);
+
           signature = await client.signTypedData({
-            domain: payload.domain,
-            types: payload.types,
-            primaryType: payload.primaryType,
-            message: payload.message,
+            domain: safePayload.domain,
+            types: safePayload.types,
+            primaryType: safePayload.primaryType,
+            message: safePayload.message,
           });
 
           if (VERIFY_SIGNATURE) {
