@@ -5,7 +5,8 @@ export type TestCase<T extends TestableActionsNames> = {
   method: T;
   name: `${T}-${string}`;
   payload: unknown;
-  isValidResponse: (response: unknown) => boolean;
+  // biome-ignore lint/suspicious/noExplicitAny: dynamic testing
+  isValidResponse: (response: any) => boolean;
 };
 
 export type AccountServerTestCase<T extends TestableActionsNames> =

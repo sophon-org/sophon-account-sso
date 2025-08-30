@@ -120,8 +120,12 @@ export const executeEthersAction = async (
       return await browserProvider.getTransactionReceipt(args.hash);
     }
     case 'estimateGas': {
-      const gasPrice = await browserProvider.getGasPrice();
-      return await browserProvider.estimateGas({ ...args, gasPrice });
+      const signerL2 = Signer.from(
+        signer,
+        531050104,
+        browserProvider as unknown as Provider,
+      );
+      return await signerL2.estimateGas(args);
     }
     case 'getBytecode': {
       return await browserProvider.getCode(args.address);
@@ -139,7 +143,9 @@ export const executeEthersAction = async (
         browserProvider as unknown as Provider,
       );
       const contract = new Contract(args.address, args.abi, signerL2);
-      return await contract[args.functionName](...args.args);
+      return await contract[args.functionName](...args.args, {
+        value: args.value,
+      });
     }
     case 'sendTransaction': {
       const signerL2 = Signer.from(
