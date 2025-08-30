@@ -58,7 +58,7 @@ export function useTransaction() {
             async signTypedData(typedData) {
               const signature = await client?.signTypedData(
                 // @ts-expect-error - Type mismatch between viem account interface and wallet client
-                typedData,
+                safeParseTypedData(typedData),
               );
               if (!signature) throw new Error('Failed to sign typed data');
               return signature;
