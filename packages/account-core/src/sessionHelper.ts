@@ -25,8 +25,6 @@ import type {
 
 const SESSION_KEY_MODULE_ADDRESS = (chainId: ChainId) =>
   CHAIN_CONTRACTS[chainId].session;
-const ALLOWED_SESSION_KEY_MODULE_ADDRESS = (chainId: ChainId) =>
-  CHAIN_CONTRACTS[chainId].allowedSession;
 
 const getSessionSpec = () => {
   return getAbiItem({
@@ -134,12 +132,10 @@ export const getSessionActionsHash = (sessionSpec: SessionConfig) => {
 export async function getSessionState({
   accountAddress,
   sessionConfig,
-  useAllowedSessions = true,
   useTestnet = true,
 }: {
   accountAddress: Address;
   sessionConfig: SessionConfig;
-  useAllowedSessions: boolean;
   useTestnet: boolean;
 }): Promise<SessionState> {
   const client = createPublicClient({
@@ -148,9 +144,7 @@ export async function getSessionState({
   });
 
   const result = await client.readContract({
-    address: useAllowedSessions
-      ? ALLOWED_SESSION_KEY_MODULE_ADDRESS(useTestnet ? '531050104' : '50104')
-      : SESSION_KEY_MODULE_ADDRESS(useTestnet ? '531050104' : '50104'),
+    address: SESSION_KEY_MODULE_ADDRESS(useTestnet ? '531050104' : '50104'),
     abi: SessionKeyValidatorAbi,
     functionName: 'sessionState',
     args: [accountAddress, sessionConfig],
@@ -162,24 +156,20 @@ export async function getSessionState({
 export async function getSessionStatus({
   accountAddress,
   sessionConfig,
-  useAllowedSessions,
   useTestnet,
 }: {
   accountAddress: Address;
   sessionConfig: SessionConfig;
-  useAllowedSessions: boolean;
   useTestnet: boolean;
 }): Promise<SessionStatus>;
 
 export async function getSessionStatus({
   accountAddress,
   sessionHash,
-  useAllowedSessions,
   useTestnet,
 }: {
   accountAddress: Address;
   sessionHash: `0x${string}`;
-  useAllowedSessions: boolean;
   useTestnet: boolean;
 }): Promise<SessionStatus>;
 
@@ -187,13 +177,11 @@ export async function getSessionStatus({
   accountAddress,
   sessionConfig,
   sessionHash,
-  useAllowedSessions = true,
   useTestnet = true,
 }: {
   accountAddress: Address;
   sessionConfig?: SessionConfig;
   sessionHash?: `0x${string}`;
-  useAllowedSessions: boolean;
   useTestnet: boolean;
 }): Promise<SessionStatus> {
   const client = createPublicClient({
@@ -205,9 +193,7 @@ export async function getSessionStatus({
 
   // Call the getState function on the session key module
   const result = await client.readContract({
-    address: useAllowedSessions
-      ? ALLOWED_SESSION_KEY_MODULE_ADDRESS(useTestnet ? '531050104' : '50104')
-      : SESSION_KEY_MODULE_ADDRESS(useTestnet ? '531050104' : '50104'),
+    address: SESSION_KEY_MODULE_ADDRESS(useTestnet ? '531050104' : '50104'),
     abi: SessionKeyValidatorAbi,
     functionName: 'sessionStatus',
     args: [accountAddress, hash],
@@ -221,7 +207,6 @@ export const getZKSyncSessionClientCreationParams = (
   accountAddress: Address,
   signerPrivateKey: Hex,
   chain: Chain,
-  useAllowedSessions: boolean = true,
   useTestnet: boolean = true,
 ) => {
   return {
@@ -230,9 +215,7 @@ export const getZKSyncSessionClientCreationParams = (
     sessionKey: signerPrivateKey,
     sessionConfig,
     contracts: {
-      session: useAllowedSessions
-        ? ALLOWED_SESSION_KEY_MODULE_ADDRESS(useTestnet ? '531050104' : '50104')
-        : SESSION_KEY_MODULE_ADDRESS(useTestnet ? '531050104' : '50104'),
+      session: SESSION_KEY_MODULE_ADDRESS(useTestnet ? '531050104' : '50104'),
     },
     transport: http(),
   };
@@ -240,7 +223,6 @@ export const getZKSyncSessionClientCreationParams = (
 
 export const isSessionKeyModuleInstalled = async (
   address: Address,
-  useAllowedSessions: boolean = true,
   useTestnet: boolean = true,
 ): Promise<boolean> => {
   const client = createPublicClient({
@@ -250,9 +232,7 @@ export const isSessionKeyModuleInstalled = async (
 
   try {
     const isInstalled = await client.readContract({
-      address: useAllowedSessions
-        ? ALLOWED_SESSION_KEY_MODULE_ADDRESS(useTestnet ? '531050104' : '50104')
-        : SESSION_KEY_MODULE_ADDRESS(useTestnet ? '531050104' : '50104'),
+      address: SESSION_KEY_MODULE_ADDRESS(useTestnet ? '531050104' : '50104'),
       abi: SessionKeyValidatorAbi,
       functionName: 'isInitialized',
       args: [address],
@@ -266,16 +246,13 @@ export const isSessionKeyModuleInstalled = async (
 
 export const getInstallSessionKeyModuleTxForViem = (
   args: InstallSessionKeyModuleArgs,
-  useAllowedSessions: boolean = true,
   useTestnet: boolean = true,
 ) => {
   const callData = encodeFunctionData({
     abi: SophonAccountAbi,
     functionName: 'addModuleValidator',
     args: [
-      useAllowedSessions
-        ? ALLOWED_SESSION_KEY_MODULE_ADDRESS(useTestnet ? '531050104' : '50104')
-        : SESSION_KEY_MODULE_ADDRESS(useTestnet ? '531050104' : '50104'),
+      SESSION_KEY_MODULE_ADDRESS(useTestnet ? '531050104' : '50104'),
       '0x',
     ],
   });
@@ -297,15 +274,12 @@ export const getInstallSessionKeyModuleTxForViem = (
 export const getCreateSessionTxForViem = (
   args: Omit<CreateSessionArgs, 'contracts'>,
   accountAddress: Address,
-  useAllowedSessions: boolean = true,
   useTestnet: boolean = true,
 ) => {
   const _args = {
     ...args,
     contracts: {
-      session: useAllowedSessions
-        ? ALLOWED_SESSION_KEY_MODULE_ADDRESS(useTestnet ? '531050104' : '50104')
-        : SESSION_KEY_MODULE_ADDRESS(useTestnet ? '531050104' : '50104'),
+      session: SESSION_KEY_MODULE_ADDRESS(useTestnet ? '531050104' : '50104'),
     },
   };
 
@@ -332,7 +306,6 @@ export const getCreateSessionTxForViem = (
 export const getRevokeSessionTxForViem = (
   args: RevokeSessionArgs,
   accountAddress: Address,
-  useAllowedSessions: boolean = true,
   useTestnet: boolean = true,
 ) => {
   const callData = encodeFunctionData({
@@ -343,9 +316,7 @@ export const getRevokeSessionTxForViem = (
 
   const revokeKeyArgs = {
     from: accountAddress,
-    to: useAllowedSessions
-      ? ALLOWED_SESSION_KEY_MODULE_ADDRESS(useTestnet ? '531050104' : '50104')
-      : SESSION_KEY_MODULE_ADDRESS(useTestnet ? '531050104' : '50104'),
+    to: SESSION_KEY_MODULE_ADDRESS(useTestnet ? '531050104' : '50104'),
     data: callData,
     paymaster: args.paymaster?.address,
     paymasterInput: args.paymaster?.address

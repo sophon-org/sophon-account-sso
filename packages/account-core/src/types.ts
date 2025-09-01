@@ -3,7 +3,6 @@
  */
 export interface ContractAddresses {
   session: `0x${string}`;
-  allowedSession: `0x${string}`;
   passkey: `0x${string}`;
   accountFactory: `0x${string}`;
   accountPaymaster: `0x${string}`;

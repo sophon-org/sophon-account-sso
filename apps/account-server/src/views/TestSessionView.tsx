@@ -21,12 +21,6 @@ export default function TestSessionView() {
 
   const { sendTransaction, transactionError } = useTransaction();
 
-  const useAllowedSessions =
-    typeof window !== 'undefined'
-      ? (new URLSearchParams(window.location.search).get('allowedSessions') ??
-        false)
-      : false;
-
   const signerPrivateKey =
     '0x7726827caac94a7f9e1b160f7ea819f172f7b6f9d2a97f992c38edeab82d4110';
   const signerAddress = '0x36615cf349d7f6344891b1e7ca7c72883f5dc049';
@@ -62,18 +56,13 @@ export default function TestSessionView() {
   const handleCreateSession = async () => {
     console.log('create session');
 
-    const installed = await isSessionKeyModuleInstalled(
-      account!.address,
-      useAllowedSessions,
-      true,
-    );
+    const installed = await isSessionKeyModuleInstalled(account!.address, true);
 
     if (!installed) {
       const installTx = getInstallSessionKeyModuleTxForViem(
         {
           accountAddress: account!.address,
         },
-        useAllowedSessions,
         true,
       );
 
@@ -90,7 +79,6 @@ export default function TestSessionView() {
         sessionConfig,
       },
       account!.address,
-      useAllowedSessions,
     );
     await sendTransaction(createSessionTx, null);
 
@@ -103,13 +91,10 @@ export default function TestSessionView() {
       account!.address,
       signerPrivateKey as `0x${string}`,
       SOPHON_VIEM_CHAIN,
-      useAllowedSessions,
       true,
     );
 
     const sessionClient = createZksyncSessionClient(sessionClientParams);
-
-    console.log(sessionClient);
 
     const tx = await sessionClient.sendTransaction({
       to: signerAddress.toLowerCase() as `0x${string}`,
