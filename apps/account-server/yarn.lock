@@ -5792,7 +5792,7 @@ __metadata:
 
 "@sophon-labs/account-core@file:../../packages/account-core::locator=%40sophon-labs%2Faccount-server%40workspace%3A.":
   version: 2.0.0-next.40
-  resolution: "@sophon-labs/account-core@file:../../packages/account-core#../../packages/account-core::hash=6c8d17&locator=%40sophon-labs%2Faccount-server%40workspace%3A."
+  resolution: "@sophon-labs/account-core@file:../../packages/account-core#../../packages/account-core::hash=e8944e&locator=%40sophon-labs%2Faccount-server%40workspace%3A."
   peerDependencies:
     viem: ">=2.21.0"
   checksum: 10c0/9583e8a907aeb05a45c004944777d3c4acfb55901a1e63224705434f53b710913cbad8ba3467fb2bb494e465c549c4c2e298e48f3a31608a0cde31fde2bca155
