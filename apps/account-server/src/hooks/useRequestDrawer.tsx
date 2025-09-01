@@ -94,7 +94,7 @@ export const useRequestDrawer = () => {
       case 'error':
         return (
           <div className="p-4">
-            <div className="text-sm text-red-600">
+            <div className="text-sm break-words">
               {typeof drawerState.data === 'string'
                 ? drawerState.data
                 : typeof drawerState.data === 'object'
