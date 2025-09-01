@@ -9,7 +9,7 @@ export const ConnectButton = () => {
   const handleConnect = async () => {
     const connectors = getConnectors(wagmiConfig);
     const connector = connectors.find(
-      (provider) => provider.id === `xyz.sophon.staging.my`,
+      (provider) => provider.id === `xyz.sophon.staging.account`,
     );
 
     if (!connector) {
