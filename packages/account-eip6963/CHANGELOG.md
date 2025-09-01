@@ -1,5 +1,13 @@
 # @sophon-labs/account-eip6963
 
+## 2.0.0-next.40
+
+### Patch Changes
+
+- Better support for ethers.js
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.0-next.40
+
 ## 2.0.0-next.39
 
 ### Patch Changes
