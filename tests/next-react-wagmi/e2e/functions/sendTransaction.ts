@@ -1,5 +1,4 @@
 import { encodeFunctionData, erc20Abi, parseEther, parseUnits } from 'viem';
-import { getGeneralPaymasterInput } from 'viem/zksync';
 import type { AccountServerTestCase } from './types';
 
 export const sendTransactionSOPTestCase: AccountServerTestCase<'sendTransaction'> =

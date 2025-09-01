@@ -64,7 +64,7 @@
     "@sophon-labs/account-core": "2.0.0-next.40",
     "eventemitter3": "^5.0.1",
     "json-rpc-2.0": "^1.7.1",
-    "zksync-sso": "0.4.1"
+    "zksync-sso": "github:sophon-org/zksync-sso-preview#20250901_1"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
