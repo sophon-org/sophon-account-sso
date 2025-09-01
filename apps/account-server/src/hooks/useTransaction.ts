@@ -26,7 +26,7 @@ export function useTransaction() {
 
   const sendTransaction = async (
     transactionRequest: TransactionRequest,
-    incomingRequest: IncomingRequest,
+    incomingRequest?: IncomingRequest,
   ) => {
     setIsSending(true);
     const availableAddress = account?.address || primaryWallet?.address;
