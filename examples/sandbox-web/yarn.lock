@@ -1189,53 +1189,56 @@ __metadata:
   linkType: hard
 
 "@sophon-labs/account-connector@file:../../packages/account-connector::locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A.":
-  version: 2.0.0-next.37
-  resolution: "@sophon-labs/account-connector@file:../../packages/account-connector#../../packages/account-connector::hash=0a4145&locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A."
+  version: 2.0.0-next.40
+  resolution: "@sophon-labs/account-connector@file:../../packages/account-connector#../../packages/account-connector::hash=aa3ed0&locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A."
   dependencies:
-    "@sophon-labs/account-core": "npm:2.0.0-next.37"
+    "@sophon-labs/account-core": "npm:2.0.0-next.40"
     zksync-sso: "npm:0.4.1"
   peerDependencies:
     "@wagmi/core": ^2.17.3
-    viem: ">=2.21.49"
-  checksum: 10c0/e5b9ca4bf4ba19c20c374e19e7ab9f33357cad0674203131656d8732dd67286b1e442b6c1e5702bcb9be1754d577ece744a49db3470dd325da02e3a3b12e9cd6
+    viem: ">=2.21.0"
+  checksum: 10c0/c0b25a81454f73ef74d15cdaffc63045f174bdd73d5923ac737f3ab6b26a446074a4218cff41d1c00f8d61320667f6db1db466c87ea3db0ed06742e2ce51ddbe
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-connector@npm:2.0.0-next.37":
-  version: 2.0.0-next.37
-  resolution: "@sophon-labs/account-connector@npm:2.0.0-next.37"
+"@sophon-labs/account-connector@npm:2.0.0-next.40":
+  version: 2.0.0-next.40
+  resolution: "@sophon-labs/account-connector@npm:2.0.0-next.40"
   dependencies:
-    "@sophon-labs/account-core": "npm:2.0.0-next.37"
+    "@sophon-labs/account-core": "npm:2.0.0-next.40"
     zksync-sso: "npm:0.4.1"
   peerDependencies:
     "@wagmi/core": ^2.17.3
-    viem: ">=2.21.49"
-  checksum: 10c0/a757dafeab9a869b51d831518bd5d080dda8774fd7ed1beb6694e908e728112b08dc7c218524c449e4e25a2709369f41aed47cdd20a40a51ff0d3d8680d016a4
+    viem: ">=2.21.0"
+  checksum: 10c0/8b1d1f7c912a2e1482fc6cedf4b00a1d47a4f5cdec2047bbb252f2ae8cfe3a65dd0c3a24c55a652fe2839e02a56f0451635b2069c83e5e6855cb893cf5bf5ed1
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-core@npm:2.0.0-next.37":
-  version: 2.0.0-next.37
-  resolution: "@sophon-labs/account-core@npm:2.0.0-next.37"
-  checksum: 10c0/7a8541337663e6743dd1ead1a1d42cab8f1737807179ea0ae0b78953524a351467439cdbf3db42b2d199aa7927dcc80e5584350e8883d4086646cd3967d9c267
+"@sophon-labs/account-core@npm:2.0.0-next.40":
+  version: 2.0.0-next.40
+  resolution: "@sophon-labs/account-core@npm:2.0.0-next.40"
+  peerDependencies:
+    viem: ">=2.21.0"
+  checksum: 10c0/8149334d03b7a1ccc652cba88769d268fa76d0b4664df74158fc76bc0438427ad40cf400b0a887292eb38f18030b0ef3ab606e98d1df0c1d60cde2eeee108b78
   languageName: node
   linkType: hard
 
 "@sophon-labs/account-react@file:../../packages/account-react::locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A.":
-  version: 2.0.0-next.37
-  resolution: "@sophon-labs/account-react@file:../../packages/account-react#../../packages/account-react::hash=9d1621&locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A."
+  version: 2.0.0-next.40
+  resolution: "@sophon-labs/account-react@file:../../packages/account-react#../../packages/account-react::hash=06bbc8&locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A."
   dependencies:
-    "@sophon-labs/account-connector": "npm:2.0.0-next.37"
-    "@sophon-labs/account-core": "npm:2.0.0-next.37"
+    "@sophon-labs/account-connector": "npm:2.0.0-next.40"
+    "@sophon-labs/account-core": "npm:2.0.0-next.40"
     axios: "npm:^1.11.0"
     clsx: "npm:^2.1.1"
+    js-cookie: "npm:^3.0.5"
   peerDependencies:
     "@tanstack/react-query": ">=5"
     react: ">=18"
     react-dom: ">=18"
-    viem: ">=2"
+    viem: ">=2.21.0"
     wagmi: ">=2"
-  checksum: 10c0/582c7b14c218c9910b685c70966ca02165092b49c97c751a162b5af6975fa4126c9395bf9cbd34dde2a59088ef97a1914f1dbd40840485392f1d37714a0f4e18
+  checksum: 10c0/aca07cb2729892e6d4d21ca9c4b04a0116ca2737a28d3c8831bec4e878c261b153394b7d8d097f32565c11335404870e6b2cbbc9906f7140a4eadf1aa7b31bdb
   languageName: node
   linkType: hard
 
@@ -1258,7 +1261,7 @@ __metadata:
     react-dom: "npm:^19.0.0"
     tailwindcss: "npm:^4"
     typescript: "npm:^5"
-    viem: "npm:^2.34.0"
+    viem: "npm:2.36.0"
     wagmi: "npm:^2.15.6"
   languageName: unknown
   linkType: soft
@@ -3300,6 +3303,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"js-cookie@npm:^3.0.5":
+  version: 3.0.5
+  resolution: "js-cookie@npm:3.0.5"
+  checksum: 10c0/04a0e560407b4489daac3a63e231d35f4e86f78bff9d792011391b49c59f721b513411cd75714c418049c8dc9750b20fcddad1ca5a2ca616c3aca4874cce5b3a
+  languageName: node
+  linkType: hard
+
 "jsbn@npm:1.1.0":
   version: 1.1.0
   resolution: "jsbn@npm:1.1.0"
@@ -3940,9 +3950,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ox@npm:0.8.7":
-  version: 0.8.7
-  resolution: "ox@npm:0.8.7"
+"ox@npm:0.9.1":
+  version: 0.9.1
+  resolution: "ox@npm:0.9.1"
   dependencies:
     "@adraffy/ens-normalize": "npm:^1.11.0"
     "@noble/ciphers": "npm:^1.3.0"
@@ -3957,7 +3967,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10c0/a0919651e35b60d741f745ef6a0cfa1f63daf17d43e95cae7957c291eba90248be0968ee0a6d2f268e5e79f6dbbc3ab3b4617df0bcadcae722843168639795e1
+  checksum: 10c0/1678b0cb3e0f1b0986e8a944f64789ca00eb9e3d02fcb4a613f43fa9d75d9fb782f15a18133779fe6095f190fec2fd8be7a3c9df7ecf9c038fb0037ef542256d
   languageName: node
   linkType: hard
 
@@ -5106,6 +5116,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"viem@npm:2.36.0":
+  version: 2.36.0
+  resolution: "viem@npm:2.36.0"
+  dependencies:
+    "@noble/curves": "npm:1.9.6"
+    "@noble/hashes": "npm:1.8.0"
+    "@scure/bip32": "npm:1.7.0"
+    "@scure/bip39": "npm:1.6.0"
+    abitype: "npm:1.0.8"
+    isows: "npm:1.0.7"
+    ox: "npm:0.9.1"
+    ws: "npm:8.18.3"
+  peerDependencies:
+    typescript: ">=5.0.4"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 10c0/b46e19ffaf85b0e80d168a707d7b295cf58ebefde27cfb8626510dfdf845bcd25c0154a02b488fc545b07397fd880d87543622d2be6973b35ab94012092b512c
+  languageName: node
+  linkType: hard
+
 "viem@npm:>=2.29.0, viem@npm:^2.1.1, viem@npm:^2.27.2, viem@npm:^2.31.7":
   version: 2.33.2
   resolution: "viem@npm:2.33.2"
@@ -5124,27 +5155,6 @@ __metadata:
     typescript:
       optional: true
   checksum: 10c0/4b0cdbb322617897f71f6ffa9efc90f8cfad202f9a90d2275181db79e806a962f5d458e3d8b5f861a81e628c05b9a4ebf7853ebce26283291aec3f54a03a4df3
-  languageName: node
-  linkType: hard
-
-"viem@npm:^2.34.0":
-  version: 2.34.0
-  resolution: "viem@npm:2.34.0"
-  dependencies:
-    "@noble/curves": "npm:1.9.6"
-    "@noble/hashes": "npm:1.8.0"
-    "@scure/bip32": "npm:1.7.0"
-    "@scure/bip39": "npm:1.6.0"
-    abitype: "npm:1.0.8"
-    isows: "npm:1.0.7"
-    ox: "npm:0.8.7"
-    ws: "npm:8.18.3"
-  peerDependencies:
-    typescript: ">=5.0.4"
-  peerDependenciesMeta:
-    typescript:
-      optional: true
-  checksum: 10c0/e2cd2a672d1912db63e8e0a7e95d0ce551e30ba4c4fa1fde042b23cde590eed7144fcdfce88777bfcbb8503c5f45a7b8d439e82853bc2ef746e408bf1394c4a3
   languageName: node
   linkType: hard
 

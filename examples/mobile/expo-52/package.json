@@ -18,7 +18,7 @@
     "@react-navigation/native": "^7.0.14",
     "@simplewebauthn/browser": "^13.1.2",
     "@simplewebauthn/server": "^13.1.2",
-    "@sophon-labs/account-react-native": "2.0.0-next.39",
+    "@sophon-labs/account-react-native": "2.0.0-next.40",
     "expo": "~52.0.47",
     "expo-blur": "~14.0.3",
     "expo-constants": "~17.0.8",
@@ -47,7 +47,7 @@
     "react-native-web": "~0.19.13",
     "react-native-webview": "13.12.5",
     "text-encoding-polyfill": "^0.6.7",
-    "viem": "2.34.0"
+    "viem": "2.36.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

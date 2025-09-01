@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 2.0.0-next.40
+
+### Patch Changes
+
+- Better support for ethers.js
+
 ## 2.0.0-next.39
 
 ### Patch Changes
