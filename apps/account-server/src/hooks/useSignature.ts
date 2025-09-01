@@ -104,7 +104,7 @@ export const useSignature = () => {
         const client = await createZksyncEcdsaClient({
           address: account!.address,
           owner: localAccount,
-          chain: VIEM_CHAIN,
+          chain: SOPHON_VIEM_CHAIN,
           transport: http(),
           contracts: {
             session: CONTRACTS.session,
@@ -142,7 +142,7 @@ export const useSignature = () => {
           userName: account.username || 'Sophon User',
           userDisplayName: account.username || 'Sophon User',
           contracts: CONTRACTS,
-          chain: VIEM_CHAIN,
+          chain: SOPHON_VIEM_CHAIN,
           transport: http(),
         });
 
@@ -253,7 +253,7 @@ export const useSignature = () => {
         const client = await createZksyncEcdsaClient({
           address: account!.address,
           owner: localAccount,
-          chain: VIEM_CHAIN,
+          chain: SOPHON_VIEM_CHAIN,
           transport: http(),
           contracts: {
             session: CONTRACTS.session,
@@ -272,7 +272,7 @@ export const useSignature = () => {
           userName: account.username || 'Sophon User',
           userDisplayName: account.username || 'Sophon User',
           contracts: CONTRACTS,
-          chain: VIEM_CHAIN,
+          chain: SOPHON_VIEM_CHAIN,
           transport: http(),
         });
 

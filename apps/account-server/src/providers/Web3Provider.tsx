@@ -10,14 +10,14 @@ import { createConfig, http, WagmiProvider } from 'wagmi';
 import { injected, walletConnect } from 'wagmi/connectors';
 import { env } from '@/env';
 import { sendMessage } from '@/events';
-import { VIEM_CHAIN } from '@/lib/constants';
+import { SOPHON_VIEM_CHAIN } from '@/lib/constants';
 
 const walletConnectProjectId =
   process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || '';
 
 // Wagmi config with MetaMask connector - uses environment-based chain
 const wagmiConfig = createConfig({
-  chains: [VIEM_CHAIN],
+  chains: [SOPHON_VIEM_CHAIN],
   connectors: [
     injected(),
     walletConnect({
@@ -26,7 +26,7 @@ const wagmiConfig = createConfig({
     }),
   ],
   transports: {
-    [VIEM_CHAIN.id]: http(),
+    [SOPHON_VIEM_CHAIN.id]: http(),
   },
 });
 

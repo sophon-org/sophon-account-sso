@@ -15,7 +15,7 @@ import {
   toHex,
 } from 'viem';
 
-import { CONTRACTS, VIEM_CHAIN } from '@/lib/constants';
+import { CONTRACTS, SOPHON_VIEM_CHAIN } from '@/lib/constants';
 
 const SALT_PREFIX = 'DynamicLabs';
 //const SALT_PREFIX = "SophonLabs";
@@ -71,7 +71,7 @@ export const checkAccountOwnership = async (
   deployerAddress: Address,
 ) => {
   const publicClient = createPublicClient({
-    chain: VIEM_CHAIN,
+    chain: SOPHON_VIEM_CHAIN,
     transport: http(),
   });
 
@@ -151,7 +151,7 @@ export const verifySignature = async ({
 }) => {
   try {
     const publicClient = createPublicClient({
-      chain: VIEM_CHAIN,
+      chain: SOPHON_VIEM_CHAIN,
       transport: http(),
     });
 

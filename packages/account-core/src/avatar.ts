@@ -1,6 +1,6 @@
 import { type Address, createPublicClient, http } from 'viem';
 import { sophon, sophonTestnet } from 'viem/chains';
-import { sophonAAFactoryAbi } from './abis/SophonAAFactory';
+import { sophonAAFactoryAbi } from './abis/SophonAAFactoryAbi';
 import { sophonAccountCodeStorageAbi } from './abis/SophonAccountStorageAbi';
 
 const COLOR_PALETTE_200 = [
