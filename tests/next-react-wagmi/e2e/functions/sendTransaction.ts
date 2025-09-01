@@ -1,5 +1,6 @@
-import { parseEther } from 'viem';
+import { encodeFunctionData, erc20Abi, parseEther, parseUnits } from 'viem';
 import type { AccountServerTestCase } from './types';
+import { getGeneralPaymasterInput } from 'viem/zksync';
 
 export const sendTransactionSOPTestCase: AccountServerTestCase<'sendTransaction'> =
   {
@@ -12,6 +13,45 @@ export const sendTransactionSOPTestCase: AccountServerTestCase<'sendTransaction'
     },
     accountServerActions: async (page) => {
       await page.locator('text=Transfer SOPH').waitFor({ state: 'visible' });
+      await page.screenshot();
+      await page.getByTestId('transaction-accept-button').click();
+    },
+    isValidResponse: (response) => {
+      return response.startsWith('0x');
+    },
+  };
+
+export const sendTransactionAsFunctionCallTestCase: AccountServerTestCase<'sendTransaction'> =
+  {
+    name: 'sendTransaction-encoded-function-call',
+    method: 'sendTransaction',
+    payload: {
+      paymaster: '0x98546B226dbbA8230cf620635a1e4ab01F6A99B2',
+      paymasterInput: getGeneralPaymasterInput({
+        innerInput: '0x',
+      }),
+      to: process.env.NEXT_PUBLIC_TOKEN_ERC20_TOKEN as `0x${string}`,
+      data: encodeFunctionData({
+        abi: [
+          ...erc20Abi,
+          {
+            inputs: [
+              { internalType: 'uint256', name: 'amount', type: 'uint256' },
+            ],
+            name: 'mint',
+            outputs: [],
+            stateMutability: 'nonpayable',
+            type: 'function',
+          },
+        ],
+        functionName: 'mint',
+        args: [parseUnits('10', 18)],
+      }),
+    },
+    accountServerActions: async (page) => {
+      await page
+        .locator('text=Transaction Request')
+        .waitFor({ state: 'visible' });
       await page.screenshot();
       await page.getByTestId('transaction-accept-button').click();
     },
