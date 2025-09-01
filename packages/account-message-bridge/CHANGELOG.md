@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 2.0.1
+
+### Patch Changes
+
+- Bumping version to minor to avoid version conflict.
+
 ## 2.0.0
 
 ### Major Changes
