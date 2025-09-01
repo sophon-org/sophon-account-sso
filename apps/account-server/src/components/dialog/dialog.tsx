@@ -108,9 +108,9 @@ export const DialogFooter = ({
   return (
     <div
       className={cn(
-        'mt-6 max-w-[400px] fixed bottom-0 left-0 right-0',
+        'mt-6 max-w-[400px] fixed bottom-0 left-0 right-0 mx-auto',
         addBackground
-          ? ' bg-white z-10 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] mx-auto'
+          ? ' bg-white z-10 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]'
           : '',
       )}
     >
