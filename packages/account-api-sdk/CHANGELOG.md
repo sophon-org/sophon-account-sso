@@ -1,5 +1,13 @@
 # @sophon-labs/account-api-sdk
 
+## 2.0.0-next.41
+
+### Patch Changes
+
+- Session Support + Custom SSO Provider
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.0-next.41
+
 ## 2.0.0-next.40
 
 ### Patch Changes
