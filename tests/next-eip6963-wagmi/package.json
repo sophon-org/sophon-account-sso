@@ -21,7 +21,7 @@
     "react-dom": "19.1.0",
     "viem": "^2.36.0",
     "wagmi": "^2.16.0",
-    "zksync-sso": "0.4.1"
+    "zksync-sso": "github:sophon-org/zksync-sso-preview#20250901_1"
   },
   "devDependencies": {
     "@dotenvx/dotenvx": "^1.49.0",

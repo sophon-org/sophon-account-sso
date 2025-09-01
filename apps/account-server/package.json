@@ -51,7 +51,7 @@
     "viem": "^2.36.0",
     "wagmi": "^2.15.6",
     "xstate": "5.20.1",
-    "zksync-sso": "0.4.1",
+    "zksync-sso": "github:sophon-org/zksync-sso-preview#20250901_1",
     "zod": "^3.25.71"
   },
   "devDependencies": {
