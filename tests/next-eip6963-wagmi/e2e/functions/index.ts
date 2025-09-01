@@ -11,7 +11,10 @@ import { getTransactionByHashTestCase } from './getTransactionByHash';
 import { getTransactionCountTestCase } from './getTransactionCount';
 import { getTransactionReceiptTestCase } from './getTransactionReceipt';
 import { mintPaidNFTTestCase, mintSimpleNFTTestCase } from './mintNFTs';
-import { sendTransactionSOPTestCase } from './sendTransaction';
+import {
+  sendTransactionAsFunctionCallTestCase,
+  sendTransactionSOPTestCase,
+} from './sendTransaction';
 import { signMessageTestCase } from './signMessage';
 import { signTypedDataTestCase } from './signTypedData';
 import { switchChainTestCase } from './switchChain';
@@ -36,6 +39,7 @@ export const accountServerTestCases = [
   writeContractUnverifiedTestCase,
   writeContractVerifiedSimpleTestCase,
   writeContractVerifiedComplexTestCase,
+  sendTransactionAsFunctionCallTestCase,
 ];
 
 export const directCallTestCases = [

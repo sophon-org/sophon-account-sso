@@ -10,6 +10,7 @@ import { MainStateMachineContext } from '@/context/state-machine-context';
 import { useAccountContext } from '@/hooks/useAccountContext';
 import { trackTransactionResult } from '@/lib/analytics';
 import { CONTRACTS, VIEM_CHAIN } from '@/lib/constants';
+import { safeParseTypedData } from '@/lib/helpers';
 import { windowService } from '@/service/window.service';
 import type { IncomingRequest, TransactionRequest } from '@/types/auth';
 
