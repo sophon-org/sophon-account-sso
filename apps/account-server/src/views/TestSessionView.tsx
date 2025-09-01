@@ -21,7 +21,11 @@ export default function TestSessionView() {
 
   const { sendTransaction, transactionError } = useTransaction();
 
-  const useAllowedSessions = true;
+  const useAllowedSessions =
+    typeof window !== 'undefined'
+      ? (new URLSearchParams(window.location.search).get('allowedSessions') ??
+        false)
+      : false;
 
   const signerPrivateKey =
     '0x7726827caac94a7f9e1b160f7ea819f172f7b6f9d2a97f992c38edeab82d4110';
