@@ -26,10 +26,6 @@ export const sendTransactionAsFunctionCallTestCase: AccountServerTestCase<'sendT
     name: 'sendTransaction-encoded-function-call',
     method: 'sendTransaction',
     payload: {
-      paymaster: '0x98546B226dbbA8230cf620635a1e4ab01F6A99B2',
-      paymasterInput: getGeneralPaymasterInput({
-        innerInput: '0x',
-      }),
       to: process.env.NEXT_PUBLIC_TOKEN_ERC20_TOKEN as `0x${string}`,
       data: encodeFunctionData({
         abi: [
