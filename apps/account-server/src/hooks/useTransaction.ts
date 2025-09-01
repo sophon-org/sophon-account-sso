@@ -13,6 +13,7 @@ import { CONTRACTS, SOPHON_VIEM_CHAIN } from '@/lib/constants';
 import { safeParseTypedData } from '@/lib/helpers';
 import { windowService } from '@/service/window.service';
 import type { IncomingRequest, TransactionRequest } from '@/types/auth';
+import { isValidPaymaster, safeHexString } from '@/lib/utils';
 
 export function useTransaction() {
   const { account } = useAccountContext();
@@ -76,20 +77,18 @@ export function useTransaction() {
             },
           });
 
+          const usePaymaster = isValidPaymaster(transactionRequest.paymaster);
+
           txHash = await ecdsaClient.sendTransaction({
             to: transactionRequest.to as `0x${string}`,
             value: BigInt(transactionRequest.value || '0'),
             data: (transactionRequest.data as `0x${string}`) || '0x',
-            paymaster:
-              transactionRequest.paymaster !== undefined &&
-              transactionRequest.paymaster !== '0x'
-                ? (transactionRequest.paymaster as `0x${string}`)
-                : undefined,
-            paymasterInput:
-              transactionRequest.paymasterInput !== undefined &&
-              transactionRequest.paymasterInput !== '0x'
-                ? (transactionRequest.paymasterInput as `0x${string}`)
-                : undefined,
+            paymaster: usePaymaster
+              ? (transactionRequest.paymaster as `0x${string}`)
+              : undefined,
+            paymasterInput: usePaymaster
+              ? safeHexString(transactionRequest.paymasterInput)
+              : undefined,
           });
         } catch (error) {
           console.error('Transaction error:', error);
@@ -134,41 +133,18 @@ export function useTransaction() {
           },
         });
 
-        try {
-          const gasEstimate = await client.estimateGas({
-            to: transactionRequest.to as `0x${string}`,
-            value: BigInt(transactionRequest.value || '0'),
-            data: (transactionRequest.data as `0x${string}`) || '0x',
-          });
-          console.log('Gas estimate:', gasEstimate.toString());
-        } catch (gasError) {
-          console.error('Gas estimation failed:', gasError);
-        }
-
-        let paymasterInput: `0x${string}` | undefined;
-        if (transactionRequest.paymasterInput) {
-          if (Array.isArray(transactionRequest.paymasterInput)) {
-            const hexString =
-              '0x' +
-              transactionRequest.paymasterInput
-                .map((n) => n.toString(16).padStart(2, '0'))
-                .join('');
-            paymasterInput = hexString as `0x${string}`;
-          } else {
-            paymasterInput = transactionRequest.paymasterInput as `0x${string}`;
-          }
-        }
+        const usePaymaster = isValidPaymaster(transactionRequest.paymaster);
 
         const txData = {
           to: transactionRequest.to as `0x${string}`,
           value: BigInt(transactionRequest.value || '0'),
           data: (transactionRequest.data as `0x${string}`) || '0x',
-          paymaster:
-            transactionRequest.paymaster !== undefined &&
-            transactionRequest.paymaster !== '0x'
-              ? (transactionRequest.paymaster as `0x${string}`)
-              : undefined,
-          paymasterInput,
+          paymaster: usePaymaster
+            ? (transactionRequest.paymaster as `0x${string}`)
+            : undefined,
+          paymasterInput: usePaymaster
+            ? safeHexString(transactionRequest.paymasterInput)
+            : undefined,
         };
 
         txHash = await client.sendTransaction(txData);
@@ -188,31 +164,18 @@ export function useTransaction() {
           transport: http(),
         });
 
-        try {
-          const gasEstimate = await client.estimateGas({
-            to: transactionRequest.to as `0x${string}`,
-            value: BigInt(transactionRequest.value || '0'),
-            data: (transactionRequest.data as `0x${string}`) || '0x',
-          });
-          console.log('Gas estimate:', gasEstimate.toString());
-        } catch (gasError) {
-          console.error('Gas estimation failed:', gasError);
-        }
+        const usePaymaster = isValidPaymaster(transactionRequest.paymaster);
 
         txHash = await client.sendTransaction({
           to: transactionRequest.to as `0x${string}`,
           value: BigInt(transactionRequest.value || '0'),
           data: (transactionRequest.data as `0x${string}`) || '0x',
-          paymaster:
-            transactionRequest.paymaster !== undefined &&
-            transactionRequest.paymaster !== '0x'
-              ? (transactionRequest.paymaster as `0x${string}`)
-              : undefined,
-          paymasterInput:
-            transactionRequest.paymasterInput !== undefined &&
-            transactionRequest.paymasterInput !== '0x'
-              ? (transactionRequest.paymasterInput as `0x${string}`)
-              : undefined,
+          paymaster: usePaymaster
+            ? (transactionRequest.paymaster as `0x${string}`)
+            : undefined,
+          paymasterInput: usePaymaster
+            ? safeHexString(transactionRequest.paymasterInput)
+            : undefined,
         });
       }
 
