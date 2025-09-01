@@ -62,7 +62,7 @@
     "release-it": "^17.10.0",
     "tsup": "^8.5.0",
     "typescript": "^5.8.3",
-    "viem": "^2.21.49"
+    "viem": "^2.36.0"
   },
   "peerDependencies": {
     "expo-network": "*",
@@ -70,7 +70,7 @@
     "react-native": ">=0.76.6",
     "react-native-mmkv": ">=3.3.0",
     "react-native-webview": ">=13.12.5",
-    "viem": ">=2.21.49"
+    "viem": ">=2.21.0"
   },
   "jest": {
     "preset": "react-native",
