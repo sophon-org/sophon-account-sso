@@ -3099,7 +3099,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@noble/curves@npm:^1.3.0, @noble/curves@npm:^1.4.2, @noble/curves@npm:^1.6.0, @noble/curves@npm:^1.9.1, @noble/curves@npm:^1.9.2, @noble/curves@npm:~1.9.0":
+"@noble/curves@npm:1.9.6, @noble/curves@npm:^1.3.0, @noble/curves@npm:^1.4.2, @noble/curves@npm:^1.6.0, @noble/curves@npm:^1.9.1, @noble/curves@npm:^1.9.2, @noble/curves@npm:~1.9.0":
   version: 1.9.6
   resolution: "@noble/curves@npm:1.9.6"
   dependencies:
@@ -5726,21 +5726,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-core@npm:2.0.0-next.39":
-  version: 2.0.0-next.39
-  resolution: "@sophon-labs/account-core@npm:2.0.0-next.39"
-  checksum: 10c0/3a2f532ee1ad7aba14955803f4939a9993af6e92e70cabc05f9988c76f5f3a951c5ad39f5fa727f26fa935ab68e7030989858427bf51e244cc7a62c11098f652
+"@sophon-labs/account-core@npm:2.0.0-next.40":
+  version: 2.0.0-next.40
+  resolution: "@sophon-labs/account-core@npm:2.0.0-next.40"
+  peerDependencies:
+    viem: ">=2.21.0"
+  checksum: 10c0/8149334d03b7a1ccc652cba88769d268fa76d0b4664df74158fc76bc0438427ad40cf400b0a887292eb38f18030b0ef3ab606e98d1df0c1d60cde2eeee108b78
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-message-bridge@npm:2.0.0-next.39":
-  version: 2.0.0-next.39
-  resolution: "@sophon-labs/account-message-bridge@npm:2.0.0-next.39"
+"@sophon-labs/account-message-bridge@npm:2.0.0-next.40":
+  version: 2.0.0-next.40
+  resolution: "@sophon-labs/account-message-bridge@npm:2.0.0-next.40"
   dependencies:
     eventemitter3: "npm:5.0.1"
   peerDependencies:
     react-native-webview: ">=13.12.5"
-  checksum: 10c0/52b559ac837a2b6d62bb71b8f86ba20b38fa19c4b874629d2dea58d70a961a7aea0ffb2dd8f4c86142f007c0da200f2aaf4d0258b97651f519b46a37fdc6b775
+  checksum: 10c0/c41b1c0680d767ee9ff0e4f41b3475e6cc3d3177d01d1bb923ca9c930ed816ab7def1b89c0a0e7444cca290e03e12a5ad7373bb9e656913c923c41e088e49054
   languageName: node
   linkType: hard
 
@@ -5761,8 +5763,8 @@ __metadata:
     "@radix-ui/react-tooltip": "npm:^1.2.7"
     "@sentry/nextjs": "npm:^10"
     "@simplewebauthn/server": "npm:^13.1.2"
-    "@sophon-labs/account-core": "npm:2.0.0-next.39"
-    "@sophon-labs/account-message-bridge": "npm:2.0.0-next.39"
+    "@sophon-labs/account-core": "npm:2.0.0-next.40"
+    "@sophon-labs/account-message-bridge": "npm:2.0.0-next.40"
     "@t3-oss/env-nextjs": "npm:^0.13.8"
     "@tailwindcss/postcss": "npm:^4"
     "@tanstack/react-query": "npm:^5.81.2"
@@ -5795,7 +5797,7 @@ __metadata:
     tw-animate-css: "npm:^1.3.5"
     typescript: "npm:^5"
     vaul: "npm:^1.1.2"
-    viem: "npm:^2.31.3"
+    viem: "npm:^2.36.0"
     vite: "npm:^7.0.5"
     vite-tsconfig-paths: "npm:^5.1.4"
     vitest: "npm:^3.2.4"
@@ -12502,6 +12504,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ox@npm:0.9.1":
+  version: 0.9.1
+  resolution: "ox@npm:0.9.1"
+  dependencies:
+    "@adraffy/ens-normalize": "npm:^1.11.0"
+    "@noble/ciphers": "npm:^1.3.0"
+    "@noble/curves": "npm:^1.9.1"
+    "@noble/hashes": "npm:^1.8.0"
+    "@scure/bip32": "npm:^1.7.0"
+    "@scure/bip39": "npm:^1.6.0"
+    abitype: "npm:^1.0.8"
+    eventemitter3: "npm:5.0.1"
+  peerDependencies:
+    typescript: ">=5.4.0"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 10c0/1678b0cb3e0f1b0986e8a944f64789ca00eb9e3d02fcb4a613f43fa9d75d9fb782f15a18133779fe6095f190fec2fd8be7a3c9df7ecf9c038fb0037ef542256d
+  languageName: node
+  linkType: hard
+
 "p-limit@npm:^2.0.0, p-limit@npm:^2.2.0":
   version: 2.3.0
   resolution: "p-limit@npm:2.3.0"
@@ -15541,7 +15564,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"viem@npm:>=2.29.0, viem@npm:^2.1.1, viem@npm:^2.27.2, viem@npm:^2.28.4, viem@npm:^2.31.3, viem@npm:^2.31.7":
+"viem@npm:>=2.29.0, viem@npm:^2.1.1, viem@npm:^2.27.2, viem@npm:^2.28.4, viem@npm:^2.31.7":
   version: 2.33.2
   resolution: "viem@npm:2.33.2"
   dependencies:
@@ -15559,6 +15582,27 @@ __metadata:
     typescript:
       optional: true
   checksum: 10c0/4b0cdbb322617897f71f6ffa9efc90f8cfad202f9a90d2275181db79e806a962f5d458e3d8b5f861a81e628c05b9a4ebf7853ebce26283291aec3f54a03a4df3
+  languageName: node
+  linkType: hard
+
+"viem@npm:^2.36.0":
+  version: 2.36.0
+  resolution: "viem@npm:2.36.0"
+  dependencies:
+    "@noble/curves": "npm:1.9.6"
+    "@noble/hashes": "npm:1.8.0"
+    "@scure/bip32": "npm:1.7.0"
+    "@scure/bip39": "npm:1.6.0"
+    abitype: "npm:1.0.8"
+    isows: "npm:1.0.7"
+    ox: "npm:0.9.1"
+    ws: "npm:8.18.3"
+  peerDependencies:
+    typescript: ">=5.0.4"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 10c0/b46e19ffaf85b0e80d168a707d7b295cf58ebefde27cfb8626510dfdf845bcd25c0154a02b488fc545b07397fd880d87543622d2be6973b35ab94012092b512c
   languageName: node
   linkType: hard
 
@@ -16019,6 +16063,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ws@npm:8.18.3, ws@npm:^8.18.0, ws@npm:^8.5.0":
+  version: 8.18.3
+  resolution: "ws@npm:8.18.3"
+  peerDependencies:
+    bufferutil: ^4.0.1
+    utf-8-validate: ">=5.0.2"
+  peerDependenciesMeta:
+    bufferutil:
+      optional: true
+    utf-8-validate:
+      optional: true
+  checksum: 10c0/eac918213de265ef7cb3d4ca348b891a51a520d839aa51cdb8ca93d4fa7ff9f6ccb339ccee89e4075324097f0a55157c89fa3f7147bde9d8d7e90335dc087b53
+  languageName: node
+  linkType: hard
+
 "ws@npm:^6.2.2":
   version: 6.2.3
   resolution: "ws@npm:6.2.3"
@@ -16040,21 +16099,6 @@ __metadata:
     utf-8-validate:
       optional: true
   checksum: 10c0/bd7d5f4aaf04fae7960c23dcb6c6375d525e00f795dd20b9385902bd008c40a94d3db3ce97d878acc7573df852056ca546328b27b39f47609f80fb22a0a9b61d
-  languageName: node
-  linkType: hard
-
-"ws@npm:^8.18.0, ws@npm:^8.5.0":
-  version: 8.18.3
-  resolution: "ws@npm:8.18.3"
-  peerDependencies:
-    bufferutil: ^4.0.1
-    utf-8-validate: ">=5.0.2"
-  peerDependenciesMeta:
-    bufferutil:
-      optional: true
-    utf-8-validate:
-      optional: true
-  checksum: 10c0/eac918213de265ef7cb3d4ca348b891a51a520d839aa51cdb8ca93d4fa7ff9f6ccb339ccee89e4075324097f0a55157c89fa3f7147bde9d8d7e90335dc087b53
   languageName: node
   linkType: hard
 

@@ -9,8 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@sophon-labs/account-core": "2.0.0-next.39",
-    "@sophon-labs/account-eip6963": "2.0.0-next.39",
+    "@sophon-labs/account-core": "2.0.0-next.40",
+    "@sophon-labs/account-eip6963": "2.0.0-next.40",
     "@tanstack/react-query": "^5.83.0",
     "connectkit": "^1.9.1",
     "next": "15.4.3",
