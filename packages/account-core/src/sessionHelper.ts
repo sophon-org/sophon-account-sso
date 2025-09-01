@@ -42,6 +42,7 @@ export function getSessionHash(sessionConfig: SessionConfig): `0x${string}` {
 }
 
 export const getSessionActionsHash = (sessionSpec: SessionConfig) => {
+  // biome-ignore lint/suspicious/noExplicitAny: improve this
   let callPoliciesEncoded: any;
 
   for (const callPolicy of sessionSpec.callPolicies) {

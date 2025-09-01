@@ -26,7 +26,7 @@ export default function TestSessionView() {
   const signerAddress = '0x36615cf349d7f6344891b1e7ca7c72883f5dc049';
 
   const sessionConfig = {
-    signer: getAddress(signerAddress.toLowerCase()) as `0x${string}`,
+    signer: getAddress(signerAddress.toLowerCase()),
     expiresAt: BigInt(1000000000000000000),
     feeLimit: {
       limitType: LimitType.Allowance,
@@ -36,7 +36,7 @@ export default function TestSessionView() {
     callPolicies: [],
     transferPolicies: [
       {
-        target: getAddress(signerAddress.toLowerCase()) as `0x${string}`,
+        target: getAddress(signerAddress.toLowerCase()),
         maxValuePerUse: BigInt(1000000000000000000),
         valueLimit: {
           limitType: LimitType.Allowance,
@@ -66,7 +66,7 @@ export default function TestSessionView() {
         true,
       );
 
-      await sendTransaction(installTx, null);
+      await sendTransaction(installTx);
       console.log('done 1');
     } else {
       console.log('Session key module already installed');
@@ -80,7 +80,7 @@ export default function TestSessionView() {
       },
       account!.address,
     );
-    await sendTransaction(createSessionTx, null);
+    await sendTransaction(createSessionTx);
 
     console.log('done');
   };

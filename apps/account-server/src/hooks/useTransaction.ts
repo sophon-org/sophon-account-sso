@@ -11,9 +11,9 @@ import { useAccountContext } from '@/hooks/useAccountContext';
 import { trackTransactionResult } from '@/lib/analytics';
 import { CONTRACTS, SOPHON_VIEM_CHAIN } from '@/lib/constants';
 import { safeParseTypedData } from '@/lib/helpers';
+import { isValidPaymaster, safeHexString } from '@/lib/utils';
 import { windowService } from '@/service/window.service';
 import type { IncomingRequest, TransactionRequest } from '@/types/auth';
-import { isValidPaymaster, safeHexString } from '@/lib/utils';
 
 export function useTransaction() {
   const { account } = useAccountContext();
@@ -26,7 +26,7 @@ export function useTransaction() {
 
   const sendTransaction = async (
     transactionRequest: TransactionRequest,
-    incomingRequest: IncomingRequest,
+    incomingRequest?: IncomingRequest,
   ) => {
     setIsSending(true);
     const availableAddress = account?.address || primaryWallet?.address;
