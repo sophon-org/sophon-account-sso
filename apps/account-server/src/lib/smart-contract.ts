@@ -95,7 +95,7 @@ export const verifySignature = async ({
 }) => {
   try {
     const publicClient = createPublicClient({
-      chain: VIEM_CHAIN,
+      chain: SOPHON_VIEM_CHAIN,
       transport: http(),
     });
 
