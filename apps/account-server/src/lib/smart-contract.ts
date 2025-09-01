@@ -1,11 +1,9 @@
-import { type ClassValue, clsx } from 'clsx';
-import { twMerge } from 'tailwind-merge';
-
 import {
   type Address,
   concat,
   createPublicClient,
-  encodePacked,
+  type Hash,
+  type Hex,
   hashMessage,
   hashTypedData,
   http,
@@ -17,94 +15,40 @@ import {
 
 import { CONTRACTS, SOPHON_VIEM_CHAIN } from '@/lib/constants';
 
-const SALT_PREFIX = 'DynamicLabs';
-//const SALT_PREFIX = "SophonLabs";
+export const DYNAMIC_SALT_PREFIX = 'DynamicLabs';
+export const SOPHON_SALT_PREFIX = 'SophonLabs';
 
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
+export const getDynamicSmartAccountUniqueId = (ownerAddress: Address) => {
+  const generatedSalt = `0x${Buffer.from(toBytes(DYNAMIC_SALT_PREFIX, { size: 32 })).toString('hex')}`;
+  const salt = keccak256(
+    concat([toBytes(keccak256(toHex(generatedSalt))), toBytes(ownerAddress)]),
+  );
 
-// TODO: change this implementation to a indexed one
-export const isAccountDeployed = async (connectedAddress: string) => {
-  const existingAccountAddress = await checkAccountOwnership(
-    connectedAddress,
-    process.env.NEXT_PUBLIC_DEPLOYER_ADDRESS as `0x${string}`,
-  );
-  return (
-    existingAccountAddress &&
-    existingAccountAddress !== '0x0000000000000000000000000000000000000000'
-  );
+  return salt;
 };
 
-export const getSmartAccountUniqueId = (ownerAddress: Address) => {
-  const salt = `0x${Buffer.from(toBytes(SALT_PREFIX, { size: 32 })).toString(
-    'hex',
-  )}` as `0x${string}`;
-
-  const uniqueIds: `0x${string}`[] = [];
-  uniqueIds.push(toHex(salt));
-  uniqueIds.push(ownerAddress as `0x${string}`);
-  const transformedUniqueId = keccak256(toHex(concat(uniqueIds)));
-
-  return transformedUniqueId;
-};
-
-export const getSmartAccountAddress = (
+export const getSophonSmartAccountUniqueId = (
   ownerAddress: Address,
-  deployerAddress?: Address,
+  deployAccount: Address,
 ) => {
-  const knownUniqueId = getSmartAccountUniqueId(ownerAddress);
+  const uniqueIds: Hex[] = [toHex(SOPHON_SALT_PREFIX), ownerAddress];
+  const partialSalt = keccak256(toHex(concat(uniqueIds)));
 
-  return keccak256(
-    encodePacked(
-      ['bytes32', 'address'],
-      [
-        knownUniqueId as `0x${string}`,
-        (deployerAddress ?? ownerAddress) as `0x${string}`,
-      ],
-    ),
+  const salt = keccak256(
+    concat([toBytes(partialSalt), toBytes(deployAccount)]),
   );
+  return salt;
 };
 
-export const checkAccountOwnership = async (
-  connectedAddress: string,
-  deployerAddress: Address,
-) => {
+export const getAccountAddressByUniqueId = async (uniqueId: Hash) => {
   const publicClient = createPublicClient({
     chain: SOPHON_VIEM_CHAIN,
     transport: http(),
   });
 
-  const salt = `0x${Buffer.from(toBytes(SALT_PREFIX, { size: 32 })).toString(
-    'hex',
-  )}` as `0x${string}`;
-
-  const uniqueIds: `0x${string}`[] = [];
-  uniqueIds.push(toHex(salt));
-  uniqueIds.push(connectedAddress as `0x${string}`);
-  const transformedUniqueId = keccak256(toHex(concat(uniqueIds)));
-
-  const knownUniqueId = transformedUniqueId;
-
   try {
-    const uniqueAccountId = keccak256(
-      encodePacked(
-        ['bytes32', 'address'],
-        [knownUniqueId as `0x${string}`, connectedAddress as `0x${string}`],
-        //[knownUniqueId as `0x${string}`, deployerAddress as `0x${string}`]
-      ),
-    );
-    console.log(
-      'calaulating',
-      uniqueAccountId,
-      'connected address',
-      connectedAddress,
-      'for deployer',
-      deployerAddress,
-    );
-
     const existingAccountAddress = await publicClient.readContract({
-      address: CONTRACTS.accountFactory as `0x${string}`,
+      address: CONTRACTS.accountFactory,
       abi: [
         {
           name: 'accountMappings',
@@ -115,7 +59,7 @@ export const checkAccountOwnership = async (
         },
       ],
       functionName: 'accountMappings',
-      args: [uniqueAccountId],
+      args: [uniqueId],
     });
 
     console.log('Existing account:', existingAccountAddress);

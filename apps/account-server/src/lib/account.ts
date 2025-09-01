@@ -11,7 +11,7 @@ import { eip712WalletActions } from 'viem/zksync';
 import { deployModularAccount } from 'zksync-sso/client';
 import { env } from '@/env';
 import { CONTRACTS, SOPHON_VIEM_CHAIN } from './constants';
-import { getSmartAccountUniqueId } from './smart-contract';
+import { SOPHON_SALT_PREFIX } from './smart-contract';
 
 // this part should be on the backend
 export const deployAccount = async (ownerAddress: `0x${string}`) => {
@@ -31,7 +31,7 @@ export const deployAccount = async (ownerAddress: `0x${string}`) => {
     paymaster: {
       location: CONTRACTS.accountPaymaster,
     },
-    uniqueAccountId: getSmartAccountUniqueId(ownerAddress),
+    uniqueAccountId: SOPHON_SALT_PREFIX,
     owners: [ownerAddress],
     installNoDataModules: [],
   });

@@ -3,8 +3,7 @@
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import { CheckIcon, ChevronRightIcon, CircleIcon } from 'lucide-react';
 import type * as React from 'react';
-
-import { cn } from '@/lib/smart-contract';
+import { cn } from '@/lib/cn';
 
 function DropdownMenu({
   ...props
