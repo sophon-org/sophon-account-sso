@@ -14,6 +14,5 @@ export default defineConfig((options) => {
     format: ['esm', 'cjs'],
     outDir: 'dist',
     tsconfig: path.resolve(__dirname, './tsconfig.json'),
-    external: ['zksync-sso'],
   };
 });
