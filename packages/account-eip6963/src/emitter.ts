@@ -25,7 +25,10 @@ export function createSophonEIP6963Emitter(
       uuid: network === 'mainnet' ? 'sophon' : `sophon-testnet`,
       name: network === 'mainnet' ? 'Sophon Account' : 'Sophon Account Test',
       icon: network === 'mainnet' ? SophonIcon : SophonIconTestnet,
-      rdns: network === 'mainnet' ? 'xyz.sophon.account' : `xyz.sophon.staging.account`,
+      rdns:
+        network === 'mainnet'
+          ? 'xyz.sophon.account'
+          : `xyz.sophon.staging.account`,
     },
     provider,
   });

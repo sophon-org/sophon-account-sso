@@ -1,3 +1,4 @@
+import { WarningCircleIcon } from '@phosphor-icons/react';
 import { useEffect } from 'react';
 import { Loader } from '@/components/loader';
 import { Button } from '@/components/ui/button';
@@ -107,42 +108,63 @@ export const useTransactionRequestActions = (
 
   const renderActions = () => (
     <div className="flex flex-col gap-4 w-full">
-      <Card
-        small
-        elevated
-        className={`w-full flex justify-between items-center gap-2 px-[16px] py-[8px] ${
-          openDrawer ? 'cursor-pointer hover:bg-gray-50' : ''
-        }`}
-        onClick={() =>
-          openDrawer?.('fee-details', {
-            fee: enrichedTransactionRequest?.fee,
-            paymaster: enrichedTransactionRequest?.paymaster,
-          })
-        }
-      >
-        <p className="text-sm font-bold h-[36px] flex items-center">
-          Estimated fee
-        </p>
-        {isEstimating && (
-          <Loader className="w-4 h-4 border-black border-r-transparent " />
-        )}
-        {!isEstimating && enrichedTransactionRequest?.fee && (
-          <div className="flex flex-col items-end">
-            <p className="text-sm text-black font-semibold">
-              {enrichedTransactionRequest?.fee?.SOPH} SOPH
-            </p>
-            {enrichedTransactionRequest?.fee?.USD && (
-              <p className="text-xs text-gray-500">
-                {enrichedTransactionRequest?.fee?.USD} USD
-              </p>
-            )}
-          </div>
-        )}
-        {enrichedTransactionRequest?.paymaster &&
-          enrichedTransactionRequest?.paymaster !== '0x' && (
-            <p className="text-sm text-black">Sponsored</p>
+      {!transactionError && (
+        <Card
+          small
+          elevated
+          className={`w-full flex justify-between items-center gap-2 px-[16px] py-[8px] ${
+            openDrawer ? 'cursor-pointer hover:bg-gray-50' : ''
+          }`}
+          onClick={() =>
+            openDrawer?.('fee-details', {
+              fee: enrichedTransactionRequest?.fee,
+              paymaster: enrichedTransactionRequest?.paymaster,
+            })
+          }
+        >
+          <p className="text-sm font-bold h-[36px] flex items-center">
+            Estimated fee
+          </p>
+          {isEstimating && (
+            <Loader className="w-4 h-4 border-black border-r-transparent " />
           )}
-      </Card>
+          {!isEstimating && enrichedTransactionRequest?.fee && (
+            <div className="flex flex-col items-end">
+              <p className="text-sm text-black font-semibold">
+                {enrichedTransactionRequest?.fee?.SOPH} SOPH
+              </p>
+              {enrichedTransactionRequest?.fee?.USD && (
+                <p className="text-xs text-gray-500">
+                  {enrichedTransactionRequest?.fee?.USD} USD
+                </p>
+              )}
+            </div>
+          )}
+          {enrichedTransactionRequest?.paymaster &&
+            enrichedTransactionRequest?.paymaster !== '0x' && (
+              <p className="text-sm text-black">Sponsored</p>
+            )}
+        </Card>
+      )}
+
+      {(transactionError || signingError) && (
+        <Card
+          small
+          elevated
+          className="py-4 px-5 rounded-3xl cursor-pointer flex items-center gap-2"
+          onClick={() =>
+            openDrawer?.(
+              'error',
+              transactionError || signingError || 'Unknown error',
+            )
+          }
+        >
+          <WarningCircleIcon weight="fill" className="w-5 h-5 text-red-500" />
+          <p className="text-xs flex-1">
+            The transaction failed. Click to see error.
+          </p>
+        </Card>
+      )}
 
       <div className="flex items-center justify-center gap-2 w-full">
         <Button
@@ -166,30 +188,6 @@ export const useTransactionRequestActions = (
           )}
         </Button>
       </div>
-
-      {(transactionError || signingError) && (
-        <div className="p-3 bg-red-50 border border-red-200 rounded">
-          <div className="flex justify-between items-start">
-            <p className="text-red-600 text-sm flex-1">
-              {transactionError || signingError}
-            </p>
-            {openDrawer && (
-              <button
-                type="button"
-                onClick={() =>
-                  openDrawer(
-                    'error',
-                    transactionError || signingError || 'Unknown error',
-                  )
-                }
-                className="ml-2 text-xs text-red-600 hover:text-red-800 underline"
-              >
-                Details
-              </button>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 
