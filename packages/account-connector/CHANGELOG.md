@@ -1,5 +1,13 @@
 # @sophon-labs/account-connector
 
+## 2.0.0-next.42
+
+### Patch Changes
+
+- Changing eip6963 rdns values
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.0-next.42
+
 ## 2.0.0-next.41
 
 ### Patch Changes
