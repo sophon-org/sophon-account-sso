@@ -1,5 +1,5 @@
 import { WarningCircleIcon } from '@phosphor-icons/react';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Loader } from '@/components/loader';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -34,12 +34,30 @@ export const useTransactionRequestActions = (
   const { enrichedTransactionRequest, isLoading, isEstimating } =
     useEnrichTransactionRequest(transactionRequest);
   const { isSending, sendTransaction, transactionError } = useTransaction();
+  // Ref to track the last opened error
+  const lastOpenedErrorRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (transactionRequest) {
       trackTransactionRequest(windowService.name, transactionRequest.value);
     }
   }, [transactionRequest]);
+
+  // Automatically open drawer when error appears
+  useEffect(() => {
+    const currentError = transactionError || signingError;
+
+    if (currentError && openDrawer) {
+      // Only open drawer if we haven't already opened it for this specific error
+      if (lastOpenedErrorRef.current !== currentError) {
+        openDrawer('error', currentError);
+        lastOpenedErrorRef.current = currentError;
+      }
+    } else {
+      // Reset the ref when there's no error
+      lastOpenedErrorRef.current = null;
+    }
+  }, [transactionError, signingError, openDrawer]);
 
   const handleSend = async (
     transactionRequest: TransactionRequest,
