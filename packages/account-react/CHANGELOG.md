@@ -1,5 +1,14 @@
 # @sophon-labs/account-react
 
+## 2.0.3
+
+### Patch Changes
+
+- Adding paymaster address on production
+- Updated dependencies
+  - @sophon-labs/account-connector@2.0.3
+  - @sophon-labs/account-core@2.0.3
+
 ## 2.0.2
 
 ### Patch Changes

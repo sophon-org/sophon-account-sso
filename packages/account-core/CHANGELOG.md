@@ -1,5 +1,11 @@
 # @sophon-labs/account-core
 
+## 2.0.3
+
+### Patch Changes
+
+- Adding paymaster address on production
+
 ## 2.0.2
 
 ### Patch Changes
