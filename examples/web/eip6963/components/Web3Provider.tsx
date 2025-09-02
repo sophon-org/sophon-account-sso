@@ -4,7 +4,7 @@ import { createSophonEIP6963Emitter } from '@sophon-labs/account-eip6963';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ConnectKitProvider, getDefaultConfig } from 'connectkit';
 import type { ReactNode } from 'react';
-import { sophonTestnet } from 'viem/chains';
+import { sophon, sophonTestnet } from 'viem/chains';
 import { createConfig, http, type State, WagmiProvider } from 'wagmi';
 
 const CHAIN_ID = (process.env.NEXT_PUBLIC_CHAIN_ID as string) ?? '531050104';
@@ -18,8 +18,9 @@ if (!projectId) throw new Error('Project ID is not defined');
 
 export const config = createConfig(
   getDefaultConfig({
-    chains: [sophonTestnet],
+    chains: [CHAIN_ID === '50104' ? sophon : sophonTestnet],
     transports: {
+      [sophon.id]: http(),
       [sophonTestnet.id]: http(),
     },
 
