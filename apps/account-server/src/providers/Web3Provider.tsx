@@ -20,14 +20,21 @@ const wagmiConfig = createConfig({
   chains: [SOPHON_VIEM_CHAIN],
   connectors: [
     injected(),
-    walletConnect({
-      projectId: walletConnectProjectId,
-      showQrModal: false,
-    }),
+    // We would run into `ReferenceError: indexedDB is not defined` during SSR without the check
+    // see https://github.com/rainbow-me/rainbowkit/issues/2476 for reference
+    ...(typeof indexedDB !== 'undefined'
+      ? [
+          walletConnect({
+            projectId: walletConnectProjectId,
+            showQrModal: false,
+          }),
+        ]
+      : []),
   ],
   transports: {
     [SOPHON_VIEM_CHAIN.id]: http(),
   },
+  ssr: true,
 });
 
 // Create query client

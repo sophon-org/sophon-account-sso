@@ -5865,7 +5865,7 @@ __metadata:
     vite: "npm:^7.0.5"
     vite-tsconfig-paths: "npm:^5.1.4"
     vitest: "npm:^3.2.4"
-    wagmi: "npm:^2.15.6"
+    wagmi: "npm:^2.16.9"
     xstate: "npm:5.20.1"
     zksync-sso: "github:sophon-org/zksync-sso-preview#20250901_1"
     zod: "npm:^3.25.71"
@@ -15779,7 +15779,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wagmi@npm:^2.15.6":
+"wagmi@npm:^2.16.9":
   version: 2.16.9
   resolution: "wagmi@npm:2.16.9"
   dependencies:
