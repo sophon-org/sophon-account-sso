@@ -7,7 +7,7 @@ export const SophonMessageHandler = () => {
   useEffect(() => {
     const listener = (event: MessageEvent) => {
       // just drop any message that didn't come from our auth server
-      if (!authServerUrl.startsWith(event.origin)) {
+      if (new URL(authServerUrl).origin !== event.origin) {
         return;
       }
 
