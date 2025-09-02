@@ -11,6 +11,7 @@ export const env = createEnv({
   server: {
     NODE_ENV: z.string(),
     DEPLOYER_PRIVATE_KEY: z.string(),
+    HYPERINDEX_ENDPOINT: z.string().url(),
   },
 
   /**
@@ -24,7 +25,7 @@ export const env = createEnv({
     NEXT_PUBLIC_CHAIN_ID: z
       .enum(VALID_CHAIN_IDS)
       .transform((val) => Number.parseInt(val.toString(), 10)),
-    NEXT_PUBLIC_HYPERINDEX_ENDPOINT: z.string().url(),
+
     NEXT_PUBLIC_AUTH_SERVER_ENDPOINT: z.string().url(),
     NEXT_PUBLIC_SERVER_LOGS_ENABLED: z
       .string()
@@ -46,8 +47,7 @@ export const env = createEnv({
       process.env.NEXT_PUBLIC_DYNAMIC_PROVIDER_ID,
     NEXT_PUBLIC_DEPLOYER_ADDRESS: process.env.NEXT_PUBLIC_DEPLOYER_ADDRESS,
     NEXT_PUBLIC_CHAIN_ID: process.env.NEXT_PUBLIC_CHAIN_ID,
-    NEXT_PUBLIC_HYPERINDEX_ENDPOINT:
-      process.env.NEXT_PUBLIC_HYPERINDEX_ENDPOINT,
+    HYPERINDEX_ENDPOINT: process.env.HYPERINDEX_ENDPOINT,
     NEXT_PUBLIC_AUTH_SERVER_ENDPOINT:
       process.env.NEXT_PUBLIC_AUTH_SERVER_ENDPOINT,
     NEXT_PUBLIC_SERVER_LOGS_ENABLED:
