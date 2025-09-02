@@ -1,5 +1,6 @@
 import { BLOCK_EXPLORER_API_URL } from '@/lib/constants';
 import type { ContractInfo } from '@/types/auth';
+import { getProxyImplementation } from './proxy-utils';
 
 export const getTokenBalance = async (
   accountAddress: string,
@@ -34,6 +35,10 @@ export const getContractInfo = async (
   address: string,
 ): Promise<ContractInfo> => {
   try {
+    const proxyImplementation = await getProxyImplementation(address);
+    if (proxyImplementation) {
+      address = proxyImplementation;
+    }
     const response = await fetch(
       `${BLOCK_EXPLORER_API_URL}/api?module=contract&action=getsourcecode&address=${address}`,
     );
