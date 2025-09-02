@@ -23,7 +23,7 @@ export const enrichERC20Transaction = async (
     token,
     displayValue: formatUnits(
       BigInt(decodedData.args[1]?.toString() || '0'),
-      18,
+      Number(token.tokenDecimal),
     ),
     paymaster: transactionRequest.paymaster,
     paymasterInput: transactionRequest.paymasterInput,
