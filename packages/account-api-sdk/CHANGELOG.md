@@ -1,5 +1,13 @@
 # @sophon-labs/account-api-sdk
 
+## 2.0.5
+
+### Patch Changes
+
+- Using partner id when using react sdk
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.5
+
 ## 2.0.4
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @sophon-labs/account-core
 
+## 2.0.5
+
+### Patch Changes
+
+- Using partner id when using react sdk
+
 ## 2.0.4
 
 ### Patch Changes
