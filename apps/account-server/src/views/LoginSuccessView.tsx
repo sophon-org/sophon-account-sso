@@ -1,4 +1,7 @@
-import { shortenAddress } from '@sophon-labs/account-core';
+import {
+  getSVGAvatarFromString,
+  shortenAddress,
+} from '@sophon-labs/account-core';
 import { useState } from 'react';
 import { IconCopy } from '@/components/icons/icon-copy';
 import {
@@ -23,9 +26,11 @@ export default function LoginSuccessView() {
     }, 1000);
   }
 
+  const avatarUrl = account?.address && getSVGAvatarFromString(account.address);
+
   return (
     <div className="flex flex-col items-center justify-center gap-8 mt-3 flex-grow">
-      <VerificationImage image="/images/avatar-example.png" />
+      {avatarUrl && <VerificationImage image={avatarUrl} />}
       <div className="flex flex-row items-center gap-2">
         <h5 className="text-lg font-bold">
           {shortenAddress(account?.address)}

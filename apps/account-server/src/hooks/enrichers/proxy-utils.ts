@@ -48,7 +48,7 @@ const getAddressSafe = async <T>(
       result.length === 66 &&
       result.startsWith('0x')
     ) {
-      const addressPart = '0x' + result.slice(-40); // Last 20 bytes (40 hex chars)
+      const addressPart = `0x${result.slice(-40)}`; // Last 20 bytes (40 hex chars)
       if (
         addressPart !== '0x0000000000000000000000000000000000000000' &&
         isAddress(addressPart)
