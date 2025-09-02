@@ -22,6 +22,7 @@ import { sophon, sophonTestnet } from 'viem/chains';
 import { eip712WalletActions } from 'viem/zksync';
 import type { Connector } from 'wagmi';
 import type { WalletProvider } from 'zksync-sso';
+import { type Communicator, PopupCommunicator } from 'zksync-sso/communicator';
 import { setCookieAuthToken } from '../cookie';
 import { SophonAppStorage, StorageKeys } from '../storage/storage';
 import { SophonMessageHandler } from './sophon-message-handler';
@@ -41,6 +42,7 @@ export interface SophonContextConfig {
   network: SophonNetworkType;
   connector: Connector;
   updateConnector: (connector: Connector) => void;
+  communicator: Communicator;
 }
 
 export const SophonContext = createContext<SophonContextConfig>({
@@ -53,6 +55,7 @@ export const SophonContext = createContext<SophonContextConfig>({
   network: 'testnet',
   connector: null,
   updateConnector: () => {},
+  communicator: undefined,
 });
 
 export interface SophonAccount {
@@ -74,6 +77,19 @@ export const SophonContextProvider = ({
     () => authServerUrl ?? AccountServerURL[network],
     [authServerUrl, network],
   );
+
+  const communicator = useMemo(() => {
+    return new PopupCommunicator(serverUrl, {
+      width: 360,
+      height: 800,
+      calculatePosition(width, height) {
+        return {
+          left: window.screenX + (window.outerWidth - width) / 2,
+          top: window.screenY + (window.outerHeight - height) / 2,
+        };
+      },
+    });
+  }, [serverUrl]);
   const [account, setAccount] = useState<SophonAccount | undefined>(undefined);
   const [token, setToken] = useState<string>();
   const [connector, setConnector] = useState<Connector>();
@@ -138,10 +154,17 @@ export const SophonContextProvider = ({
   );
 
   const disconnect = useCallback(async () => {
+    const logoutRequest = {
+      id: crypto.randomUUID(),
+      content: {
+        action: { method: 'wallet_revokePermissions', params: [] },
+      },
+    };
+    communicator?.postMessage(logoutRequest);
     await connector.disconnect();
     SophonAppStorage.clear();
     setAccount(undefined);
-  }, [connector]);
+  }, [connector, communicator]);
 
   const contextValue = useMemo<SophonContextConfig>(
     () => ({
@@ -159,6 +182,7 @@ export const SophonContextProvider = ({
       connect,
       updateConnector,
       walletClient,
+      communicator,
     }),
     [
       network,
@@ -174,6 +198,7 @@ export const SophonContextProvider = ({
       updateToken,
       updateConnector,
       walletClient,
+      communicator,
     ],
   );
 

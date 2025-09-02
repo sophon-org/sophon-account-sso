@@ -6,7 +6,6 @@ import { MainStateMachineContext } from '../context/state-machine-context';
 
 export const useConnectEventsWithStateMachine = () => {
   const actorRef = MainStateMachineContext.useActorRef();
-  const state = MainStateMachineContext.useSelector((state) => state);
 
   const {
     incomingRequest,
@@ -41,8 +40,4 @@ export const useConnectEventsWithStateMachine = () => {
     logoutRequest,
     actorRef,
   ]);
-
-  useEffect(() => {
-    console.log('>>> current state: ', state.value, state.context);
-  }, [state]);
 };
