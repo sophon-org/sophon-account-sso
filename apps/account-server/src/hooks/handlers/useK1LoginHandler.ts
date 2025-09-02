@@ -21,6 +21,10 @@ export const useK1LoginHandler = () => {
   );
 
   useEventHandler('k1.login', async (payload) => {
+    if (!payload.address) {
+      return;
+    }
+
     actorRef.send({ type: 'ACCOUNT_AUTHENTICATED' });
     const accounts = await getsSmartAccounts(payload.address);
 
