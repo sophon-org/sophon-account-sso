@@ -73,10 +73,10 @@ export const SophonContextProvider = ({
   authServerUrl?: string;
   partnerId: string;
 }) => {
-  const serverUrl = useMemo(
-    () => authServerUrl ?? AccountServerURL[network],
-    [authServerUrl, network],
-  );
+  const serverUrl = useMemo(() => {
+    const baseUrl = authServerUrl ?? AccountServerURL[network];
+    return `${baseUrl}/${partnerId}`;
+  }, [authServerUrl, network, partnerId]);
 
   const communicator = useMemo(() => {
     return new PopupCommunicator(serverUrl, {
