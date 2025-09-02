@@ -5790,23 +5790,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-core@npm:2.0.1":
-  version: 2.0.1
-  resolution: "@sophon-labs/account-core@npm:2.0.1"
+"@sophon-labs/account-core@npm:2.0.3":
+  version: 2.0.3
+  resolution: "@sophon-labs/account-core@npm:2.0.3"
   peerDependencies:
     viem: ">=2.21.0"
-  checksum: 10c0/aeefbbaba7152b596a30ba3f49f2a19dcdddb26faa173896cf245c07471d9877e90f58f6b793ddfcf5a79d1d08cb87122ab3050de1800a6e2f3a298fd73c8a36
+  checksum: 10c0/f7b1569533687a61f8056eb72dc3b6a3d32b368c3243f8653c7d4e24af19f559d434dd67102fedd6288c4c4e720fa830de55e1076076f7e9bd6a698467fe4746
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-message-bridge@npm:2.0.1":
-  version: 2.0.1
-  resolution: "@sophon-labs/account-message-bridge@npm:2.0.1"
+"@sophon-labs/account-message-bridge@npm:2.0.3":
+  version: 2.0.3
+  resolution: "@sophon-labs/account-message-bridge@npm:2.0.3"
   dependencies:
     eventemitter3: "npm:5.0.1"
   peerDependencies:
     react-native-webview: ">=13.12.5"
-  checksum: 10c0/cf110799323d6809ae1d1b59165eba548f06e7a9c2a042346d6a85b9efae516e60f234b5c2fd1c2fdb1cfdeff3af79e3238d2b65f979c2c6839288f98a1a37c4
+  checksum: 10c0/a95c4e2360c655f904fc10503e4c3f428b41c9791eb7a1fdad4d1bda1ae20171c27a9b03eb67ace23b85f834d61ed811e3f2b9dfd75ef813a19a880e77b833ce
   languageName: node
   linkType: hard
 
@@ -5827,8 +5827,8 @@ __metadata:
     "@radix-ui/react-tooltip": "npm:^1.2.7"
     "@sentry/nextjs": "npm:^10"
     "@simplewebauthn/server": "npm:^13.1.2"
-    "@sophon-labs/account-core": "npm:2.0.1"
-    "@sophon-labs/account-message-bridge": "npm:2.0.1"
+    "@sophon-labs/account-core": "npm:2.0.3"
+    "@sophon-labs/account-message-bridge": "npm:2.0.3"
     "@t3-oss/env-nextjs": "npm:^0.13.8"
     "@tailwindcss/postcss": "npm:^4"
     "@tanstack/react-query": "npm:^5.81.2"
