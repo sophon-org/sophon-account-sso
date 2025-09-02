@@ -1,5 +1,14 @@
 # @sophon-labs/account-react-native
 
+## 2.0.4
+
+### Patch Changes
+
+- Updating SetToken on react sdk
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.4
+  - @sophon-labs/account-message-bridge@2.0.4
+
 ## 2.0.3
 
 ### Patch Changes

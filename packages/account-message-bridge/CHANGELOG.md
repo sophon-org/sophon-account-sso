@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 2.0.4
+
+### Patch Changes
+
+- Updating SetToken on react sdk
+
 ## 2.0.3
 
 ### Patch Changes
