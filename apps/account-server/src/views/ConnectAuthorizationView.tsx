@@ -77,9 +77,10 @@ export default function ConnectAuthorizationView({
               {userScopes.map((key) => {
                 const scope = availableScopes[key];
                 return (
-                  <p key={key} className="flex items-start gap-2">
-                    <span className="mt-1">
+                  <p key={key} className="flex items-center gap-2">
+                    <span className="inline-flex">
                       <Checkbox
+                        id={`scope-${key}`}
                         checked={selectedScopes[key]}
                         onCheckedChange={(checked) => {
                           setSelectedScopes((prev) => {
@@ -92,9 +93,15 @@ export default function ConnectAuthorizationView({
                             return newScopes;
                           });
                         }}
+                        className="cursor-pointer"
                       />
                     </span>
-                    See your {scope.label} account
+                    <label
+                      htmlFor={`scope-${key}`}
+                      className="inline-flex cursor-pointer"
+                    >
+                      See your {scope.label} account
+                    </label>
                   </p>
                 );
               })}
