@@ -5,6 +5,7 @@ import {
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { isAddress } from 'viem';
+import { sophonTestnet } from 'viem/chains';
 import { sendMessage } from '@/events';
 import { trackDialogInteraction } from '@/lib/analytics';
 import { cn } from '@/lib/cn';
@@ -28,6 +29,7 @@ export const DialogHeader = ({
   showSettings,
   dialogType = 'dialog',
   isFixed = false,
+  showTestnetBanner = false,
 }: {
   title?: string;
   onBack?: () => void;
@@ -35,6 +37,7 @@ export const DialogHeader = ({
   showSettings?: boolean;
   dialogType?: string;
   isFixed?: boolean;
+  showTestnetBanner?: boolean;
 }) => {
   const handleDisconnect = () => {
     sendMessage('smart-contract.logout', null);
@@ -51,10 +54,11 @@ export const DialogHeader = ({
   return (
     <div
       className={cn(
-        'flex justify-between items-center py-2 min-h-16 px-6',
+        'flex justify-between items-center pb-2 min-h-16 px-6',
         isFixed
           ? 'sticky top-0 left-0 right-0 backdrop-blur-sm z-50 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)]'
           : '',
+        showTestnetBanner ? 'pt-6' : 'pt-2',
       )}
     >
       <div
@@ -181,6 +185,7 @@ export function Dialog({
   const [isScrollable, setIsScrollable] = useState(false);
   const [isScrolling, setIsScrolling] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const showTestnetBanner = SOPHON_VIEM_CHAIN.id === sophonTestnet.id;
 
   useEffect(() => {
     trackDialogInteraction(dialogType, 'opened');
@@ -240,8 +245,8 @@ export function Dialog({
           'linear-gradient(180deg, rgba(255, 255, 255, 0.00) 0%, #FFF 75%), url(/images/skybg.webp) lightgray -46.312px 0px / 395.062% 100% no-repeat',
       }}
     >
-      {SOPHON_VIEM_CHAIN.id === 531050104 && (
-        <div className="fixed bg-yellow-500 px-4 top-0 z-50 text-center text-white justify-self-center items-center rounded-b-lg">
+      {showTestnetBanner && (
+        <div className="fixed bg-yellow-500 px-4 top-0 z-60 text-center text-white justify-self-center items-center rounded-b-lg">
           <strong className="text-xs">TESTNET</strong>
         </div>
       )}
@@ -255,6 +260,7 @@ export function Dialog({
           showSettings={showSettings}
           dialogType={dialogType}
           isFixed={isScrollable && isScrolling}
+          showTestnetBanner={showTestnetBanner}
         />
         <div
           className={cn(
