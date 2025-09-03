@@ -1,7 +1,14 @@
+import {
+  getSVGAvatarFromString,
+  shortenAddress,
+} from '@sophon-labs/account-core';
+import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
+import { isAddress } from 'viem';
 import { sendMessage } from '@/events';
 import { trackDialogInteraction } from '@/lib/analytics';
 import { cn } from '@/lib/cn';
+import { SOPHON_VIEM_CHAIN } from '@/lib/constants';
 import { IconBack } from '../icons/icon-back';
 import { IconClose } from '../icons/icon-close';
 import { IconSettings } from '../icons/icon-settings';
@@ -32,6 +39,15 @@ export const DialogHeader = ({
   const handleDisconnect = () => {
     sendMessage('smart-contract.logout', null);
   };
+
+  const titleIsAddress = isAddress(title || '');
+
+  const avatarUrl = titleIsAddress && getSVGAvatarFromString(title || '');
+
+  const titleDisplay = titleIsAddress
+    ? shortenAddress(title as `0x${string}`)
+    : title;
+
   return (
     <div
       className={cn(
@@ -59,7 +75,14 @@ export const DialogHeader = ({
             <IconBack className="m-w-6 m-h-6" />
           </button>
         )}
-        <h2 className="text-xl font-bold flex-grow text-center">{title}</h2>
+        {!onBack && avatarUrl && (
+          <div className="w-6 h-6 rounded-full overflow-hidden">
+            <Image src={avatarUrl} alt="Sophon" width={24} height={24} />
+          </div>
+        )}
+        <h2 className="text-xl font-bold flex-grow text-center">
+          {titleDisplay}
+        </h2>
         {!!onClose && (
           <button
             type="button"
@@ -217,6 +240,11 @@ export function Dialog({
           'linear-gradient(180deg, rgba(255, 255, 255, 0.00) 0%, #FFF 75%), url(/images/skybg.webp) lightgray -46.312px 0px / 395.062% 100% no-repeat',
       }}
     >
+      {SOPHON_VIEM_CHAIN.id === 531050104 && (
+        <div className="fixed bg-yellow-500 px-4 top-0 z-50 text-center text-white justify-self-center items-center rounded-b-lg">
+          <strong className="text-xs">TESTNET</strong>
+        </div>
+      )}
       <div
         className={cn('mx-auto h-full relative max-w-[400px] flex flex-col')}
       >

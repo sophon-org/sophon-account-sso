@@ -1,7 +1,5 @@
 'use client';
 
-import { shortenAddress } from '@sophon-labs/account-core';
-
 import { Dialog } from '@/components/dialog';
 import { Button } from '@/components/ui/button';
 import { MainStateMachineContext } from '@/context/state-machine-context';
@@ -65,7 +63,7 @@ export default function DesktopRoot({ partnerId }: DesktopRootProps) {
       <>
         <Dialog
           className="relative"
-          title={shortenAddress(account?.address)}
+          title={account?.address}
           showSettings={true}
           showLegalNotice={false}
           dialogType="signing_request"
@@ -83,7 +81,7 @@ export default function DesktopRoot({ partnerId }: DesktopRootProps) {
       <>
         <Dialog
           className="relative"
-          title={shortenAddress(account?.address)}
+          title={account?.address}
           showSettings={true}
           showLegalNotice={false}
           dialogType="transaction_request"

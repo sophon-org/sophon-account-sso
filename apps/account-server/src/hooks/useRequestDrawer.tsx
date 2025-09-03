@@ -122,7 +122,22 @@ export const useRequestDrawer = () => {
               : '';
 
     return (
-      <VaulDrawer.Root open={isOpen} onOpenChange={setIsOpen}>
+      <VaulDrawer.Root
+        open={isOpen}
+        onOpenChange={(open) => {
+          //Immediately start animation
+          setIsOpen(open);
+          if (!open) {
+            // Wait for animation to complete before closing
+            const timer = setTimeout(() => {
+              // Sync global drawer state
+              closeDrawer();
+            }, 300);
+
+            return () => clearTimeout(timer);
+          }
+        }}
+      >
         <VaulDrawer.Portal>
           <VaulDrawer.Overlay className="fixed inset-0 bg-black/40" />
           <VaulDrawer.Content className="bg-white h-fit max-h-[80vh] fixed bottom-0 left-0 right-0 outline-none rounded-t-3xl overflow-hidden z-50">
@@ -132,7 +147,17 @@ export const useRequestDrawer = () => {
                 {title}
               </VaulDrawer.Title>
               <button
-                onClick={() => setIsOpen(false)}
+                onClick={() => {
+                  //Immediately start animation
+                  setIsOpen(false);
+                  // Wait for animation to complete before closing
+                  const timer = setTimeout(() => {
+                    // Sync global drawer state
+                    closeDrawer();
+                  }, 300);
+
+                  return () => clearTimeout(timer);
+                }}
                 type="button"
                 className="text-black hover:opacity-70 transition-opacity"
                 aria-label="Close drawer"
