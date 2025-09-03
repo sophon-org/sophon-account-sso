@@ -5,46 +5,11 @@ import {
   dynamicEvents,
 } from '@dynamic-labs/sdk-react-core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import type { ReactNode } from 'react';
-import { createConfig, http, WagmiProvider } from 'wagmi';
-import { injected, walletConnect } from 'wagmi/connectors';
+import { type ReactNode, useState } from 'react';
+import { type State, WagmiProvider } from 'wagmi';
 import { env } from '@/env';
 import { sendMessage } from '@/events';
-import { SOPHON_VIEM_CHAIN } from '@/lib/constants';
-
-const walletConnectProjectId =
-  process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || '';
-
-// Wagmi config with MetaMask connector - uses environment-based chain
-const wagmiConfig = createConfig({
-  chains: [SOPHON_VIEM_CHAIN],
-  connectors: [
-    injected(),
-    // We would run into `ReferenceError: indexedDB is not defined` during SSR without the check
-    // see https://github.com/rainbow-me/rainbowkit/issues/2476 for reference
-    ...(typeof indexedDB !== 'undefined'
-      ? [
-          walletConnect({
-            projectId: walletConnectProjectId,
-            showQrModal: false,
-          }),
-        ]
-      : []),
-  ],
-  transports: {
-    [SOPHON_VIEM_CHAIN.id]: http(),
-  },
-  ssr: true,
-});
-
-// Create query client
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 60 * 1000,
-    },
-  },
-});
+import { getWagmiConfig } from './wagmi';
 
 // work around for dynamic events not working properly and giving the primary wallet on auth success
 dynamicEvents.on('primaryWalletChanged', (newPrimaryWallet) => {
@@ -54,7 +19,25 @@ dynamicEvents.on('primaryWalletChanged', (newPrimaryWallet) => {
   });
 });
 
-export const Web3Provider = ({ children }: { children: ReactNode }) => {
+export const Web3Provider = ({
+  children,
+  initialState,
+}: {
+  children: ReactNode;
+  initialState?: State;
+}) => {
+  const [wagmiConfig] = useState(() => getWagmiConfig());
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            staleTime: 60 * 1000,
+          },
+        },
+      }),
+  );
+
   return (
     <DynamicContextProvider
       settings={{
@@ -81,7 +64,7 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
         },
       }}
     >
-      <WagmiProvider config={wagmiConfig}>
+      <WagmiProvider config={wagmiConfig} initialState={initialState}>
         <QueryClientProvider client={queryClient}>
           {children}
         </QueryClientProvider>
