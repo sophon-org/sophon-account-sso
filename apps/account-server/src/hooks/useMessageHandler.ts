@@ -244,7 +244,12 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
 
     // Define the message handler
     const unregister = windowService.listen(messageHandler);
-    setHandlerInitialized(true);
+
+    // wait a little before setting the handle initialized to give
+    // time for the caller messages to be receive and avoid visual glitches
+    setTimeout(() => {
+      setHandlerInitialized(true);
+    }, 500);
 
     return () => {
       unregister();
