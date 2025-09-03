@@ -2,7 +2,7 @@ import {
   AccountServerURL,
   type SophonNetworkType,
 } from '@sophon-labs/account-core';
-import { addNetworkStateListener, getNetworkStateAsync } from 'expo-network';
+// import { addNetworkStateListener, getNetworkStateAsync } from 'expo-network'; // Disabled - was causing WebView recreate
 import {
   createContext,
   useCallback,
@@ -20,7 +20,7 @@ import {
 import { sophon, sophonTestnet } from 'viem/chains';
 import { erc7846Actions } from 'viem/experimental';
 import type { WalletProvider } from 'zksync-sso';
-import { SophonMainView, type SophonMainViewProps } from '../components';
+import { SophonMainView, type SophonMainViewProps, SafeWebViewWrapper } from '../components';
 import { useUIEventHandler } from '../messaging';
 import {
   createWalletProvider,
@@ -39,6 +39,15 @@ export interface SophonContextConfig {
   token?: string | null;
   disconnect: () => void;
   hasInternet: boolean;
+  // 🚀 Global SDK status (shared across all hook instances)
+  sdkStatus: {
+    isHealthy: boolean;
+    lastError: string | null;
+    serverReachable: boolean;
+    webViewResponsive: boolean;
+    connectionState: 'idle' | 'connecting' | 'connected' | 'error';
+    lastUpdate: number;
+  };
 }
 
 export const SophonContext = createContext<SophonContextConfig>({
@@ -47,6 +56,15 @@ export const SophonContext = createContext<SophonContextConfig>({
   setAccount: () => {},
   disconnect: () => {},
   hasInternet: false,
+  // 🚀 Default SDK status
+  sdkStatus: {
+    isHealthy: true,
+    lastError: null,
+    serverReachable: true,
+    webViewResponsive: true,
+    connectionState: 'idle',
+    lastUpdate: Date.now(),
+  },
 });
 
 export interface SophonAccount {
@@ -68,6 +86,8 @@ export const SophonContextProvider = ({
 }) => {
   const [isConnected, setIsConnected] = useState(false);
 
+  // NETWORK LISTENER DISABLED: Was causing WebView to recreate constantly
+  /*
   useEffect(() => {
     const listener = addNetworkStateListener(() => {
       setTimeout(async () => {
@@ -81,16 +101,38 @@ export const SophonContextProvider = ({
       listener.remove();
     };
   }, []);
+  */
+  
+  // Set to true by default to stop WebView recreating
+  useEffect(() => {
+    setIsConnected(true);
+  }, []);
 
-  const serverUrl = useMemo(
-    () => authServerUrl ?? AccountServerURL[network],
-    [authServerUrl, network],
-  );
+  const serverUrl = useMemo(() => {
+    const url = authServerUrl ?? AccountServerURL[network];
+    console.log('📍 [CONTEXT-DEBUG] Computing serverUrl:', {
+      authServerUrl,
+      network,
+      result: url,
+      timestamp: new Date().toLocaleTimeString()
+    });
+    return url;
+  }, [authServerUrl, network]);
   const [account, setAccount] = useState<SophonAccount | undefined>(
     SophonAppStorage.getItem(StorageKeys.USER_ACCOUNT)
       ? JSON.parse(SophonAppStorage.getItem(StorageKeys.USER_ACCOUNT)!)
       : undefined,
   );
+  
+  // 🚀 Global SDK status (shared across all useSophonAccount instances)
+  const [sdkStatus, setSdkStatus] = useState({
+    isHealthy: true,
+    lastError: null as string | null,
+    serverReachable: true,
+    webViewResponsive: true,
+    connectionState: 'idle' as 'idle' | 'connecting' | 'connected' | 'error',
+    lastUpdate: Date.now(),
+  });
   const chain = useMemo(
     () => (network === 'mainnet' ? sophon : sophonTestnet),
     [network],
@@ -131,11 +173,33 @@ export const SophonContextProvider = ({
   }).extend(erc7846Actions());
 
   const disconnect = useCallback(() => {
-    // await walletClient.disconnect();
-    provider?.disconnect();
-    SophonAppStorage.clear();
-    setAccount(undefined);
+    console.log('🔍 [DISCONNECT-DEBUG] Context disconnect called:', {
+      hasProvider: !!provider,
+      timestamp: new Date().toLocaleTimeString()
+    });
+    
+    try {
+      // await walletClient.disconnect();
+      console.log('🔍 [DISCONNECT-DEBUG] Context: Calling provider.disconnect()');
+      provider?.disconnect();
+      
+      console.log('🔍 [DISCONNECT-DEBUG] Context: Clearing storage');
+      SophonAppStorage.clear();
+      
+      console.log('🔍 [DISCONNECT-DEBUG] Context: Setting account to undefined');
+      setAccount(undefined);
+      
+      console.log('✅ [DISCONNECT-DEBUG] Context disconnect completed');
+    } catch (error) {
+      console.log('🚨 [DISCONNECT-DEBUG] Context disconnect error:', error);
+    }
   }, [provider]);
+
+  // 🚀 Handle SDK status updates from WebView
+  useUIEventHandler('sdkStatusUpdate', (status) => {
+    console.log('🔍 [SDK-STATUS] Global status update:', status);
+    setSdkStatus(status);
+  });
 
   const contextValue = useMemo<SophonContextConfig>(
     () => ({
@@ -148,6 +212,7 @@ export const SophonContextProvider = ({
       disconnect,
       partnerId,
       hasInternet: isConnected,
+      sdkStatus, // ← Global SDK status shared by all hook instances
     }),
     [
       network,
@@ -159,21 +224,33 @@ export const SophonContextProvider = ({
       disconnect,
       partnerId,
       isConnected,
+      sdkStatus, // ← Add sdkStatus to dependencies
     ],
   );
 
   useUIEventHandler('logout', () => {
+    console.log('🔍 [DISCONNECT-DEBUG] Logout UI event received - calling context disconnect');
     disconnect();
   });
 
   return (
     <SophonContext.Provider value={contextValue}>
-      <SophonMainView
-        insets={insets}
-        authServerUrl={serverUrl}
-        partnerId={partnerId}
-        hasInternet={isConnected}
-      />
+      <SafeWebViewWrapper 
+        onError={(error, errorInfo) => {
+          // ✅ Use console.log to avoid triggering red screen from Error Boundary
+          console.log('🚨 [CRASH-DEBUG] SophonMainView crashed, gracefully handled by Error Boundary:', {
+            error: error.message,
+            componentStack: errorInfo.componentStack?.slice(0, 200) || 'No stack trace'
+          });
+        }}
+      >
+        <SophonMainView
+          insets={insets}
+          authServerUrl={serverUrl}
+          partnerId={partnerId}
+          hasInternet={isConnected}
+        />
+      </SafeWebViewWrapper>
       {children}
     </SophonContext.Provider>
   );

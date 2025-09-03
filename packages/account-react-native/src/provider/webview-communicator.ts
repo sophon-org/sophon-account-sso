@@ -67,8 +67,16 @@ export class WebViewCommunicator implements Communicator {
     sendUIMessage('hideModal', {});
   };
 
+  private isWaitingForModal = false; // 🚨 PREVENT SPAM
+  
   private readonly waitContextToBeReady = async () => {
-    console.log('🔥 waitContextToBeReady called - isReady:', this.isReady);
+    console.log('🔥 waitContextToBeReady called - isReady:', this.isReady, 'isWaiting:', this.isWaitingForModal);
+    
+    // 🚨 PREVENT SPAM: Don't start multiple modal waits
+    if (this.isWaitingForModal) {
+      console.log('🚨 waitContextToBeReady - already waiting for modal, skipping');
+      return;
+    }
     
     if (this.isReady) {
       console.log('🔥 Context ready - showing modal');
@@ -76,21 +84,30 @@ export class WebViewCommunicator implements Communicator {
       return;
     }
 
-    await new Promise((resolve, reject) => {
-      const unregister = registerUIEventHandler('modalReady', () => {
-        unregister();
-        resolve(true);
-        this.isReady = true;
+    this.isWaitingForModal = true;
+    
+    try {
+      await new Promise((resolve, reject) => {
+        const unregister = registerUIEventHandler('modalReady', () => {
+          unregister();
+          this.isWaitingForModal = false;
+          resolve(true);
+          this.isReady = true;
+        });
+
+        console.log('🔥 Context not ready - showing modal and waiting');
+        sendUIMessage('showModal', {});
+
+        setTimeout(() => {
+          unregister();
+          this.isWaitingForModal = false;
+          reject(new Error('Modal timeout'));
+        }, MODAL_TIMEOUT);
       });
-
-      console.log('🔥 Context not ready - showing modal and waiting');
-      sendUIMessage('showModal', {});
-
-      setTimeout(() => {
-        unregister();
-        reject(new Error('Modal timeout'));
-      }, MODAL_TIMEOUT);
-    });
+    } catch (error) {
+      this.isWaitingForModal = false;
+      throw error;
+    }
   };
   ready = async () => {};
 }

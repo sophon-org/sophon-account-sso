@@ -2,6 +2,7 @@
 
 import { shortenAddress } from '@sophon-labs/account-core';
 import { useRNHandler } from '@sophon-labs/account-message-bridge';
+// TODO: Add back sendMessageToRN import when ping/pong types are ready
 import { useCallback, useEffect, useState } from 'react';
 import { Loader } from '@/components/loader';
 import { Button } from '@/components/ui/button';
@@ -43,6 +44,8 @@ export default function EmbeddedRoot({ partnerId }: EmbeddedRootProps) {
       setOpen(true);
     }, []),
   );
+
+  // 🏓 TODO: WEBVIEW HEALTHCHECK - Add ping/pong handler after message bridge types are updated
 
   useEffect(() => {
     console.log('🔥 STATE', state);

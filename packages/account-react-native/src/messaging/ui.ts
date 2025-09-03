@@ -4,6 +4,8 @@ import type { Message } from 'zksync-sso/communicator';
 
 const SophonUIEvents = new EventEmitter();
 
+// Circuit breaker removed - was blocking normal operation
+
 export type SophonUIActions = {
   showModal: unknown;
   hideModal: unknown;
@@ -14,6 +16,26 @@ export type SophonUIActions = {
   logout: unknown;
   // 🚀 Status/result from wallet web app 
   webWalletStatus: { success: boolean; error?: string; account?: any };
+  // 🚀 Safe SDK status updates (read-only for external apps)
+  sdkStatusUpdate: { 
+    isHealthy: boolean; 
+    lastError: string | null; 
+    serverReachable: boolean; 
+    webViewResponsive: boolean; 
+    connectionState: 'idle' | 'connecting' | 'connected' | 'error';
+    lastUpdate: number;
+  };
+  // 🚨 Critical SDK errors that apps should handle (server crash during tx, etc.)
+  sdkCriticalError: {
+    type: 'server_crash' | 'webview_unresponsive' | 'transaction_interrupted' | 'connection_lost';
+    message: string;
+    timestamp: number;
+    recoverySuggestion?: string;
+  };
+  // 🚀 Server unavailable notification from connect()
+  serverUnavailable: { authServerUrl: string };
+  // 🚀 Server recovered notification from health check
+  serverRecovered: unknown;
 };
 
 export type SophonUIActionsName = keyof SophonUIActions;
