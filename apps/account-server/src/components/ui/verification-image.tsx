@@ -17,9 +17,10 @@ export default function VerificationImage({
           {image && (
             <Image
               src={image}
-              alt="Verification Image"
-              width={84}
-              height={84}
+              alt="Profile Image"
+              width={50}
+              height={50}
+              className="rounded-full"
             />
           )}
           {icon && icon}
