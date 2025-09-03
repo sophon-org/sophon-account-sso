@@ -42,7 +42,6 @@ export const useLoadingResources = () => {
     }
   }, [isReturningFromOAuth]);
 
-  // Step 4: Main authentication logic - runs when Dynamic SDK and handlers are ready
   useEffect(() => {
     if (sdkHasLoaded && handlerInitialized) {
       // important to ensure that we are connected to the provider, some providers may
