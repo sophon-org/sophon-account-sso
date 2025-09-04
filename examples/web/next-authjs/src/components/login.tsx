@@ -28,7 +28,7 @@ export const LoginButton = () => {
     const messageBuilder: SiwsMessage = new SiwsMessage({
       domain: window.location.host,
       address: connectedWallets[0],
-      statement: 'Hello, world from Sophon and Next-Auth!',
+      statement: 'Hello world from Sophon and Next-Auth!',
       chainId: currentNetwork.id,
       nonce: await getCsrfToken(),
     });
