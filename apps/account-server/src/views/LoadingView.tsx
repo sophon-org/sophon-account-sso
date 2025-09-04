@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { Loader } from '@/components/loader';
 import VerificationImage from '@/components/ui/verification-image';
 import {
-  clearSocialProviderFromURL,
   getSocialProviderFromURL,
   getSocialProviderIcon,
 } from '@/lib/social-provider';
@@ -19,7 +18,6 @@ export const LoadingView = ({ message }: { message?: string }) => {
     const provider = getSocialProviderFromURL();
     if (provider) {
       setSocialProvider(provider);
-      clearSocialProviderFromURL();
     }
   }, []);
 
