@@ -7,6 +7,14 @@ import { OpenAction } from '../../components/actions/open-action';
 import { SignMessageAction } from '../../components/actions/sign-message-action';
 import { SignTypedAction } from '../../components/actions/sign-typed-action';
 import { Logo } from '../../components/logo';
+import { SendSophAction } from '../../components/actions/send-soph-action';
+import { SendDTNAction } from '../../components/actions/send-dtn-action';
+import { ApproveDTNAction } from '../../components/actions/approve-dtn-action';
+import { MintNFTAction } from '../../components/actions/mint-nft-action';
+import { MintPaidNFTAction } from '../../components/actions/mint-paid-nft-action';
+import { UnverifiedAction } from '../../components/actions/unverified-action';
+import { VerifiedSimpleAction } from '../../components/actions/verified-simple-action';
+import { VerifiedComplexAction } from '../../components/actions/verified-complex-action';
 
 const address = '0xF2D70927368140D67355465c4E07d39caB36aeC9';
 
@@ -49,6 +57,14 @@ export default function Home() {
             address={address}
             message="Hello from Sophon SSO!\\n\\nThis message confirms you control this wallet."
           />
+          <SendSophAction sendMessage={sendMessage} address={address} />
+          <SendDTNAction sendMessage={sendMessage} address={address} />
+          <ApproveDTNAction sendMessage={sendMessage} address={address} />
+          <MintNFTAction sendMessage={sendMessage} address={address} />
+          <MintPaidNFTAction sendMessage={sendMessage} address={address} />
+          <UnverifiedAction sendMessage={sendMessage} address={address} />
+          <VerifiedSimpleAction sendMessage={sendMessage} address={address} />
+          <VerifiedComplexAction sendMessage={sendMessage} address={address} />
         </div>
       </div>
     </div>
