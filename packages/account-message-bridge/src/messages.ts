@@ -16,6 +16,9 @@ export type FromWebActions = {
     content: unknown;
   };
   'account.token.emitted': string;
+  pong: {
+    timestamp: number;
+  };
 };
 
 export type FromWebActionNames = keyof FromWebActions;
@@ -32,6 +35,9 @@ export type FromNativeActions = {
     id: string;
     requestId: string;
     content: unknown;
+  };
+  ping: {
+    timestamp: number;
   };
 };
 

@@ -2,6 +2,7 @@
 
 import { shortenAddress } from '@sophon-labs/account-core';
 import { useRNHandler } from '@sophon-labs/account-message-bridge';
+// TODO: Add back sendMessageToRN import when ping/pong types are ready
 import { useCallback, useEffect, useState } from 'react';
 import { Loader } from '@/components/loader';
 import { Button } from '@/components/ui/button';
@@ -39,19 +40,25 @@ export default function EmbeddedRoot({ partnerId }: EmbeddedRootProps) {
   useRNHandler(
     'openModal',
     useCallback(() => {
+      console.log('🔥 OPEN MODAL');
       setOpen(true);
     }, []),
   );
 
+  // 🏓 TODO: WEBVIEW HEALTHCHECK - Add ping/pong handler after message bridge types are updated
+
   useEffect(() => {
+    console.log('🔥 STATE', state);
     serverLog(`>>> 🔥 <<< STATE ${JSON.stringify(state, null, 2)}`);
   }, [state]);
 
   useEventHandler('flow.complete', () => {
+    console.log('🔥 FLOW COMPLETE');
     setOpen(false);
   });
 
   useEventHandler('modal.open', () => {
+    console.log('🔥 MODAL OPEN');
     setOpen(true);
   });
 
@@ -60,6 +67,7 @@ export default function EmbeddedRoot({ partnerId }: EmbeddedRootProps) {
   const handleCloseModal = (isOpen: boolean) => {
     setOpen(isOpen);
     if (!isOpen) {
+      console.log('🔥 CANCEL FLOW');
       actorRef.send({ type: 'CANCEL' });
     }
   };
