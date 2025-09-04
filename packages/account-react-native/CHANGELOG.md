@@ -1,5 +1,14 @@
 # @sophon-labs/account-react-native
 
+## 2.0.6
+
+### Patch Changes
+
+- Exposing again SIWS helper and adding example
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.6
+  - @sophon-labs/account-message-bridge@2.0.6
+
 ## 2.0.5
 
 ### Patch Changes
