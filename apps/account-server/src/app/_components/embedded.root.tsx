@@ -11,6 +11,7 @@ import { sendMessage } from '@/events';
 import { useEventHandler } from '@/events/hooks';
 import { useConnectionAuthorization } from '@/hooks/auth/useConnectionAuthorization';
 import { useAccountContext } from '@/hooks/useAccountContext';
+import { useRequestDrawer } from '@/hooks/useRequestDrawer';
 import { useUserIdentification } from '@/hooks/useUserIdentification';
 import { serverLog } from '@/lib/server-log';
 import { CompletedView } from '@/views/CompletedView';
@@ -32,14 +33,41 @@ export default function EmbeddedRoot({ partnerId }: EmbeddedRootProps) {
   const [open, setOpen] = useState(false);
   const state = MainStateMachineContext.useSelector((state) => state);
   const actorRef = MainStateMachineContext.useActorRef();
+  const { openDrawer, DrawerComponent } = useRequestDrawer();
+  const signingActions = SigningRequestView.useActions({ openDrawer });
   const { onRefuseConnection, onAcceptConnection, isLoading } =
     useConnectionAuthorization();
   useUserIdentification();
+
+  useEffect(() => {
+    const callback = (event: MessageEvent) => {
+      if (
+        event.origin === 'http://localhost:3006' &&
+        event.data.type === 'embedded'
+      ) {
+        console.log('Processing Embedded Message', event.data.payload);
+        // @ts-ignore
+        window.onMessageFromRN(event.data.payload);
+      }
+    };
+
+    window.addEventListener('message', callback);
+    return () => {
+      window.removeEventListener('message', callback);
+    };
+  }, []);
 
   useRNHandler(
     'openModal',
     useCallback(() => {
       setOpen(true);
+    }, []),
+  );
+
+  useRNHandler(
+    'closeModal',
+    useCallback(() => {
+      setOpen(false);
     }, []),
   );
 
@@ -97,6 +125,7 @@ export default function EmbeddedRoot({ partnerId }: EmbeddedRootProps) {
         showLogo={false}
         showLegalNotice={false}
         drawerType="signing_request"
+        actions={signingActions.renderActions()}
       >
         <SigningRequestView />
       </Drawer>

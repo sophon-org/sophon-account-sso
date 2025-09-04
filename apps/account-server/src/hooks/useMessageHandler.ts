@@ -216,7 +216,7 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
 
     // Check sessionStorage for saved request (survives OAuth redirects)
     const savedRequest = sessionStorage.getItem('sophon-incoming-request');
-    if (savedRequest && !incomingRequest) {
+    if (false && savedRequest && !incomingRequest) {
       try {
         const parsedRequest = JSON.parse(savedRequest);
         messageHandler(parsedRequest);

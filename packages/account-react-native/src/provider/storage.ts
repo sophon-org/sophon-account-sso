@@ -1,6 +1,4 @@
-import { MMKV } from 'react-native-mmkv';
-
-const storage = new MMKV();
+// import * as SecureStore from 'expo-secure-store';
 
 interface StorageLike {
   getItem(key: string): string | null;
@@ -10,13 +8,27 @@ interface StorageLike {
 }
 
 export const SophonAppStorage: StorageLike = {
-  getItem: (key: string) => storage.getString(key) ?? null,
-  setItem: (key: string, value: string) => storage.set(key, value),
-  removeItem: (key: string) => storage.delete(key),
-  clear: () => storage.clearAll(),
+  getItem: (key: string) => {
+    return '';
+    // console.log('getItem', key);
+    // return SecureStore.getItem(key);
+  },
+  setItem: (key: string, value: string) => {
+    console.log('setItem', key, value);
+    // SecureStore.setItem(key, value);
+  },
+  removeItem: (key: string) => {
+    console.log('removeItem', key);
+    // SecureStore.deleteItemAsync(key);
+  },
+  clear: () => {
+    console.log('clear');
+    // SecureStore.deleteItemAsync(StorageKeys.USER_TOKEN);
+    // SecureStore.deleteItemAsync(StorageKeys.USER_ACCOUNT);
+  },
 };
 
 export enum StorageKeys {
-  USER_TOKEN = 'user_token',
-  USER_ACCOUNT = 'user_account',
+  USER_TOKEN = 'sophon-user-token',
+  USER_ACCOUNT = 'sophon-user-account',
 }

@@ -31,6 +31,7 @@ export const registerRNHandler = <T extends FromNativeActionNames>(
   action: T,
   callback: (payload: FromNativeActions[T]) => void,
 ) => {
+  console.log('registerRNHandler', action, callback);
   RNEvents.on(action, callback);
   return () => RNEvents.off(action, callback);
 };
@@ -48,15 +49,23 @@ export const useRNHandler = <T extends FromNativeActionNames>(
   callback: (payload: FromNativeActions[T]) => void,
 ) => {
   useEffect(() => {
+    console.log('useRNHandler', action, callback);
     const deregister = registerRNHandler(action, callback);
     return () => {
+      console.log('useRNHandler deregister', action, callback);
       deregister();
     };
   }, [action, callback]);
 };
 
-const onMessageFromRN = (message: string) => {
+export const onMessageFromRN = (message: string) => {
+  console.log('Parsing onMessageFromRN', message);
   const { action, payload } = JSON.parse(message);
+  console.log(
+    'listeners',
+    RNEvents.listenerCount(action),
+    RNEvents.listeners(action),
+  );
   RNEvents.emit(action, payload);
 };
 

@@ -1,3 +1,5 @@
+import 'text-encoding-polyfill';
+
 export * from './abis';
 export * from './avatar';
 export * from './constants';

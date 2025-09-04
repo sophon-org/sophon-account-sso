@@ -110,6 +110,36 @@ const popupWindowService: WindowCommunicationService = {
   },
 };
 
+const embeddedWindowService: WindowCommunicationService = {
+  name: 'embedded',
+
+  isManaged: () => !isSSR() && !!window.parent,
+
+  reload: () => {
+    window.location.reload();
+  },
+
+  close: () => {
+    sendMessageToRN('closeModal', {});
+  },
+
+  sendMessage: (message: unknown) => {
+    sendMessageToRN('rpc', message as FromWebActions['rpc']);
+  },
+
+  emitToken: (token: string) => {
+    sendMessageToRN('account.token.emitted', token);
+  },
+
+  logout: () => {
+    sendMessageToRN('logout', null);
+  },
+
+  listen: (callback: (message: unknown) => void) => {
+    return registerRNHandler('rpc', callback);
+  },
+};
+
 const webViewWindowService: WindowCommunicationService = {
   name: 'webview',
 
@@ -140,6 +170,7 @@ const webViewWindowService: WindowCommunicationService = {
 
 const availableServices: WindowCommunicationService[] = [
   popupWindowService,
+  embeddedWindowService,
   webViewWindowService,
 ];
 

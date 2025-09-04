@@ -64,6 +64,7 @@ export const SophonMainView = ({
   return (
     <View style={containerStyles}>
       <WebView
+        data-testid="sophon-mainview"
         key={authServerUrl}
         ref={webViewRef}
         source={{

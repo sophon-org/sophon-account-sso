@@ -5799,14 +5799,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-message-bridge@npm:2.0.3":
-  version: 2.0.3
-  resolution: "@sophon-labs/account-message-bridge@npm:2.0.3"
+"@sophon-labs/account-message-bridge@file:../../packages/account-message-bridge::locator=%40sophon-labs%2Faccount-server%40workspace%3A.":
+  version: 2.0.6
+  resolution: "@sophon-labs/account-message-bridge@file:../../packages/account-message-bridge#../../packages/account-message-bridge::hash=f5e9cc&locator=%40sophon-labs%2Faccount-server%40workspace%3A."
   dependencies:
     eventemitter3: "npm:5.0.1"
   peerDependencies:
     react-native-webview: ">=13.12.5"
-  checksum: 10c0/a95c4e2360c655f904fc10503e4c3f428b41c9791eb7a1fdad4d1bda1ae20171c27a9b03eb67ace23b85f834d61ed811e3f2b9dfd75ef813a19a880e77b833ce
+  checksum: 10c0/bdc5cb54ea31dd595db4cb67b43483ac903501ce2dd7f0e2eb5e51da7c5aac914617422620982ccb2720d6b9623f4527818df0dde144f1f1f3816c1dc4362634
   languageName: node
   linkType: hard
 
@@ -5828,7 +5828,7 @@ __metadata:
     "@sentry/nextjs": "npm:^10"
     "@simplewebauthn/server": "npm:^13.1.2"
     "@sophon-labs/account-core": "npm:2.0.3"
-    "@sophon-labs/account-message-bridge": "npm:2.0.3"
+    "@sophon-labs/account-message-bridge": "file:../../packages/account-message-bridge"
     "@t3-oss/env-nextjs": "npm:^0.13.8"
     "@tailwindcss/postcss": "npm:^4"
     "@tanstack/react-query": "npm:^5.81.2"
