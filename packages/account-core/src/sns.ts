@@ -234,13 +234,25 @@ export const snsCache = (testnet: boolean = false) => {
   };
 
   const getSNSName = async (address: Address): Promise<string | null> => {
-    console.log('getSNSName', address);
     if (!isAddress(address)) {
-      console.log('isAddress(address)', isAddress(address));
       return null;
     }
 
     return await resolveAddress(address, testnet);
+  };
+
+  const getCachedSNSName = (address: Address): string | null => {
+    if (!isAddress(address)) {
+      return null;
+    }
+
+    const cachedEntry = getCacheEntry(address, networkId);
+
+    if (cachedEntry) {
+      return cachedEntry.name;
+    }
+
+    return null;
   };
 
   /**
@@ -251,13 +263,11 @@ export const snsCache = (testnet: boolean = false) => {
     address: Address,
     onlyCache = false,
   ): Promise<string | null> => {
-    console.log('fetchSNSName', address, onlyCache);
-
     if (!address) return null;
 
     // Check cache first
     const cachedEntry = getCacheEntry(address, networkId);
-    console.log('cachedEntry', cachedEntry);
+
     if (cachedEntry) {
       return cachedEntry.name;
     }
@@ -268,7 +278,6 @@ export const snsCache = (testnet: boolean = false) => {
 
     try {
       const result = await getSNSName(address);
-      console.log('result', result);
       if (result) {
         setCacheEntry(result, address, networkId);
         return result;
@@ -342,6 +351,7 @@ export const snsCache = (testnet: boolean = false) => {
   return {
     // Main functions
     fetchSNSName,
+    getCachedSNSName,
     resolveSNSName,
     // Cache utilities
     clearCache,

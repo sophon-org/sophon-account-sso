@@ -13,8 +13,9 @@ export const useAddressWithSns = (
   shortAddress?: boolean,
 ) => {
   const [isChecking, setIsChecking] = useState(false);
+
   const [addressOrName, setAddressOrName] = useState<string | undefined>(
-    address,
+    undefined,
   );
 
   const cache = snsCache(SOPHON_VIEM_CHAIN.id === sophonTestnet.id);
@@ -22,7 +23,12 @@ export const useAddressWithSns = (
   // biome-ignore lint/correctness/useExhaustiveDependencies: If I add, it complains the function changes on every render
   useEffect(() => {
     if (address && !addressOrName) {
-      if (shortAddress) {
+      const cachedName = cache.getCachedSNSName(address!);
+
+      if (cachedName) {
+        setAddressOrName(cachedName);
+        return;
+      } else if (shortAddress) {
         setAddressOrName(shortenAddress(address));
       } else {
         setAddressOrName(address);
