@@ -1,12 +1,10 @@
-import {
-  getSVGAvatarFromString,
-  shortenAddress,
-} from '@sophon-labs/account-core';
+import { getSVGAvatarFromString } from '@sophon-labs/account-core';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { isAddress } from 'viem';
 import { sophonTestnet } from 'viem/chains';
 import { sendMessage } from '@/events';
+import { useAddressWithSns } from '@/hooks/useAddressWithSns';
 import { trackDialogInteraction } from '@/lib/analytics';
 import { cn } from '@/lib/cn';
 import { SOPHON_VIEM_CHAIN } from '@/lib/constants';
@@ -47,9 +45,12 @@ export const DialogHeader = ({
 
   const avatarUrl = titleIsAddress && getSVGAvatarFromString(title || '');
 
-  const titleDisplay = titleIsAddress
-    ? shortenAddress(title as `0x${string}`)
-    : title;
+  const { addressOrName } = useAddressWithSns(
+    title as `0x${string}` | undefined,
+    true,
+  );
+
+  const titleDisplay = titleIsAddress ? addressOrName : title;
 
   return (
     <div
