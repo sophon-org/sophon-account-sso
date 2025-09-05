@@ -3,13 +3,13 @@ import { useCallback } from 'react';
 import { useSophonContext } from './useSophonContext';
 
 export const useSophonActions = () => {
-  const { authServerUrl, partnerId } = useSophonContext();
+  const { authServerUrl } = useSophonContext();
   const openProfile = useCallback(() => {
     if (isSSR()) {
       return;
     }
 
-    const url = `${authServerUrl}/${partnerId}`;
+    const url = authServerUrl;
     const width = 360;
     const height = 800;
     const left = window.screenX + (window.outerWidth - width) / 2;
@@ -20,7 +20,7 @@ export const useSophonActions = () => {
       'SophonProfile',
       `width=${width}, height=${height}, left=${left}, top=${top}`,
     );
-  }, [authServerUrl, partnerId]);
+  }, [authServerUrl]);
 
   return {
     openProfile,
