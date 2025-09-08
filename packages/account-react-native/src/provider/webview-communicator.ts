@@ -5,24 +5,11 @@ import {
   type SophonUIActions,
   sendUIMessage,
 } from '../messaging';
+import { getTimeoutRPC } from '../messaging/utils';
 
 const HEALTH_CHECK_TIMEOUT = 1000;
 // const MODAL_TIMEOUT = 5000;
 // const REQUEST_TIMEOUT = 5 * 1000;
-
-const getTimeoutRPC = (requestId?: UUID) => {
-  return {
-    id: crypto.randomUUID(),
-    requestId,
-    content: {
-      result: null,
-      error: {
-        message: 'Request timeout.',
-        code: -32002,
-      },
-    },
-  };
-};
 
 export class WebViewCommunicator implements Communicator {
   // private initialized = false;
@@ -160,12 +147,19 @@ export class WebViewCommunicator implements Communicator {
         return true;
       }
 
-      if (maxRetries-- <= 0) {
+      // try to refresh the main view in case of retry, just to make sure that the page is loaded
+      // and sort out user connection issues
+      sendUIMessage('refreshMainView', {});
+
+      if (--maxRetries <= 0) {
         console.log(requestId, ' - max retries reached, send timeout rpc');
         clearInterval(this.currentCheckId);
+
         this.currentCheckId = undefined;
         this.currentRequestId = undefined;
-        sendUIMessage('outgoingRpc', getTimeoutRPC(requestId));
+
+        // simulate the RPC response to send a timeout error and release resources
+        sendUIMessage('incomingRpc', getTimeoutRPC(requestId));
       }
       return false;
     };

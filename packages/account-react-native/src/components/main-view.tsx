@@ -5,6 +5,7 @@ import { WebView } from 'react-native-webview';
 import { VIEW_VERSION } from '../constants';
 import { USER_AGENT } from '../constants/user-agent';
 import { useModalVisibility } from '../hooks/use-modal-visibility';
+import { useSophonContext } from '../hooks/use-sophon-context';
 import { sendUIMessage, useUIEventHandler } from '../messaging/ui';
 
 export interface SophonMainViewProps {
@@ -28,6 +29,7 @@ export const SophonMainView = ({
   const webViewRef = useRef<WebView>(null);
   const { visible } = useModalVisibility();
   const [isReady, setIsReady] = useState(false);
+  const { setError } = useSophonContext();
 
   const containerStyles = {
     ...styles.container,
@@ -58,6 +60,10 @@ export const SophonMainView = ({
       [isReady],
     ),
   );
+
+  useUIEventHandler('refreshMainView', () => {
+    webViewRef.current?.reload();
+  });
 
   const params = new URLSearchParams();
   if (partnerId) {
@@ -131,8 +137,7 @@ export const SophonMainView = ({
           }
         }}
         onError={(event) => {
-          console.error(event);
-          console.log('onError', event.nativeEvent.description);
+          setError(event.nativeEvent.description);
           sendUIMessage('hideModal', null);
         }}
         onContentProcessDidTerminate={() => {}}

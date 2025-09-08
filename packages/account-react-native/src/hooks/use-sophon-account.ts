@@ -1,16 +1,19 @@
 import { useCallback, useMemo, useState } from 'react';
 import type { Address } from 'viem';
+import type { CustomRPCError } from '@/types';
 import { sendUIMessage } from '../messaging';
 import { useSophonContext } from './use-sophon-context';
 
 export const useSophonAccount = () => {
-  const { walletClient, setAccount, provider, account, disconnect } =
+  const { walletClient, setAccount, provider, account, disconnect, error } =
     useSophonContext();
-  const [error, setError] = useState<string>();
+  const [accountError, setAccountError] = useState<string>();
+  const [isConnecting, setIsConnecting] = useState(false);
 
   const connect = useCallback(async () => {
     try {
-      setError(undefined);
+      setIsConnecting(true);
+      setAccountError(undefined);
       const addresses = await walletClient!.requestAddresses();
       console.log('addresses', addresses);
       if (addresses.length === 0) {
@@ -19,9 +22,13 @@ export const useSophonAccount = () => {
       setAccount({
         address: addresses[0] as Address,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       setAccount(undefined);
-      setError(error.details ?? error.message);
+      setAccountError(
+        (error as CustomRPCError).details ?? (error as CustomRPCError).message,
+      );
+    } finally {
+      setIsConnecting(false);
     }
   }, [walletClient, setAccount]);
 
@@ -41,6 +48,7 @@ export const useSophonAccount = () => {
     provider,
     walletClient,
     showProfile,
-    error,
+    accountError: accountError ?? error,
+    isConnecting,
   };
 };
