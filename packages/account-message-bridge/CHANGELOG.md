@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 2.0.7-next.2
+
+### Patch Changes
+
+- Bumping version
+
 ## 2.0.7-next.1
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @sophon-labs/account-connector
 
+## 2.0.7-next.2
+
+### Patch Changes
+
+- Bumping version
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.7-next.2
+
 ## 2.0.7-next.1
 
 ### Patch Changes
