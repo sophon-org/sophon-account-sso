@@ -3,7 +3,7 @@ import {
   shortenAddress,
   snsCache,
 } from '@sophon-labs/account-core';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { Address } from 'viem';
 import { sophonTestnet } from 'viem/chains';
 import { SOPHON_VIEM_CHAIN } from '@/lib/constants';
@@ -20,7 +20,17 @@ export const useAddressWithSns = (
 
   const cache = snsCache(SOPHON_VIEM_CHAIN.id === sophonTestnet.id);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: If I add, it complains the function changes on every render
+  const tryToResolveAddress = async () => {
+    setIsChecking(true);
+    const result = await cache.fetchSNSName(address!);
+    if (result) {
+      setAddressOrName(result as SNSName);
+    }
+    setIsChecking(false);
+  };
+
+  const cachedTryToResolveAddress = useCallback(tryToResolveAddress, []);
+
   useEffect(() => {
     if (address && !addressOrName) {
       const cachedName = cache.getCachedSNSName(address!);
@@ -33,18 +43,9 @@ export const useAddressWithSns = (
       } else {
         setAddressOrName(address);
       }
-      tryToResolveAddress();
+      cachedTryToResolveAddress();
     }
-  }, [address, addressOrName]);
-
-  const tryToResolveAddress = async () => {
-    setIsChecking(true);
-    const result = await cache.fetchSNSName(address!);
-    if (result) {
-      setAddressOrName(result as SNSName);
-    }
-    setIsChecking(false);
-  };
+  }, [address, addressOrName, cache, shortAddress, cachedTryToResolveAddress]);
 
   return {
     tryToResolveAddress,
