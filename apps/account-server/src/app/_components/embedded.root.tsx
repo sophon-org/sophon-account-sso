@@ -1,8 +1,7 @@
 'use client';
 
 import { shortenAddress } from '@sophon-labs/account-core';
-import { useRNHandler } from '@sophon-labs/account-message-bridge';
-// TODO: Add back sendMessageToRN import when ping/pong types are ready
+import { useRNHandler, sendMessageToRN } from '@sophon-labs/account-message-bridge';
 import { useCallback, useEffect, useState } from 'react';
 import { Loader } from '@/components/loader';
 import { Button } from '@/components/ui/button';
@@ -45,7 +44,20 @@ export default function EmbeddedRoot({ partnerId }: EmbeddedRootProps) {
     }, []),
   );
 
-  // 🏓 TODO: WEBVIEW HEALTHCHECK - Add ping/pong handler after message bridge types are updated
+  // 🏓 WEBVIEW HEALTHCHECK: Ping/pong handler
+  useRNHandler(
+    'ping',
+    useCallback((payload: any) => {
+      console.log('🏓 [HEALTHCHECK] Received ping from RN, sending pong');
+      sendMessageToRN('pong', { timestamp: payload?.timestamp || Date.now() });
+    }, []),
+  );
+
+  // Send initial message to confirm site is loaded
+  useEffect(() => {
+    console.log('🚀 [EMBEDDED] Sending initial ready message to React Native');
+    sendMessageToRN('siteReady', { timestamp: Date.now() });
+  }, []);
 
   useEffect(() => {
     console.log('🔥 STATE', state);

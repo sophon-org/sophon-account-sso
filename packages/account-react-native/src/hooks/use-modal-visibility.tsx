@@ -26,7 +26,10 @@ export const useModalVisibility = () => {
     
     setVisible(true);
     console.log('🔍 [DRAWER-DEBUG] Sending modalReady immediately');
-    sendUIMessage('modalReady', {});
+    // Small delay to ensure state updates propagate
+    setTimeout(() => {
+      sendUIMessage('modalReady', {});
+    }, 100);
   });
   
   useUIEventHandler('hideModal', () => {

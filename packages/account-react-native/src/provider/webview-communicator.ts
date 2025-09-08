@@ -5,7 +5,7 @@ import {
   sendUIMessage,
 } from '../messaging';
 
-const MODAL_TIMEOUT = 5000;
+const MODAL_TIMEOUT = 30000; // Increase from 5s to 30s to avoid premature timeouts
 const REQUEST_TIMEOUT = 5 * 60 * 1000;
 
 export class WebViewCommunicator implements Communicator {
@@ -71,11 +71,15 @@ export class WebViewCommunicator implements Communicator {
     // 🚨 IMPORTANT: Send logout to WebView so server can clear the session!
     // Without this, the session remains active on the server
     console.log('🔍 [LOGOUT] Sending logout to WebView to clear server session');
+    
+    // Generate proper UUID format for MessageID
+    const logoutId = `${Date.now()}-0000-0000-0000-000000000000`;
+    // biome-ignore lint/suspicious/noExplicitAny: logout message has custom fields
     sendUIMessage('outgoingRpc', {
-      id: `logout-${Date.now()}`,
+      id: logoutId as `${string}-${string}-${string}-${string}-${string}`,
       action: 'logout',
       method: 'logout'
-    });
+    } as any);
     
     // Hide the modal after logout
     sendUIMessage('hideModal', {});

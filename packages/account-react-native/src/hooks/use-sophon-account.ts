@@ -237,8 +237,9 @@ export const useSophonAccount = () => {
       console.log('🚀 Stored connection Promise resolvers');
       
       try {
-        console.log('🚀 Sending showModal to WebView...');
+        console.log('🚀 [CONNECT-FLOW] Step 3: Sending showModal to WebView...');
         sendUIMessage('showModal', {});
+        console.log('✅ [CONNECT-FLOW] Step 3 complete: showModal sent');
       } catch (error) {
         console.log('❌ Failed to send showModal:', error);
         const errorMessage = error instanceof Error ? error.message : 'Failed to show modal';
