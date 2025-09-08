@@ -1,10 +1,10 @@
+import { isSSR } from '@sophon-labs/account-core';
 import type { FromWebActions } from '@sophon-labs/account-message-bridge';
 import {
   registerRNHandler,
   sendMessageToRN,
 } from '@sophon-labs/account-message-bridge';
 import { env } from '@/env';
-import { isSSR } from '@/lib/is-ssr';
 
 /**
  * Simple interface to be used by all possible comnunications services,
