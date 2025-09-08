@@ -63,6 +63,27 @@ export const SophonMainView = ({
   });
 
   const params = new URLSearchParams();
+
+  // Propagate the insets to the account server, so we can properly render the webview
+  // on the mobile device without overlapping the status bar and bottom navigation bar
+  if (insets) {
+    if (insets.top) {
+      params.set('it', insets.top.toString());
+    }
+
+    if (insets.bottom) {
+      params.set('ib', insets.bottom.toString());
+    }
+
+    if (insets.left) {
+      params.set('il', insets.left.toString());
+    }
+
+    if (insets.right) {
+      params.set('ir', insets.right.toString());
+    }
+  }
+
   if (partnerId) {
     params.set('version', VIEW_VERSION);
     params.set('platformOS', Platform.OS);

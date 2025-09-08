@@ -1409,26 +1409,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-core@npm:2.0.1":
-  version: 2.0.1
-  resolution: "@sophon-labs/account-core@npm:2.0.1"
+"@sophon-labs/account-core@npm:2.0.7-next.0":
+  version: 2.0.7-next.0
+  resolution: "@sophon-labs/account-core@npm:2.0.7-next.0"
+  dependencies:
+    text-encoding-polyfill: "npm:^0.6.7"
   peerDependencies:
     viem: ">=2.21.0"
-  checksum: 10c0/aeefbbaba7152b596a30ba3f49f2a19dcdddb26faa173896cf245c07471d9877e90f58f6b793ddfcf5a79d1d08cb87122ab3050de1800a6e2f3a298fd73c8a36
+  checksum: 10c0/b6f45c0c38728c4da05c5c4fa2136669d7f308a9e15bb5b7320845db4cd8fa86b74dadb0241add301a2a7c61d5c5a101af348f74c69c9dc5f822890467358155
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-eip6963@npm:2.0.1":
-  version: 2.0.1
-  resolution: "@sophon-labs/account-eip6963@npm:2.0.1"
+"@sophon-labs/account-eip6963@npm:2.0.7-next.0":
+  version: 2.0.7-next.0
+  resolution: "@sophon-labs/account-eip6963@npm:2.0.7-next.0"
   dependencies:
-    "@sophon-labs/account-core": "npm:2.0.1"
+    "@sophon-labs/account-core": "npm:2.0.7-next.0"
     eventemitter3: "npm:^5.0.1"
     json-rpc-2.0: "npm:^1.7.1"
     zksync-sso: "github:sophon-org/zksync-sso-preview#20250901_1"
   peerDependencies:
     typescript: ^5.0.0
-  checksum: 10c0/6ef36e155815af1357510b991229e006c64f02e7b1ab44410106b7971250e45bcfd7efd205d5b3de1d8d996cd9b70c1696ea54818a98c73ca8a39a5ed6c846c9
+  checksum: 10c0/a9a406107a059b9523daacedf9536884c0719d9b8e07e8065efdd931a90ebb9817c64c485e2b0db2cd6fd37fc1e0a67127b0185cbba50d10fb54c4f4cbc5af4d
   languageName: node
   linkType: hard
 
@@ -1436,8 +1438,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@sophon-labs/examples-sandbox-eip6963@workspace:."
   dependencies:
-    "@sophon-labs/account-core": "npm:2.0.1"
-    "@sophon-labs/account-eip6963": "npm:2.0.1"
+    "@sophon-labs/account-core": "npm:2.0.7-next.0"
+    "@sophon-labs/account-eip6963": "npm:2.0.7-next.0"
     "@tailwindcss/postcss": "npm:^4"
     "@tanstack/react-query": "npm:^5.83.0"
     "@types/node": "npm:^20"
@@ -5204,6 +5206,13 @@ __metadata:
     mkdirp: "npm:^3.0.1"
     yallist: "npm:^5.0.0"
   checksum: 10c0/d4679609bb2a9b48eeaf84632b6d844128d2412b95b6de07d53d8ee8baf4ca0857c9331dfa510390a0727b550fd543d4d1a10995ad86cdf078423fbb8d99831d
+  languageName: node
+  linkType: hard
+
+"text-encoding-polyfill@npm:^0.6.7":
+  version: 0.6.7
+  resolution: "text-encoding-polyfill@npm:0.6.7"
+  checksum: 10c0/5486a2320e2384b0153d2835a8e6e3a643ff28fcd05c2e9fa5d69c7879a2b8fdb7faa44708792a9205f074f10606ee3b6470c8f3f4da1be90a014b79057008d0
   languageName: node
   linkType: hard
 
