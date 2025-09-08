@@ -1,5 +1,6 @@
+// biome-ignore assist/source/organizeImports: required polyfill
 import 'text-encoding-polyfill';
-
+// everything below is public
 export * from './abis';
 export * from './avatar';
 export * from './constants';
