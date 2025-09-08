@@ -11,6 +11,7 @@
     "@sophon-labs/account-react-native": "2.0.6"
   },
   "changesets": [
-    "large-lands-smoke"
+    "large-lands-smoke",
+    "shy-cows-slide"
   ]
 }

@@ -17,6 +17,8 @@ import {
 import type { StorageLike } from '../types';
 import { cachedSNS } from './cache';
 
+export type { SNSName } from './types';
+
 /**
  * Resolve a name to an address on sophon network
  *

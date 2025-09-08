@@ -1,6 +1,6 @@
 {
   "name": "@sophon-labs/account-message-bridge",
-  "version": "2.0.7-next.0",
+  "version": "2.0.7-next.1",
   "description": "Message bridge to handle communication between web and mobile",
   "author": "Sophon",
   "license": "MIT",

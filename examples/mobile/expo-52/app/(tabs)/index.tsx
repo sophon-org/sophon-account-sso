@@ -6,13 +6,8 @@ import { parseEther } from 'viem';
 import { sophonTestnet } from 'viem/chains';
 
 export default function HomeScreen() {
-  const {
-    account,
-    connect,
-    isConnected,
-    disconnect,
-    walletClient,
-  } = useSophonAccount();
+  const { account, connect, isConnected, disconnect, walletClient } =
+    useSophonAccount();
 
   const [error, setError] = useState<string>('');
   const [signature, setSignature] = useState<string>();

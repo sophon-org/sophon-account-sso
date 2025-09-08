@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 2.0.7-next.1
+
+### Patch Changes
+
+- Exposing SNSName again
+
 ## 2.0.7-next.0
 
 ### Patch Changes
