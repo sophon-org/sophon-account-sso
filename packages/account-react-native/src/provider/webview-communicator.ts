@@ -18,7 +18,7 @@ export class WebViewCommunicator implements Communicator {
   postMessage = (message: Message) => {
     console.log('🔥 WebViewCommunicator.postMessage called:', {
       messageId: message.id,
-      messageMethod: (message as any).method, // Fix TypeScript error
+      messageMethod: 'method' in message ? (message as Message & { method: string }).method : undefined,
       timestamp: new Date().toISOString()
     });
     
@@ -59,11 +59,25 @@ export class WebViewCommunicator implements Communicator {
   };
 
   disconnect = () => {
+    console.log('🔍 [LOGOUT] WebViewCommunicator.disconnect() called');
+    
+    // Clear all pending listeners
     this.listeners.forEach(({ reject, deregister }) => {
       deregister();
       reject(new Error('Request rejected'));
     });
     this.listeners.clear();
+    
+    // 🚨 IMPORTANT: Send logout to WebView so server can clear the session!
+    // Without this, the session remains active on the server
+    console.log('🔍 [LOGOUT] Sending logout to WebView to clear server session');
+    sendUIMessage('outgoingRpc', {
+      id: `logout-${Date.now()}`,
+      action: 'logout',
+      method: 'logout'
+    });
+    
+    // Hide the modal after logout
     sendUIMessage('hideModal', {});
   };
 

@@ -6,6 +6,7 @@ import { VIEW_VERSION } from '../constants';
 import { USER_AGENT } from '../constants/user-agent';
 import { useModalVisibility } from '../hooks/use-modal-visibility';
 import { sendUIMessage, useUIEventHandler } from '../messaging/ui';
+import { SophonAppStorage, StorageKeys } from '../provider/storage';
 
 export interface SophonMainViewProps {
   debugEnabled?: boolean;
@@ -17,7 +18,6 @@ export interface SophonMainViewProps {
   };
   authServerUrl?: string;
   partnerId: string;
-  hasInternet: boolean;
 }
 export const SophonMainView = ({
   debugEnabled = false,
@@ -57,6 +57,7 @@ export const SophonMainView = ({
   const { visible } = useModalVisibility();
   const [isReady, setIsReady] = useState(false);
   const [siteLoaded, setSiteLoaded] = useState(false); // ← SITE ACTUALLY LOADED?
+  const [sessionRestored, setSessionRestored] = useState(false); // ← Track if we restored session
   
   // 🔍 DEBUG: Track cancellation and unresponsive state
   const [isCancelled, setIsCancelled] = useState(false);
@@ -345,6 +346,23 @@ export const SophonMainView = ({
           timeSinceLastInteraction: Date.now() - lastInteraction + 'ms'
         });
         
+        // 🚨 Special handling for logout - always try to send it even if WebView not fully ready
+        const payloadAny = payload as any;
+        const isLogout = payloadAny?.action === 'logout' || payloadAny?.method === 'logout';
+        if (isLogout) {
+          console.log('🔍 [LOGOUT] Sending logout to WebView - bypassing readiness checks');
+          if (webViewRef.current) {
+            try {
+              // Send logout as rpc message (WebView expects rpc format)
+              postMessageToWebApp(webViewRef, 'rpc', payloadAny);
+              console.log('✅ [LOGOUT] Logout sent to WebView');
+            } catch (error) {
+              console.log('⚠️ [LOGOUT] Failed to send logout to WebView:', error);
+            }
+          }
+          return;
+        }
+        
         if (!isReady || !siteLoaded) {
           console.log('❌ [UNRESPONSIVE-DEBUG] WebView not ready or site not loaded, cannot send RPC - REJECTING Promise');
           sendUIMessage('webWalletStatus', { 
@@ -549,11 +567,38 @@ export const SophonMainView = ({
               payload: JSON.stringify(payload, null, 2) 
             });
             
-            // First message from site = site is loaded and working!
-            if (!siteLoaded) {
-              console.log('✅ [MASTER-DEBUG] First message from wallet site - site is loaded!');
-              setSiteLoaded(true);
+          // First message from site = site is loaded and working!
+          if (!siteLoaded) {
+            console.log('✅ [MASTER-DEBUG] First message from wallet site - site is loaded!');
+            setSiteLoaded(true);
+            
+            // 🔄 RESTORE SESSION: Check if we have saved account/token to restore
+            if (!sessionRestored) {
+              const savedAccount = SophonAppStorage.getItem(StorageKeys.USER_ACCOUNT);
+              const savedToken = SophonAppStorage.getItem(StorageKeys.USER_TOKEN);
+              
+              if (savedAccount && savedToken) {
+                console.log('🔄 [SESSION-RESTORE] Found saved session, restoring in WebView...');
+                try {
+                  // Send restore session message to WebView as a custom rpc
+                  // biome-ignore lint/suspicious/noExplicitAny: custom message type
+                  postMessageToWebApp(webViewRef, 'rpc', {
+                    id: `restore-${Date.now()}`,
+                    action: 'restoreSession',
+                    account: JSON.parse(savedAccount),
+                    token: savedToken
+                  } as any);
+                  setSessionRestored(true);
+                  console.log('✅ [SESSION-RESTORE] Session restore message sent to WebView');
+                } catch (error) {
+                  console.log('❌ [SESSION-RESTORE] Failed to restore session:', error);
+                }
+              } else {
+                console.log('🔍 [SESSION-RESTORE] No saved session to restore');
+                setSessionRestored(true);
+              }
             }
+          }
             
             if (action === 'closeModal') {
               console.log('🔍 [DRAWER-DEBUG] Received closeModal from WebView');
@@ -619,6 +664,9 @@ export const SophonMainView = ({
             } else if (action === 'logout') {
               console.log('🔍 [DISCONNECT-DEBUG] Logout action received from WebView');
               sendUIMessage('logout', payload);
+            } else if (action === 'sessionRestored') {
+              console.log('✅ [SESSION-RESTORE] WebView confirmed session restoration');
+              // WebView confirmed session restoration
             } else if (action === 'pong') {
               // 🏓 WEBVIEW HEALTHCHECK: Handle pong response
               const pingTimestamp = payload?.timestamp || 0;

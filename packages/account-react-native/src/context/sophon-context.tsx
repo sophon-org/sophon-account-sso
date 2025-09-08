@@ -248,7 +248,6 @@ export const SophonContextProvider = ({
           insets={insets}
           authServerUrl={serverUrl}
           partnerId={partnerId}
-          hasInternet={isConnected}
         />
       </SafeWebViewWrapper>
       {children}
