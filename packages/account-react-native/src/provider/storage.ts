@@ -1,4 +1,4 @@
-// import * as SecureStore from 'expo-secure-store';
+import * as SecureStore from 'expo-secure-store';
 
 interface StorageLike {
   getItem(key: string): string | null;
@@ -9,22 +9,20 @@ interface StorageLike {
 
 export const SophonAppStorage: StorageLike = {
   getItem: (key: string) => {
-    return '';
-    // console.log('getItem', key);
-    // return SecureStore.getItem(key);
+    const normalizedKey = `sophon-${key.replaceAll(/[^a-zA-Z0-9]/g, '_')}`;
+    return SecureStore.getItem(normalizedKey);
   },
   setItem: (key: string, value: string) => {
-    console.log('setItem', key, value);
-    // SecureStore.setItem(key, value);
+    const normalizedKey = `sophon-${key.replaceAll(/[^a-zA-Z0-9]/g, '_')}`;
+    SecureStore.setItem(normalizedKey, value);
   },
   removeItem: (key: string) => {
-    console.log('removeItem', key);
-    // SecureStore.deleteItemAsync(key);
+    const normalizedKey = `sophon-${key.replaceAll(/[^a-zA-Z0-9]/g, '_')}`;
+    SecureStore.deleteItemAsync(normalizedKey);
   },
   clear: () => {
-    console.log('clear');
-    // SecureStore.deleteItemAsync(StorageKeys.USER_TOKEN);
-    // SecureStore.deleteItemAsync(StorageKeys.USER_ACCOUNT);
+    SecureStore.deleteItemAsync(StorageKeys.USER_TOKEN);
+    SecureStore.deleteItemAsync(StorageKeys.USER_ACCOUNT);
   },
 };
 

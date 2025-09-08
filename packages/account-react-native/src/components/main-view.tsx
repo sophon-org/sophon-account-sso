@@ -17,7 +17,7 @@ export interface SophonMainViewProps {
   };
   authServerUrl?: string;
   partnerId: string;
-  hasInternet: boolean;
+  // hasInternet: boolean;
 }
 export const SophonMainView = ({
   debugEnabled = false,
@@ -38,6 +38,13 @@ export const SophonMainView = ({
     'showModal',
     useCallback(() => {
       postMessageToWebApp(webViewRef, 'openModal', {});
+    }, []),
+  );
+
+  useUIEventHandler(
+    'sdkStatusRequest',
+    useCallback(() => {
+      postMessageToWebApp(webViewRef, 'sdkStatusRequest', {});
     }, []),
   );
 
@@ -119,10 +126,13 @@ export const SophonMainView = ({
             sendUIMessage('setToken', payload);
           } else if (action === 'logout') {
             sendUIMessage('logout', payload);
+          } else if (action === 'sdkStatusResponse') {
+            sendUIMessage('sdkStatusResponse', payload);
           }
         }}
         onError={(event) => {
           console.error(event);
+          console.log('onError', event.nativeEvent.description);
           sendUIMessage('hideModal', null);
         }}
         onContentProcessDidTerminate={() => {}}

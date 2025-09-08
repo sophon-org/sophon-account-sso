@@ -2,19 +2,19 @@
 
 import { useEffect } from 'react';
 import { useAccountServer } from '../../components/account-server-frame';
-import { CloseAction } from '../../components/actions/close-action';
-import { OpenAction } from '../../components/actions/open-action';
-import { SignMessageAction } from '../../components/actions/sign-message-action';
-import { SignTypedAction } from '../../components/actions/sign-typed-action';
-import { Logo } from '../../components/logo';
-import { SendSophAction } from '../../components/actions/send-soph-action';
-import { SendDTNAction } from '../../components/actions/send-dtn-action';
 import { ApproveDTNAction } from '../../components/actions/approve-dtn-action';
+import { CloseAction } from '../../components/actions/close-action';
 import { MintNFTAction } from '../../components/actions/mint-nft-action';
 import { MintPaidNFTAction } from '../../components/actions/mint-paid-nft-action';
+import { OpenAction } from '../../components/actions/open-action';
+import { SendDTNAction } from '../../components/actions/send-dtn-action';
+import { SendSophAction } from '../../components/actions/send-soph-action';
+import { SignMessageAction } from '../../components/actions/sign-message-action';
+import { SignTypedAction } from '../../components/actions/sign-typed-action';
 import { UnverifiedAction } from '../../components/actions/unverified-action';
-import { VerifiedSimpleAction } from '../../components/actions/verified-simple-action';
 import { VerifiedComplexAction } from '../../components/actions/verified-complex-action';
+import { VerifiedSimpleAction } from '../../components/actions/verified-simple-action';
+import { Logo } from '../../components/logo';
 
 const address = '0xF2D70927368140D67355465c4E07d39caB36aeC9';
 

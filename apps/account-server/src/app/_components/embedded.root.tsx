@@ -1,6 +1,9 @@
 'use client';
 
-import { useRNHandler } from '@sophon-labs/account-message-bridge';
+import {
+  sendMessageToRN,
+  useRNHandler,
+} from '@sophon-labs/account-message-bridge';
 import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Drawer } from '@/components/ui/drawer';
@@ -36,6 +39,7 @@ export default function EmbeddedRoot({ partnerId }: EmbeddedRootProps) {
     openDrawer,
   });
   const connectActions = ConnectAuthorizationView.useActions();
+  const { account } = useAccountContext();
   useUserIdentification();
 
   useEffect(() => {
@@ -70,8 +74,22 @@ export default function EmbeddedRoot({ partnerId }: EmbeddedRootProps) {
     }, []),
   );
 
+  useRNHandler(
+    'sdkStatusRequest',
+    useCallback(() => {
+      sendMessageToRN('sdkStatusResponse', {
+        isDrawerOpen: open,
+        isReady: !state.context.isLoadingResources,
+        isAuthenticated: state.context.isAuthenticated,
+        connectedAccount: account?.address,
+      });
+    }, [state, open, account?.address]),
+  );
+
   useEffect(() => {
-    serverLog(`>>> 🔥 <<< STATE ${JSON.stringify(state, null, 2)}`);
+    serverLog(
+      `>>> 🔥 <<< STATE ${JSON.stringify(state.value)} / ${state.context.requests.incoming?.id}`,
+    );
   }, [state]);
 
   useEventHandler('flow.complete', () => {
@@ -81,8 +99,6 @@ export default function EmbeddedRoot({ partnerId }: EmbeddedRootProps) {
   useEventHandler('modal.open', () => {
     setOpen(true);
   });
-
-  const { account } = useAccountContext();
 
   const handleCloseModal = (isOpen: boolean) => {
     setOpen(isOpen);

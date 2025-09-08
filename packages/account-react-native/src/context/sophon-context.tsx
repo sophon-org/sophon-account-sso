@@ -1,12 +1,14 @@
+import '../pollyfills';
+// everything else
 import {
   AccountServerURL,
   type SophonNetworkType,
 } from '@sophon-labs/account-core';
-import { addNetworkStateListener, getNetworkStateAsync } from 'expo-network';
+// import { addNetworkStateListener, getNetworkStateAsync } from 'expo-network';
 import {
   createContext,
   useCallback,
-  useEffect,
+  // useEffect,
   useMemo,
   useState,
 } from 'react';
@@ -38,7 +40,7 @@ export interface SophonContextConfig {
   provider?: WalletProvider;
   token?: string | null;
   disconnect: () => void;
-  hasInternet: boolean;
+  // hasInternet: boolean;
 }
 
 export const SophonContext = createContext<SophonContextConfig>({
@@ -46,7 +48,7 @@ export const SophonContext = createContext<SophonContextConfig>({
   chain: sophonTestnet,
   setAccount: () => {},
   disconnect: () => {},
-  hasInternet: false,
+  // hasInternet: false,
 });
 
 export interface SophonAccount {
@@ -66,21 +68,21 @@ export const SophonContextProvider = ({
   partnerId: string;
   insets?: SophonMainViewProps['insets'];
 }) => {
-  const [isConnected, setIsConnected] = useState(false);
+  // const [isConnected, setIsConnected] = useState(false);
 
-  useEffect(() => {
-    const listener = addNetworkStateListener(() => {
-      setTimeout(async () => {
-        const { isConnected, isInternetReachable } =
-          await getNetworkStateAsync();
-        setIsConnected(!!isConnected && !!isInternetReachable);
-      }, 500);
-    });
+  // useEffect(() => {
+  //   const listener = addNetworkStateListener(() => {
+  //     setTimeout(async () => {
+  //       const { isConnected, isInternetReachable } =
+  //         await getNetworkStateAsync();
+  //       setIsConnected(!!isConnected && !!isInternetReachable);
+  //     }, 500);
+  //   });
 
-    return () => {
-      listener.remove();
-    };
-  }, []);
+  //   return () => {
+  //     listener.remove();
+  //   };
+  // }, []);
 
   const serverUrl = useMemo(
     () => authServerUrl ?? AccountServerURL[network],
@@ -123,15 +125,10 @@ export const SophonContextProvider = ({
 
   const walletClient = createWalletClient({
     chain: chain,
-    transport: custom({
-      async request({ method, params }) {
-        return await provider?.request({ method, params });
-      },
-    }),
+    transport: custom(provider),
   }).extend(erc7846Actions());
 
   const disconnect = useCallback(() => {
-    // await walletClient.disconnect();
     provider?.disconnect();
     SophonAppStorage.clear();
     setAccount(undefined);
@@ -148,7 +145,7 @@ export const SophonContextProvider = ({
       token,
       disconnect,
       partnerId,
-      hasInternet: isConnected,
+      // hasInternet: isConnected,
     }),
     [
       network,
@@ -159,7 +156,7 @@ export const SophonContextProvider = ({
       token,
       disconnect,
       partnerId,
-      isConnected,
+      // isConnected,
     ],
   );
 
@@ -173,7 +170,7 @@ export const SophonContextProvider = ({
         insets={insets}
         authServerUrl={serverUrl}
         partnerId={partnerId}
-        hasInternet={isConnected}
+        // hasInternet={isConnected}
       />
       {children}
     </SophonContext.Provider>

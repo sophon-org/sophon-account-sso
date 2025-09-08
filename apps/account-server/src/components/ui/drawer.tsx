@@ -194,7 +194,7 @@ export const Drawer = ({
     >
       <VaulDrawer.Portal>
         <VaulDrawer.Overlay className="fixed inset-0 bg-black/40" />
-        <VaulDrawer.Content className="bg-gray-100 fixed h-fit bottom-0 left-0 right-0 outline-none rounded-t-3xl">
+        <VaulDrawer.Content className="bg-gray-100 fixed h-fit bottom-0 left-0 right-0 outline-none rounded-t-3xl pb-2">
           <VaulDrawer.Title hidden={true}>
             Sophon Authentication Modal
           </VaulDrawer.Title>

@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { hexToString, toHex } from 'viem';
 import { isValidPaymaster } from '@/lib/paymaster';
+import { serverLog } from '@/lib/server-log';
 import { windowService } from '@/service/window.service';
 import type {
   AuthenticationRequest,
@@ -43,7 +44,14 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
   useEffect(() => {
     // biome-ignore lint/suspicious/noExplicitAny: review that in the future TODO
     const messageHandler = (data: any) => {
+      // Do nothing, the server is already answering a request, don't
+      // overlap with current request/response flow.
+      if (data.id && data.requestId) {
+        return;
+      }
+
       // Store the incoming request if it's an RPC request
+      serverLog(`${data?.id} - messageHandler ${JSON.stringify(data)}`);
       if (data?.id && data?.content) {
         const method = data.content?.action?.method;
         if (method === 'eth_requestAccounts') {
@@ -216,7 +224,7 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
 
     // Check sessionStorage for saved request (survives OAuth redirects)
     const savedRequest = sessionStorage.getItem('sophon-incoming-request');
-    if (false && savedRequest && !incomingRequest) {
+    if (savedRequest && !incomingRequest) {
       try {
         const parsedRequest = JSON.parse(savedRequest);
         messageHandler(parsedRequest);

@@ -12,6 +12,9 @@ export type SophonUIActions = {
   outgoingRpc: Message;
   setToken: string;
   logout: unknown;
+  // from server:
+  sdkStatusResponse: unknown;
+  sdkStatusRequest: unknown;
 };
 
 export type SophonUIActionsName = keyof SophonUIActions;

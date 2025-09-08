@@ -183,8 +183,8 @@ const webViewWindowService: WindowCommunicationService = {
 
 const availableServices: WindowCommunicationService[] = [
   popupWindowService,
-  embeddedWindowService,
   webViewWindowService,
+  embeddedWindowService,
 ];
 
 class DelegateWindowService implements WindowCommunicationService {
