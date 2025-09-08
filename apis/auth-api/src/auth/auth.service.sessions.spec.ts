@@ -1,10 +1,10 @@
+import { UnauthorizedException } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import jwt from "jsonwebtoken";
-import { UnauthorizedException } from "@nestjs/common";
 import type { TypedDataDefinition } from "viem";
-import { AuthService } from "./auth.service";
 import { PartnerRegistryService } from "../partners/partner-registry.service";
 import { SessionsRepository } from "../sessions/sessions.repository";
+import { AuthService } from "./auth.service";
 
 // ---- Mocks ----
 

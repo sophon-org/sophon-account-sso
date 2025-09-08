@@ -1,14 +1,27 @@
-import type { SophonNetworkType } from '@sophon-labs/account-core';
+import {
+  isSSR,
+  type SophonNetworkType,
+  type StorageLike,
+} from '@sophon-labs/account-core';
 import { http } from 'viem';
 import { sophon, sophonTestnet } from 'viem/chains';
 import { type ProviderInterface, WalletProvider } from 'zksync-sso';
 import type { ZksyncSsoConnectorOptions } from 'zksync-sso/connector';
 import { genericRPCHandler } from './genericRPC';
 
+const NoopStorage: StorageLike = {
+  getItem: () => null,
+  setItem: () => {},
+  removeItem: () => {},
+  clear: () => {},
+};
+
 export const createDelegateProvider = (
   network: SophonNetworkType,
   params: ZksyncSsoConnectorOptions,
 ): ProviderInterface => {
+  const storage = isSSR() ? NoopStorage : localStorage;
+
   const ssoProvider = new WalletProvider({
     metadata: {
       name: params.metadata?.name,
@@ -24,6 +37,7 @@ export const createDelegateProvider = (
     chains: [network === 'mainnet' ? sophon : sophonTestnet],
     paymasterHandler: params.paymasterHandler,
     customCommunicator: params.communicator,
+    storage,
   }) as ProviderInterface;
 
   return {

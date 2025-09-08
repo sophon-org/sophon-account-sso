@@ -28,6 +28,7 @@
 		"---------- DATABASE ---------": "",
 		"db:create": "node-pg-migrate create -j sql --migrations-dir db/migrations",
 		"db:migrate": "node-pg-migrate up --migrations-dir db/migrations --sql-file",
+		"db:migrate:local": "dotenvx run -- node-pg-migrate up --migrations-dir db/migrations --sql-file",
 		"db:revert": "node-pg-migrate down --migrations-dir db/migrations --sql-file"
 	},
 	"dependencies": {
@@ -54,6 +55,7 @@
 		"@babel/preset-env": "^7.28.0",
 		"@babel/preset-typescript": "^7.27.1",
 		"@biomejs/biome": "^2.0.6",
+		"@dotenvx/dotenvx": "^1.49.0",
 		"@jest/globals": "^30.0.3",
 		"@nestjs/cli": "^11.0.0",
 		"@nestjs/schematics": "^11.0.0",

@@ -29,4 +29,5 @@ export const SophonAppStorage: StorageLike = {
 export enum StorageKeys {
   USER_TOKEN = 'sophon-user-token',
   USER_ACCOUNT = 'sophon-user-account',
+  USER_REFRESH_TOKEN = 'sophon-user-refresh-token',
 }

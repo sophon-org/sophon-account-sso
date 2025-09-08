@@ -2,8 +2,8 @@ import { Test } from "@nestjs/testing";
 import jwt from "jsonwebtoken";
 import type { TypedDataDefinition } from "viem";
 import { PartnerRegistryService } from "../partners/partner-registry.service";
-import { AuthService } from "./auth.service";
 import { SessionsRepository } from "../sessions/sessions.repository";
+import { AuthService } from "./auth.service";
 
 // --- jsonwebtoken mocks ---
 jest.mock("jsonwebtoken", () => ({

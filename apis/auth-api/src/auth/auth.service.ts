@@ -23,6 +23,7 @@ import {
 	unpackScope,
 } from "../config/permission-allowed-fields";
 import { PartnerRegistryService } from "../partners/partner-registry.service";
+import { SessionsRepository } from "../sessions/sessions.repository";
 import {
 	getPrivateKey,
 	getPublicKey,
@@ -31,7 +32,6 @@ import {
 } from "../utils/jwt";
 import { verifyEIP1271Signature } from "../utils/signature";
 import type { AccessTokenPayload, RefreshTokenPayload } from "./types";
-import { SessionsRepository } from "../sessions/sessions.repository";
 
 type NoncePayload = JwtPayload & {
 	address: string;
@@ -189,7 +189,13 @@ export class AuthService {
 		typedData: TypedDataDefinition,
 		signature: `0x${string}`,
 		nonceToken: string,
-	): Promise<{ accessToken: string; refreshToken: string; sid: string }> {
+	): Promise<{
+		accessToken: string;
+		accessTokenExpiresAt: number;
+		refreshToken: string;
+		refreshTokenExpiresAt: number;
+		sid: string;
+	}> {
 		const expectedAud = String(typedData.message.audience);
 		await this.partnerRegistry.assertExists(expectedAud);
 		const expectedIss = this.E.NONCE_ISSUER;
@@ -217,18 +223,20 @@ export class AuthService {
 			throw new ForbiddenException("audience mismatch");
 		}
 
+		const network = process.env.CHAIN_ID === "50104" ? sophon : sophonTestnet;
+
 		const isValid = await verifyEIP1271Signature({
 			accountAddress: address,
 			signature,
 			domain: {
 				name: "Sophon SSO",
 				version: "1",
-				chainId: sophonTestnet.id,
+				chainId: network.id,
 			},
 			types: typedData.types,
 			primaryType: typedData.primaryType,
 			message: typedData.message,
-			chain: sophonTestnet,
+			chain: network,
 		});
 
 		if (!isValid) {
@@ -293,7 +301,13 @@ export class AuthService {
 					: new Date(Date.now() + refreshExp * 1000),
 		});
 
-		return { accessToken, refreshToken, sid };
+		return {
+			accessToken,
+			accessTokenExpiresAt: iat + accessExp,
+			refreshToken,
+			refreshTokenExpiresAt: iat + refreshExp,
+			sid,
+		};
 	}
 
 	cookieOptions() {
@@ -371,9 +385,12 @@ export class AuthService {
 		await this.sessions.revokeSid(r.sid);
 	}
 
-	async refresh(
-		refreshToken: string,
-	): Promise<{ accessToken: string; refreshToken: string }> {
+	async refresh(refreshToken: string): Promise<{
+		accessToken: string;
+		accessTokenExpiresAt: number;
+		refreshToken: string;
+		refreshTokenExpiresAt: number;
+	}> {
 		let r!: RefreshTokenPayload;
 		try {
 			r = jwt.verify(refreshToken, await getRefreshPublicKey(), {
@@ -402,6 +419,8 @@ export class AuthService {
 		}
 
 		const iat = Math.floor(Date.now() / 1000);
+		const accessExp = this.E.ACCESS_TTL_S;
+		const refreshExp = this.E.REFRESH_TTL_S;
 
 		const newAccess = jwt.sign(
 			{
@@ -418,7 +437,7 @@ export class AuthService {
 				keyid: getJwtKid(),
 				issuer: this.E.JWT_ISSUER,
 				audience: r.aud,
-				expiresIn: this.E.ACCESS_TTL_S,
+				expiresIn: accessExp,
 			},
 		);
 
@@ -440,7 +459,7 @@ export class AuthService {
 				keyid: this.E.REFRESH_JWT_KID,
 				issuer: this.E.REFRESH_ISSUER,
 				audience: r.aud,
-				expiresIn: this.E.REFRESH_TTL_S,
+				expiresIn: refreshExp,
 			},
 		);
 
@@ -456,6 +475,11 @@ export class AuthService {
 			newRefreshExpiresAt,
 		});
 
-		return { accessToken: newAccess, refreshToken: newRefresh };
+		return {
+			accessToken: newAccess,
+			accessTokenExpiresAt: iat + accessExp,
+			refreshToken: newRefresh,
+			refreshTokenExpiresAt: iat + refreshExp,
+		};
 	}
 }

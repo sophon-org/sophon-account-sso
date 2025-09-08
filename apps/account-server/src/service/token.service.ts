@@ -58,6 +58,11 @@ export const verifyAuthorization = async (
     throw new Error('Failed to verify authorization');
   }
 
-  const result = await response.json();
-  return result.token;
+  const result = (await response.json()) as {
+    token: string;
+    refreshToken: string;
+    accessTokenExpiresAt: number;
+    refreshTokenExpiresAt: number;
+  };
+  return result;
 };

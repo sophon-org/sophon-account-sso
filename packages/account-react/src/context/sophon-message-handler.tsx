@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useSophonContext } from '../hooks/useSophonContext';
 
 export const SophonMessageHandler = () => {
-  const { updateToken, authServerUrl } = useSophonContext();
+  const { updateToken, updateRefreshToken, authServerUrl } = useSophonContext();
 
   useEffect(() => {
     const listener = (event: MessageEvent) => {
@@ -14,6 +14,10 @@ export const SophonMessageHandler = () => {
       if (event.data.type === 'token') {
         updateToken(event.data.payload);
       }
+
+      if (event.data.type === 'refresh.token') {
+        updateRefreshToken(event.data.payload);
+      }
     };
 
     window.addEventListener('message', listener);
@@ -21,7 +25,7 @@ export const SophonMessageHandler = () => {
     return () => {
       window.removeEventListener('message', listener);
     };
-  }, [updateToken, authServerUrl]);
+  }, [updateToken, updateRefreshToken, authServerUrl]);
 
   return null;
 };

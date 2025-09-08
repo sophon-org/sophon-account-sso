@@ -16,13 +16,13 @@ import {
 	ApiTags,
 } from "@nestjs/swagger";
 import type { Request, Response } from "express";
+import { extractRefreshToken } from "../utils/token-extractor";
 import { AuthService } from "./auth.service";
 import { NonceRequestDto } from "./dto/nonce-request.dto";
 import { VerifySiweDto } from "./dto/verify-siwe.dto";
 import { AccessTokenGuard } from "./guards/access-token.guard";
 import { MeService } from "./me.service";
 import { AccessTokenPayload } from "./types";
-import { extractRefreshToken } from "../utils/token-extractor";
 
 @ApiTags("Auth")
 @Controller("auth")
@@ -52,13 +52,17 @@ export class AuthController {
 	})
 	async verifySignature(@Body() body: VerifySiweDto, @Res() res: Response) {
 		try {
-			const { accessToken, refreshToken } =
-				await this.authService.verifySignatureWithSiweIssueTokens(
-					body.address,
-					body.typedData,
-					body.signature,
-					body.nonceToken,
-				);
+			const {
+				accessToken,
+				accessTokenExpiresAt,
+				refreshToken,
+				refreshTokenExpiresAt,
+			} = await this.authService.verifySignatureWithSiweIssueTokens(
+				body.address,
+				body.typedData,
+				body.signature,
+				body.nonceToken,
+			);
 
 			res
 				.cookie("access_token", accessToken, this.authService.cookieOptions())
@@ -68,8 +72,14 @@ export class AuthController {
 					this.authService.refreshCookieOptions(),
 				);
 
-			return res.json({ token: accessToken });
+			return res.json({
+				token: accessToken,
+				refreshToken,
+				accessTokenExpiresAt,
+				refreshTokenExpiresAt,
+			});
 		} catch (_err: unknown) {
+			console.error(_err);
 			throw new UnauthorizedException({ error: "verification failed" });
 		}
 	}
@@ -84,7 +94,12 @@ export class AuthController {
 		}
 
 		try {
-			const { accessToken, refreshToken } = await this.authService.refresh(rt);
+			const {
+				accessToken,
+				refreshToken,
+				accessTokenExpiresAt,
+				refreshTokenExpiresAt,
+			} = await this.authService.refresh(rt);
 
 			res
 				.cookie("access_token", accessToken, this.authService.cookieOptions())
@@ -94,7 +109,12 @@ export class AuthController {
 					this.authService.refreshCookieOptions(),
 				);
 
-			return res.json({ token: accessToken });
+			return res.json({
+				accessToken,
+				accessTokenExpiresAt,
+				refreshToken,
+				refreshTokenExpiresAt,
+			});
 		} catch (_err: unknown) {
 			throw new UnauthorizedException({ error: "invalid refresh token" });
 		}

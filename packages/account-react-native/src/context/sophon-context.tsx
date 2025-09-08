@@ -92,6 +92,11 @@ export const SophonContextProvider = ({
     setToken(incomingToken);
   });
 
+  useUIEventHandler('setRefreshToken', (incomingToken) => {
+    SophonAppStorage.setItem(StorageKeys.USER_REFRESH_TOKEN, incomingToken);
+    // setRefreshToken(incomingToken);
+  });
+
   useUIEventHandler('mainViewError', setError);
 
   const setAccountWithEffect = useCallback((account?: SophonAccount) => {

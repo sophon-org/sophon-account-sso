@@ -1,24 +1,26 @@
 import { shortenAddress } from '@sophon-labs/account-core';
+import { useSophonAccount } from '@sophon-labs/account-react';
 import { useEffect } from 'react';
 import { erc20Abi, formatUnits, parseUnits } from 'viem';
-import { useAccount, useBalance, useWriteContract } from 'wagmi';
+import { useBalance, useWriteContract } from 'wagmi';
 import { waitForTransactionReceipt } from 'wagmi/actions';
+import { getWagmiConfig } from '@/lib/wagmi';
 import { Loader } from './loader';
+import JWTPanel from './me.panel';
 import NftPanel from './nft.panel';
 import OtherPanel from './other.panel';
 import { usePaymaster } from './paymaster.provider';
 import SignaturesPanel from './signature.panel';
 import TokenTransactionsPanel from './transaction-tokens.panel';
-import { config } from './Web3Provider';
 
 export const ProfilePanel = () => {
-  const { isConnected, address } = useAccount();
+  const { disconnect, isConnected, account } = useSophonAccount();
   const { data: balance } = useBalance({
-    address,
+    address: account.address,
   });
   const { paymasterEnabled, setPaymasterEnabled } = usePaymaster();
   const { data: balanceMintMe, refetch: refetchMintMe } = useBalance({
-    address,
+    address: account.address,
     token: '0xE676a42fEd98d51336f02510bB5d598893AbfE90',
   });
 
@@ -47,7 +49,7 @@ export const ProfilePanel = () => {
   useEffect(() => {
     const refetch = async () => {
       if (writeContractData) {
-        await waitForTransactionReceipt(config, {
+        await waitForTransactionReceipt(getWagmiConfig(), {
           hash: writeContractData,
         });
 
@@ -67,7 +69,8 @@ export const ProfilePanel = () => {
     <div className="flex flex-col gap-1 mt-2  w-full">
       <div className="flex flex-col gap-2 border border-gray-300 rounded-md p-4">
         <p className="text-sm text-gray-500">
-          <span className="font-bold">User:</span> {shortenAddress(address)}
+          <span className="font-bold">User:</span>{' '}
+          {shortenAddress(account.address)}
         </p>
         <p className="text-sm text-gray-500">
           <span className="font-bold">Soph:</span>{' '}
@@ -99,10 +102,18 @@ export const ProfilePanel = () => {
           Use paymaster
         </label>
       </div>
+      <JWTPanel />
       <SignaturesPanel />
       <TokenTransactionsPanel />
       <NftPanel />
       <OtherPanel />
+      <button
+        className="bg-red-500/30 text-white border mt-2 border-red-500/50 px-4 py-2 rounded-md hover:bg-red-500/50 transition-all duration-300 hover:cursor-pointer"
+        type="button"
+        onClick={disconnect}
+      >
+        Disconnect
+      </button>
     </div>
   );
 };

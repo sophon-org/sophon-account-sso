@@ -14,6 +14,11 @@ export const AccountServerURL: Record<SophonNetworkType, string> = {
   testnet: 'https://my.staging.sophon.xyz',
 };
 
+export const AccountAuthAPIURL: Record<SophonNetworkType, string> = {
+  mainnet: 'https://api.my.sophon.xyz',
+  testnet: 'https://api.my.staging.sophon.xyz',
+};
+
 /**
  * Mapping of possible RPC urls based on
  * sophon networks

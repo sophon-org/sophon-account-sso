@@ -12,7 +12,8 @@ export type EventActions = {
   'k1.login.init': null;
   'k1.logout': null;
   'smart-contract.logout': null;
-  'account.token.emitted': string;
+  'account.token.emitted': { token: string; expiresAt: number };
+  'account.refresh.token.emitted': { refreshToken: string; expiresAt: number };
   'flow.complete': null;
   'modal.open': null;
 };

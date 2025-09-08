@@ -12,6 +12,7 @@
     "@simplewebauthn/browser": "^13.1.2",
     "@simplewebauthn/server": "^13.1.2",
     "@sophon-labs/account-connector": "file:../../packages/account-connector",
+    "@sophon-labs/account-core": "file:../../packages/account-core",
     "@sophon-labs/account-react": "file:../../packages/account-react",
     "@tanstack/react-query": "^5.80.7",
     "@wagmi/core": "^2.19.0",
@@ -28,5 +29,10 @@
     "@types/react-dom": "^19",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "resolutions": {
+    "@sophon-labs/account-connector": "file:../../packages/account-connector",
+    "@sophon-labs/account-react": "file:../../packages/account-react",
+    "@sophon-labs/account-core": "file:../../packages/account-core"
   }
 }

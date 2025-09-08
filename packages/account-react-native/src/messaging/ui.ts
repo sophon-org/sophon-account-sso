@@ -12,6 +12,7 @@ export type SophonUIActions = {
   incomingRpc: Message;
   outgoingRpc: Message;
   setToken: string;
+  setRefreshToken: string;
   logout: unknown;
   timeout: UUID;
   refreshMainView: unknown;

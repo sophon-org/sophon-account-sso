@@ -35,8 +35,13 @@ export interface SophonContextConfig {
   setAccount: (account?: SophonAccount) => void;
   chain: Chain;
   provider?: WalletProvider;
-  token?: string | null;
-  updateToken: (token: string) => void;
+  token?: { token: string; expiresAt: number } | null;
+  updateToken: (token: { token: string; expiresAt: number }) => void;
+  refreshToken?: { refreshToken: string; expiresAt: number } | null;
+  updateRefreshToken: (refreshToken: {
+    refreshToken: string;
+    expiresAt: number;
+  }) => void;
   connect: () => Promise<void>;
   disconnect: () => Promise<void>;
   network: SophonNetworkType;
@@ -50,6 +55,7 @@ export const SophonContext = createContext<SophonContextConfig>({
   chain: sophonTestnet,
   setAccount: () => {},
   updateToken: () => {},
+  updateRefreshToken: () => {},
   connect: async () => {},
   disconnect: async () => {},
   network: 'testnet',
@@ -91,7 +97,11 @@ export const SophonContextProvider = ({
     });
   }, [serverUrl]);
   const [account, setAccount] = useState<SophonAccount | undefined>(undefined);
-  const [token, setToken] = useState<string>();
+  const [token, setToken] = useState<{ token: string; expiresAt: number }>();
+  const [refreshToken, setRefreshToken] = useState<{
+    refreshToken: string;
+    expiresAt: number;
+  }>();
   const [connector, setConnector] = useState<Connector>();
 
   useEffect(() => {
@@ -102,7 +112,14 @@ export const SophonContextProvider = ({
 
     const tokenContext = SophonAppStorage.getItem(StorageKeys.USER_TOKEN);
     if (tokenContext) {
-      setToken(tokenContext);
+      setToken(JSON.parse(tokenContext));
+    }
+
+    const refreshTokenContext = SophonAppStorage.getItem(
+      StorageKeys.USER_REFRESH_TOKEN,
+    );
+    if (refreshTokenContext) {
+      setRefreshToken(JSON.parse(refreshTokenContext));
     }
   }, []);
 
@@ -111,11 +128,28 @@ export const SophonContextProvider = ({
     [network],
   );
 
-  const updateToken = useCallback((newToken: string) => {
-    setCookieAuthToken(newToken);
-    setToken(newToken);
-    SophonAppStorage.setItem(StorageKeys.USER_TOKEN, newToken);
-  }, []);
+  const updateToken = useCallback(
+    (newToken: { token: string; expiresAt: number }) => {
+      setCookieAuthToken(newToken.token);
+      setToken(newToken);
+      SophonAppStorage.setItem(
+        StorageKeys.USER_TOKEN,
+        JSON.stringify(newToken),
+      );
+    },
+    [],
+  );
+
+  const updateRefreshToken = useCallback(
+    (newToken: { refreshToken: string; expiresAt: number }) => {
+      setRefreshToken(newToken);
+      SophonAppStorage.setItem(
+        StorageKeys.USER_REFRESH_TOKEN,
+        JSON.stringify(newToken),
+      );
+    },
+    [],
+  );
 
   const updateConnector = useCallback((newConnector: Connector) => {
     setConnector(newConnector);
@@ -183,6 +217,8 @@ export const SophonContextProvider = ({
       updateConnector,
       walletClient,
       communicator,
+      refreshToken,
+      updateRefreshToken,
     }),
     [
       network,
@@ -199,6 +235,8 @@ export const SophonContextProvider = ({
       updateConnector,
       walletClient,
       communicator,
+      refreshToken,
+      updateRefreshToken,
     ],
   );
 

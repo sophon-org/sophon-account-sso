@@ -148,6 +148,8 @@ export const SophonMainView = ({
             sendUIMessage('incomingRpc', payload);
           } else if (action === 'account.token.emitted') {
             sendUIMessage('setToken', payload);
+          } else if (action === 'account.refresh.token.emitted') {
+            sendUIMessage('setRefreshToken', payload);
           } else if (action === 'logout') {
             sendUIMessage('logout', payload);
           } else if (action === 'sdkStatusResponse') {
