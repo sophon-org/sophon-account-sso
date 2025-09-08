@@ -34,6 +34,11 @@ export const env = createEnv({
       .string()
       .optional()
       .transform((it) => it === 'true'),
+    NEXT_PUBLIC_EMBEDDED_FLOW_ENABLED: z
+      .string()
+      .optional()
+      .transform((it) => it === 'true'),
+    NEXT_PUBLIC_EMBEDDED_FLOW_ORIGIN: z.string().url().optional(),
   },
 
   /**
@@ -53,6 +58,10 @@ export const env = createEnv({
     NEXT_PUBLIC_SERVER_LOGS_ENABLED:
       process.env.NEXT_PUBLIC_SERVER_LOGS_ENABLED,
     NEXT_PUBLIC_SHOW_TEST_SCREEN: process.env.NEXT_PUBLIC_SHOW_TEST_SCREEN,
+    NEXT_PUBLIC_EMBEDDED_FLOW_ENABLED:
+      process.env.NEXT_PUBLIC_EMBEDDED_FLOW_ENABLED,
+    NEXT_PUBLIC_EMBEDDED_FLOW_ORIGIN:
+      process.env.NEXT_PUBLIC_EMBEDDED_FLOW_ORIGIN,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

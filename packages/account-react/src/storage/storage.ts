@@ -1,11 +1,4 @@
-interface StorageLike {
-  getItem(key: string): string | null;
-  setItem(key: string, value: string): void;
-  removeItem(key: string): void;
-  clear(): void;
-}
-
-export const isSSR = () => typeof window === 'undefined';
+import type { StorageLike } from '@sophon-labs/account-core';
 
 export const SophonAppStorage: StorageLike = {
   getItem: (key: string) => localStorage.getItem(key) ?? null,

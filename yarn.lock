@@ -4574,6 +4574,7 @@ __metadata:
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@types/node": "npm:^20.0.0"
     "@vitest/coverage-v8": "npm:^3.2.4"
+    text-encoding-polyfill: "npm:^0.6.7"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.0.0"
     viem: "npm:2.36.0"
@@ -4641,12 +4642,12 @@ __metadata:
     del-cli: "npm:^5.1.0"
     eventemitter3: "npm:5.0.1"
     expo-network: "npm:^7.1.5"
+    expo-secure-store: "npm:14.2.3"
     expo-standard-web-crypto: "npm:2.1.4"
     jest: "npm:^29.7.0"
     prettier: "npm:^3.0.3"
     react-native: "npm:0.76.6"
     react-native-builder-bob: "npm:^0.40.12"
-    react-native-mmkv: "npm:^3.3.0"
     react-native-webview: "npm:13.12.5"
     release-it: "npm:^17.10.0"
     text-encoding-polyfill: "npm:^0.6.7"
@@ -4656,9 +4657,9 @@ __metadata:
     zksync-sso: "github:sophon-org/zksync-sso-preview#20250901_1"
   peerDependencies:
     expo-network: "*"
+    expo-secure-store: "*"
     expo-standard-web-crypto: "*"
     react-native: ">=0.76.6"
-    react-native-mmkv: ">=3.3.0"
     react-native-webview: ">=13.12.5"
     viem: ">=2.21.0"
   languageName: unknown
@@ -8666,6 +8667,15 @@ __metadata:
     expo: "*"
     react: "*"
   checksum: 10c0/c2e02c337e0d0e3e7bf01334e4730bd2e5a5cb822c0b33146a64a1ac3b7e95384c6558359260a5b1aa6e504a874a9f7feefc99aee7a7a0590a5d8fad8b1b4106
+  languageName: node
+  linkType: hard
+
+"expo-secure-store@npm:14.2.3":
+  version: 14.2.3
+  resolution: "expo-secure-store@npm:14.2.3"
+  peerDependencies:
+    expo: "*"
+  checksum: 10c0/c1414e2a0a470a4531ae8b6f04e355184e29f61c41c988f9c9f6a3fa2a3f563382a7d44976d8ed560165288993971d295d4071e4921fe17105f3b807180e6f06
   languageName: node
   linkType: hard
 
@@ -13797,16 +13807,6 @@ __metadata:
   bin:
     bob: bin/bob
   checksum: 10c0/ea1da4db2ab919ba237cf8e090bd80ff6ddb35ba831d224f5c6866059c5a629c8c7a38af3ab327efbb1cf9a5d56c4295ba2cf34719cba1c19f5c0862282341eb
-  languageName: node
-  linkType: hard
-
-"react-native-mmkv@npm:^3.3.0":
-  version: 3.3.0
-  resolution: "react-native-mmkv@npm:3.3.0"
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-  checksum: 10c0/a1b93b4d5ccc87d9bda88e0708f7d6c2470c56c32daa8de5cbe1df2350c49d697549ce13512ee6b13e91a421093358a7f0a60cf286a8d1bbd63346d8b217def1
   languageName: node
   linkType: hard
 

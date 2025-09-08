@@ -17,7 +17,6 @@ export interface SophonMainViewProps {
   };
   authServerUrl?: string;
   partnerId: string;
-  hasInternet: boolean;
 }
 export const SophonMainView = ({
   debugEnabled = false,
@@ -42,6 +41,13 @@ export const SophonMainView = ({
   );
 
   useUIEventHandler(
+    'sdkStatusRequest',
+    useCallback(() => {
+      postMessageToWebApp(webViewRef, 'sdkStatusRequest', {});
+    }, []),
+  );
+
+  useUIEventHandler(
     'outgoingRpc',
     useCallback(
       (payload) => {
@@ -51,6 +57,10 @@ export const SophonMainView = ({
       [isReady],
     ),
   );
+
+  useUIEventHandler('refreshMainView', () => {
+    webViewRef.current?.reload();
+  });
 
   const params = new URLSearchParams();
   if (partnerId) {
@@ -64,6 +74,7 @@ export const SophonMainView = ({
   return (
     <View style={containerStyles}>
       <WebView
+        data-testid="sophon-mainview"
         key={authServerUrl}
         ref={webViewRef}
         source={{
@@ -118,10 +129,12 @@ export const SophonMainView = ({
             sendUIMessage('setToken', payload);
           } else if (action === 'logout') {
             sendUIMessage('logout', payload);
+          } else if (action === 'sdkStatusResponse') {
+            sendUIMessage('sdkStatusResponse', payload);
           }
         }}
         onError={(event) => {
-          console.error(event);
+          sendUIMessage('mainViewError', event.nativeEvent.description);
           sendUIMessage('hideModal', null);
         }}
         onContentProcessDidTerminate={() => {}}

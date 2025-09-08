@@ -1,9 +1,10 @@
+import { isSSR } from '@sophon-labs/account-core';
 import type { FromWebActions } from '@sophon-labs/account-message-bridge';
 import {
   registerRNHandler,
   sendMessageToRN,
 } from '@sophon-labs/account-message-bridge';
-import { isSSR } from '@/lib/is-ssr';
+import { env } from '@/env';
 
 /**
  * Simple interface to be used by all possible comnunications services,
@@ -42,6 +43,11 @@ interface WindowCommunicationService {
    */
   logout: () => void;
 
+  /**
+   * @returns if this service represents a mobile environment
+   */
+  isMobile: () => boolean;
+
   listen: (callback: (message: unknown) => void) => () => void;
 }
 
@@ -66,6 +72,8 @@ const noopWindowService: WindowCommunicationService = {
     console.log('Logout (noop)');
   },
 
+  isMobile: () => false,
+
   listen: () => {
     return () => {};
   },
@@ -82,11 +90,9 @@ const popupWindowService: WindowCommunicationService = {
 
   close: () => {
     window.opener.postMessage({ event: 'PopupUnload' }, '*');
-    // window.close();
   },
 
   sendMessage: (message: unknown) => {
-    // alert(`sendMessage webview ${JSON.stringify(message)}`);
     window.opener.postMessage(message, '*');
   },
 
@@ -98,6 +104,8 @@ const popupWindowService: WindowCommunicationService = {
     window.opener.postMessage({ type: 'logout' }, '*');
   },
 
+  isMobile: () => false,
+
   listen: (callback: (message: unknown) => void) => {
     const listener = (event: MessageEvent) => {
       callback(event.data);
@@ -107,6 +115,38 @@ const popupWindowService: WindowCommunicationService = {
     return () => {
       window.removeEventListener('message', listener);
     };
+  },
+};
+
+const embeddedWindowService: WindowCommunicationService = {
+  name: 'embedded',
+
+  isManaged: () => !isSSR() && !!window.parent,
+
+  reload: () => {
+    window.location.reload();
+  },
+
+  close: () => {
+    sendMessageToRN('closeModal', {});
+  },
+
+  sendMessage: (message: unknown) => {
+    sendMessageToRN('rpc', message as FromWebActions['rpc']);
+  },
+
+  emitToken: (token: string) => {
+    sendMessageToRN('account.token.emitted', token);
+  },
+
+  logout: () => {
+    sendMessageToRN('logout', null);
+  },
+
+  isMobile: () => true,
+
+  listen: (callback: (message: unknown) => void) => {
+    return registerRNHandler('rpc', callback);
   },
 };
 
@@ -133,6 +173,8 @@ const webViewWindowService: WindowCommunicationService = {
     sendMessageToRN('logout', null);
   },
 
+  isMobile: () => true,
+
   listen: (callback: (message: unknown) => void) => {
     return registerRNHandler('rpc', callback);
   },
@@ -141,6 +183,7 @@ const webViewWindowService: WindowCommunicationService = {
 const availableServices: WindowCommunicationService[] = [
   popupWindowService,
   webViewWindowService,
+  ...(env.NEXT_PUBLIC_EMBEDDED_FLOW_ENABLED ? [embeddedWindowService] : []),
 ];
 
 class DelegateWindowService implements WindowCommunicationService {
@@ -166,6 +209,8 @@ class DelegateWindowService implements WindowCommunicationService {
   emitToken = (token: string) => this.proxy.emitToken(token);
 
   logout = () => this.proxy.logout();
+
+  isMobile = () => this.proxy.isMobile();
 
   listen = (callback: (message: unknown) => void) =>
     this.proxy.listen(callback);

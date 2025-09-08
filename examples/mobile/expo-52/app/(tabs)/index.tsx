@@ -12,7 +12,6 @@ export default function HomeScreen() {
     isConnected,
     disconnect,
     walletClient,
-    showProfile,
   } = useSophonAccount();
 
   const [error, setError] = useState<string>('');
@@ -65,19 +64,6 @@ export default function HomeScreen() {
             onPress={() => {
               setError('');
               connect().catch((e) => setError(e.details ?? e.message));
-            }}
-          />
-        </View>
-      )}
-
-      {isConnected && (
-        <View style={styles.button}>
-          <Button
-            title={`✨ Open Profile`}
-            color="white"
-            onPress={() => {
-              setError('');
-              showProfile();
             }}
           />
         </View>

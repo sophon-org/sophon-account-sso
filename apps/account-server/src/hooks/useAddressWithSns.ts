@@ -1,7 +1,9 @@
+'use client';
+
 import {
   type SNSName,
   shortenAddress,
-  snsCache,
+  snsManager,
 } from '@sophon-labs/account-core';
 import { useCallback, useEffect, useState } from 'react';
 import type { Address } from 'viem';
@@ -18,11 +20,11 @@ export const useAddressWithSns = (
     undefined,
   );
 
-  const cache = snsCache(SOPHON_VIEM_CHAIN.id === sophonTestnet.id);
+  const sns = snsManager(SOPHON_VIEM_CHAIN.id === sophonTestnet.id);
 
   const tryToResolveAddress = async () => {
     setIsChecking(true);
-    const result = await cache.fetchSNSName(address!);
+    const result = await sns.fetchSNSName(address!);
     if (result) {
       setAddressOrName(result as SNSName);
     }
@@ -33,7 +35,7 @@ export const useAddressWithSns = (
 
   useEffect(() => {
     if (address && !addressOrName) {
-      const cachedName = cache.getCachedSNSName(address!);
+      const cachedName = sns.getCachedSNSName(address);
 
       if (cachedName) {
         setAddressOrName(cachedName);
@@ -45,7 +47,7 @@ export const useAddressWithSns = (
       }
       cachedTryToResolveAddress();
     }
-  }, [address, addressOrName, cache, shortAddress, cachedTryToResolveAddress]);
+  }, [address, addressOrName, sns, shortAddress, cachedTryToResolveAddress]);
 
   return {
     tryToResolveAddress,

@@ -9,6 +9,7 @@ import VerificationImage from '@/components/ui/verification-image';
 import { MainStateMachineContext } from '@/context/state-machine-context';
 import { useConnectAuthorizationActions } from '@/hooks/actions/useConnectAuthorizationActions';
 import { useDataAccessScopes } from '@/hooks/useDataAccessScopes';
+import { windowService } from '@/service/window.service';
 import type { Scopes } from '@/types/data-scopes';
 
 export default function ConnectAuthorizationView({
@@ -16,6 +17,7 @@ export default function ConnectAuthorizationView({
 }: Readonly<{
   partnerId?: string;
 }>) {
+  const isMobile = windowService.isMobile();
   const actorRef = MainStateMachineContext.useActorRef();
   const { availableScopes, userScopes } = useDataAccessScopes();
   const [selectedScopes, setSelectedScopes] = useState<Record<string, boolean>>(
@@ -50,9 +52,11 @@ export default function ConnectAuthorizationView({
 
   return (
     <div className="text-center flex flex-col items-center justify-center gap-8 mt-3">
-      <VerificationImage
-        icon={<PlugsIcon className="w-10 h-10 text-white" />}
-      />
+      {!isMobile && (
+        <VerificationImage
+          icon={<PlugsIcon className="w-10 h-10 text-white" />}
+        />
+      )}
       <div className="flex flex-col items-center justify-center">
         <h5 className="text-2xl font-bold">Connection request</h5>
         <p className="hidden">https://my.staging.sophon.xyz</p>
