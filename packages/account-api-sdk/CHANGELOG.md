@@ -1,5 +1,13 @@
 # @sophon-labs/account-api-sdk
 
+## 2.0.7-next.0
+
+### Patch Changes
+
+- Support for better mobile flow
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.7-next.0
+
 ## 2.0.6
 
 ### Patch Changes
