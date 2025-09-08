@@ -1,15 +1,12 @@
 'use client';
 
-import { shortenAddress } from '@sophon-labs/account-core';
 import { useRNHandler } from '@sophon-labs/account-message-bridge';
 import { useCallback, useEffect, useState } from 'react';
-import { Loader } from '@/components/loader';
 import { Button } from '@/components/ui/button';
 import { Drawer } from '@/components/ui/drawer';
 import { MainStateMachineContext } from '@/context/state-machine-context';
 import { sendMessage } from '@/events';
 import { useEventHandler } from '@/events/hooks';
-import { useConnectionAuthorization } from '@/hooks/auth/useConnectionAuthorization';
 import { useAccountContext } from '@/hooks/useAccountContext';
 import { useRequestDrawer } from '@/hooks/useRequestDrawer';
 import { useUserIdentification } from '@/hooks/useUserIdentification';
@@ -35,8 +32,10 @@ export default function EmbeddedRoot({ partnerId }: EmbeddedRootProps) {
   const actorRef = MainStateMachineContext.useActorRef();
   const { openDrawer, DrawerComponent } = useRequestDrawer();
   const signingActions = SigningRequestView.useActions({ openDrawer });
-  const { onRefuseConnection, onAcceptConnection, isLoading } =
-    useConnectionAuthorization();
+  const transactionActions = TransactionRequestView.useActions({
+    openDrawer,
+  });
+  const connectActions = ConnectAuthorizationView.useActions();
   useUserIdentification();
 
   useEffect(() => {
@@ -118,32 +117,43 @@ export default function EmbeddedRoot({ partnerId }: EmbeddedRootProps) {
     state.matches('incoming-message-signature')
   ) {
     return (
-      <Drawer
-        open={open}
-        onOpenChange={handleCloseModal}
-        showHeader={false}
-        showLogo={false}
-        showLegalNotice={false}
-        drawerType="signing_request"
-        actions={signingActions.renderActions()}
-      >
-        <SigningRequestView />
-      </Drawer>
+      <>
+        <Drawer
+          open={open}
+          onOpenChange={handleCloseModal}
+          showHeader={true}
+          showProfileImage={true}
+          title={account?.address}
+          showLogo={false}
+          showLegalNotice={false}
+          drawerType="signing_request"
+          actions={signingActions.renderActions()}
+        >
+          <SigningRequestView openDrawer={openDrawer} />
+        </Drawer>
+        <DrawerComponent />
+      </>
     );
   }
 
   if (state.matches('incoming-transaction')) {
     return (
-      <Drawer
-        open={open}
-        onOpenChange={handleCloseModal}
-        showHeader={false}
-        showLogo={false}
-        showLegalNotice={false}
-        drawerType="transaction_request"
-      >
-        <TransactionRequestView />
-      </Drawer>
+      <>
+        <Drawer
+          open={open}
+          onOpenChange={handleCloseModal}
+          showHeader={true}
+          showProfileImage={true}
+          title={account?.address}
+          showLogo={false}
+          showLegalNotice={false}
+          drawerType="transaction_request"
+          actions={transactionActions.renderActions()}
+        >
+          <TransactionRequestView openDrawer={openDrawer} />
+        </Drawer>
+        <DrawerComponent />
+      </>
     );
   }
 
@@ -157,28 +167,7 @@ export default function EmbeddedRoot({ partnerId }: EmbeddedRootProps) {
         showLegalNotice={false}
         showLogo={false}
         drawerType="connection_authorization"
-        actions={
-          <div className="flex items-center justify-center gap-2 w-full">
-            <Button
-              variant="transparent"
-              disabled={isLoading}
-              onClick={onRefuseConnection}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="button"
-              disabled={isLoading}
-              onClick={onAcceptConnection}
-            >
-              {isLoading ? (
-                <Loader className="w-4 h-4 border-white border-r-transparent" />
-              ) : (
-                'Connect'
-              )}
-            </Button>
-          </div>
-        }
+        actions={connectActions.renderActions()}
       >
         <ConnectAuthorizationView partnerId={partnerId} />
       </Drawer>
@@ -290,7 +279,7 @@ export default function EmbeddedRoot({ partnerId }: EmbeddedRootProps) {
         showProfileImage={true}
         showLegalNotice={false}
         showLogo={false}
-        title={shortenAddress(account.address)}
+        title={account.address}
         drawerType="user_profile"
         // onSettings={() => {
         //   // goToSettings();

@@ -1,6 +1,11 @@
+import {
+  getSVGAvatarFromString,
+  shortenAddress,
+} from '@sophon-labs/account-core';
 import Image from 'next/image';
-import React from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Drawer as VaulDrawer } from 'vaul';
+import { isAddress } from 'viem';
 import { trackDialogInteraction } from '@/lib/analytics';
 import { IconBack } from '../icons/icon-back';
 import { IconSettings } from '../icons/icon-settings';
@@ -29,6 +34,7 @@ interface DrawerHeaderProps {
   onBack?: () => void;
   onSettings?: () => void;
   drawerType?: string;
+  isScrolling?: boolean;
 }
 
 const DrawerHeader = ({
@@ -37,17 +43,25 @@ const DrawerHeader = ({
   onBack,
   onSettings,
   drawerType = 'drawer',
+  isScrolling,
 }: DrawerHeaderProps) => {
+  const titleIsAddress = isAddress(title || '');
+
+  const avatarUrl = titleIsAddress && getSVGAvatarFromString(title || '');
+  console.log(avatarUrl);
+
+  const titleDisplay = titleIsAddress
+    ? shortenAddress(title as `0x${string}`)
+    : title;
   return (
-    <div className="relative flex justify-between items-center p-8 gap-2 pb-0">
+    <div
+      className={`relative flex justify-between items-center p-6 gap-2 w-full bg-transparent ${isScrolling ? 'z-50 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)]' : ''}`}
+    >
       <div className="flex items-center gap-2 z-10">
-        {showProfileImage && (
-          <Image
-            src="/images/avatar-example.png"
-            alt="Sophon"
-            width={28}
-            height={28}
-          />
+        {showProfileImage && avatarUrl && (
+          <div className="w-6 h-6 rounded-full overflow-hidden">
+            <Image src={avatarUrl} alt="Sophon" width={28} height={28} />
+          </div>
         )}
         {onBack && (
           <button
@@ -61,8 +75,8 @@ const DrawerHeader = ({
           </button>
         )}
       </div>
-      <h5 className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-2xl font-bold w-full text-center">
-        {title}
+      <h5 className="text-2xl font-bold w-full text-center flex-grow mr-8">
+        {titleDisplay}
       </h5>
       <div className="flex justify-end z-10">
         {onSettings && (
@@ -118,14 +132,52 @@ export const Drawer = ({
   actions,
   drawerType = 'drawer',
 }: DrawerProps) => {
+  const [isScrollable, setIsScrollable] = useState(false);
+  const [isScrolling, setIsScrolling] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const checkScrollable = useCallback(() => {
+    if (scrollContainerRef.current) {
+      const { scrollHeight, clientHeight } = scrollContainerRef.current;
+      setIsScrollable(scrollHeight > clientHeight);
+    }
+  }, []);
+
   // Track drawer opened/closed
-  React.useEffect(() => {
+  useEffect(() => {
     if (open) {
+      // add small timeout to make sure ref is set
+      setTimeout(() => {
+        checkScrollable();
+      }, 10);
+
       trackDialogInteraction(drawerType, 'opened');
     } else {
       trackDialogInteraction(drawerType, 'closed');
     }
-  }, [open, drawerType]);
+  }, [open, drawerType, checkScrollable]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (scrollContainerRef.current) {
+        const { scrollTop } = scrollContainerRef.current;
+        setIsScrolling(scrollTop > 0);
+      }
+    };
+
+    // Only set up scroll listener when content is scrollable
+    if (isScrollable) {
+      const container = scrollContainerRef.current;
+
+      if (container) {
+        container.addEventListener('scroll', handleScroll, { passive: true });
+
+        return () => {
+          container.removeEventListener('scroll', handleScroll);
+        };
+      }
+    }
+  }, [isScrollable]);
 
   const handleOpenChange = (isOpen: boolean) => {
     if (!isOpen) {
@@ -142,11 +194,11 @@ export const Drawer = ({
     >
       <VaulDrawer.Portal>
         <VaulDrawer.Overlay className="fixed inset-0 bg-black/40" />
-        <VaulDrawer.Content className="bg-white h-fit fixed bottom-0 left-0 right-0 outline-none rounded-t-3xl">
+        <VaulDrawer.Content className="bg-gray-100 fixed h-fit bottom-0 left-0 right-0 outline-none rounded-t-3xl">
           <VaulDrawer.Title hidden={true}>
             Sophon Authentication Modal
           </VaulDrawer.Title>
-          <VaulDrawer.Handle className="mt-4 w-[67px]" />
+          <VaulDrawer.Handle className="mt-4 w-[67px] bg-red-500" />
 
           {showHeader && (
             <DrawerHeader
@@ -155,9 +207,15 @@ export const Drawer = ({
               onBack={onBack}
               onSettings={onSettings}
               drawerType={drawerType}
+              isScrolling={isScrolling}
             />
           )}
-          {children}
+          <div
+            ref={scrollContainerRef}
+            className={`overflow-y-auto max-h-[60vh] px-4 pb-4`}
+          >
+            {children}
+          </div>
           <DrawerFooter
             showLegalNotice={showLegalNotice}
             showLogo={showLogo}

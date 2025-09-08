@@ -42,6 +42,11 @@ interface WindowCommunicationService {
    */
   logout: () => void;
 
+  /**
+   * @returns if this service represents a mobile environment
+   */
+  isMobile: () => boolean;
+
   listen: (callback: (message: unknown) => void) => () => void;
 }
 
@@ -65,6 +70,8 @@ const noopWindowService: WindowCommunicationService = {
   logout: () => {
     console.log('Logout (noop)');
   },
+
+  isMobile: () => false,
 
   listen: () => {
     return () => {};
@@ -97,6 +104,8 @@ const popupWindowService: WindowCommunicationService = {
   logout: () => {
     window.opener.postMessage({ type: 'logout' }, '*');
   },
+
+  isMobile: () => false,
 
   listen: (callback: (message: unknown) => void) => {
     const listener = (event: MessageEvent) => {
@@ -135,6 +144,8 @@ const embeddedWindowService: WindowCommunicationService = {
     sendMessageToRN('logout', null);
   },
 
+  isMobile: () => true,
+
   listen: (callback: (message: unknown) => void) => {
     return registerRNHandler('rpc', callback);
   },
@@ -162,6 +173,8 @@ const webViewWindowService: WindowCommunicationService = {
   logout: () => {
     sendMessageToRN('logout', null);
   },
+
+  isMobile: () => true,
 
   listen: (callback: (message: unknown) => void) => {
     return registerRNHandler('rpc', callback);
@@ -197,6 +210,8 @@ class DelegateWindowService implements WindowCommunicationService {
   emitToken = (token: string) => this.proxy.emitToken(token);
 
   logout = () => this.proxy.logout();
+
+  isMobile = () => this.proxy.isMobile();
 
   listen = (callback: (message: unknown) => void) =>
     this.proxy.listen(callback);
