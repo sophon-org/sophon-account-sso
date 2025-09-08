@@ -4574,6 +4574,7 @@ __metadata:
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@types/node": "npm:^20.0.0"
     "@vitest/coverage-v8": "npm:^3.2.4"
+    text-encoding-polyfill: "npm:^0.6.7"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.0.0"
     viem: "npm:2.36.0"

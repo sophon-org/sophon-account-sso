@@ -92,6 +92,8 @@ export const SophonContextProvider = ({
     setToken(incomingToken);
   });
 
+  useUIEventHandler('mainViewError', setError);
+
   const setAccountWithEffect = useCallback((account?: SophonAccount) => {
     setAccount(account);
     if (account) {

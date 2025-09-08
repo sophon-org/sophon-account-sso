@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import type { Address } from 'viem';
 import type { CustomRPCError } from '@/types';
-import { sendUIMessage } from '../messaging';
 import { useSophonContext } from './use-sophon-context';
 
 export const useSophonAccount = () => {
@@ -33,12 +32,6 @@ export const useSophonAccount = () => {
 
   const isConnected = useMemo(() => !!account, [account]);
 
-  const showProfile = useCallback(async () => {
-    if (account) {
-      sendUIMessage('showModal', {});
-    }
-  }, [account]);
-
   return {
     isConnected,
     connect,
@@ -46,7 +39,6 @@ export const useSophonAccount = () => {
     account,
     provider,
     walletClient,
-    showProfile,
     accountError: accountError ?? error,
     isConnecting,
   };
