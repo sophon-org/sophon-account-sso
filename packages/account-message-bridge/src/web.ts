@@ -55,7 +55,7 @@ export const useRNHandler = <T extends FromNativeActionNames>(
   }, [action, callback]);
 };
 
-const onMessageFromRN = (message: string) => {
+export const onMessageFromRN = (message: string) => {
   const { action, payload } = JSON.parse(message);
   RNEvents.emit(action, payload);
 };

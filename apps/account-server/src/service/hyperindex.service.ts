@@ -10,9 +10,9 @@ class HyperindexService {
   private readonly graphqlEndpoint: string;
 
   constructor() {
-    this.graphqlEndpoint = env.NEXT_PUBLIC_HYPERINDEX_ENDPOINT;
+    this.graphqlEndpoint = env.HYPERINDEX_ENDPOINT;
     if (!this.graphqlEndpoint?.trim()) {
-      throw new Error('NEXT_PUBLIC_HYPERINDEX_ENDPOINT is not set');
+      throw new Error('HYPERINDEX_ENDPOINT is not set');
     }
   }
 

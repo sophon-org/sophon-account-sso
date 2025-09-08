@@ -1,10 +1,39 @@
 import { withSentryConfig } from '@sentry/nextjs';
 import type { NextConfig } from 'next';
-import './src/env';
+import { env } from './src/env';
 
 const nextConfig: NextConfig = {
   /* config options here */
   devIndicators: false,
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'assets.coingecko.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'coin-images.coingecko.com',
+      },
+    ],
+  },
+  async headers() {
+    if (!env.NEXT_PUBLIC_EMBEDDED_FLOW_ENABLED) {
+      return [];
+    }
+
+    return [
+      {
+        source: '/_next/:path*',
+        headers: [
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: 'http://localhost:3000',
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default withSentryConfig(nextConfig, {
@@ -22,6 +51,8 @@ export default withSentryConfig(nextConfig, {
 
   // Upload a larger set of source maps for prettier stack traces (increases build time)
   widenClientFileUpload: true,
+
+  telemetry: false,
 
   // Uncomment to route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
   // This can increase your server load as well as your hosting bill.

@@ -1,3 +1,4 @@
+import { SwapAPIURL } from '@sophon-labs/account-core';
 import { useEffect, useMemo, useState } from 'react';
 import type {
   SwapApiConfig,
@@ -5,6 +6,7 @@ import type {
   UseGetSwapTransactionArgs,
 } from '../types/swap';
 import { createApiClient } from '../utils/apiClient';
+import { useSophonContext } from './useSophonContext';
 
 /**
  * Hook to prepare a swap transaction
@@ -73,7 +75,9 @@ export function useGetSwapTransaction(
  */
 export function useGetSwapTransactionWithDefaults(
   args: UseGetSwapTransactionArgs,
-  baseUrl = 'http://localhost:4001',
+  baseUrl?: string,
 ) {
-  return useGetSwapTransaction(args, { baseUrl });
+  const { network } = useSophonContext();
+  const defaultBaseUrl = SwapAPIURL[network];
+  return useGetSwapTransaction(args, { baseUrl: baseUrl ?? defaultBaseUrl });
 }

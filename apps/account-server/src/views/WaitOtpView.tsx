@@ -17,7 +17,7 @@ export default function WaitOtpView() {
     (state) => state.context.email,
   );
   const { verifyOTP, resendOTP, otpError } = useAuthCallbacks();
-  const isMobile = windowService.name === 'webview';
+  const isMobile = windowService.isMobile();
   const [otpLoading, setOtpLoading] = useState(false);
 
   return (
@@ -50,6 +50,7 @@ export default function WaitOtpView() {
             maxLength={6}
             pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
             autoFocus
+            data-testid="login-otp-input"
           >
             <InputOTPGroup>
               <InputOTPSlot index={0} />
@@ -61,7 +62,11 @@ export default function WaitOtpView() {
             </InputOTPGroup>
           </InputOTP>
 
-          <Button type="submit" disabled={otpLoading}>
+          <Button
+            type="submit"
+            disabled={otpLoading}
+            data-testid="login-otp-submit"
+          >
             {otpLoading ? (
               <Loader className="w-4 h-4 border-white border-r-transparent" />
             ) : (
@@ -79,13 +84,13 @@ export default function WaitOtpView() {
             </button>
           </p>
         </form>
-        <div className="mt-4 px-2">
-          {otpError && (
-            <p className="text-red-500 text-xs whitespace-pre-wrap break-words line-clamp-3 text-left">
-              {otpError}
-            </p>
-          )}
-        </div>
+        {otpError && (
+          <div className="mt-4 px-2">
+            <div className="p-3 bg-red-50 border border-red-200 rounded">
+              <p className="text-red-600 text-sm">{otpError}</p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

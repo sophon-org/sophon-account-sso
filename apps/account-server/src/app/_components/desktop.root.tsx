@@ -1,14 +1,11 @@
 'use client';
 
-import { shortenAddress } from '@sophon-labs/account-core';
-
 import { Dialog } from '@/components/dialog';
-import { Loader } from '@/components/loader';
 import { Button } from '@/components/ui/button';
 import { MainStateMachineContext } from '@/context/state-machine-context';
 import { sendMessage } from '@/events';
-import { useConnectionAuthorization } from '@/hooks/auth/useConnectionAuthorization';
 import { useAccountContext } from '@/hooks/useAccountContext';
+import { useRequestDrawer } from '@/hooks/useRequestDrawer';
 import { useUserIdentification } from '@/hooks/useUserIdentification';
 import { useWalletConnection } from '@/hooks/useWalletConnection';
 import { windowService } from '@/service/window.service';
@@ -34,9 +31,14 @@ export default function DesktopRoot({ partnerId }: DesktopRootProps) {
 
   const { account } = useAccountContext();
   const { disconnect } = useWalletConnection();
-  const { onRefuseConnection, onAcceptConnection, isLoading } =
-    useConnectionAuthorization();
   useUserIdentification();
+  const { openDrawer, DrawerComponent } = useRequestDrawer();
+
+  const signingActions = SigningRequestView.useActions({ openDrawer });
+  const connectActions = ConnectAuthorizationView.useActions();
+  const transactionActions = TransactionRequestView.useActions({
+    openDrawer,
+  });
 
   /***************************
    * LOADING RESOURCES STATE *
@@ -57,27 +59,37 @@ export default function DesktopRoot({ partnerId }: DesktopRootProps) {
     state.matches('incoming-message-signature')
   ) {
     return (
-      <Dialog
-        className="relative"
-        title={shortenAddress(account?.address)}
-        showSettings={true}
-        showLegalNotice={false}
-        dialogType="signing_request"
-      >
-        <SigningRequestView />
-      </Dialog>
+      <>
+        <Dialog
+          className="relative"
+          title={account?.address}
+          showSettings={true}
+          showLegalNotice={false}
+          dialogType="signing_request"
+          actions={signingActions.renderActions()}
+        >
+          <SigningRequestView openDrawer={openDrawer} />
+        </Dialog>
+        <DrawerComponent />
+      </>
     );
   }
 
   if (state.matches('incoming-transaction')) {
     return (
-      <Dialog
-        className="relative"
-        showLegalNotice={false}
-        dialogType="transaction_request"
-      >
-        <TransactionRequestView />
-      </Dialog>
+      <>
+        <Dialog
+          className="relative"
+          title={account?.address}
+          showSettings={true}
+          showLegalNotice={false}
+          dialogType="transaction_request"
+          actions={transactionActions.renderActions()}
+        >
+          <TransactionRequestView openDrawer={openDrawer} />
+        </Dialog>
+        <DrawerComponent />
+      </>
     );
   }
 
@@ -86,28 +98,7 @@ export default function DesktopRoot({ partnerId }: DesktopRootProps) {
       <Dialog
         className="relative"
         dialogType="connection_authorization"
-        actions={
-          <div className="flex items-center justify-center gap-2 w-full">
-            <Button
-              variant="transparent"
-              disabled={isLoading}
-              onClick={onRefuseConnection}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="button"
-              disabled={isLoading}
-              onClick={onAcceptConnection}
-            >
-              {isLoading ? (
-                <Loader className="w-4 h-4 border-white border-r-transparent" />
-              ) : (
-                'Connect'
-              )}
-            </Button>
-          </div>
-        }
+        actions={connectActions.renderActions()}
         showLegalNotice={false}
       >
         <ConnectAuthorizationView partnerId={partnerId} />

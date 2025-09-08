@@ -3,7 +3,7 @@ import { defineConfig } from 'tsup';
 
 export default defineConfig((options) => {
   return {
-    entry: ['src/**/*.ts'],
+    entry: ['src/**/*.ts', '!src/**/*.spec.ts', '!src/**/*.test.ts'],
     splitting: false,
     sourcemap: !!options.watch,
     clean: true,
@@ -14,6 +14,5 @@ export default defineConfig((options) => {
     format: ['esm', 'cjs'],
     outDir: 'dist',
     tsconfig: path.resolve(__dirname, './tsconfig.json'),
-    external: ['zksync-sso'],
   };
 });

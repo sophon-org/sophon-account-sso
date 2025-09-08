@@ -4,7 +4,7 @@ import * as SheetPrimitive from '@radix-ui/react-dialog';
 import { XIcon } from 'lucide-react';
 import type * as React from 'react';
 
-import { cn } from '@/lib/smart-contract';
+import { cn } from '@/lib/cn';
 import { IconSophon } from '../icons/icon-sophon';
 import { LegalNotice } from '../legal';
 

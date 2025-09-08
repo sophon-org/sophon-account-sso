@@ -1,9 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { hexToString } from 'viem';
-import { MainStateMachineContext } from '@/context/state-machine-context';
-
-import { getSocialProviderFromURL } from '@/lib/social-provider';
+import { hexToString, toHex } from 'viem';
+import { isValidPaymaster } from '@/lib/paymaster';
 import { windowService } from '@/service/window.service';
 import type {
   AuthenticationRequest,
@@ -26,7 +24,6 @@ interface UseMessageHandlerReturn {
 }
 
 export const useMessageHandler = (): UseMessageHandlerReturn => {
-  const state = MainStateMachineContext.useSelector((state) => state);
   const [handlerInitialized, setHandlerInitialized] = useState(false);
   const [incomingRequest, setIncomingRequest] =
     useState<IncomingRequest | null>(null);
@@ -46,6 +43,12 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
   useEffect(() => {
     // biome-ignore lint/suspicious/noExplicitAny: review that in the future TODO
     const messageHandler = (data: any) => {
+      // Do nothing, the server is already answering a request, don't
+      // overlap with current request/response flow.
+      if (data.id && data.requestId) {
+        return;
+      }
+
       // Store the incoming request if it's an RPC request
       if (data?.id && data?.content) {
         const method = data.content?.action?.method;
@@ -64,7 +67,17 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
           setMessageSigningRequest(null);
           setTransactionRequest(null);
           setAuthenticationRequest({
-            domain: 'http://samplerequest.com',
+            domain: 'https://sophon.xyz', // placeholder
+          });
+        } else if (method === 'wallet_requestPermissions') {
+          // Handle wallet permissions as profile request
+          setTypedDataSigningRequest(null);
+          setMessageSigningRequest(null);
+          setTransactionRequest(null);
+          setSessionPreferences(null);
+          setAuthenticationRequest({
+            domain: 'profile',
+            type: 'profile_view',
           });
         } else if (method === 'personal_sign') {
           const params = data.content.action?.params;
@@ -79,7 +92,10 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
             setTypedDataSigningRequest(null);
             setTransactionRequest(null);
           }
-        } else if (method === 'wallet_revokePermissions') {
+        } else if (
+          method === 'wallet_revokePermissions' ||
+          method === 'wallet_disconnect'
+        ) {
           setLogoutRequest({
             reason: 'wallet_revoke_permissions',
           });
@@ -107,11 +123,60 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
                 address: address,
               };
 
-              setTypedDataSigningRequest(signingRequestData);
-              setSessionPreferences(null);
-              setAuthenticationRequest(null);
-              setMessageSigningRequest(null);
-              setTransactionRequest(null);
+              if (
+                typedData.primaryType === 'Transaction' &&
+                typedData.message?.txType === '113'
+              ) {
+                // ZKsync Transaction Type has addresses as uint, and this breaks the rest of the flow. So we convert here
+                const transactionData = { ...typedData.message };
+                transactionData.from = toHex(BigInt(transactionData.from), {
+                  size: 20,
+                });
+                transactionData.to = toHex(BigInt(transactionData.to), {
+                  size: 20,
+                });
+                transactionData.value = toHex(BigInt(transactionData.value));
+
+                // Handle paymaster conversion with error handling
+                let convertedPaymaster: string | undefined;
+                try {
+                  if (transactionData.paymaster) {
+                    convertedPaymaster = toHex(
+                      BigInt(transactionData.paymaster),
+                      { size: 20 },
+                    );
+                  }
+                } catch (error) {
+                  console.warn(
+                    'Invalid paymaster value:',
+                    transactionData.paymaster,
+                    error,
+                  );
+                  convertedPaymaster = undefined;
+                }
+
+                // only use the converted paymaster if it's valid
+                transactionData.paymaster =
+                  convertedPaymaster && isValidPaymaster(convertedPaymaster)
+                    ? convertedPaymaster
+                    : undefined;
+
+                // not elegant, but it works
+                transactionData.transactionType = 'eip712';
+                transactionData.signingRequestData = signingRequestData;
+
+                setTypedDataSigningRequest(null);
+                setSessionPreferences(null);
+                setAuthenticationRequest(null);
+                setMessageSigningRequest(null);
+                setTransactionRequest(transactionData);
+              } else {
+                setTypedDataSigningRequest(signingRequestData);
+                setSessionPreferences(null);
+                setAuthenticationRequest(null);
+                setMessageSigningRequest(null);
+                setTransactionRequest(null);
+              }
             } catch (parseError) {
               console.error('Failed to parse typed data JSON:', parseError);
             }
@@ -122,16 +187,25 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
           const params = data.content.action?.params;
 
           if (params && params.length >= 1) {
-            const txData = params[0];
+            let txData = params[0];
 
-            const transactionRequestData = {
-              from: txData.from,
-              to: txData.to,
-              value: txData.value || '0x0',
-              data: txData.data || '0x',
-            };
+            if (
+              txData.eip712Meta?.paymasterParams &&
+              (txData.eip712Meta.paymasterParams.paymaster ||
+                txData.eip712Meta.paymasterParams.paymasterInput)
+            ) {
+              const transactionData = { ...txData };
+              transactionData.paymaster =
+                transactionData.eip712Meta.paymasterParams.paymaster ||
+                undefined;
+              transactionData.paymasterInput =
+                transactionData.eip712Meta.paymasterParams.paymasterInput ||
+                undefined;
+              delete transactionData.eip712Meta;
+              txData = transactionData;
+            }
 
-            setTransactionRequest(transactionRequestData);
+            setTransactionRequest(txData);
             setTypedDataSigningRequest(null);
             setMessageSigningRequest(null);
             setSessionPreferences(null);
@@ -144,14 +218,6 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
         // Save to sessionStorage (survives OAuth redirects when social auth is used)
         sessionStorage.setItem('sophon-incoming-request', JSON.stringify(data));
       }
-    };
-
-    const handleBeforeUnload = () => {
-      const popupUnloadSignal = {
-        event: 'PopupUnload',
-        id: crypto.randomUUID(),
-      };
-      windowService.sendMessage(popupUnloadSignal);
     };
 
     // Check sessionStorage for saved request (survives OAuth redirects)
@@ -178,29 +244,23 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
       };
       windowService.sendMessage(popupLoadedSignal);
 
-      // Add beforeunload listener to send PopupUnload event
-      // Skip if we're doing social login to prevent interrupting OAuth flow
-      const isSocialLogin =
-        getSocialProviderFromURL() !== null ||
-        state.matches('login-required.started');
-
-      if (!state.matches('login.init') && !isSocialLogin) {
-        window.addEventListener('beforeunload', handleBeforeUnload);
-      }
+      // differently from Matter Labs auth-server example, we don't need to send
+      // a PopupUnload signal because the popup is closed by the window service
     }
 
     // Define the message handler
     const unregister = windowService.listen(messageHandler);
-    setHandlerInitialized(true);
+
+    // wait a little before setting the handle initialized to give
+    // time for the caller messages to be receive and avoid visual glitches
+    setTimeout(() => {
+      setHandlerInitialized(true);
+    }, 500);
 
     return () => {
       unregister();
-      // Clean up the beforeunload listener
-      if (origin && windowService.isManaged()) {
-        window.removeEventListener('beforeunload', handleBeforeUnload);
-      }
     };
-  }, [incomingRequest, state]);
+  }, [incomingRequest]);
 
   return {
     incomingRequest,

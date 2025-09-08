@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ChainValidationService } from './chain-validation.service';
-import { ProviderRegistryService } from './provider-registry.service';
 import { ISwapProvider } from '../interfaces/swap-provider.interface';
 import { ChainId } from '../types/common.types';
+import { ChainValidationService } from './chain-validation.service';
+import { ProviderRegistryService } from './provider-registry.service';
 
 describe('ChainValidationService', () => {
   let service: ChainValidationService;
@@ -19,7 +19,7 @@ describe('ChainValidationService', () => {
   };
 
   const mockProvider2: ISwapProvider = {
-    providerId: 'provider2', 
+    providerId: 'provider2',
     name: 'Provider 2',
     supportedChains: [42161, 8453] as ChainId[],
     prepareTransaction: jest.fn(),
@@ -53,16 +53,19 @@ describe('ChainValidationService', () => {
       providerRegistry.getProvider.mockReturnValue(mockProvider1);
 
       const result = service.getSupportedChains('provider1');
-      
+
       expect(result).toEqual([1, 10, 137]);
       expect(providerRegistry.getProvider).toHaveBeenCalledWith('provider1');
     });
 
     it('should return all chains from enabled providers when no provider specified', () => {
-      providerRegistry.getEnabledProviders.mockReturnValue([mockProvider1, mockProvider2]);
+      providerRegistry.getEnabledProviders.mockReturnValue([
+        mockProvider1,
+        mockProvider2,
+      ]);
 
       const result = service.getSupportedChains();
-      
+
       expect(result).toEqual(expect.arrayContaining([1, 10, 137, 42161, 8453]));
       expect(result).toHaveLength(5);
     });
@@ -73,7 +76,7 @@ describe('ChainValidationService', () => {
       });
 
       const result = service.getSupportedChains('nonexistent');
-      
+
       expect(result).toEqual([]);
     });
   });
@@ -83,7 +86,7 @@ describe('ChainValidationService', () => {
       providerRegistry.getProvider.mockReturnValue(mockProvider1);
 
       const result = service.isChainSupported(1, 'provider1');
-      
+
       expect(result).toBe(true);
     });
 
@@ -91,15 +94,18 @@ describe('ChainValidationService', () => {
       providerRegistry.getProvider.mockReturnValue(mockProvider1);
 
       const result = service.isChainSupported(42161, 'provider1');
-      
+
       expect(result).toBe(false);
     });
 
     it('should return true if chain is supported by any enabled provider', () => {
-      providerRegistry.getEnabledProviders.mockReturnValue([mockProvider1, mockProvider2]);
+      providerRegistry.getEnabledProviders.mockReturnValue([
+        mockProvider1,
+        mockProvider2,
+      ]);
 
       const result = service.isChainSupported(42161);
-      
+
       expect(result).toBe(true);
     });
   });
@@ -109,7 +115,7 @@ describe('ChainValidationService', () => {
       providerRegistry.getProvider.mockReturnValue(mockProvider1);
 
       const result = service.validateChainForProvider(1, 'provider1');
-      
+
       expect(result.isValid).toBe(true);
       expect(result.error).toBeUndefined();
     });
@@ -118,9 +124,11 @@ describe('ChainValidationService', () => {
       providerRegistry.getProvider.mockReturnValue(mockProvider1);
 
       const result = service.validateChainForProvider(42161, 'provider1');
-      
+
       expect(result.isValid).toBe(false);
-      expect(result.error).toContain('Chain 42161 is not supported by provider');
+      expect(result.error).toContain(
+        'Chain 42161 is not supported by provider',
+      );
     });
 
     it('should return error for non-existent provider', () => {
@@ -129,9 +137,48 @@ describe('ChainValidationService', () => {
       });
 
       const result = service.validateChainForProvider(1, 'nonexistent');
-      
+
       expect(result.isValid).toBe(false);
-      expect(result.error).toContain('Provider \'nonexistent\' not found or disabled');
+      expect(result.error).toContain(
+        "Provider 'nonexistent' not found or disabled",
+      );
+    });
+
+    it('should validate chain without specific provider', () => {
+      providerRegistry.getEnabledProviders.mockReturnValue([
+        mockProvider1,
+        mockProvider2,
+      ]);
+
+      const result = service.validateChainForProvider(1);
+
+      expect(result.isValid).toBe(true);
+    });
+
+    it('should return error for unsupported chain without specific provider', () => {
+      providerRegistry.getEnabledProviders.mockReturnValue([
+        mockProvider1,
+        mockProvider2,
+      ]);
+
+      const result = service.validateChainForProvider(999);
+
+      expect(result.isValid).toBe(false);
+      expect(result.error).toContain(
+        'Chain 999 is not supported by any enabled provider',
+      );
+    });
+
+    it('should handle provider registry errors gracefully', () => {
+      providerRegistry.getProvider.mockImplementation(() => {
+        throw new Error('Provider error');
+      });
+
+      const result = service.validateChainForProvider(1, 'error-provider');
+      expect(result.isValid).toBe(false);
+      expect(result.error).toContain(
+        "Provider 'error-provider' not found or disabled",
+      );
     });
   });
 });

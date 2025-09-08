@@ -86,7 +86,7 @@ export const LogoutView = () => {
   );
 
   return (
-    <div className="gap-8 mt-6 flex flex-grow flex-col items-center justify-center bg-gradient-to-br from-background via-background to-muted/20 p-6">
+    <div className="gap-8 mt-3 flex flex-grow flex-col items-center justify-center bg-gradient-to-br from-background via-background to-muted/20 p-6">
       <div className="w-full max-w-sm">
         <div>
           {logoutState === 'logging-out' && renderLoggingOut()}

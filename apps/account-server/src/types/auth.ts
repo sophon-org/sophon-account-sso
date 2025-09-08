@@ -29,6 +29,7 @@ export interface TypedDataSigningRequest {
 
 export interface AuthenticationRequest {
   domain: string;
+  type?: 'profile_view' | 'connection_request';
 }
 
 export interface LogoutRequest {
@@ -44,6 +45,7 @@ export interface Token {
   liquidity: string;
   l1Address: string;
   iconURL: string;
+  currentBalance?: string;
 }
 
 export interface DecodedData {
@@ -57,20 +59,84 @@ export interface TransactionRequest {
   to: string;
   value?: string;
   data?: string;
+  paymaster?: string;
+  paymasterInput?: string;
 }
 
-export interface EnrichedTransactionRequest extends TransactionRequest {
-  from: string;
-  to: string;
+export interface BaseEnrichedTransaction extends TransactionRequest {
   transactionType: TransactionType;
-  recipient?: string;
-  value?: string;
-  displayValue?: string;
-  token?: Token;
-  data?: string;
-  usePaymaster?: boolean;
-  fee?: string;
-  decodedData?: DecodedData;
+  recipient: string;
+  displayValue: string;
+  fee?: {
+    SOPH: string;
+    USD?: string;
+  };
+}
+
+export interface EnrichedSOPHTransaction extends BaseEnrichedTransaction {
+  transactionType: TransactionType.SOPH;
+  token: Token;
+}
+
+export interface EnrichedERC20Transaction extends BaseEnrichedTransaction {
+  transactionType: TransactionType.ERC20;
+  token: Token;
+}
+
+export interface EnrichedApprovalTransaction extends BaseEnrichedTransaction {
+  transactionType: TransactionType.APPROVE;
+  token: Token & { currentBalance: string };
+  spender: {
+    name: string;
+    address: string;
+    spendingCap: string;
+  };
+}
+
+export interface EnrichedContractTransaction extends BaseEnrichedTransaction {
+  transactionType: TransactionType.CONTRACT;
+  decodedData?: {
+    args: {
+      name: string;
+      value: string;
+      type: string;
+    }[];
+    functionName: string;
+  };
+  contractName?: string;
+  isVerified: boolean;
+}
+
+export interface EnrichedUnknownTransaction extends BaseEnrichedTransaction {
+  transactionType: TransactionType.UNKNOWN;
+}
+
+export type EnrichedTransactionRequest =
+  | EnrichedSOPHTransaction
+  | EnrichedERC20Transaction
+  | EnrichedApprovalTransaction
+  | EnrichedContractTransaction
+  | EnrichedUnknownTransaction;
+
+export type AbiFunction = {
+  type: 'function';
+  name: string;
+  inputs?: Array<{
+    name?: string;
+    type: string;
+    internalType?: string;
+  }>;
+  outputs?: Array<{
+    name?: string;
+    type: string;
+  }>;
+  stateMutability?: string;
+};
+
+export interface ContractInfo {
+  abi: readonly AbiFunction[] | null;
+  name: string | null;
+  isVerified: boolean;
 }
 
 export interface AccountStore {
@@ -122,7 +188,15 @@ export enum TransactionType {
   SOPH = 'soph',
   ERC20 = 'erc20',
   CONTRACT = 'contract',
+  APPROVE = 'approve',
   UNKNOWN = 'unknown',
+}
+
+export enum ERC20FunctionName {
+  TRANSFER = 'transfer',
+  APPROVE = 'approve',
+  TRANSFER_FROM = 'transferFrom',
+  ALLOWANCE = 'allowance',
 }
 
 export interface AuthContext {

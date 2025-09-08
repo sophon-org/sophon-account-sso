@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ProviderRegistryService } from './provider-registry.service';
+import { ErrorCodes, SwapAPIError } from '../errors/swap-api.error';
 import { ISwapProvider } from '../interfaces/swap-provider.interface';
 import { TransactionType } from '../types/common.types';
-import { SwapAPIError, ErrorCodes } from '../errors/swap-api.error';
+import { ProviderRegistryService } from './provider-registry.service';
 
 describe('ProviderRegistryService', () => {
   let service: ProviderRegistryService;
@@ -100,11 +100,34 @@ describe('ProviderRegistryService', () => {
         ...mockRequest,
         sourceChain: 999,
       };
-      expect(() => service.selectBestProvider(incompatibleRequest)).toThrow(SwapAPIError);
+      expect(() => service.selectBestProvider(incompatibleRequest)).toThrow(
+        SwapAPIError,
+      );
       try {
         service.selectBestProvider(incompatibleRequest);
       } catch (error) {
         expect(error.code).toBe(ErrorCodes.UNSUPPORTED_ROUTE);
+      }
+    });
+
+    it('should throw error when no enabled providers are available', () => {
+      // Register disabled provider
+      const disabledProvider = {
+        ...mockProvider,
+        isEnabled: jest.fn(() => false),
+      };
+
+      // Clear existing providers and register disabled one
+      service = new ProviderRegistryService();
+      service.registerProvider(disabledProvider);
+
+      expect(() => service.selectBestProvider(mockRequest)).toThrow(
+        'No enabled providers available',
+      );
+      try {
+        service.selectBestProvider(mockRequest);
+      } catch (error) {
+        expect(error.code).toBe(ErrorCodes.PROVIDER_ERROR);
       }
     });
   });

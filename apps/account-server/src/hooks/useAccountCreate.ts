@@ -6,8 +6,9 @@ import { eip712WalletActions } from 'viem/zksync';
 import { useWalletClient } from 'wagmi';
 import { deployModularAccount } from 'zksync-sso/client';
 import { registerNewPasskey } from 'zksync-sso/client/passkey';
-import { CONTRACTS, VIEM_CHAIN } from '@/lib/constants';
-import { deployAccount, getsSmartAccounts } from '@/service/account.service';
+import { CONTRACTS, SOPHON_VIEM_CHAIN } from '@/lib/constants';
+import { deployAccount } from '@/service/account.service';
+import { getsSmartAccounts } from '@/service/smart-account.server';
 import { useAccountContext } from './useAccountContext';
 
 export const useAccountCreate = () => {
@@ -41,7 +42,7 @@ export const useAccountCreate = () => {
 
         const deployerClient = createWalletClient({
           account: ownerAccount,
-          chain: VIEM_CHAIN,
+          chain: SOPHON_VIEM_CHAIN,
           transport: http(),
         }).extend(eip712WalletActions());
 

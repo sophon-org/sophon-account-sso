@@ -43,7 +43,6 @@ const developConfig = {
   resolver: {
     extraNodeModules: new Proxy(extraNodeModules, {
       get: (target, name) => {
-        console.log('requestion', name);
         // if its one of the local packages, return the mapped path
         if (name in target) {
           return target[name];

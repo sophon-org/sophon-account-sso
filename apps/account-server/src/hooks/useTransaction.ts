@@ -3,14 +3,15 @@ import { useDynamicContext } from '@dynamic-labs/sdk-react-core';
 import { useState } from 'react';
 import { http } from 'viem';
 import { toAccount } from 'viem/accounts';
-import { getGeneralPaymasterInput } from 'viem/zksync';
 import { useAccount, useWalletClient } from 'wagmi';
 import { createZksyncEcdsaClient } from 'zksync-sso/client/ecdsa';
 import { createZksyncPasskeyClient } from 'zksync-sso/client/passkey';
 import { MainStateMachineContext } from '@/context/state-machine-context';
 import { useAccountContext } from '@/hooks/useAccountContext';
 import { trackTransactionResult } from '@/lib/analytics';
-import { CONTRACTS, VIEM_CHAIN } from '@/lib/constants';
+import { CONTRACTS, SOPHON_VIEM_CHAIN } from '@/lib/constants';
+import { safeParseTypedData } from '@/lib/helpers';
+import { isValidPaymaster, safeHexString } from '@/lib/utils';
 import { windowService } from '@/service/window.service';
 import type { IncomingRequest, TransactionRequest } from '@/types/auth';
 
@@ -25,7 +26,7 @@ export function useTransaction() {
 
   const sendTransaction = async (
     transactionRequest: TransactionRequest,
-    incomingRequest: IncomingRequest,
+    incomingRequest?: IncomingRequest,
   ) => {
     setIsSending(true);
     const availableAddress = account?.address || primaryWallet?.address;
@@ -59,7 +60,7 @@ export function useTransaction() {
             async signTypedData(typedData) {
               const signature = await client?.signTypedData(
                 // @ts-expect-error - Type mismatch between viem account interface and wallet client
-                typedData,
+                safeParseTypedData(typedData),
               );
               if (!signature) throw new Error('Failed to sign typed data');
               return signature;
@@ -69,27 +70,25 @@ export function useTransaction() {
           const ecdsaClient = await createZksyncEcdsaClient({
             address: account?.address as `0x${string}`,
             owner: localAccount,
-            chain: VIEM_CHAIN,
+            chain: SOPHON_VIEM_CHAIN,
             transport: http(),
             contracts: {
               session: CONTRACTS.session,
             },
           });
 
+          const usePaymaster = isValidPaymaster(transactionRequest.paymaster);
+
           txHash = await ecdsaClient.sendTransaction({
             to: transactionRequest.to as `0x${string}`,
             value: BigInt(transactionRequest.value || '0'),
             data: (transactionRequest.data as `0x${string}`) || '0x',
-            paymaster:
-              transactionRequest.data === '0x'
-                ? undefined
-                : CONTRACTS.accountPaymaster,
-            paymasterInput:
-              transactionRequest.data === '0x'
-                ? undefined
-                : getGeneralPaymasterInput({
-                    innerInput: '0x',
-                  }),
+            paymaster: usePaymaster
+              ? (transactionRequest.paymaster as `0x${string}`)
+              : undefined,
+            paymasterInput: usePaymaster
+              ? safeHexString(transactionRequest.paymasterInput)
+              : undefined,
           });
         } catch (error) {
           console.error('Transaction error:', error);
@@ -127,39 +126,28 @@ export function useTransaction() {
         const client = await createZksyncEcdsaClient({
           address: account?.address as `0x${string}`,
           owner: localAccount,
-          chain: VIEM_CHAIN,
+          chain: SOPHON_VIEM_CHAIN,
           transport: http(),
           contracts: {
             session: CONTRACTS.session,
           },
         });
 
-        try {
-          const gasEstimate = await client.estimateGas({
-            to: transactionRequest.to as `0x${string}`,
-            value: BigInt(transactionRequest.value || '0'),
-            data: (transactionRequest.data as `0x${string}`) || '0x',
-          });
-          console.log('Gas estimate:', gasEstimate.toString());
-        } catch (gasError) {
-          console.error('Gas estimation failed:', gasError);
-        }
+        const usePaymaster = isValidPaymaster(transactionRequest.paymaster);
 
-        txHash = await client.sendTransaction({
+        const txData = {
           to: transactionRequest.to as `0x${string}`,
           value: BigInt(transactionRequest.value || '0'),
           data: (transactionRequest.data as `0x${string}`) || '0x',
-          paymaster:
-            transactionRequest.data === '0x'
-              ? undefined
-              : CONTRACTS.accountPaymaster,
-          paymasterInput:
-            transactionRequest.data === '0x'
-              ? undefined
-              : getGeneralPaymasterInput({
-                  innerInput: '0x',
-                }),
-        });
+          paymaster: usePaymaster
+            ? (transactionRequest.paymaster as `0x${string}`)
+            : undefined,
+          paymasterInput: usePaymaster
+            ? safeHexString(transactionRequest.paymasterInput)
+            : undefined,
+        };
+
+        txHash = await client.sendTransaction(txData);
       } else {
         console.log('Sending transaction with Passkey...');
         if (!account.owner.passkey) {
@@ -172,35 +160,22 @@ export function useTransaction() {
           userName: account.username || 'Sophon User',
           userDisplayName: account.username || 'Sophon User',
           contracts: CONTRACTS,
-          chain: VIEM_CHAIN,
+          chain: SOPHON_VIEM_CHAIN,
           transport: http(),
         });
 
-        try {
-          const gasEstimate = await client.estimateGas({
-            to: transactionRequest.to as `0x${string}`,
-            value: BigInt(transactionRequest.value || '0'),
-            data: (transactionRequest.data as `0x${string}`) || '0x',
-          });
-          console.log('Gas estimate:', gasEstimate.toString());
-        } catch (gasError) {
-          console.error('Gas estimation failed:', gasError);
-        }
+        const usePaymaster = isValidPaymaster(transactionRequest.paymaster);
 
         txHash = await client.sendTransaction({
           to: transactionRequest.to as `0x${string}`,
           value: BigInt(transactionRequest.value || '0'),
           data: (transactionRequest.data as `0x${string}`) || '0x',
-          paymaster:
-            transactionRequest.data === '0x'
-              ? undefined
-              : CONTRACTS.accountPaymaster,
-          paymasterInput:
-            transactionRequest.data === '0x'
-              ? undefined
-              : getGeneralPaymasterInput({
-                  innerInput: '0x',
-                }),
+          paymaster: usePaymaster
+            ? (transactionRequest.paymaster as `0x${string}`)
+            : undefined,
+          paymasterInput: usePaymaster
+            ? safeHexString(transactionRequest.paymasterInput)
+            : undefined,
         });
       }
 

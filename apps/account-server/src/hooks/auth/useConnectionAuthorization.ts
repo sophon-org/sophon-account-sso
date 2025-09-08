@@ -5,7 +5,7 @@ import { sendMessage } from '@/events';
 import { useAccountContext } from '@/hooks/useAccountContext';
 import { useAuthResponse } from '@/hooks/useAuthResponse';
 import { useSignature } from '@/hooks/useSignature';
-import { VIEM_CHAIN } from '@/lib/constants';
+import { SOPHON_VIEM_CHAIN } from '@/lib/constants';
 import { serverLog } from '@/lib/server-log';
 import { requestNonce, verifyAuthorization } from '@/service/token.service';
 import { windowService } from '@/service/window.service';
@@ -70,30 +70,34 @@ export function useConnectionAuthorization() {
           user?.userId,
         );
 
+        const messageFields = [
+          { name: 'content', type: 'string' },
+          { name: 'from', type: 'address' },
+          { name: 'nonce', type: 'string' },
+          { name: 'audience', type: 'string' },
+        ];
+
+        const message = {
+          content: `Do you authorize this website to connect?!\n\nThis message confirms you control this wallet.`,
+          from: account.address,
+          nonce: authNonce,
+          audience: partnerId,
+        };
+
         const signAuth = {
           domain: {
             name: 'Sophon SSO',
             version: '1',
-            chainId: VIEM_CHAIN.id,
+            chainId: SOPHON_VIEM_CHAIN.id,
           },
           types: {
-            Message: [
-              { name: 'content', type: 'string' },
-              { name: 'from', type: 'address' },
-              { name: 'nonce', type: 'string' },
-              { name: 'audience', type: 'string' },
-              { name: 'userId', type: 'string' },
-            ],
+            Message: user?.userId
+              ? [...messageFields, { name: 'userId', type: 'string' }]
+              : messageFields,
           },
           primaryType: 'Message',
           address: account.address,
-          message: {
-            content: `Do you authorize this website to connect?!\n\nThis message confirms you control this wallet.`,
-            from: account.address,
-            nonce: authNonce,
-            audience: partnerId,
-            userId: user?.userId,
-          },
+          message: user?.userId ? { ...message, userId: user.userId } : message,
         };
 
         const authSignature = await signTypeData(signAuth);

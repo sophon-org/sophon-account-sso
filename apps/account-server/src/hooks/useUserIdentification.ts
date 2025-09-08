@@ -1,7 +1,12 @@
+'use client';
+
 import * as Sentry from '@sentry/nextjs';
+import { snsManager } from '@sophon-labs/account-core';
 import { useEffect, useRef } from 'react';
+import { sophonTestnet } from 'viem/chains';
 import { useAccountContext } from '@/hooks/useAccountContext';
 import { identifyUser, updateUserProperties } from '@/lib/analytics';
+import { SOPHON_VIEM_CHAIN } from '@/lib/constants';
 import { AccountType, type SmartAccount } from '@/types/smart-account';
 
 /**
@@ -24,6 +29,10 @@ export const useUserIdentification = () => {
     });
 
     Sentry.setUser({ id: account.address });
+
+    // try to resolve name so whenever is needed is already cached
+    const sns = snsManager(SOPHON_VIEM_CHAIN.id === sophonTestnet.id);
+    sns.fetchSNSName(account.address);
 
     hasIdentifiedRef.current = true;
   }, [account]);

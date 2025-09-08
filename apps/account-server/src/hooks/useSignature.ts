@@ -8,13 +8,17 @@ import { toAccount } from 'viem/accounts';
 import { http, useAccount, useWalletClient } from 'wagmi';
 import { createZksyncEcdsaClient } from 'zksync-sso/client/ecdsa';
 import { createZksyncPasskeyClient } from 'zksync-sso/client/passkey';
-import { CONTRACTS, VIEM_CHAIN } from '@/lib/constants';
+import { CONTRACTS, SOPHON_VIEM_CHAIN } from '@/lib/constants';
+import { safeParseTypedData } from '@/lib/helpers';
 import { verifySignature } from '@/lib/smart-contract';
 import type {
   MessageSigningRequest,
   TypedDataSigningRequest,
 } from '@/types/auth';
 import { useAccountContext } from './useAccountContext';
+
+// TODO: remove this in the future, no need for extra calls on RPC
+const VERIFY_SIGNATURE = false;
 
 export const useSignature = () => {
   const { account } = useAccountContext();
@@ -40,23 +44,27 @@ export const useSignature = () => {
       if (primaryWallet && isEthereumWallet(primaryWallet)) {
         try {
           const client = await primaryWallet.getWalletClient();
+          const safePayload = safeParseTypedData(payload);
+
           signature = await client.signTypedData({
-            domain: payload.domain,
-            types: payload.types,
-            primaryType: payload.primaryType,
-            message: payload.message,
+            domain: safePayload.domain,
+            types: safePayload.types,
+            primaryType: safePayload.primaryType,
+            message: safePayload.message,
           });
 
-          const verified = await verifySignature({
-            accountAddress: payload.address,
-            signature,
-            domain: payload.domain,
-            types: payload.types,
-            primaryType: payload.primaryType,
-            message: payload.message,
-            signatureType: 'EIP1271',
-          });
-          if (!verified) throw new Error('Failed to verify message');
+          if (VERIFY_SIGNATURE) {
+            const verified = await verifySignature({
+              accountAddress: payload.address,
+              signature,
+              domain: payload.domain,
+              types: payload.types,
+              primaryType: payload.primaryType,
+              message: payload.message,
+              signatureType: 'EIP1271',
+            });
+            if (!verified) throw new Error('Failed to verify message');
+          }
         } catch (error) {
           console.error('Signing error:', error);
           throw error;
@@ -96,7 +104,7 @@ export const useSignature = () => {
         const client = await createZksyncEcdsaClient({
           address: account!.address,
           owner: localAccount,
-          chain: VIEM_CHAIN,
+          chain: SOPHON_VIEM_CHAIN,
           transport: http(),
           contracts: {
             session: CONTRACTS.session,
@@ -110,17 +118,19 @@ export const useSignature = () => {
           message: payload.message,
         });
 
-        const verified = await verifySignature({
-          accountAddress: payload.address,
-          signature,
-          domain: payload.domain,
-          types: payload.types,
-          primaryType: payload.primaryType,
-          message: payload.message,
-          signatureType: 'EIP1271',
-        });
+        if (VERIFY_SIGNATURE) {
+          const verified = await verifySignature({
+            accountAddress: payload.address,
+            signature,
+            domain: payload.domain,
+            types: payload.types,
+            primaryType: payload.primaryType,
+            message: payload.message,
+            signatureType: 'EIP1271',
+          });
 
-        if (!verified) throw new Error('Failed to verify message');
+          if (!verified) throw new Error('Failed to verify message');
+        }
       } else {
         if (!account.owner.passkey) {
           throw new Error('No passkey data available for signing');
@@ -132,7 +142,7 @@ export const useSignature = () => {
           userName: account.username || 'Sophon User',
           userDisplayName: account.username || 'Sophon User',
           contracts: CONTRACTS,
-          chain: VIEM_CHAIN,
+          chain: SOPHON_VIEM_CHAIN,
           transport: http(),
         });
 
@@ -144,16 +154,18 @@ export const useSignature = () => {
           message: payload.message,
         });
 
-        const verified = await verifySignature({
-          accountAddress: payload.address,
-          signature,
-          domain: payload.domain,
-          types: payload.types,
-          primaryType: payload.primaryType,
-          message: payload.message,
-          signatureType: 'EIP1271',
-        });
-        if (!verified) throw new Error('Failed to verify message');
+        if (VERIFY_SIGNATURE) {
+          const verified = await verifySignature({
+            accountAddress: payload.address,
+            signature,
+            domain: payload.domain,
+            types: payload.types,
+            primaryType: payload.primaryType,
+            message: payload.message,
+            signatureType: 'EIP1271',
+          });
+          if (!verified) throw new Error('Failed to verify message');
+        }
       }
 
       return signature;
@@ -184,13 +196,15 @@ export const useSignature = () => {
           const client = await primaryWallet.getWalletClient();
           signature = await client.signMessage({ message: payload.message });
 
-          const verified = await verifySignature({
-            accountAddress: payload.address,
-            signature,
-            message: payload.message,
-            signatureType: 'EIP-191',
-          });
-          if (!verified) throw new Error('Failed to verify message');
+          if (VERIFY_SIGNATURE) {
+            const verified = await verifySignature({
+              accountAddress: payload.address,
+              signature,
+              message: payload.message,
+              signatureType: 'EIP-191',
+            });
+            if (!verified) throw new Error('Failed to verify message');
+          }
         } catch (error) {
           console.error('Signing error:', error);
           throw error;
@@ -207,13 +221,15 @@ export const useSignature = () => {
               message,
             });
             if (!signature) throw new Error('Failed to sign message');
-            const verified = await verifySignature({
-              accountAddress: payload.address,
-              signature,
-              message: payload.message,
-              signatureType: 'EIP-191',
-            });
-            if (!verified) throw new Error('Failed to verify message');
+            if (VERIFY_SIGNATURE) {
+              const verified = await verifySignature({
+                accountAddress: payload.address,
+                signature,
+                message: payload.message,
+                signatureType: 'EIP-191',
+              });
+              if (!verified) throw new Error('Failed to verify message');
+            }
             return signature;
           },
           async signTransaction(transaction) {
@@ -237,7 +253,7 @@ export const useSignature = () => {
         const client = await createZksyncEcdsaClient({
           address: account!.address,
           owner: localAccount,
-          chain: VIEM_CHAIN,
+          chain: SOPHON_VIEM_CHAIN,
           transport: http(),
           contracts: {
             session: CONTRACTS.session,
@@ -256,19 +272,22 @@ export const useSignature = () => {
           userName: account.username || 'Sophon User',
           userDisplayName: account.username || 'Sophon User',
           contracts: CONTRACTS,
-          chain: VIEM_CHAIN,
+          chain: SOPHON_VIEM_CHAIN,
           transport: http(),
         });
 
         console.log('passkey signature');
         signature = await client.signMessage({ message: payload.message });
-        const verified = await verifySignature({
-          accountAddress: payload.address,
-          signature,
-          message: payload.message as SignableMessage,
-          signatureType: 'EIP-191',
-        });
-        if (!verified) throw new Error('Failed to verify message');
+
+        if (VERIFY_SIGNATURE) {
+          const verified = await verifySignature({
+            accountAddress: payload.address,
+            signature,
+            message: payload.message as SignableMessage,
+            signatureType: 'EIP-191',
+          });
+          if (!verified) throw new Error('Failed to verify message');
+        }
       }
 
       return signature;

@@ -1,9 +1,9 @@
 import {
-  Injectable,
   CanActivate,
   ExecutionContext,
   HttpException,
   HttpStatus,
+  Injectable,
   Logger,
 } from '@nestjs/common';
 import { Request } from 'express';
@@ -23,7 +23,7 @@ export class RateLimitGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest<Request>();
     const clientId = this.getClientId(request);
-    
+
     const now = Date.now();
     const entry = this.requests.get(clientId);
 
@@ -61,16 +61,18 @@ export class RateLimitGuard implements CanActivate {
 
   private getClientId(request: Request): string {
     const forwarded = request.headers['x-forwarded-for'] as string;
-    const ip = forwarded ? forwarded.split(',')[0] : request.connection.remoteAddress;
+    const ip = forwarded
+      ? forwarded.split(',')[0]
+      : request.connection.remoteAddress;
     const userAgent = request.headers['user-agent'] || 'unknown';
-    
+
     return `${ip}-${userAgent}`;
   }
 
   getStats(): { totalClients: number; activeClients: number } {
     const now = Date.now();
     let activeClients = 0;
-    
+
     for (const [clientId, entry] of this.requests.entries()) {
       if (now <= entry.resetTime) {
         activeClients++;

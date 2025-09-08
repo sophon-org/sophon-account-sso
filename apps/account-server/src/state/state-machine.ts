@@ -9,6 +9,12 @@ import type {
 } from '@/types/auth';
 import type { Scopes } from '@/types/data-scopes';
 
+interface RPCResponse {
+  id: string;
+  requestId: string;
+  content: unknown;
+}
+
 const defaultContext = {
   error: undefined as string | undefined,
   isLoadingResources: true as boolean,
@@ -23,6 +29,7 @@ const defaultContext = {
     authentication: null as AuthenticationRequest | null | undefined,
     logout: null as LogoutRequest | null | undefined,
   },
+  response: null as RPCResponse | null,
   scopes: {
     profile: false,
     email: false,
@@ -90,7 +97,7 @@ export const userWalletRequestStateMachine = createMachine({
     },
     CANCEL: {
       target: '#userWalletRequestStateMachine.completed',
-      actions: 'clearRequests',
+      actions: 'cancelRequests',
     },
   },
   states: {
@@ -151,7 +158,7 @@ export const userWalletRequestStateMachine = createMachine({
           on: {
             CANCEL: {
               target: '#userWalletRequestStateMachine.completed',
-              actions: 'clearRequests',
+              actions: 'cancelRequests',
             },
             GO_BACK: {
               target: 'idle',
@@ -272,7 +279,22 @@ export const userWalletRequestStateMachine = createMachine({
         },
         {
           guard: ({ context }) => {
-            return context.isAuthenticated && !!context.requests.authentication;
+            return (
+              context.isAuthenticated &&
+              !!context.requests.authentication &&
+              context.requests.authentication.type === 'profile_view'
+            );
+          },
+          target: 'profile',
+          actions: ['clearProfileRequests'],
+        },
+        {
+          guard: ({ context }) => {
+            return (
+              context.isAuthenticated &&
+              !!context.requests.authentication &&
+              context.requests.authentication.type !== 'profile_view'
+            );
           },
           target: 'incoming-authentication',
           actions: ['clearScopes'],
@@ -293,7 +315,7 @@ export const userWalletRequestStateMachine = createMachine({
         },
         CANCEL: {
           target: 'completed',
-          actions: 'clearRequests',
+          actions: 'cancelRequests',
         },
       },
     },
@@ -305,7 +327,7 @@ export const userWalletRequestStateMachine = createMachine({
         },
         CANCEL: {
           target: 'completed',
-          actions: 'clearRequests',
+          actions: 'cancelRequests',
         },
       },
     },
@@ -317,7 +339,7 @@ export const userWalletRequestStateMachine = createMachine({
         },
         CANCEL: {
           target: 'completed',
-          actions: 'clearRequests',
+          actions: 'cancelRequests',
         },
       },
     },
@@ -329,7 +351,7 @@ export const userWalletRequestStateMachine = createMachine({
         },
         CANCEL: {
           target: 'completed',
-          actions: 'clearRequests',
+          actions: 'cancelRequests',
         },
       },
     },
@@ -341,7 +363,7 @@ export const userWalletRequestStateMachine = createMachine({
         },
         CANCEL: {
           target: 'completed',
-          actions: 'clearRequests',
+          actions: 'cancelRequests',
         },
         LOGOUT: {
           target: 'login-required',

@@ -47,10 +47,12 @@ export default function SelectingWalletView() {
   };
 
   const getAvailableWallets = useCallback(() => {
-    const installedWallets = connectors.filter((c) => c.icon);
+    const installedWallets = connectors.filter(
+      (c) => c.id !== 'injected' && c.id !== 'walletConnect',
+    );
     const availableWallets = installedWallets.map((c) => ({
       name: c.name,
-      icon: c.icon,
+      icon: c.icon?.replace(/\n/g, '').replace(' ', ''),
     }));
     const removedDuplicates = SUPPORTED_WALLETS.filter(
       (wallet) => !availableWallets.some((c) => c.name === wallet.name),
@@ -85,7 +87,7 @@ export default function SelectingWalletView() {
   }
 
   return (
-    <div className="px-6">
+    <div className="">
       <input
         className="w-full h-14 p-3 bg-white border border-[#EBE9E6] rounded-md placeholder:text-[#CCCAC8] placeholder:text-lg mt-4 mb-8"
         type="text"

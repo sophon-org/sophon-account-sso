@@ -17,7 +17,6 @@ export interface SophonMainViewProps {
   };
   authServerUrl?: string;
   partnerId: string;
-  hasInternet: boolean;
 }
 export const SophonMainView = ({
   debugEnabled = false,
@@ -42,6 +41,13 @@ export const SophonMainView = ({
   );
 
   useUIEventHandler(
+    'sdkStatusRequest',
+    useCallback(() => {
+      postMessageToWebApp(webViewRef, 'sdkStatusRequest', {});
+    }, []),
+  );
+
+  useUIEventHandler(
     'outgoingRpc',
     useCallback(
       (payload) => {
@@ -52,7 +58,32 @@ export const SophonMainView = ({
     ),
   );
 
+  useUIEventHandler('refreshMainView', () => {
+    webViewRef.current?.reload();
+  });
+
   const params = new URLSearchParams();
+
+  // Propagate the insets to the account server, so we can properly render the webview
+  // on the mobile device without overlapping the status bar and bottom navigation bar
+  if (insets) {
+    if (insets.top) {
+      params.set('it', insets.top.toString());
+    }
+
+    if (insets.bottom) {
+      params.set('ib', insets.bottom.toString());
+    }
+
+    if (insets.left) {
+      params.set('il', insets.left.toString());
+    }
+
+    if (insets.right) {
+      params.set('ir', insets.right.toString());
+    }
+  }
+
   if (partnerId) {
     params.set('version', VIEW_VERSION);
     params.set('platformOS', Platform.OS);
@@ -64,6 +95,7 @@ export const SophonMainView = ({
   return (
     <View style={containerStyles}>
       <WebView
+        data-testid="sophon-mainview"
         key={authServerUrl}
         ref={webViewRef}
         source={{
@@ -118,10 +150,12 @@ export const SophonMainView = ({
             sendUIMessage('setToken', payload);
           } else if (action === 'logout') {
             sendUIMessage('logout', payload);
+          } else if (action === 'sdkStatusResponse') {
+            sendUIMessage('sdkStatusResponse', payload);
           }
         }}
         onError={(event) => {
-          console.error(event);
+          sendUIMessage('mainViewError', event.nativeEvent.description);
           sendUIMessage('hideModal', null);
         }}
         onContentProcessDidTerminate={() => {}}

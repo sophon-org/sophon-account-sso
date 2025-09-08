@@ -1,6 +1,5 @@
-import { ethers } from 'ethers';
 import { useCallback, useState } from 'react';
-import { erc20Abi } from 'viem';
+import { erc20Abi, maxUint256 } from 'viem';
 import {
   useAccount,
   useReadContract,
@@ -8,6 +7,7 @@ import {
   useWriteContract,
 } from 'wagmi';
 import type { UseERC20ApprovalArgs } from '../types/swap';
+import { useSophonContext } from './useSophonContext';
 
 // Explicit ERC20 approve ABI to avoid MetaMask confusion
 const ERC20_APPROVE_ABI = [
@@ -35,12 +35,14 @@ const ERC20_APPROVE_ABI = [
 
 /**
  * Hook to handle ERC20 token approvals
+ *
  * Provides approval status checking and approval transaction execution
  */
 export function useERC20Approval(args: UseERC20ApprovalArgs) {
   const { tokenAddress, spender, amount, chainId } = args;
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const { chain } = useSophonContext();
 
   // Get user address (use context automatically)
   const { address: userAddress } = useAccount();
@@ -48,10 +50,10 @@ export function useERC20Approval(args: UseERC20ApprovalArgs) {
   // Read current allowance (use context automatically)
   const { data: currentAllowance, refetch: refetchAllowance } = useReadContract(
     {
-      address: tokenAddress,
+      address: tokenAddress as `0x${string}`,
       abi: erc20Abi,
       functionName: 'allowance',
-      args: userAddress ? [userAddress, spender] : undefined,
+      args: userAddress ? [userAddress, spender as `0x${string}`] : undefined,
       chainId,
       query: {
         enabled: !!userAddress && !!tokenAddress && !!spender,
@@ -98,8 +100,9 @@ export function useERC20Approval(args: UseERC20ApprovalArgs) {
         abi: ERC20_APPROVE_ABI,
         functionName: 'approve',
         args: [spender as `0x${string}`, amount],
-        chainId,
-      });
+        chain,
+        account: userAddress,
+      } as const);
     } catch (err) {
       const error = err instanceof Error ? err : new Error('Approval failed');
       setError(error);
@@ -107,7 +110,7 @@ export function useERC20Approval(args: UseERC20ApprovalArgs) {
     } finally {
       setIsLoading(false);
     }
-  }, [userAddress, tokenAddress, spender, amount, chainId, writeContract]);
+  }, [userAddress, tokenAddress, spender, amount, writeContract, chain]);
 
   // Refresh allowance after successful approval
   if (isConfirmed) {
@@ -132,7 +135,7 @@ export function useERC20Approval(args: UseERC20ApprovalArgs) {
 export function useERC20InfiniteApproval(
   args: Omit<UseERC20ApprovalArgs, 'amount'>,
 ) {
-  const maxAmount = ethers.MaxUint256;
+  const maxAmount = maxUint256;
 
   return useERC20Approval({
     ...args,

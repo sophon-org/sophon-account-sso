@@ -1,3 +1,4 @@
+import type { UUID } from 'node:crypto';
 import { EventEmitter } from 'eventemitter3';
 import { useEffect } from 'react';
 import type { Message } from 'zksync-sso/communicator';
@@ -12,6 +13,12 @@ export type SophonUIActions = {
   outgoingRpc: Message;
   setToken: string;
   logout: unknown;
+  timeout: UUID;
+  refreshMainView: unknown;
+  mainViewError: string;
+  // from server:
+  sdkStatusResponse: unknown;
+  sdkStatusRequest: unknown;
 };
 
 export type SophonUIActionsName = keyof SophonUIActions;

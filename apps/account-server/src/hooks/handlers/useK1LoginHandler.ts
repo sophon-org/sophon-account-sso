@@ -3,7 +3,8 @@
 import { MainStateMachineContext } from '@/context/state-machine-context';
 import { useEventHandler } from '@/events/hooks';
 import { useAccountContext } from '@/hooks/useAccountContext';
-import { deployAccount, getsSmartAccounts } from '@/service/account.service';
+import { deployAccount } from '@/service/account.service';
+import { getsSmartAccounts } from '@/service/smart-account.server';
 
 /**
  * Handles every login request from k1, being possible right now
@@ -20,6 +21,10 @@ export const useK1LoginHandler = () => {
   );
 
   useEventHandler('k1.login', async (payload) => {
+    if (!payload.address) {
+      return;
+    }
+
     actorRef.send({ type: 'ACCOUNT_AUTHENTICATED' });
     const accounts = await getsSmartAccounts(payload.address);
 

@@ -1,22 +1,23 @@
+import type { UUID } from 'node:crypto';
 import type { Communicator, Message } from 'zksync-sso/communicator';
 import {
   registerUIEventHandler,
   type SophonUIActions,
   sendUIMessage,
 } from '../messaging';
+import { getTimeoutRPC } from '../messaging/utils';
 
-const MODAL_TIMEOUT = 5000;
-const REQUEST_TIMEOUT = 5 * 60 * 1000;
+const HEALTH_CHECK_TIMEOUT = 1000;
 
 export class WebViewCommunicator implements Communicator {
-  private isReady = false;
+  // private initialized = false;
   private readonly listeners = new Map<
     (payload: SophonUIActions['incomingRpc']) => void,
     { reject: (_: Error) => void; deregister: () => void }
   >();
 
   postMessage = (message: Message) => {
-    this.waitContextToBeReady().then(() => {
+    this.waitContextToBeReady(message.id).then(() => {
       sendUIMessage('outgoingRpc', message);
     });
   };
@@ -40,12 +41,6 @@ export class WebViewCommunicator implements Communicator {
           deregister();
           this.listeners.delete(listener);
         }
-
-        setTimeout(() => {
-          deregister();
-          this.listeners.delete(listener);
-          reject(new Error('Request timeout'));
-        }, REQUEST_TIMEOUT);
       };
       const deregister = registerUIEventHandler('incomingRpc', listener);
       this.listeners.set(listener, { reject, deregister });
@@ -61,26 +56,80 @@ export class WebViewCommunicator implements Communicator {
     sendUIMessage('hideModal', {});
   };
 
-  private readonly waitContextToBeReady = async () => {
-    if (this.isReady) {
-      sendUIMessage('showModal', {});
+  private readonly waitWebViewToBeReady = async () => {
+    const callbackPromise = new Promise((resolve) => {
+      const healthCheckTimeout = setTimeout(() => {
+        resolve(undefined);
+      }, HEALTH_CHECK_TIMEOUT);
+
+      const unregister = registerUIEventHandler(
+        'sdkStatusResponse',
+        (payload) => {
+          clearTimeout(healthCheckTimeout);
+          unregister();
+          resolve(payload);
+        },
+      );
+    });
+
+    sendUIMessage('sdkStatusRequest', {});
+    const payload = await callbackPromise;
+    return payload;
+  };
+
+  private currentRequestId?: UUID;
+  private currentCheckId?: NodeJS.Timeout;
+
+  private readonly waitContextToBeReady = async (requestId?: UUID) => {
+    if (this.currentRequestId === requestId) {
       return;
     }
 
-    await new Promise((resolve, reject) => {
-      const unregister = registerUIEventHandler('modalReady', () => {
-        unregister();
-        resolve(true);
-        this.isReady = true;
-      });
+    // if there is another request in progress, cancel it
+    if (this.currentCheckId) {
+      clearInterval(this.currentCheckId);
+      sendUIMessage('outgoingRpc', getTimeoutRPC(this.currentRequestId));
+      this.currentCheckId = undefined;
+      this.currentRequestId = undefined;
+    }
 
-      sendUIMessage('showModal', {});
+    this.currentRequestId = requestId;
+    let maxRetries = 3;
 
-      setTimeout(() => {
-        unregister();
-        reject(new Error('Modal timeout'));
-      }, MODAL_TIMEOUT);
-    });
+    const checkIfReady = async () => {
+      const payload = await this.waitWebViewToBeReady();
+
+      // got active connection, show the modal
+      if (payload) {
+        clearInterval(this.currentCheckId);
+        this.currentCheckId = undefined;
+        this.currentRequestId = undefined;
+        sendUIMessage('showModal', {});
+        return true;
+      }
+
+      // try to refresh the main view in case of retry, just to make sure that the page is loaded
+      // and sort out user connection issues
+      sendUIMessage('refreshMainView', {});
+
+      if (--maxRetries <= 0) {
+        clearInterval(this.currentCheckId);
+
+        this.currentCheckId = undefined;
+        this.currentRequestId = undefined;
+
+        // simulate the RPC response to send a timeout error and release resources
+        sendUIMessage('incomingRpc', getTimeoutRPC(requestId));
+      }
+      return false;
+    };
+
+    const isReady = await checkIfReady();
+    if (!isReady) {
+      this.currentCheckId = setInterval(checkIfReady, HEALTH_CHECK_TIMEOUT);
+    }
   };
-  ready = async () => {};
+  ready = async () => {
+    await this.waitWebViewToBeReady();
+  };
 }

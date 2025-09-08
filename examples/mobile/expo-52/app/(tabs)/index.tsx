@@ -6,14 +6,8 @@ import { parseEther } from 'viem';
 import { sophonTestnet } from 'viem/chains';
 
 export default function HomeScreen() {
-  const {
-    account,
-    connect,
-    isConnected,
-    disconnect,
-    walletClient,
-    showProfile,
-  } = useSophonAccount();
+  const { account, connect, isConnected, disconnect, walletClient } =
+    useSophonAccount();
 
   const [error, setError] = useState<string>('');
   const [signature, setSignature] = useState<string>();
@@ -65,19 +59,6 @@ export default function HomeScreen() {
             onPress={() => {
               setError('');
               connect().catch((e) => setError(e.details ?? e.message));
-            }}
-          />
-        </View>
-      )}
-
-      {isConnected && (
-        <View style={styles.button}>
-          <Button
-            title={`✨ Open Profile`}
-            color="white"
-            onPress={() => {
-              setError('');
-              showProfile();
             }}
           />
         </View>

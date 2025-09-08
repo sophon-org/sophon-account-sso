@@ -15,6 +15,12 @@ export type FromWebActions = {
     requestId: string;
     content: unknown;
   };
+  sdkStatusResponse: {
+    isDrawerOpen: boolean;
+    isReady: boolean;
+    isAuthenticated: boolean;
+    connectedAccount?: string;
+  };
   'account.token.emitted': string;
 };
 
@@ -27,7 +33,9 @@ export type FromNativeActions = {
   echo: {
     message: string;
   };
+  sdkStatusRequest: unknown;
   openModal: unknown;
+  closeModal: unknown;
   rpc: {
     id: string;
     requestId: string;

@@ -6,7 +6,7 @@ import VerificationImage from '@/components/ui/verification-image';
 
 export default function LoginRequestView() {
   return (
-    <div className="text-center flex flex-col items-center justify-center gap-8 mt-6 px-6">
+    <div className="text-center flex flex-col items-center justify-center gap-8 mt-3">
       <VerificationImage icon={<IconSophon className="w-24 h-24" />} />
       <div className="flex flex-col items-center justify-center">
         <h5 className="text-2xl font-bold">Sign in to</h5>

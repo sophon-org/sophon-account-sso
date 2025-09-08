@@ -1,9 +1,10 @@
+'use client';
+
 import type { ProviderEnum } from '@dynamic-labs/types';
 import { useEffect, useState } from 'react';
 import { Loader } from '@/components/loader';
 import VerificationImage from '@/components/ui/verification-image';
 import {
-  clearSocialProviderFromURL,
   getSocialProviderFromURL,
   getSocialProviderIcon,
 } from '@/lib/social-provider';
@@ -13,20 +14,18 @@ export const LoadingView = ({ message }: { message?: string }) => {
   const [socialProvider, setSocialProvider] = useState<ProviderEnum | null>(
     null,
   );
-  const isMobile = windowService.name === 'webview';
 
   useEffect(() => {
     const provider = getSocialProviderFromURL();
     if (provider) {
       setSocialProvider(provider);
-      clearSocialProviderFromURL();
     }
   }, []);
 
   return (
     <div
-      className={`flex flex-col items-center justify-center gap-8 mt-6 flex-grow ${
-        !isMobile ? 'h-full' : ''
+      className={`flex flex-col items-center justify-center gap-8 mt-3 flex-grow ${
+        !windowService.isMobile() ? 'h-[calc(100vh-100px)]' : ''
       }`}
     >
       {socialProvider ? (

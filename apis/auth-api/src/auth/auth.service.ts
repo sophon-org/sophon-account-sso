@@ -14,7 +14,7 @@ import jwt, {
 	TokenExpiredError,
 } from "jsonwebtoken";
 import type { TypedDataDefinition } from "viem";
-import { sophonTestnet } from "viem/chains";
+import { sophon, sophonTestnet } from "viem/chains";
 
 import { getEnv, getJwtKid } from "../config/env";
 import {
@@ -136,18 +136,20 @@ export class AuthService {
 			throw new ForbiddenException("audience mismatch");
 		}
 
+		const network = process.env.CHAIN_ID === "50104" ? sophon : sophonTestnet;
+
 		const isValid = await verifyEIP1271Signature({
 			accountAddress: address,
 			signature,
 			domain: {
 				name: "Sophon SSO",
 				version: "1",
-				chainId: sophonTestnet.id,
+				chainId: network.id,
 			},
 			types: typedData.types,
 			primaryType: typedData.primaryType,
 			message: typedData.message,
-			chain: sophonTestnet,
+			chain: network,
 		});
 
 		if (!isValid) {

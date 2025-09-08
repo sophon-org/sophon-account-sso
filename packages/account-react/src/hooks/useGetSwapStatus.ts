@@ -1,3 +1,4 @@
+import { SwapAPIURL } from '@sophon-labs/account-core';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type {
   SwapApiConfig,
@@ -5,9 +6,11 @@ import type {
   UseGetSwapStatusArgs,
 } from '../types/swap';
 import { createApiClient } from '../utils/apiClient';
+import { useSophonContext } from './useSophonContext';
 
 /**
  * Hook to track a transaction's lifecycle
+ *
  * Calls /swap/status endpoint with optional polling
  */
 export function useGetSwapStatus(
@@ -113,7 +116,9 @@ export function useGetSwapStatus(
  */
 export function useGetSwapStatusWithDefaults(
   args: UseGetSwapStatusArgs,
-  baseUrl = 'http://localhost:4001',
+  baseUrl?: string,
 ) {
-  return useGetSwapStatus(args, { baseUrl });
+  const { network } = useSophonContext();
+  const defaultBaseUrl = SwapAPIURL[network];
+  return useGetSwapStatus(args, { baseUrl: baseUrl ?? defaultBaseUrl });
 }

@@ -89,6 +89,7 @@ const MobileView = ({
               className="w-full h-14 p-3 bg-white border border-[#EBE9E6] rounded-md placeholder:text-[#CCCAC8] placeholder:text-lg mb-2"
               type="email"
               name="email"
+              data-testid="login-email-input"
               placeholder="Enter email"
               required
             />
@@ -133,7 +134,7 @@ const WebView = ({
         <h2 className="text-2xl font-bold text-gray-900">Sign in</h2>
       </div>
 
-      <div className="flex flex-col gap-6 px-6">
+      <div className="flex flex-col gap-6">
         {error && (
           <div className="p-3 bg-red-50 border border-red-200 rounded">
             <p className="text-red-600 text-sm">{error}</p>
@@ -167,10 +168,16 @@ const WebView = ({
               className="w-full h-14 p-3 bg-white border border-[#EBE9E6] rounded-md placeholder:text-[#CCCAC8] placeholder:text-lg mb-2"
               type="email"
               name="email"
+              data-testid="login-email-input"
               placeholder="Enter email"
               required
             />
-            <Button variant="primary" type="submit" disabled={emailLoading}>
+            <Button
+              variant="primary"
+              type="submit"
+              disabled={emailLoading}
+              data-testid="login-email-submit"
+            >
               {emailLoading ? (
                 <Loader className="w-4 h-4 border-white border-r-transparent" />
               ) : (
@@ -210,7 +217,7 @@ export const NotAuthenticatedView = () => {
   const { requestOTP, connectSocial } = useAuthCallbacks();
   const [error, setError] = useState<string | null>(null);
   const [emailLoading, setEmailLoading] = useState(false);
-  const isMobile = windowService.name === 'webview';
+  const isMobile = windowService.isMobile();
 
   const [socialProvider, setSocialProvider] = useState<ProviderEnum>();
 
