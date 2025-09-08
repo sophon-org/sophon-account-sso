@@ -178,8 +178,8 @@ export default function EmbeddedRoot({ partnerId }: EmbeddedRootProps) {
       <Drawer
         open={open}
         onOpenChange={handleCloseModal}
-        showHeader={true}
-        showProfileImage={true}
+        showHeader={false}
+        showProfileImage={false}
         showLegalNotice={false}
         showLogo={false}
         drawerType="connection_authorization"
