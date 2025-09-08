@@ -75,7 +75,7 @@ export default function TransactionRequestView({
 
       <div className="w-full">
         <ContractWarning transaction={enrichedTransactionRequest} />
-        <MessageContainer showBottomButton={!!openDrawer}>
+        <MessageContainer showBottomButton={!!openDrawer} isMobile={isMobile}>
           {renderTransactionContent(enrichedTransactionRequest)}
           {openDrawer && (
             <MessageContainerButton

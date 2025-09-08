@@ -48,7 +48,7 @@ export default function SigningRequestView({
               </p>
             </div>
           </Card>
-          <MessageContainer showBottomButton={!!openDrawer}>
+          <MessageContainer showBottomButton={!!openDrawer} isMobile={isMobile}>
             <div className="text-sm text-black">
               <TypedDataDisplay data={typedDataSigning.message} />
             </div>
