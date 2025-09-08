@@ -5792,21 +5792,21 @@ __metadata:
 
 "@sophon-labs/account-core@file:../../packages/account-core::locator=%40sophon-labs%2Faccount-server%40workspace%3A.":
   version: 2.0.6
-  resolution: "@sophon-labs/account-core@file:../../packages/account-core#../../packages/account-core::hash=36f87d&locator=%40sophon-labs%2Faccount-server%40workspace%3A."
+  resolution: "@sophon-labs/account-core@file:../../packages/account-core#../../packages/account-core::hash=07e4d7&locator=%40sophon-labs%2Faccount-server%40workspace%3A."
   peerDependencies:
     viem: ">=2.21.0"
-  checksum: 10c0/827847cab606c845e8efea597fc149d2c515a64198934a3bf46286d17c462a17b1142397ca61208e2b96c54935bf7ffdf4284e1dc23635a09ebc76800e32f2d8
+  checksum: 10c0/19f529c9b3108f7b63daf665c947186cb55a5287b9276e381629a5747a67db115f51e5041e92e478b36a12d17d75ad1f2e778a78b334a2e0860f07726faf106a
   languageName: node
   linkType: hard
 
 "@sophon-labs/account-message-bridge@file:../../packages/account-message-bridge::locator=%40sophon-labs%2Faccount-server%40workspace%3A.":
   version: 2.0.6
-  resolution: "@sophon-labs/account-message-bridge@file:../../packages/account-message-bridge#../../packages/account-message-bridge::hash=90b681&locator=%40sophon-labs%2Faccount-server%40workspace%3A."
+  resolution: "@sophon-labs/account-message-bridge@file:../../packages/account-message-bridge#../../packages/account-message-bridge::hash=c01abe&locator=%40sophon-labs%2Faccount-server%40workspace%3A."
   dependencies:
     eventemitter3: "npm:5.0.1"
   peerDependencies:
     react-native-webview: ">=13.12.5"
-  checksum: 10c0/e1325d200a4593b2ad24b436f7e6d39d395a780296e91a078f5919f7e84ccaee92c4cda1a524e87a0b349327f11dc8391e5e8b82c1f024a204341ccd2e650c61
+  checksum: 10c0/8ac39b8af29ab99133eca090bf49b71730faae6265feda7bd98b5348814719944ddc2974131df8a2dee8bddf458debcd30bb2b659f93c83617eb798bdc6378bd
   languageName: node
   linkType: hard
 
@@ -5858,6 +5858,7 @@ __metadata:
     siwe: "npm:^3.0.0"
     tailwind-merge: "npm:^3.3.1"
     tailwindcss: "npm:^4"
+    text-encoding-polyfill: "npm:^0.6.7"
     tw-animate-css: "npm:^1.3.5"
     typescript: "npm:^5"
     vaul: "npm:^1.1.2"
@@ -14844,6 +14845,13 @@ __metadata:
     glob: "npm:^10.4.1"
     minimatch: "npm:^9.0.4"
   checksum: 10c0/6d67b9af4336a2e12b26a68c83308c7863534c65f27ed4ff7068a56f5a58f7ac703e8fc80f698a19bb154fd8f705cdf7ec347d9512b2c522c737269507e7b263
+  languageName: node
+  linkType: hard
+
+"text-encoding-polyfill@npm:^0.6.7":
+  version: 0.6.7
+  resolution: "text-encoding-polyfill@npm:0.6.7"
+  checksum: 10c0/5486a2320e2384b0153d2835a8e6e3a643ff28fcd05c2e9fa5d69c7879a2b8fdb7faa44708792a9205f074f10606ee3b6470c8f3f4da1be90a014b79057008d0
   languageName: node
   linkType: hard
 

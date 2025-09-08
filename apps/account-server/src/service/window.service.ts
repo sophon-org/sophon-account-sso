@@ -3,6 +3,7 @@ import {
   registerRNHandler,
   sendMessageToRN,
 } from '@sophon-labs/account-message-bridge';
+import { env } from '@/env';
 import { isSSR } from '@/lib/is-ssr';
 
 /**
@@ -89,11 +90,9 @@ const popupWindowService: WindowCommunicationService = {
 
   close: () => {
     window.opener.postMessage({ event: 'PopupUnload' }, '*');
-    // window.close();
   },
 
   sendMessage: (message: unknown) => {
-    // alert(`sendMessage webview ${JSON.stringify(message)}`);
     window.opener.postMessage(message, '*');
   },
 
@@ -184,7 +183,7 @@ const webViewWindowService: WindowCommunicationService = {
 const availableServices: WindowCommunicationService[] = [
   popupWindowService,
   webViewWindowService,
-  embeddedWindowService,
+  ...(env.NEXT_PUBLIC_EMBEDDED_FLOW_ENABLED ? [embeddedWindowService] : []),
 ];
 
 class DelegateWindowService implements WindowCommunicationService {

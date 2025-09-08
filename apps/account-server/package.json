@@ -47,6 +47,7 @@
     "react-dom": "^19.0.0",
     "siwe": "^3.0.0",
     "tailwind-merge": "^3.3.1",
+    "text-encoding-polyfill": "^0.6.7",
     "vaul": "^1.1.2",
     "viem": "^2.36.0",
     "wagmi": "^2.16.9",

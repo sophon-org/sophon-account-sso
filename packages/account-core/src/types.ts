@@ -9,6 +9,7 @@ export interface ContractAddresses {
   recovery: `0x${string}`;
   oidcKeyRegistry: `0x${string}`;
   recoveryOidc: `0x${string}`;
+  snsRegistry: `0x${string}`;
 }
 
 /**
@@ -213,3 +214,10 @@ export type InstallSessionKeyModuleArgs = BaseTransactionArgs & {
 export type RevokeSessionArgs = BaseTransactionArgs & {
   sessionHash: `0x${string}`;
 };
+
+export interface StorageLike {
+  getItem(key: string): string | null;
+  setItem(key: string, value: string): void;
+  removeItem(key: string): void;
+  clear(): void;
+}

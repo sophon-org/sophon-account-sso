@@ -6,6 +6,6 @@ export * from './constants';
 export * from './formatters';
 export * from './sessionHelper';
 export * from './siws';
-export * from './sns';
+export * from './sns/index';
 export * from './types';
 export * from './utils';
