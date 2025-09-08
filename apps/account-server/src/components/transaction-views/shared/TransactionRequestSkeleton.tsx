@@ -24,7 +24,7 @@ export default function TransactionRequestSkeleton({
 
       {/* Content Skeleton */}
       <div className="w-full">
-        <MessageContainer>
+        <MessageContainer isMobile={isMobile}>
           <div className="text-sm text-black flex flex-col gap-4">
             {/* Token/Contract Name Skeleton */}
             <div className="flex flex-col gap-1">

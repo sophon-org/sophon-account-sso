@@ -61,7 +61,7 @@ export default function ConnectAuthorizationView({
         <h5 className="text-2xl font-bold">Connection request</h5>
         <p className="hidden">https://my.staging.sophon.xyz</p>
       </div>
-      <MessageContainer>
+      <MessageContainer isMobile={isMobile}>
         <div className="flex flex-col gap-4 text-base text-black">
           <div className="flex flex-col gap-2">
             <p className="font-bold ">It can</p>
