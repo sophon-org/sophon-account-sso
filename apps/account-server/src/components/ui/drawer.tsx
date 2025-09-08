@@ -2,13 +2,13 @@ import {
   getSVGAvatarFromString,
   shortenAddress,
 } from '@sophon-labs/account-core';
+import { NutIcon } from '@phosphor-icons/react';
 import Image from 'next/image';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Drawer as VaulDrawer } from 'vaul';
 import { isAddress } from 'viem';
 import { trackDialogInteraction } from '@/lib/analytics';
 import { IconBack } from '../icons/icon-back';
-import { IconSettings } from '../icons/icon-settings';
 import { IconSophon } from '../icons/icon-sophon';
 import { LegalNotice } from '../legal';
 
@@ -81,7 +81,7 @@ const DrawerHeader = ({
       <div className="flex justify-end z-10">
         {onSettings && (
           <button type="button" onClick={onSettings}>
-            <IconSettings className="w-7 h-7" />
+            <NutIcon weight="fill" size={24} className="w-7 h-7" />
           </button>
         )}
       </div>

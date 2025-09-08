@@ -1,7 +1,10 @@
 import * as Sentry from '@sentry/nextjs';
+import { snsCache } from '@sophon-labs/account-core';
 import { useEffect, useRef } from 'react';
+import { sophonTestnet } from 'viem/chains';
 import { useAccountContext } from '@/hooks/useAccountContext';
 import { identifyUser, updateUserProperties } from '@/lib/analytics';
+import { SOPHON_VIEM_CHAIN } from '@/lib/constants';
 import { AccountType, type SmartAccount } from '@/types/smart-account';
 
 /**
@@ -24,6 +27,10 @@ export const useUserIdentification = () => {
     });
 
     Sentry.setUser({ id: account.address });
+
+    // try to resolve name so whenever is needed is already cached
+    const cache = snsCache(SOPHON_VIEM_CHAIN.id === sophonTestnet.id);
+    cache.fetchSNSName('0x000000FE034CabE5Ec8b02cE026bF6572b69c41e');
 
     hasIdentifiedRef.current = true;
   }, [account]);
