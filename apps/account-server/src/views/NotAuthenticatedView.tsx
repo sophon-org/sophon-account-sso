@@ -217,7 +217,7 @@ export const NotAuthenticatedView = () => {
   const { requestOTP, connectSocial } = useAuthCallbacks();
   const [error, setError] = useState<string | null>(null);
   const [emailLoading, setEmailLoading] = useState(false);
-  const isMobile = windowService.name === 'webview';
+  const isMobile = windowService.isMobile();
 
   const [socialProvider, setSocialProvider] = useState<ProviderEnum>();
 

@@ -12,7 +12,7 @@ export const LoadingView = ({ message }: { message?: string }) => {
   const [socialProvider, setSocialProvider] = useState<ProviderEnum | null>(
     null,
   );
-  const isMobile = windowService.name === 'webview';
+  const isMobile = windowService.isMobile();
 
   useEffect(() => {
     const provider = getSocialProviderFromURL();
