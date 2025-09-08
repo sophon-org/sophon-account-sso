@@ -1,4 +1,3 @@
-
 import { NutIcon } from '@phosphor-icons/react';
 import { getSVGAvatarFromString } from '@sophon-labs/account-core';
 import Image from 'next/image';

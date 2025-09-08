@@ -8,6 +8,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Drawer } from '@/components/ui/drawer';
 import { MainStateMachineContext } from '@/context/state-machine-context';
+import { env } from '@/env';
 import { sendMessage } from '@/events';
 import { useEventHandler } from '@/events/hooks';
 import { useAccountContext } from '@/hooks/useAccountContext';
@@ -43,21 +44,24 @@ export default function EmbeddedRoot({ partnerId }: EmbeddedRootProps) {
   useUserIdentification();
 
   useEffect(() => {
-    const callback = (event: MessageEvent) => {
-      if (
-        event.origin === 'http://localhost:3006' &&
-        event.data.type === 'embedded'
-      ) {
-        console.log('Processing Embedded Message', event.data.payload);
-        // @ts-ignore
-        window.onMessageFromRN(event.data.payload);
-      }
-    };
+    // Only enable this flow if the  flag is enabled, for some
+    // really specific cases we should use this flow, mainly for local development
+    if (!env.NEXT_PUBLIC_EMBEDDED_FLOW_ENABLED) {
+      const callback = (event: MessageEvent) => {
+        if (
+          event.origin === env.NEXT_PUBLIC_EMBEDDED_FLOW_ORIGIN &&
+          event.data.type === 'embedded'
+        ) {
+          // @ts-ignore
+          window.onMessageFromRN(event.data.payload);
+        }
+      };
 
-    window.addEventListener('message', callback);
-    return () => {
-      window.removeEventListener('message', callback);
-    };
+      window.addEventListener('message', callback);
+      return () => {
+        window.removeEventListener('message', callback);
+      };
+    }
   }, []);
 
   useRNHandler(

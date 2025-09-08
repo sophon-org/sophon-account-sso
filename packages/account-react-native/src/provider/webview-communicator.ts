@@ -8,8 +8,6 @@ import {
 import { getTimeoutRPC } from '../messaging/utils';
 
 const HEALTH_CHECK_TIMEOUT = 1000;
-// const MODAL_TIMEOUT = 5000;
-// const REQUEST_TIMEOUT = 5 * 1000;
 
 export class WebViewCommunicator implements Communicator {
   // private initialized = false;
@@ -19,7 +17,6 @@ export class WebViewCommunicator implements Communicator {
   >();
 
   postMessage = (message: Message) => {
-    console.log(message.id, ' - postMessage', JSON.stringify(message));
     this.waitContextToBeReady(message.id).then(() => {
       sendUIMessage('outgoingRpc', message);
     });
@@ -27,11 +24,6 @@ export class WebViewCommunicator implements Communicator {
   postRequestAndWaitForResponse = async <M extends Message>(
     request: Message & { id: NonNullable<Message['id']> },
   ): Promise<M> => {
-    console.log(
-      request.id,
-      ' - postRequestAndWaitForResponse',
-      JSON.stringify(request),
-    );
     const responsePromise = this.onMessage<M>(
       ({ requestId }) => requestId === request.id,
     );
@@ -45,16 +37,9 @@ export class WebViewCommunicator implements Communicator {
       const listener = (payload: SophonUIActions['incomingRpc']) => {
         // only act if the message target hits the given predicate
         if (predicate(payload as Partial<M>)) {
-          console.log(payload.requestId, ' - resolved request');
           resolve(payload as M);
           deregister();
           this.listeners.delete(listener);
-        } else {
-          console.log(
-            payload.requestId,
-            ' -  message not matched ',
-            JSON.stringify(payload),
-          );
         }
       };
       const deregister = registerUIEventHandler('incomingRpc', listener);
@@ -96,19 +81,12 @@ export class WebViewCommunicator implements Communicator {
   private currentCheckId?: NodeJS.Timeout;
 
   private readonly waitContextToBeReady = async (requestId?: UUID) => {
-    console.log(`${requestId} - waitContextToBeReady to send request`);
-
     if (this.currentRequestId === requestId) {
       return;
     }
 
     // if there is another request in progress, cancel it
     if (this.currentCheckId) {
-      console.log(
-        requestId,
-        ' - cancel previous request',
-        this.currentRequestId,
-      );
       clearInterval(this.currentCheckId);
       sendUIMessage('outgoingRpc', getTimeoutRPC(this.currentRequestId));
       this.currentCheckId = undefined;
@@ -117,29 +95,12 @@ export class WebViewCommunicator implements Communicator {
 
     this.currentRequestId = requestId;
     let maxRetries = 3;
-    console.log(
-      requestId,
-      ' - set interval to check if the webview is ready for request',
-      new Date().toISOString(),
-    );
 
     const checkIfReady = async () => {
-      console.log(
-        requestId,
-        ' - check if the webview is ready for request',
-        maxRetries,
-        new Date().toISOString(),
-      );
       const payload = await this.waitWebViewToBeReady();
 
       // got active connection, show the modal
       if (payload) {
-        console.log(
-          requestId,
-          ' - got active connection, show the modal',
-          payload,
-        );
-
         clearInterval(this.currentCheckId);
         this.currentCheckId = undefined;
         this.currentRequestId = undefined;
@@ -152,7 +113,6 @@ export class WebViewCommunicator implements Communicator {
       sendUIMessage('refreshMainView', {});
 
       if (--maxRetries <= 0) {
-        console.log(requestId, ' - max retries reached, send timeout rpc');
         clearInterval(this.currentCheckId);
 
         this.currentCheckId = undefined;

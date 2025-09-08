@@ -18,7 +18,6 @@ export interface SophonMainViewProps {
   };
   authServerUrl?: string;
   partnerId: string;
-  // hasInternet: boolean;
 }
 export const SophonMainView = ({
   debugEnabled = false,

@@ -1,8 +1,8 @@
+import { NutIcon } from '@phosphor-icons/react';
 import {
   getSVGAvatarFromString,
   shortenAddress,
 } from '@sophon-labs/account-core';
-import { NutIcon } from '@phosphor-icons/react';
 import Image from 'next/image';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Drawer as VaulDrawer } from 'vaul';
@@ -46,9 +46,7 @@ const DrawerHeader = ({
   isScrolling,
 }: DrawerHeaderProps) => {
   const titleIsAddress = isAddress(title || '');
-
   const avatarUrl = titleIsAddress && getSVGAvatarFromString(title || '');
-  console.log(avatarUrl);
 
   const titleDisplay = titleIsAddress
     ? shortenAddress(title as `0x${string}`)

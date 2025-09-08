@@ -2,7 +2,6 @@
 import { useEffect, useState } from 'react';
 import { hexToString, toHex } from 'viem';
 import { isValidPaymaster } from '@/lib/paymaster';
-import { serverLog } from '@/lib/server-log';
 import { windowService } from '@/service/window.service';
 import type {
   AuthenticationRequest,
@@ -51,7 +50,6 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
       }
 
       // Store the incoming request if it's an RPC request
-      serverLog(`${data?.id} - messageHandler ${JSON.stringify(data)}`);
       if (data?.id && data?.content) {
         const method = data.content?.action?.method;
         if (method === 'eth_requestAccounts') {
@@ -69,7 +67,7 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
           setMessageSigningRequest(null);
           setTransactionRequest(null);
           setAuthenticationRequest({
-            domain: 'http://samplerequest.com',
+            domain: 'https://sophon.xyz', // placeholder
           });
         } else if (method === 'wallet_requestPermissions') {
           // Handle wallet permissions as profile request

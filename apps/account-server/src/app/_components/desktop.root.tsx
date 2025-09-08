@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
 import { Dialog } from '@/components/dialog';
 import { Button } from '@/components/ui/button';
 import { MainStateMachineContext } from '@/context/state-machine-context';
@@ -40,19 +39,6 @@ export default function DesktopRoot({ partnerId }: DesktopRootProps) {
   const transactionActions = TransactionRequestView.useActions({
     openDrawer,
   });
-
-  useEffect(() => {
-    const callback = (event: MessageEvent) => {
-      if (event.origin === 'http://localhost:3002') {
-        console.log('Receiving Message', event);
-      }
-    };
-
-    window.addEventListener('message', callback);
-    return () => {
-      window.removeEventListener('message', callback);
-    };
-  }, []);
 
   /***************************
    * LOADING RESOURCES STATE *

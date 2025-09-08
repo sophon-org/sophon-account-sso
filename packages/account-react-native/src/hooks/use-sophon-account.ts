@@ -15,7 +15,6 @@ export const useSophonAccount = () => {
       setIsConnecting(true);
       setAccountError(undefined);
       const addresses = await walletClient!.requestAddresses();
-      console.log('addresses', addresses);
       if (addresses.length === 0) {
         throw new Error('No addresses found');
       }
