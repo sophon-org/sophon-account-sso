@@ -1,27 +1,29 @@
+import { DataScopes } from '@sophon-labs/account-core';
+
 export const AllScopes = {
   email: {
     label: 'Email',
-    key: 'email',
+    key: DataScopes.email,
     description: 'Your email address',
   },
   google: {
     label: 'Google',
-    key: 'google',
+    key: DataScopes.google,
     description: 'Your Google account handle',
   },
   discord: {
     label: 'Discord',
-    key: 'discord',
+    key: DataScopes.discord,
     description: 'Your Discord account handle',
   },
   telegram: {
     label: 'Telegram',
-    key: 'telegram',
+    key: DataScopes.telegram,
     description: 'Your Telegram account handle',
   },
   x: {
     label: 'X (Twitter)',
-    key: 'x',
+    key: DataScopes.x,
     description: 'Your X (Twitter) account handle',
   },
 };

@@ -5790,14 +5790,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-core@npm:2.0.7-next.1":
-  version: 2.0.7-next.1
-  resolution: "@sophon-labs/account-core@npm:2.0.7-next.1"
+"@sophon-labs/account-core@file:../../packages/account-core::locator=%40sophon-labs%2Faccount-server%40workspace%3A.":
+  version: 2.0.7-next.2
+  resolution: "@sophon-labs/account-core@file:../../packages/account-core#../../packages/account-core::hash=5b8dac&locator=%40sophon-labs%2Faccount-server%40workspace%3A."
   dependencies:
     text-encoding-polyfill: "npm:^0.6.7"
   peerDependencies:
     viem: ">=2.21.0"
-  checksum: 10c0/6984fac7dfc3e43a4fff15012eff3df3042d5c067e4e8194efc82f6cc4b370d7fa042ab8422fe53bfadd0c01d25ad981f6385d621d02153ab05f0c7a088c1e61
+  checksum: 10c0/7346162a0b17f5afe7ac6a59dd0a796837b2970719914d8efc8da525af7135d6d92343ae3d1c0b4dbff93fb63e60a722df4ce2b366e2444bff7b13f5b068acc7
   languageName: node
   linkType: hard
 
@@ -5829,7 +5829,7 @@ __metadata:
     "@radix-ui/react-tooltip": "npm:^1.2.7"
     "@sentry/nextjs": "npm:^10"
     "@simplewebauthn/server": "npm:^13.1.2"
-    "@sophon-labs/account-core": "npm:2.0.7-next.1"
+    "@sophon-labs/account-core": "file:../../packages/account-core"
     "@sophon-labs/account-message-bridge": "file:../../packages/account-message-bridge"
     "@t3-oss/env-nextjs": "npm:^0.13.8"
     "@tailwindcss/postcss": "npm:^4"

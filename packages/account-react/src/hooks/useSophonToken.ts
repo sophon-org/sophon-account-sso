@@ -22,7 +22,10 @@ export const useSophonToken = () => {
   }, [network]);
 
   const refreshAccessToken = useCallback(
-    async (forceRefresh = false, baseURL: string): Promise<SophonJWTToken> => {
+    async (
+      forceRefresh = false,
+      baseURL: string,
+    ): Promise<SophonJWTToken | null> => {
       if (!accessToken) {
         console.warn('No access token found to use');
         return null;
@@ -73,7 +76,7 @@ export const useSophonToken = () => {
   );
 
   const getAccessToken = useCallback(
-    (forceRefresh = false, baseURL: string): SophonJWTToken => {
+    (forceRefresh = false, baseURL: string): SophonJWTToken | null => {
       refreshAccessToken(forceRefresh, baseURL);
       return accessToken;
     },

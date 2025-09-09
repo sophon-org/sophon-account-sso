@@ -10,6 +10,7 @@ import { sophonTestnet } from 'viem/chains';
 import { nftAbi } from '@/abis/nft';
 import { unverifiedAbi } from '@/abis/unverified';
 import { verifiedAbi } from '@/abis/verified';
+import JWTPanel from '@/components/me.panel';
 import { SendContractButton } from '@/components/send-contract-button';
 import { Button } from '@/components/ui/button';
 
@@ -61,6 +62,11 @@ export default function HomeScreen() {
               <Text className="text-xl font-bold text-white">Disconnect</Text>
             </Button>
           </>
+        )}
+        {isConnected && (
+          <View className="mt-4 w-full max-w-[80%]">
+            <JWTPanel />
+          </View>
         )}
         {isConnected && (
           <>

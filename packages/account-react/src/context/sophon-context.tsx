@@ -2,6 +2,7 @@
 
 import {
   AccountServerURL,
+  type DataScopes,
   type SophonNetworkType,
 } from '@sophon-labs/account-core';
 import {
@@ -71,11 +72,14 @@ export const SophonContextProvider = ({
   network = 'testnet',
   authServerUrl,
   partnerId,
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: placeholder for future implementation
+  dataScopes = [],
 }: {
   children: React.ReactNode;
   network: SophonNetworkType;
   authServerUrl?: string;
   partnerId: string;
+  dataScopes?: DataScopes[];
 }) => {
   const serverUrl = useMemo(() => {
     const baseUrl = authServerUrl ?? AccountServerURL[network];

@@ -110,3 +110,11 @@ export const CHAIN_CONTRACTS: Record<ChainId, ContractAddresses> = {
     snsRegistry: '0xc1Ef891D1b17AB8E1af3a8Bb24cdA68aBfFD1F49',
   },
 };
+
+export enum DataScopes {
+  email = 'email',
+  google = 'google',
+  discord = 'discord',
+  telegram = 'telegram',
+  x = 'x',
+}

@@ -12,8 +12,8 @@ export default function ContractWarning({ transaction }: ContractWarningProps) {
       <Card elevated className="py-4 px-6 flex items-center gap-4 w-full">
         <InfoIcon weight="fill" className="w-6 h-6 text-[#A3A2A0]" />
         <p className="text-xs text-black flex-1 text-left max-w-[264px]">
-          You will give permission for the following contract to spend tokens on
-          your behalf.
+          You will give permission to the following address to spend tokens on
+          your behalf
         </p>
       </Card>
     );

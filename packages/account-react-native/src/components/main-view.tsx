@@ -103,10 +103,6 @@ export const SophonMainView = ({
         }}
         style={{
           ...styles.webview,
-          paddingTop: insets?.top,
-          paddingBottom: insets?.bottom,
-          paddingLeft: insets?.left,
-          paddingRight: insets?.right,
         }}
         javaScriptEnabled={true}
         startInLoadingState={true}
