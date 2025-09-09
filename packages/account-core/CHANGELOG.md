@@ -1,5 +1,11 @@
 # @sophon-labs/account-core
 
+## 2.0.7-next.5
+
+### Patch Changes
+
+- Datascopes on react native
+
 ## 2.0.7-next.4
 
 ### Patch Changes
