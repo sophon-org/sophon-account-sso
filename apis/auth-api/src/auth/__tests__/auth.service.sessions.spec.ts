@@ -2,9 +2,9 @@ import { UnauthorizedException } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import jwt from "jsonwebtoken";
 import type { TypedDataDefinition } from "viem";
-import { PartnerRegistryService } from "../partners/partner-registry.service";
-import { SessionsRepository } from "../sessions/sessions.repository";
-import { AuthService } from "./auth.service";
+import { PartnerRegistryService } from "../../partners/partner-registry.service";
+import { SessionsRepository } from "../../sessions/sessions.repository";
+import { AuthService } from "../auth.service";
 
 // ---- Mocks ----
 
@@ -16,12 +16,12 @@ jest.mock("jsonwebtoken", () => ({
 }));
 
 // EIP-1271 verifier
-jest.mock("../utils/signature", () => ({
+jest.mock("../../utils/signature", () => ({
 	verifyEIP1271Signature: jest.fn().mockResolvedValue(true),
 }));
 
 // keys
-jest.mock("../utils/jwt", () => ({
+jest.mock("../../utils/jwt", () => ({
 	getPrivateKey: jest.fn().mockResolvedValue("PRIV"),
 	getPublicKey: jest.fn().mockResolvedValue("PUB"),
 	getRefreshPrivateKey: jest.fn().mockResolvedValue("RPRIV"),
@@ -46,7 +46,7 @@ const MOCK_ENV = {
 	JWT_AUDIENCE: "example-client",
 	PARTNER_CDN: "https://cdn.sophon.xyz/partners/sdk",
 };
-jest.mock("../config/env", () => ({
+jest.mock("../../config/env", () => ({
 	getEnv: jest.fn(() => MOCK_ENV),
 	getJwtKid: jest.fn(() => MOCK_ENV.JWT_KID),
 }));

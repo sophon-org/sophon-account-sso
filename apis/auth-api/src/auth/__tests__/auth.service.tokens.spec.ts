@@ -1,9 +1,9 @@
 import { Test } from "@nestjs/testing";
 import jwt from "jsonwebtoken";
 import type { TypedDataDefinition } from "viem";
-import { PartnerRegistryService } from "../partners/partner-registry.service";
-import { SessionsRepository } from "../sessions/sessions.repository";
-import { AuthService } from "./auth.service";
+import { PartnerRegistryService } from "../../partners/partner-registry.service";
+import { SessionsRepository } from "../../sessions/sessions.repository";
+import { AuthService } from "../auth.service";
 
 // --- jsonwebtoken mocks ---
 jest.mock("jsonwebtoken", () => ({
@@ -13,19 +13,19 @@ jest.mock("jsonwebtoken", () => ({
 }));
 
 // --- signature verifier mock ---
-jest.mock("../utils/signature", () => ({
+jest.mock("../../utils/signature", () => ({
 	verifyEIP1271Signature: jest.fn().mockResolvedValue(true),
 }));
 
 // --- key/env mocks ---
-jest.mock("../utils/jwt", () => ({
+jest.mock("../../utils/jwt", () => ({
 	getPrivateKey: jest.fn().mockResolvedValue("PRIVATE_KEY"),
 	getPublicKey: jest.fn().mockResolvedValue("PUBLIC_KEY"),
 	getRefreshPrivateKey: jest.fn().mockResolvedValue("REFRESH_PRIVATE_KEY"),
 	getRefreshPublicKey: jest.fn().mockResolvedValue("REFRESH_PUBLIC_KEY"),
 }));
 
-jest.mock("../config/env", () => {
+jest.mock("../../config/env", () => {
 	const env = {
 		ACCESS_TTL_S: 60 * 60 * 3, // 3h
 		REFRESH_TTL_S: 60 * 60 * 24 * 30, // 30d

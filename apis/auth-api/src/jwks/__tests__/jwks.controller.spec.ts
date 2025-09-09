@@ -1,5 +1,5 @@
 import { Test, type TestingModule } from "@nestjs/testing";
-import { JwksController } from "./jwks.controller";
+import { JwksController } from "../jwks.controller";
 
 describe("JwksController", () => {
 	let controller: JwksController;

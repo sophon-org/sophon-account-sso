@@ -1,11 +1,11 @@
 import { UnauthorizedException } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import type { Request, Response } from "express";
-import { AuthController } from "./auth.controller";
-import { AuthService } from "./auth.service";
-import type { VerifySiweDto } from "./dto/verify-siwe.dto";
-import { MeService } from "./me.service";
-import type { AccessTokenPayload } from "./types";
+import { AuthController } from "../auth.controller";
+import { AuthService } from "../auth.service";
+import type { VerifySiweDto } from "../dto/verify-siwe.dto";
+import { MeService } from "../me.service";
+import type { AccessTokenPayload } from "../types";
 
 describe("AuthController (new flows)", () => {
 	let controller: AuthController;
