@@ -6,6 +6,7 @@ import { VIEW_VERSION } from '../constants';
 import { USER_AGENT } from '../constants/user-agent';
 import { useModalVisibility } from '../hooks/use-modal-visibility';
 import { sendUIMessage, useUIEventHandler } from '../messaging/ui';
+import type { DataScopes } from '@sophon-labs/account-core';
 
 export interface SophonMainViewProps {
   debugEnabled?: boolean;
@@ -17,12 +18,14 @@ export interface SophonMainViewProps {
   };
   authServerUrl?: string;
   partnerId: string;
+  scopes: DataScopes[];
 }
 export const SophonMainView = ({
   debugEnabled = false,
   insets,
   authServerUrl,
   partnerId,
+  scopes,
 }: SophonMainViewProps) => {
   const webViewRef = useRef<WebView>(null);
   const { visible } = useModalVisibility();
@@ -82,6 +85,12 @@ export const SophonMainView = ({
     if (insets.right) {
       params.set('ir', insets.right.toString());
     }
+  }
+
+  if (scopes?.length > 0) {
+    scopes.forEach((scope) => {
+      params.append('scopes', scope);
+    });
   }
 
   if (partnerId) {

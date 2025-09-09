@@ -75,13 +75,11 @@ export const SophonContextProvider = ({
   dataScopes: DataScopes[];
 }) => {
   const [error, setError] = useState<string>();
-  if (dataScopes.length > 0) {
-    console.log('dataScopes', dataScopes);
-  }
   const serverUrl = useMemo(
     () => authServerUrl ?? AccountServerURL[network],
     [authServerUrl, network],
   );
+
   const [account, setAccount] = useState<SophonAccount | undefined>(
     SophonAppStorage.getItem(StorageKeys.USER_ACCOUNT)
       ? JSON.parse(SophonAppStorage.getItem(StorageKeys.USER_ACCOUNT)!)
@@ -200,6 +198,7 @@ export const SophonContextProvider = ({
   return (
     <SophonContext.Provider value={contextValue}>
       <SophonMainView
+        scopes={dataScopes}
         insets={insets}
         authServerUrl={serverUrl}
         partnerId={partnerId}
