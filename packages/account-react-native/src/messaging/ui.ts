@@ -11,7 +11,7 @@ export type SophonUIActions = {
   modalReady: unknown;
   incomingRpc: Message;
   outgoingRpc: Message;
-  setToken: string;
+  setAccessToken: string;
   setRefreshToken: string;
   logout: unknown;
   timeout: UUID;

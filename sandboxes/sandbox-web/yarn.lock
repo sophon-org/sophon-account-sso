@@ -1215,7 +1215,7 @@ __metadata:
 
 "@sophon-labs/account-react@file:../../packages/account-react::locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A.":
   version: 2.0.7-next.2
-  resolution: "@sophon-labs/account-react@file:../../packages/account-react#../../packages/account-react::hash=60d61c&locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A."
+  resolution: "@sophon-labs/account-react@file:../../packages/account-react#../../packages/account-react::hash=266593&locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A."
   dependencies:
     "@sophon-labs/account-connector": "npm:2.0.7-next.2"
     "@sophon-labs/account-core": "npm:2.0.7-next.2"
@@ -1228,7 +1228,7 @@ __metadata:
     react-dom: ">=18"
     viem: ">=2.21.0"
     wagmi: ">=2"
-  checksum: 10c0/c959b71bf6c319ec4184230de637e55e5ac66ffb75646f86015e62197a7b9a9d3de22678e6657a878c5470a57ab31e7b69a7a062ed37939c1a04572d1547fd46
+  checksum: 10c0/6a2ddfbd242b2fa3b81a7a41275601a819b0265a402d5cd98ca9e3cb9132fe28b4d9d7b5ed39a9183cdbe3cfe63f351c52e6a16e9bb33fb828ab0dd40e8fb5c3
   languageName: node
   linkType: hard
 

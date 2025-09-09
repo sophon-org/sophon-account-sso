@@ -5803,12 +5803,12 @@ __metadata:
 
 "@sophon-labs/account-message-bridge@file:../../packages/account-message-bridge::locator=%40sophon-labs%2Faccount-server%40workspace%3A.":
   version: 2.0.7-next.2
-  resolution: "@sophon-labs/account-message-bridge@file:../../packages/account-message-bridge#../../packages/account-message-bridge::hash=b70440&locator=%40sophon-labs%2Faccount-server%40workspace%3A."
+  resolution: "@sophon-labs/account-message-bridge@file:../../packages/account-message-bridge#../../packages/account-message-bridge::hash=33aaf1&locator=%40sophon-labs%2Faccount-server%40workspace%3A."
   dependencies:
     eventemitter3: "npm:5.0.1"
   peerDependencies:
     react-native-webview: ">=13.12.5"
-  checksum: 10c0/836fd5c9b1b600cc8a263db5d88b9b4cb70fbc3ae62d439b8167e6de1ed38c4ee7ef82afb296679ee36876380378af269322d4d1452c5692301119e3173398ac
+  checksum: 10c0/4c95803ab07aa8c4ec43aa31688837750cf9511c5c89f83b2a8ba9eebad51f44099affa2e07f3b5e5d55f1fc567fef6aadf50a5e37ddcc3a2a40a713a1e7379a
   languageName: node
   linkType: hard
 

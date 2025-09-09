@@ -1,28 +1,21 @@
 import { shortenAddress } from '@sophon-labs/account-core';
 import { useSophonToken } from '@sophon-labs/account-react';
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 export default function JWTPanel() {
-  const { token, getAccessToken, getMe } = useSophonToken();
+  const { getAccessToken, getMe } = useSophonToken();
   const [me, setMe] = useState<`0x${string}` | null>(null);
-
-  useEffect(() => {
-    (async () => {
-      console.log('getting access token');
-      const tk = await getAccessToken(false, 'http://localhost:4001');
-      console.log('current token', tk);
-      console.log('access token got');
-    })();
+  const token = useMemo(() => {
+    return getAccessToken(false, 'http://localhost:4001');
   }, [getAccessToken]);
 
   const fetchMe = async () => {
     const me = await getMe('http://localhost:4001');
-    console.log('me', me);
     setMe(me.sub as `0x${string}`);
   };
 
-  const refreshMe = async () => {
-    await getAccessToken(true, 'http://localhost:4001');
+  const refreshMe = () => {
+    getAccessToken(true, 'http://localhost:4001');
   };
 
   return (
@@ -30,7 +23,7 @@ export default function JWTPanel() {
       <h2 className="text-xl font-bold mt-4">Me / JWT</h2>
       {token && (
         <p className="text-sm bg-red-400/10 p-2 rounded-md border border-red-400 text-red-400 text-center">
-          Token: {shortenAddress(token.token)}
+          Token: {shortenAddress(token.value as `0x${string}`)}
         </p>
       )}
       {me && (

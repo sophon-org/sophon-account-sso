@@ -146,8 +146,8 @@ export const SophonMainView = ({
             sendUIMessage('hideModal', payload);
           } else if (action === 'rpc') {
             sendUIMessage('incomingRpc', payload);
-          } else if (action === 'account.token.emitted') {
-            sendUIMessage('setToken', payload);
+          } else if (action === 'account.access.token.emitted') {
+            sendUIMessage('setAccessToken', payload);
           } else if (action === 'account.refresh.token.emitted') {
             sendUIMessage('setRefreshToken', payload);
           } else if (action === 'logout') {

@@ -31,7 +31,7 @@ export interface SophonContextConfig {
   setAccount: (account?: SophonAccount) => void;
   chain: Chain;
   provider?: WalletProvider;
-  token?: string | null;
+  accessToken?: string | null;
   disconnect: () => void;
   error?: string;
   setError: (error: string) => void;
@@ -83,17 +83,18 @@ export const SophonContextProvider = ({
     return provider;
   }, [serverUrl, chain]);
 
-  const [token, setToken] = useState(
+  const [accessToken, setAccessToken] = useState(
     SophonAppStorage.getItem(StorageKeys.USER_TOKEN),
   );
 
-  useUIEventHandler('setToken', (incomingToken) => {
+  useUIEventHandler('setAccessToken', (incomingToken) => {
     SophonAppStorage.setItem(StorageKeys.USER_TOKEN, incomingToken);
-    setToken(incomingToken);
+    setAccessToken(incomingToken);
   });
 
   useUIEventHandler('setRefreshToken', (incomingToken) => {
     SophonAppStorage.setItem(StorageKeys.USER_REFRESH_TOKEN, incomingToken);
+    // TODO
     // setRefreshToken(incomingToken);
   });
 
@@ -130,7 +131,7 @@ export const SophonContextProvider = ({
       walletClient,
       account,
       setAccount: setAccountWithEffect,
-      token,
+      accessToken,
       disconnect,
       partnerId,
       error,
@@ -142,7 +143,7 @@ export const SophonContextProvider = ({
       walletClient,
       account,
       chain,
-      token,
+      accessToken,
       disconnect,
       partnerId,
       error,

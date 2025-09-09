@@ -1,5 +1,6 @@
 import { AccountAuthAPIURL } from '@sophon-labs/account-core';
 import { useCallback, useMemo } from 'react';
+import type { SophonJWTToken } from '../types';
 import { useSophonContext } from './useSophonContext';
 
 const ACCESS_TOKEN_EXPIRATION_THRESHOLD = 1000 * 60 * 5; // 5 mins before
@@ -8,73 +9,97 @@ const ACCESS_TOKEN_EXPIRATION_THRESHOLD = 1000 * 60 * 5; // 5 mins before
  * Hook that handles the authentication token and the logic regarging its refreshing
  */
 export const useSophonToken = () => {
-  const { token, refreshToken, network, updateToken, updateRefreshToken } =
-    useSophonContext();
+  const {
+    accessToken,
+    refreshToken,
+    network,
+    updateAccessToken,
+    updateRefreshToken,
+  } = useSophonContext();
 
   const baseAuthAPIURL = useMemo(() => {
     return AccountAuthAPIURL[network];
   }, [network]);
 
-  const getAccessToken = useCallback(
-    async (forceRefresh = false, baseURL: string) => {
-      const accessExpiresAt = new Date(token.expiresAt * 1000);
+  const refreshAccessToken = useCallback(
+    async (forceRefresh = false, baseURL: string): Promise<SophonJWTToken> => {
+      if (!accessToken) {
+        console.warn('No access token found to use');
+        return null;
+      }
+
+      const accessExpiresAt = new Date(
+        accessToken.expiresAt * 1000 - ACCESS_TOKEN_EXPIRATION_THRESHOLD,
+      );
+
       // if the token is expired, refresh it
-      if (
-        forceRefresh ||
-        accessExpiresAt <
-          new Date(Date.now() + ACCESS_TOKEN_EXPIRATION_THRESHOLD)
-      ) {
-        console.log(
-          'token is expired, refreshing it',
-          accessExpiresAt.toISOString(),
-        );
+      if (forceRefresh || accessExpiresAt < new Date()) {
         const response = await fetch(
           `${baseURL ?? baseAuthAPIURL}/auth/refresh`,
           {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              authorization: `Bearer ${refreshToken.refreshToken}`,
+              authorization: `Bearer ${refreshToken.value}`,
             },
           },
         );
         const data = await response.json();
 
-        console.log('refreshed token', data);
-        updateToken({
-          token: data.accessToken,
+        updateAccessToken({
+          value: data.accessToken,
           expiresAt: data.accessTokenExpiresAt,
         });
         updateRefreshToken({
-          refreshToken: data.refreshToken,
+          value: data.refreshToken,
           expiresAt: data.refreshTokenExpiresAt,
         });
+
         return {
-          token: data.accessToken,
+          value: data.accessToken,
           expiresAt: data.accessTokenExpiresAt,
         };
       }
-      console.log('token is still valid until', accessExpiresAt.toISOString());
-      return token;
+
+      return accessToken;
     },
-    [token, refreshToken, baseAuthAPIURL, updateToken, updateRefreshToken],
+    [
+      accessToken,
+      refreshToken,
+      baseAuthAPIURL,
+      updateAccessToken,
+      updateRefreshToken,
+    ],
+  );
+
+  const getAccessToken = useCallback(
+    (forceRefresh = false, baseURL: string): SophonJWTToken => {
+      refreshAccessToken(forceRefresh, baseURL);
+      return accessToken;
+    },
+    [accessToken, refreshAccessToken],
   );
 
   const getMe = useCallback(
     async (baseURL: string) => {
+      if (!accessToken) {
+        console.warn('No access token found to use');
+        return null;
+      }
+
       const response = await fetch(`${baseURL ?? baseAuthAPIURL}/auth/me`, {
         headers: {
-          authorization: `Bearer ${token.token}`,
+          authorization: `Bearer ${accessToken.value}`,
         },
       });
       const data = await response.json();
       return data;
     },
-    [token, baseAuthAPIURL],
+    [accessToken, baseAuthAPIURL],
   );
 
   return {
-    token,
+    refreshAccessToken,
     getAccessToken,
     getMe,
   };
