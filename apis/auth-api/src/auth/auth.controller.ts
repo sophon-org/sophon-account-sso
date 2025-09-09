@@ -73,7 +73,7 @@ export class AuthController {
 				);
 
 			return res.json({
-				token: accessToken,
+				accessToken,
 				refreshToken,
 				accessTokenExpiresAt,
 				refreshTokenExpiresAt,

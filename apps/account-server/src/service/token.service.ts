@@ -59,7 +59,7 @@ export const verifyAuthorization = async (
   }
 
   const result = (await response.json()) as {
-    token: string;
+    accessToken: string;
     refreshToken: string;
     accessTokenExpiresAt: number;
     refreshTokenExpiresAt: number;

@@ -114,6 +114,8 @@ describe("AuthService (new token features)", () => {
 		expect(result).toEqual({
 			accessToken: "mocked.access",
 			refreshToken: "mocked.refresh",
+			accessTokenExpiresAt: expect.any(Number),
+			refreshTokenExpiresAt: expect.any(Number),
 			sid: expect.any(String),
 		});
 

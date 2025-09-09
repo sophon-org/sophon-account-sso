@@ -98,7 +98,10 @@ describe("AuthController (new flows)", () => {
 			"refresh.jwt",
 			expect.objectContaining({ httpOnly: true }),
 		);
-		expect(res.json).toHaveBeenCalledWith({ token: "access.jwt" });
+		expect(res.json).toHaveBeenCalledWith({
+			accessToken: "access.jwt",
+			refreshToken: "refresh.jwt",
+		});
 	});
 
 	it("POST /auth/refresh reads refresh token from cookie, rotates tokens, sets cookies", async () => {
@@ -121,7 +124,10 @@ describe("AuthController (new flows)", () => {
 			"new.refresh.jwt",
 			expect.any(Object),
 		);
-		expect(res.json).toHaveBeenCalledWith({ token: "new.access.jwt" });
+		expect(res.json).toHaveBeenCalledWith({
+			accessToken: "new.access.jwt",
+			refreshToken: "new.refresh.jwt",
+		});
 	});
 
 	it("POST /auth/refresh reads refresh token from Authorization header if cookie missing", async () => {
