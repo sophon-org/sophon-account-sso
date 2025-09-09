@@ -41,6 +41,7 @@ export interface SophonContextConfig {
   disconnect: () => void;
   error?: string;
   setError: (error: string) => void;
+  scopes: DataScopes[];
 }
 
 export const SophonContext = createContext<SophonContextConfig>({
@@ -53,6 +54,7 @@ export const SophonContext = createContext<SophonContextConfig>({
   disconnect: () => {},
   error: undefined,
   setError: (_: string) => {},
+  scopes: [],
 });
 
 export interface SophonAccount {
@@ -82,6 +84,9 @@ export const SophonContextProvider = ({
     () => authServerUrl ?? AccountServerURL[network],
     [authServerUrl, network],
   );
+
+  const [scopes] = useState<DataScopes[]>(dataScopes);
+
   const [account, setAccount] = useState<SophonAccount | undefined>(
     SophonAppStorage.getItem(StorageKeys.USER_ACCOUNT)
       ? JSON.parse(SophonAppStorage.getItem(StorageKeys.USER_ACCOUNT)!)
@@ -174,6 +179,7 @@ export const SophonContextProvider = ({
       network,
       updateAccessToken,
       updateRefreshToken,
+      scopes,
     }),
     [
       network,
@@ -190,6 +196,7 @@ export const SophonContextProvider = ({
       network,
       updateAccessToken,
       updateRefreshToken,
+      scopes,
     ],
   );
 
@@ -200,6 +207,7 @@ export const SophonContextProvider = ({
   return (
     <SophonContext.Provider value={contextValue}>
       <SophonMainView
+        scopes={scopes}
         insets={insets}
         authServerUrl={serverUrl}
         partnerId={partnerId}

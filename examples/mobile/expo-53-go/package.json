@@ -24,8 +24,6 @@
     "@react-navigation/native": "^7.1.6",
     "@simplewebauthn/browser": "^13.1.2",
     "@simplewebauthn/server": "^13.1.2",
-    "@sophon-labs/account-core": "2.0.7-next.4",
-    "@sophon-labs/account-message-bridge": "2.0.7-next.4",
     "@sophon-labs/account-react-native": "2.0.7-next.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -61,9 +59,7 @@
     "react-native-web": "~0.20.0",
     "react-native-webview": "13.13.5",
     "tailwind-merge": "^3.3.1",
-    "text-encoding-polyfill": "^0.6.7",
-    "viem": "^2.37.3",
-    "zksync-sso": "github:sophon-org/zksync-sso-preview#20250901_1"
+    "viem": "^2.37.3"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
