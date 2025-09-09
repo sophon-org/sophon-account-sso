@@ -8,16 +8,16 @@ export default function JWTPanel() {
   const { getAccessToken, getMe } = useSophonToken();
   const [me, setMe] = useState<`0x${string}` | null>(null);
   const token = useMemo(() => {
-    return getAccessToken(false, 'http://localhost:4001');
+    return getAccessToken(false);
   }, [getAccessToken]);
 
   const fetchMe = async () => {
-    const me = await getMe('http://localhost:4001');
+    const me = await getMe();
     setMe(me.sub as `0x${string}`);
   };
 
   const refreshMe = () => {
-    getAccessToken(true, 'http://localhost:4001');
+    getAccessToken(true);
   };
 
   return (

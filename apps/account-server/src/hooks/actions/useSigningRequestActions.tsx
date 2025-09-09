@@ -10,6 +10,7 @@ import {
   trackSigningRequestResult,
 } from '@/lib/analytics';
 import { windowService } from '@/service/window.service';
+import { useNetworkStatus } from '../useNetworkStatus';
 
 type DrawerContentType =
   | 'raw-transaction'
@@ -31,6 +32,7 @@ export const useSigningRequestActions = (
     MainStateMachineContext.useSelector((state) => state.context.requests);
   const actorRef = MainStateMachineContext.useActorRef();
   const { isSigning, signTypeData, signMessage, signingError } = useSignature();
+  const { isOffline } = useNetworkStatus();
 
   useEffect(() => {
     if (typedDataSigning) {
@@ -108,7 +110,7 @@ export const useSigningRequestActions = (
         </Button>
         <Button
           type="button"
-          disabled={isSigning}
+          disabled={isOffline || isSigning}
           onClick={handleSign}
           data-testid="signing-accept-button"
         >

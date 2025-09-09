@@ -1,5 +1,14 @@
 # @sophon-labs/account-react
 
+## 2.0.7-next.4
+
+### Patch Changes
+
+- Updating hooks parameter
+- Updated dependencies
+  - @sophon-labs/account-connector@2.0.7-next.4
+  - @sophon-labs/account-core@2.0.7-next.4
+
 ## 2.0.7-next.3
 
 ### Patch Changes

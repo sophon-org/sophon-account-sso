@@ -24,9 +24,9 @@
     "@react-navigation/native": "^7.1.6",
     "@simplewebauthn/browser": "^13.1.2",
     "@simplewebauthn/server": "^13.1.2",
-    "@sophon-labs/account-core": "link:../../../packages/account-core",
-    "@sophon-labs/account-message-bridge": "link:../../../packages/account-message-bridge",
-    "@sophon-labs/account-react-native": "link:../../../packages/account-react-native",
+    "@sophon-labs/account-core": "2.0.7-next.4",
+    "@sophon-labs/account-message-bridge": "2.0.7-next.4",
+    "@sophon-labs/account-react-native": "2.0.7-next.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "expo": "~53.0.22",
@@ -79,10 +79,5 @@
   "packageManager": "yarn@4.9.0",
   "engines": {
     "node": ">=22"
-  },
-  "resolutions": {
-    "@sophon-labs/account-core": "link:../../../packages/account-core",
-    "@sophon-labs/account-message-bridge": "link:../../../packages/account-message-bridge",
-    "@sophon-labs/account-react-native": "link:../../../packages/account-react-native"
   }
 }

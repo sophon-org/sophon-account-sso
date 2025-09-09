@@ -7,10 +7,12 @@ import Image from 'next/image';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Drawer as VaulDrawer } from 'vaul';
 import { isAddress } from 'viem';
+import { useNetworkStatus } from '@/hooks/useNetworkStatus';
 import { trackDialogInteraction } from '@/lib/analytics';
 import { IconBack } from '../icons/icon-back';
 import { IconSophon } from '../icons/icon-sophon';
 import { LegalNotice } from '../legal';
+import { OfflineContent } from './offline-content';
 
 interface DrawerProps {
   children?: React.ReactNode;
@@ -184,6 +186,8 @@ export const Drawer = ({
     onOpenChange(isOpen);
   };
 
+  const { isOffline } = useNetworkStatus();
+
   return (
     <VaulDrawer.Root
       open={open}
@@ -212,7 +216,7 @@ export const Drawer = ({
             ref={scrollContainerRef}
             className={`overflow-y-auto max-h-[60vh] px-4 pb-4`}
           >
-            {children}
+            {isOffline ? <OfflineContent /> : children}
           </div>
           <DrawerFooter
             showLegalNotice={showLegalNotice}

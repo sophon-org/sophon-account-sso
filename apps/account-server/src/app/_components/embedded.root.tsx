@@ -46,7 +46,7 @@ export default function EmbeddedRoot({ partnerId }: EmbeddedRootProps) {
   useEffect(() => {
     // Only enable this flow if the  flag is enabled, for some
     // really specific cases we should use this flow, mainly for local development
-    if (!env.NEXT_PUBLIC_EMBEDDED_FLOW_ENABLED) {
+    if (env.NEXT_PUBLIC_EMBEDDED_FLOW_ENABLED) {
       const callback = (event: MessageEvent) => {
         if (
           event.origin === env.NEXT_PUBLIC_EMBEDDED_FLOW_ORIGIN &&
