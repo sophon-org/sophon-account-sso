@@ -15,6 +15,7 @@ import {
 } from '@/lib/analytics';
 import { windowService } from '@/service/window.service';
 import type { IncomingRequest, TransactionRequest } from '@/types/auth';
+import { useNetworkStatus } from '../useNetworkStatus';
 
 type DrawerContentType = 'raw-transaction' | 'fee-details' | 'error' | null;
 
@@ -30,6 +31,7 @@ export const useTransactionRequestActions = (
     MainStateMachineContext.useSelector((state) => state.context.requests);
   const actorRef = MainStateMachineContext.useActorRef();
   const { isSigning, signTypeData, signingError } = useSignature();
+  const { isOnline, isOffline } = useNetworkStatus();
 
   const { enrichedTransactionRequest, isLoading, isEstimating } =
     useEnrichTransactionRequest(transactionRequest);
@@ -126,7 +128,7 @@ export const useTransactionRequestActions = (
 
   const renderActions = () => (
     <div className="flex flex-col gap-4 w-full">
-      {!transactionError && (
+      {isOnline && !transactionError && (
         <Card
           small
           elevated
@@ -195,7 +197,7 @@ export const useTransactionRequestActions = (
         </Button>
         <Button
           type="button"
-          disabled={isSending || isSigning}
+          disabled={isOffline || isSending || isSigning}
           onClick={() => handleSend(transactionRequest!, incomingRequest!)}
           data-testid="transaction-accept-button"
         >

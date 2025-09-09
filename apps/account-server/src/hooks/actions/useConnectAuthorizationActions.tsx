@@ -1,10 +1,12 @@
 import { Loader } from '@/components/loader';
 import { Button } from '@/components/ui/button';
 import { useConnectionAuthorization } from '@/hooks/auth/useConnectionAuthorization';
+import { useNetworkStatus } from '../useNetworkStatus';
 
 export const useConnectAuthorizationActions = () => {
   const { onRefuseConnection, onAcceptConnection, isLoading } =
     useConnectionAuthorization();
+  const { isOffline } = useNetworkStatus();
 
   const renderActions = () => (
     <div
@@ -20,7 +22,7 @@ export const useConnectAuthorizationActions = () => {
       </Button>
       <Button
         type="button"
-        disabled={isLoading}
+        disabled={isOffline || isLoading}
         onClick={onAcceptConnection}
         data-testid="connect-accept-button"
       >
