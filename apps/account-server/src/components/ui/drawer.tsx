@@ -8,6 +8,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Drawer as VaulDrawer } from 'vaul';
 import { isAddress } from 'viem';
 import { useNetworkStatus } from '@/hooks/useNetworkStatus';
+import { useUrlInsets } from '@/hooks/useUrlInsets';
 import { trackDialogInteraction } from '@/lib/analytics';
 import { IconBack } from '../icons/icon-back';
 import { IconSophon } from '../icons/icon-sophon';
@@ -187,6 +188,7 @@ export const Drawer = ({
   };
 
   const { isOffline } = useNetworkStatus();
+  const insets = useUrlInsets();
 
   return (
     <VaulDrawer.Root
@@ -196,7 +198,14 @@ export const Drawer = ({
     >
       <VaulDrawer.Portal>
         <VaulDrawer.Overlay className="fixed inset-0 bg-black/40" />
-        <VaulDrawer.Content className="bg-gray-100 fixed h-fit bottom-0 left-0 right-0 outline-none rounded-t-3xl pb-2">
+        <VaulDrawer.Content
+          className="bg-gray-100 fixed h-fit outline-none rounded-t-3xl"
+          style={{
+            bottom: `${insets.bottom}px`,
+            left: `${insets.left}px`,
+            right: `${insets.right}px`,
+          }}
+        >
           <VaulDrawer.Title hidden={true}>
             Sophon Authentication Modal
           </VaulDrawer.Title>
