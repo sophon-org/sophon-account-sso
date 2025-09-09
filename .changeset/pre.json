@@ -11,6 +11,7 @@
     "@sophon-labs/account-react-native": "2.0.6"
   },
   "changesets": [
+    "cruel-rockets-agree",
     "large-lands-smoke",
     "shy-cows-slide",
     "tall-toes-cheat"

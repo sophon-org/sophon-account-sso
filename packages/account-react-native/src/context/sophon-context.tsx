@@ -65,7 +65,6 @@ export const SophonContextProvider = ({
   authServerUrl,
   partnerId,
   insets,
-  // biome-ignore lint/correctness/noUnusedFunctionParameters: placeholder for future implementation
   dataScopes = [],
 }: {
   children: React.ReactNode;
@@ -76,7 +75,9 @@ export const SophonContextProvider = ({
   dataScopes: DataScopes[];
 }) => {
   const [error, setError] = useState<string>();
-
+  if (dataScopes.length > 0) {
+    console.log('dataScopes', dataScopes);
+  }
   const serverUrl = useMemo(
     () => authServerUrl ?? AccountServerURL[network],
     [authServerUrl, network],
