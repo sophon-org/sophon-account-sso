@@ -21,7 +21,8 @@ export type FromWebActions = {
     isAuthenticated: boolean;
     connectedAccount?: string;
   };
-  'account.token.emitted': string;
+  'account.access.token.emitted': { value: string; expiresAt: number };
+  'account.refresh.token.emitted': { value: string; expiresAt: number };
 };
 
 export type FromWebActionNames = keyof FromWebActions;

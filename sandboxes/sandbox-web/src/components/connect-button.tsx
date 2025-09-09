@@ -1,35 +1,21 @@
-import { sophonTestnet } from 'viem/chains';
-import { useConnect } from 'wagmi';
+import { useSophonAccount } from '@sophon-labs/account-react';
 
 export const ConnectButton = () => {
-  const { connect, connectors, isPending, error: connectError } = useConnect();
+  const { connect } = useSophonAccount();
 
-  const handleWagmiConnect = () => {
-    const sophonConnector = connectors.find((c) => c.name === 'ZKsync');
-
-    if (sophonConnector) {
-      connect({
-        connector: sophonConnector,
-        chainId: sophonTestnet.id,
-      });
-    } else {
-      console.error('Sophon connector not found!');
-    }
+  const handleConnect = async () => {
+    console.log('Connecting to Sophon');
+    await connect();
+    console.log('Connected to Sophon');
   };
 
   return (
-    <>
-      {connectError && (
-        <div className="text-red-500">{connectError.message}</div>
-      )}
-      <button
-        type="button"
-        onClick={handleWagmiConnect}
-        disabled={isPending}
-        className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 hover:cursor-pointer"
-      >
-        {isPending ? 'Connecting...' : 'Connect with Wagmi'}
-      </button>
-    </>
+    <button
+      type="button"
+      onClick={handleConnect}
+      className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 hover:cursor-pointer"
+    >
+      Connect with Sophon
+    </button>
   );
 };

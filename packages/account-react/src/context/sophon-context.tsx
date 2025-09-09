@@ -2,6 +2,7 @@
 
 import {
   AccountServerURL,
+  type DataScopes,
   type SophonNetworkType,
 } from '@sophon-labs/account-core';
 import {
@@ -25,6 +26,7 @@ import type { WalletProvider } from 'zksync-sso';
 import { type Communicator, PopupCommunicator } from 'zksync-sso/communicator';
 import { setCookieAuthToken } from '../cookie';
 import { SophonAppStorage, StorageKeys } from '../storage/storage';
+import type { SophonJWTToken } from '../types/auth';
 import { SophonMessageHandler } from './sophon-message-handler';
 
 export interface SophonContextConfig {
@@ -35,8 +37,10 @@ export interface SophonContextConfig {
   setAccount: (account?: SophonAccount) => void;
   chain: Chain;
   provider?: WalletProvider;
-  token?: string | null;
-  updateToken: (token: string) => void;
+  accessToken?: SophonJWTToken | null;
+  updateAccessToken: (data: SophonJWTToken) => void;
+  refreshToken?: SophonJWTToken | null;
+  updateRefreshToken: (data: SophonJWTToken) => void;
   connect: () => Promise<void>;
   disconnect: () => Promise<void>;
   network: SophonNetworkType;
@@ -49,7 +53,8 @@ export const SophonContext = createContext<SophonContextConfig>({
   partnerId: '',
   chain: sophonTestnet,
   setAccount: () => {},
-  updateToken: () => {},
+  updateAccessToken: () => {},
+  updateRefreshToken: () => {},
   connect: async () => {},
   disconnect: async () => {},
   network: 'testnet',
@@ -67,11 +72,14 @@ export const SophonContextProvider = ({
   network = 'testnet',
   authServerUrl,
   partnerId,
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: placeholder for future implementation
+  dataScopes = [],
 }: {
   children: React.ReactNode;
   network: SophonNetworkType;
   authServerUrl?: string;
   partnerId: string;
+  dataScopes?: DataScopes[];
 }) => {
   const serverUrl = useMemo(() => {
     const baseUrl = authServerUrl ?? AccountServerURL[network];
@@ -91,7 +99,8 @@ export const SophonContextProvider = ({
     });
   }, [serverUrl]);
   const [account, setAccount] = useState<SophonAccount | undefined>(undefined);
-  const [token, setToken] = useState<string>();
+  const [accessToken, setAccessToken] = useState<SophonJWTToken>();
+  const [refreshToken, setRefreshToken] = useState<SophonJWTToken>();
   const [connector, setConnector] = useState<Connector>();
 
   useEffect(() => {
@@ -102,7 +111,14 @@ export const SophonContextProvider = ({
 
     const tokenContext = SophonAppStorage.getItem(StorageKeys.USER_TOKEN);
     if (tokenContext) {
-      setToken(tokenContext);
+      setAccessToken(JSON.parse(tokenContext));
+    }
+
+    const refreshTokenContext = SophonAppStorage.getItem(
+      StorageKeys.USER_REFRESH_TOKEN,
+    );
+    if (refreshTokenContext) {
+      setRefreshToken(JSON.parse(refreshTokenContext));
     }
   }, []);
 
@@ -111,10 +127,18 @@ export const SophonContextProvider = ({
     [network],
   );
 
-  const updateToken = useCallback((newToken: string) => {
-    setCookieAuthToken(newToken);
-    setToken(newToken);
-    SophonAppStorage.setItem(StorageKeys.USER_TOKEN, newToken);
+  const updateAccessToken = useCallback((newToken: SophonJWTToken) => {
+    setCookieAuthToken(newToken.value);
+    setAccessToken(newToken);
+    SophonAppStorage.setItem(StorageKeys.USER_TOKEN, JSON.stringify(newToken));
+  }, []);
+
+  const updateRefreshToken = useCallback((newToken: SophonJWTToken) => {
+    setRefreshToken(newToken);
+    SophonAppStorage.setItem(
+      StorageKeys.USER_REFRESH_TOKEN,
+      JSON.stringify(newToken),
+    );
   }, []);
 
   const updateConnector = useCallback((newConnector: Connector) => {
@@ -173,32 +197,36 @@ export const SophonContextProvider = ({
       authServerUrl: serverUrl,
       account,
       setAccount: setAccountWithEffect,
-      token,
+      accessToken: accessToken,
       disconnect,
       partnerId,
       network,
-      updateToken,
+      updateAccessToken,
       connector,
       connect,
       updateConnector,
       walletClient,
       communicator,
+      refreshToken,
+      updateRefreshToken,
     }),
     [
       network,
       serverUrl,
       account,
       chain,
-      token,
+      accessToken,
       connector,
       connect,
       disconnect,
       partnerId,
       setAccountWithEffect,
-      updateToken,
+      updateAccessToken,
       updateConnector,
       walletClient,
       communicator,
+      refreshToken,
+      updateRefreshToken,
     ],
   );
 

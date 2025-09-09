@@ -1189,46 +1189,36 @@ __metadata:
   linkType: hard
 
 "@sophon-labs/account-connector@file:../../packages/account-connector::locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A.":
-  version: 2.0.0-next.40
-  resolution: "@sophon-labs/account-connector@file:../../packages/account-connector#../../packages/account-connector::hash=aa3ed0&locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A."
+  version: 2.0.7-next.2
+  resolution: "@sophon-labs/account-connector@file:../../packages/account-connector#../../packages/account-connector::hash=27cf40&locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A."
   dependencies:
-    "@sophon-labs/account-core": "npm:2.0.0-next.40"
-    zksync-sso: "npm:0.4.1"
+    "@sophon-labs/account-core": "npm:2.0.7-next.2"
+    json-rpc-2.0: "npm:^1.7.1"
+    zksync-sso: "github:sophon-org/zksync-sso-preview#20250901_1"
   peerDependencies:
     "@wagmi/core": ^2.17.3
     viem: ">=2.21.0"
-  checksum: 10c0/c0b25a81454f73ef74d15cdaffc63045f174bdd73d5923ac737f3ab6b26a446074a4218cff41d1c00f8d61320667f6db1db466c87ea3db0ed06742e2ce51ddbe
+  checksum: 10c0/fa3e0abf239d9cd813d6e502f2bc5961dde48e79995fafb1177c2d34f56cc6da9b8379d79dafbcc17b3af07d280ad709ebdbe4d216f7b2405b4573c06b303ae6
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-connector@npm:2.0.0-next.40":
-  version: 2.0.0-next.40
-  resolution: "@sophon-labs/account-connector@npm:2.0.0-next.40"
+"@sophon-labs/account-core@file:../../packages/account-core::locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A.":
+  version: 2.0.7-next.2
+  resolution: "@sophon-labs/account-core@file:../../packages/account-core#../../packages/account-core::hash=4e3584&locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A."
   dependencies:
-    "@sophon-labs/account-core": "npm:2.0.0-next.40"
-    zksync-sso: "npm:0.4.1"
-  peerDependencies:
-    "@wagmi/core": ^2.17.3
-    viem: ">=2.21.0"
-  checksum: 10c0/8b1d1f7c912a2e1482fc6cedf4b00a1d47a4f5cdec2047bbb252f2ae8cfe3a65dd0c3a24c55a652fe2839e02a56f0451635b2069c83e5e6855cb893cf5bf5ed1
-  languageName: node
-  linkType: hard
-
-"@sophon-labs/account-core@npm:2.0.0-next.40":
-  version: 2.0.0-next.40
-  resolution: "@sophon-labs/account-core@npm:2.0.0-next.40"
+    text-encoding-polyfill: "npm:^0.6.7"
   peerDependencies:
     viem: ">=2.21.0"
-  checksum: 10c0/8149334d03b7a1ccc652cba88769d268fa76d0b4664df74158fc76bc0438427ad40cf400b0a887292eb38f18030b0ef3ab606e98d1df0c1d60cde2eeee108b78
+  checksum: 10c0/dd761c9a8a4a45521988e8cb39c066b112e283c5aa3cf30738ad2a6daacee77e7512a706e960a12231b8bb54baef732d4204173a436cdff811be7d7cb492b0ba
   languageName: node
   linkType: hard
 
 "@sophon-labs/account-react@file:../../packages/account-react::locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A.":
-  version: 2.0.0-next.40
-  resolution: "@sophon-labs/account-react@file:../../packages/account-react#../../packages/account-react::hash=06bbc8&locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A."
+  version: 2.0.7-next.2
+  resolution: "@sophon-labs/account-react@file:../../packages/account-react#../../packages/account-react::hash=266593&locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A."
   dependencies:
-    "@sophon-labs/account-connector": "npm:2.0.0-next.40"
-    "@sophon-labs/account-core": "npm:2.0.0-next.40"
+    "@sophon-labs/account-connector": "npm:2.0.7-next.2"
+    "@sophon-labs/account-core": "npm:2.0.7-next.2"
     axios: "npm:^1.11.0"
     clsx: "npm:^2.1.1"
     js-cookie: "npm:^3.0.5"
@@ -1238,7 +1228,7 @@ __metadata:
     react-dom: ">=18"
     viem: ">=2.21.0"
     wagmi: ">=2"
-  checksum: 10c0/aca07cb2729892e6d4d21ca9c4b04a0116ca2737a28d3c8831bec4e878c261b153394b7d8d097f32565c11335404870e6b2cbbc9906f7140a4eadf1aa7b31bdb
+  checksum: 10c0/6a2ddfbd242b2fa3b81a7a41275601a819b0265a402d5cd98ca9e3cb9132fe28b4d9d7b5ed39a9183cdbe3cfe63f351c52e6a16e9bb33fb828ab0dd40e8fb5c3
   languageName: node
   linkType: hard
 
@@ -1249,6 +1239,7 @@ __metadata:
     "@simplewebauthn/browser": "npm:^13.1.2"
     "@simplewebauthn/server": "npm:^13.1.2"
     "@sophon-labs/account-connector": "file:../../packages/account-connector"
+    "@sophon-labs/account-core": "file:../../packages/account-core"
     "@sophon-labs/account-react": "file:../../packages/account-react"
     "@tailwindcss/postcss": "npm:^4"
     "@tanstack/react-query": "npm:^5.80.7"
@@ -3317,6 +3308,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"json-rpc-2.0@npm:^1.7.1":
+  version: 1.7.1
+  resolution: "json-rpc-2.0@npm:1.7.1"
+  checksum: 10c0/260f573fd2f38c04bce63076b9293ed0c222c10bff12dd14fed8b926555af6d390c4bcc888b01dd42f28a8759056b8e4420b9f65f09e64d12d042a541fd88695
+  languageName: node
+  linkType: hard
+
 "json-rpc-engine@npm:^6.1.0":
   version: 6.1.0
   resolution: "json-rpc-engine@npm:6.1.0"
@@ -4799,6 +4797,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"text-encoding-polyfill@npm:^0.6.7":
+  version: 0.6.7
+  resolution: "text-encoding-polyfill@npm:0.6.7"
+  checksum: 10c0/5486a2320e2384b0153d2835a8e6e3a643ff28fcd05c2e9fa5d69c7879a2b8fdb7faa44708792a9205f074f10606ee3b6470c8f3f4da1be90a014b79057008d0
+  languageName: node
+  linkType: hard
+
 "thread-stream@npm:^0.15.1":
   version: 0.15.2
   resolution: "thread-stream@npm:0.15.2"
@@ -5431,9 +5436,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zksync-sso@npm:0.4.1":
-  version: 0.4.1
-  resolution: "zksync-sso@npm:0.4.1"
+"zksync-sso@github:sophon-org/zksync-sso-preview#20250901_1":
+  version: 0.0.0-development
+  resolution: "zksync-sso@https://github.com/sophon-org/zksync-sso-preview.git#commit=f5d9b27b244127d6ce21ce2e53b85fa11e8a5c11"
   dependencies:
     "@peculiar/asn1-ecc": "npm:^2.3.13"
     "@peculiar/asn1-schema": "npm:^2.3.13"
@@ -5454,7 +5459,7 @@ __metadata:
       optional: true
     typescript:
       optional: true
-  checksum: 10c0/2a7446a7e5af2acb12e5e7ec8ee01fd0461d804c06de18497a7c1c9327a52df89ca09442c39ac83e1d1f2d6af862dbcf7fc7e1043b4c6d3066dedf986a93c8a7
+  checksum: 10c0/e69a700b8b1678804b5fb43ca97162acf3711445175cc6a976f00848cd81a04ee2c92b880d516e50d0e572eb83402c33ecad5ef1ffc5e9326f71cee01cacbf1a
   languageName: node
   linkType: hard
 

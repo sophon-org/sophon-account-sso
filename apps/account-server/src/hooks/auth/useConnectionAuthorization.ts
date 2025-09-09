@@ -102,7 +102,12 @@ export function useConnectionAuthorization() {
 
         const authSignature = await signTypeData(signAuth);
 
-        const token = await verifyAuthorization(
+        const {
+          accessToken,
+          accessTokenExpiresAt,
+          refreshToken,
+          refreshTokenExpiresAt,
+        } = await verifyAuthorization(
           account.address,
           signAuth,
           authSignature,
@@ -110,11 +115,13 @@ export function useConnectionAuthorization() {
           true,
         );
 
-        serverLog(`Token: ${token}`);
+        serverLog(`Token: ${accessToken}`);
+        serverLog(`Refresh Token: ${refreshToken}`);
 
         // we don't store the token, we just send it during the account authorization
         // TODO: better handling token expiration
-        windowService.emitToken(token);
+        windowService.emitAccessToken(accessToken, accessTokenExpiresAt);
+        windowService.emitRefreshToken(refreshToken, refreshTokenExpiresAt);
       }
 
       if (windowService.isManaged() && incoming) {

@@ -7,26 +7,34 @@ interface StorageLike {
   clear(): void;
 }
 
+const normalizeKey = (key: string) => {
+  return `sophon-${key.replaceAll(/[^a-zA-Z0-9]/g, '_')}`;
+};
+
 export const SophonAppStorage: StorageLike = {
   getItem: (key: string) => {
-    const normalizedKey = `sophon-${key.replaceAll(/[^a-zA-Z0-9]/g, '_')}`;
+    const normalizedKey = normalizeKey(key);
     return SecureStore.getItem(normalizedKey);
   },
   setItem: (key: string, value: string) => {
-    const normalizedKey = `sophon-${key.replaceAll(/[^a-zA-Z0-9]/g, '_')}`;
+    const normalizedKey = normalizeKey(key);
     SecureStore.setItem(normalizedKey, value);
   },
   removeItem: (key: string) => {
-    const normalizedKey = `sophon-${key.replaceAll(/[^a-zA-Z0-9]/g, '_')}`;
+    const normalizedKey = normalizeKey(key);
     SecureStore.deleteItemAsync(normalizedKey);
   },
   clear: () => {
-    SecureStore.deleteItemAsync(StorageKeys.USER_TOKEN);
-    SecureStore.deleteItemAsync(StorageKeys.USER_ACCOUNT);
+    Object.values(StorageKeys).forEach((entry) => {
+      const normalizedKey = normalizeKey(entry);
+      SophonAppStorage.setItem(normalizedKey, '');
+      SecureStore.deleteItemAsync(normalizedKey);
+    });
   },
 };
 
 export enum StorageKeys {
-  USER_TOKEN = 'sophon-user-token',
+  USER_ACCESS_TOKEN = 'sophon-user-access-token',
   USER_ACCOUNT = 'sophon-user-account',
+  USER_REFRESH_TOKEN = 'sophon-user-refresh-token',
 }

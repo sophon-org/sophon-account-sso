@@ -2,6 +2,7 @@ import '../pollyfills';
 // everything else
 import {
   AccountServerURL,
+  type DataScopes,
   type SophonNetworkType,
 } from '@sophon-labs/account-core';
 import { createContext, useCallback, useMemo, useState } from 'react';
@@ -15,6 +16,7 @@ import {
 import { sophon, sophonTestnet } from 'viem/chains';
 import { erc7846Actions } from 'viem/experimental';
 import type { WalletProvider } from 'zksync-sso';
+import type { SophonJWTToken } from '@/types';
 import { SophonMainView, type SophonMainViewProps } from '../components';
 import { useUIEventHandler } from '../messaging';
 import {
@@ -31,7 +33,11 @@ export interface SophonContextConfig {
   setAccount: (account?: SophonAccount) => void;
   chain: Chain;
   provider?: WalletProvider;
-  token?: string | null;
+  network: SophonNetworkType;
+  accessToken?: SophonJWTToken | null;
+  refreshToken?: SophonJWTToken | null;
+  updateAccessToken: (data: SophonJWTToken) => void;
+  updateRefreshToken: (data: SophonJWTToken) => void;
   disconnect: () => void;
   error?: string;
   setError: (error: string) => void;
@@ -41,6 +47,9 @@ export const SophonContext = createContext<SophonContextConfig>({
   partnerId: '',
   chain: sophonTestnet,
   setAccount: () => {},
+  network: 'testnet',
+  updateAccessToken: () => {},
+  updateRefreshToken: () => {},
   disconnect: () => {},
   error: undefined,
   setError: (_: string) => {},
@@ -56,12 +65,15 @@ export const SophonContextProvider = ({
   authServerUrl,
   partnerId,
   insets,
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: placeholder for future implementation
+  dataScopes = [],
 }: {
   children: React.ReactNode;
   network: SophonNetworkType;
   authServerUrl?: string;
   partnerId: string;
   insets?: SophonMainViewProps['insets'];
+  dataScopes: DataScopes[];
 }) => {
   const [error, setError] = useState<string>();
 
@@ -83,14 +95,41 @@ export const SophonContextProvider = ({
     return provider;
   }, [serverUrl, chain]);
 
-  const [token, setToken] = useState(
-    SophonAppStorage.getItem(StorageKeys.USER_TOKEN),
+  const [accessToken, setAccessToken] = useState(
+    SophonAppStorage.getItem(StorageKeys.USER_ACCESS_TOKEN)
+      ? JSON.parse(SophonAppStorage.getItem(StorageKeys.USER_ACCESS_TOKEN)!)
+      : undefined,
   );
 
-  useUIEventHandler('setToken', (incomingToken) => {
-    SophonAppStorage.setItem(StorageKeys.USER_TOKEN, incomingToken);
-    setToken(incomingToken);
+  const [refreshToken, setRefreshToken] = useState(
+    SophonAppStorage.getItem(StorageKeys.USER_REFRESH_TOKEN)
+      ? JSON.parse(SophonAppStorage.getItem(StorageKeys.USER_REFRESH_TOKEN)!)
+      : undefined,
+  );
+
+  useUIEventHandler('setAccessToken', (incomingToken) => {
+    updateAccessToken(incomingToken);
   });
+
+  useUIEventHandler('setRefreshToken', (incomingToken) => {
+    updateRefreshToken(incomingToken);
+  });
+
+  const updateAccessToken = useCallback((newToken: SophonJWTToken) => {
+    setAccessToken(newToken);
+    SophonAppStorage.setItem(
+      StorageKeys.USER_ACCESS_TOKEN,
+      JSON.stringify(newToken),
+    );
+  }, []);
+
+  const updateRefreshToken = useCallback((newToken: SophonJWTToken) => {
+    setRefreshToken(newToken);
+    SophonAppStorage.setItem(
+      StorageKeys.USER_REFRESH_TOKEN,
+      JSON.stringify(newToken),
+    );
+  }, []);
 
   useUIEventHandler('mainViewError', setError);
 
@@ -125,11 +164,15 @@ export const SophonContextProvider = ({
       walletClient,
       account,
       setAccount: setAccountWithEffect,
-      token,
+      accessToken,
+      refreshToken,
       disconnect,
       partnerId,
       error,
       setError,
+      network,
+      updateAccessToken,
+      updateRefreshToken,
     }),
     [
       network,
@@ -137,11 +180,15 @@ export const SophonContextProvider = ({
       walletClient,
       account,
       chain,
-      token,
+      accessToken,
+      refreshToken,
       disconnect,
       partnerId,
       error,
       setError,
+      network,
+      updateAccessToken,
+      updateRefreshToken,
     ],
   );
 

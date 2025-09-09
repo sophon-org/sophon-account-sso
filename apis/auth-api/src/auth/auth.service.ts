@@ -1,3 +1,4 @@
+// auth.service.ts
 import { randomUUID } from "node:crypto";
 import {
 	BadRequestException,
@@ -15,16 +16,22 @@ import jwt, {
 import type { TypedDataDefinition } from "viem";
 import { sophon, sophonTestnet } from "viem/chains";
 
-import { getJwtKid, JWT_ISSUER } from "../config/env";
+import { getEnv, getJwtKid } from "../config/env";
 import {
 	type PermissionAllowedField,
 	packScope,
 	unpackScope,
 } from "../config/permission-allowed-fields";
 import { PartnerRegistryService } from "../partners/partner-registry.service";
-import { getPrivateKey, getPublicKey } from "../utils/jwt";
+import { SessionsRepository } from "../sessions/sessions.repository";
+import {
+	getPrivateKey,
+	getPublicKey,
+	getRefreshPrivateKey,
+	getRefreshPublicKey,
+} from "../utils/jwt";
 import { verifyEIP1271Signature } from "../utils/signature";
-import type { AccessTokenPayload } from "./types";
+import type { AccessTokenPayload, RefreshTokenPayload } from "./types";
 
 type NoncePayload = JwtPayload & {
 	address: string;
@@ -38,9 +45,16 @@ type NoncePayload = JwtPayload & {
 
 @Injectable()
 export class AuthService {
-	constructor(private readonly partnerRegistry: PartnerRegistryService) {}
+	constructor(
+		private readonly partnerRegistry: PartnerRegistryService,
+		private readonly sessions: SessionsRepository,
+	) {
+		this.E = getEnv();
+	}
 
-	private mapJwtError(e: unknown, ctx: "nonce" | "access"): never {
+	private readonly E: ReturnType<typeof getEnv>;
+
+	private mapJwtError(e: unknown, ctx: "nonce" | "access" | "refresh"): never {
 		if (e instanceof TokenExpiredError) {
 			throw new UnauthorizedException(`${ctx} token expired`);
 		}
@@ -76,10 +90,10 @@ export class AuthService {
 				{
 					algorithm: "RS256",
 					keyid: getJwtKid(),
-					issuer: JWT_ISSUER,
+					issuer: this.E.NONCE_ISSUER,
 					audience,
 					subject: address,
-					expiresIn: "10m",
+					expiresIn: this.E.NONCE_TTL_S,
 				},
 			);
 		} catch (e) {
@@ -94,11 +108,10 @@ export class AuthService {
 		typedData: TypedDataDefinition,
 		signature: `0x${string}`,
 		nonceToken: string,
-		rememberMe = false,
 	): Promise<string> {
 		const expectedAud = String(typedData.message.audience);
 		await this.partnerRegistry.assertExists(expectedAud);
-		const expectedIss = process.env.NONCE_ISSUER;
+		const expectedIss = this.E.NONCE_ISSUER;
 
 		let payload!: NoncePayload;
 		try {
@@ -145,7 +158,7 @@ export class AuthService {
 		const scope = packScope(unpackScope(payload.scope ?? ""));
 
 		const iat = Math.floor(Date.now() / 1000);
-		const expiresInSeconds = rememberMe ? 60 * 60 * 24 * 7 : 60 * 60 * 3;
+		const expiresInSeconds = this.E.ACCESS_TTL_S;
 
 		try {
 			return jwt.sign(
@@ -159,7 +172,7 @@ export class AuthService {
 				{
 					algorithm: "RS256",
 					keyid: getJwtKid(),
-					issuer: payload.iss,
+					issuer: this.E.JWT_ISSUER,
 					audience: payload.aud,
 					expiresIn: expiresInSeconds,
 				},
@@ -171,13 +184,151 @@ export class AuthService {
 		}
 	}
 
-	cookieOptions(rememberMe = false) {
+	async verifySignatureWithSiweIssueTokens(
+		address: `0x${string}`,
+		typedData: TypedDataDefinition,
+		signature: `0x${string}`,
+		nonceToken: string,
+	): Promise<{
+		accessToken: string;
+		accessTokenExpiresAt: number;
+		refreshToken: string;
+		refreshTokenExpiresAt: number;
+		sid: string;
+	}> {
+		const expectedAud = String(typedData.message.audience);
+		await this.partnerRegistry.assertExists(expectedAud);
+		const expectedIss = this.E.NONCE_ISSUER;
+
+		let payload!: NoncePayload;
+		try {
+			payload = jwt.verify(nonceToken, await getPublicKey(), {
+				algorithms: ["RS256"],
+				audience: expectedAud,
+				issuer: expectedIss,
+			}) as NoncePayload;
+		} catch (e) {
+			this.mapJwtError(e, "nonce");
+		}
+
+		if (
+			nonceToken !== typedData.message.nonce ||
+			payload.address.toLowerCase() !==
+				(typedData.message.from as string).toLowerCase()
+		) {
+			throw new UnauthorizedException("Nonce or address mismatch");
+		}
+
+		if (String(typedData.message.audience) !== payload.aud) {
+			throw new ForbiddenException("audience mismatch");
+		}
+
+		const network = process.env.CHAIN_ID === "50104" ? sophon : sophonTestnet;
+
+		const isValid = await verifyEIP1271Signature({
+			accountAddress: address,
+			signature,
+			domain: {
+				name: "Sophon SSO",
+				version: "1",
+				chainId: network.id,
+			},
+			types: typedData.types,
+			primaryType: typedData.primaryType,
+			message: typedData.message,
+			chain: network,
+		});
+
+		if (!isValid) {
+			throw new UnauthorizedException("signature is invalid");
+		}
+		const scope = packScope(unpackScope(payload.scope ?? ""));
+
+		const sid = randomUUID();
+		const iat = Math.floor(Date.now() / 1000);
+		const accessExp = this.E.ACCESS_TTL_S;
+		const refreshExp = this.E.REFRESH_TTL_S;
+
+		const accessToken = jwt.sign(
+			{
+				sub: address,
+				iat,
+				scope,
+				userId: payload.userId,
+				sid,
+				typ: "access",
+			},
+			await getPrivateKey(),
+			{
+				algorithm: "RS256",
+				keyid: getJwtKid(),
+				issuer: this.E.JWT_ISSUER,
+				audience: payload.aud,
+				expiresIn: accessExp,
+			},
+		);
+
+		const refreshJti = randomUUID();
+		const refreshToken = jwt.sign(
+			{
+				sub: address,
+				iat,
+				scope,
+				userId: payload.userId,
+				sid,
+				jti: refreshJti,
+				typ: "refresh",
+			},
+			await getRefreshPrivateKey(),
+			{
+				algorithm: "RS256",
+				keyid: this.E.REFRESH_JWT_KID,
+				issuer: this.E.REFRESH_ISSUER,
+				audience: payload.aud,
+				expiresIn: refreshExp,
+			},
+		);
+
+		const decoded = jwt.decode(refreshToken) as { exp?: number } | null;
+		await this.sessions.create({
+			sid,
+			userId: payload.userId ?? address,
+			aud: payload.aud,
+			currentRefreshJti: refreshJti,
+			refreshExpiresAt:
+				decoded?.exp != null
+					? new Date(decoded.exp * 1000)
+					: new Date(Date.now() + refreshExp * 1000),
+		});
+
+		return {
+			accessToken,
+			accessTokenExpiresAt: iat + accessExp,
+			refreshToken,
+			refreshTokenExpiresAt: iat + refreshExp,
+			sid,
+		};
+	}
+
+	cookieOptions() {
 		return {
 			httpOnly: true,
 			secure: true,
-			sameSite: "none" as const,
-			domain: process.env.COOKIE_DOMAIN || "localhost",
-			maxAge: rememberMe ? 60 * 60 * 24 * 7 : 60 * 60 * 3, // 7d or 3h
+			sameSite: "lax" as const,
+			domain: this.E.COOKIE_DOMAIN,
+			path: "/",
+			maxAge: this.E.COOKIE_ACCESS_MAX_AGE_S * 1000,
+		};
+	}
+
+	refreshCookieOptions() {
+		return {
+			httpOnly: true,
+			secure: true,
+			sameSite: "strict" as const,
+			domain: this.E.COOKIE_DOMAIN,
+			path: "/auth/refresh",
+			maxAge: this.E.COOKIE_REFRESH_MAX_AGE_S * 1000,
 		};
 	}
 
@@ -191,12 +342,144 @@ export class AuthService {
 			this.mapJwtError(e, "access");
 		}
 
-		if (payload.iss !== JWT_ISSUER) {
+		if (payload.iss !== this.E.JWT_ISSUER) {
 			throw new UnauthorizedException("invalid token issuer");
 		}
 
 		await this.partnerRegistry.assertExists(payload.aud);
-
+		const rowSid = (payload as AccessTokenPayload & { sid?: string }).sid;
+		if (rowSid) {
+			const row = await this.sessions.getBySid(rowSid);
+			if (!this.sessions.isActive(row)) {
+				throw new UnauthorizedException("session revoked or expired");
+			}
+			if (row.invalidate_before) {
+				const iatSec = payload.iat ?? 0;
+				const cut = Math.floor(
+					new Date(row.invalidate_before).getTime() / 1000,
+				);
+				if (iatSec < cut) {
+					throw new UnauthorizedException(
+						"access token is too old (invalidated)",
+					);
+				}
+			}
+		}
 		return payload as AccessTokenPayload;
+	}
+
+	async revokeByRefreshToken(refreshToken: string): Promise<void> {
+		let r!: RefreshTokenPayload;
+		try {
+			r = jwt.verify(refreshToken, await getRefreshPublicKey(), {
+				algorithms: ["RS256"],
+				issuer: this.E.REFRESH_ISSUER,
+			}) as RefreshTokenPayload;
+		} catch {
+			return;
+		}
+		const rTyp = (r as RefreshTokenPayload & { typ?: string }).typ;
+		if (rTyp && rTyp !== "refresh") {
+			return;
+		}
+		await this.sessions.revokeSid(r.sid);
+	}
+
+	async refresh(refreshToken: string): Promise<{
+		accessToken: string;
+		accessTokenExpiresAt: number;
+		refreshToken: string;
+		refreshTokenExpiresAt: number;
+	}> {
+		let r!: RefreshTokenPayload;
+		try {
+			r = jwt.verify(refreshToken, await getRefreshPublicKey(), {
+				algorithms: ["RS256"],
+				issuer: this.E.REFRESH_ISSUER,
+			}) as RefreshTokenPayload;
+		} catch (e) {
+			this.mapJwtError(e, "refresh");
+		}
+
+		const rTyp = (r as RefreshTokenPayload & { typ?: string }).typ;
+		if (rTyp && rTyp !== "refresh") {
+			throw new UnauthorizedException("invalid refresh token");
+		}
+
+		await this.partnerRegistry.assertExists(r.aud);
+
+		const row = await this.sessions.getBySid(r.sid);
+		if (!this.sessions.isActive(row)) {
+			throw new UnauthorizedException("session revoked or expired");
+		}
+
+		if (row.current_refresh_jti !== r.jti) {
+			await this.sessions.revokeSid(r.sid);
+			throw new UnauthorizedException("refresh token reuse detected");
+		}
+
+		const iat = Math.floor(Date.now() / 1000);
+		const accessExp = this.E.ACCESS_TTL_S;
+		const refreshExp = this.E.REFRESH_TTL_S;
+
+		const newAccess = jwt.sign(
+			{
+				sub: r.sub,
+				iat,
+				scope: r.scope,
+				userId: r.userId,
+				sid: r.sid,
+				typ: "access",
+			},
+			await getPrivateKey(),
+			{
+				algorithm: "RS256",
+				keyid: getJwtKid(),
+				issuer: this.E.JWT_ISSUER,
+				audience: r.aud,
+				expiresIn: accessExp,
+			},
+		);
+
+		const newJti = randomUUID();
+
+		const newRefresh = jwt.sign(
+			{
+				sub: r.sub,
+				iat,
+				scope: r.scope,
+				userId: r.userId,
+				sid: r.sid,
+				jti: newJti,
+				typ: "refresh",
+			},
+			await getRefreshPrivateKey(),
+			{
+				algorithm: "RS256",
+				keyid: this.E.REFRESH_JWT_KID,
+				issuer: this.E.REFRESH_ISSUER,
+				audience: r.aud,
+				expiresIn: refreshExp,
+			},
+		);
+
+		const decoded = jwt.decode(newRefresh) as { exp?: number } | null;
+		const newRefreshExpiresAt =
+			decoded?.exp != null
+				? new Date(decoded.exp * 1000)
+				: new Date((iat + this.E.REFRESH_TTL_S) * 1000);
+
+		await this.sessions.rotateRefreshJti({
+			sid: r.sid,
+			newJti,
+			newRefreshExpiresAt,
+		});
+
+		return {
+			accessToken: newAccess,
+			accessTokenExpiresAt: iat + accessExp,
+			refreshToken: newRefresh,
+			refreshTokenExpiresAt: iat + refreshExp,
+		};
 	}
 }

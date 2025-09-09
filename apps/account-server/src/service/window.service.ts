@@ -36,7 +36,12 @@ interface WindowCommunicationService {
   /**
    * Emits a token to the bridge
    */
-  emitToken: (token: string) => void;
+  emitAccessToken: (token: string, expiresAt: number) => void;
+
+  /**
+   * Emits a refresh token to the bridge
+   */
+  emitRefreshToken: (refreshToken: string, expiresAt: number) => void;
 
   /**
    * Sends logout signal to the bridge
@@ -64,8 +69,17 @@ const noopWindowService: WindowCommunicationService = {
     alert(`sendMessage noop ${JSON.stringify(message)}`);
   },
 
-  emitToken: (token: string) => {
-    console.log('Token emitted (noop):', token);
+  emitAccessToken: (token: string, expiresAt: number) => {
+    console.log('Token emitted (noop):', token, 'expiresAt:', expiresAt);
+  },
+
+  emitRefreshToken: (refreshToken: string, expiresAt: number) => {
+    console.log(
+      'Refresh Token emitted (noop):',
+      refreshToken,
+      'expiresAt:',
+      expiresAt,
+    );
   },
 
   logout: () => {
@@ -96,8 +110,18 @@ const popupWindowService: WindowCommunicationService = {
     window.opener.postMessage(message, '*');
   },
 
-  emitToken: (token: string) => {
-    window.opener.postMessage({ type: 'token', payload: token }, '*');
+  emitAccessToken: (value: string, expiresAt: number) => {
+    window.opener.postMessage(
+      { type: 'access.token', payload: { value, expiresAt } },
+      '*',
+    );
+  },
+
+  emitRefreshToken: (value: string, expiresAt: number) => {
+    window.opener.postMessage(
+      { type: 'refresh.token', payload: { value, expiresAt } },
+      '*',
+    );
   },
 
   logout: () => {
@@ -135,8 +159,15 @@ const embeddedWindowService: WindowCommunicationService = {
     sendMessageToRN('rpc', message as FromWebActions['rpc']);
   },
 
-  emitToken: (token: string) => {
-    sendMessageToRN('account.token.emitted', token);
+  emitAccessToken: (value: string, expiresAt: number) => {
+    sendMessageToRN('account.access.token.emitted', { value, expiresAt });
+  },
+
+  emitRefreshToken: (value: string, expiresAt: number) => {
+    sendMessageToRN('account.refresh.token.emitted', {
+      value,
+      expiresAt,
+    });
   },
 
   logout: () => {
@@ -165,8 +196,15 @@ const webViewWindowService: WindowCommunicationService = {
     sendMessageToRN('rpc', message as FromWebActions['rpc']);
   },
 
-  emitToken: (token: string) => {
-    sendMessageToRN('account.token.emitted', token);
+  emitAccessToken: (value: string, expiresAt: number) => {
+    sendMessageToRN('account.access.token.emitted', { value, expiresAt });
+  },
+
+  emitRefreshToken: (value: string, expiresAt: number) => {
+    sendMessageToRN('account.refresh.token.emitted', {
+      value,
+      expiresAt,
+    });
   },
 
   logout: () => {
@@ -206,7 +244,11 @@ class DelegateWindowService implements WindowCommunicationService {
 
   sendMessage = (message: unknown) => this.proxy.sendMessage(message);
 
-  emitToken = (token: string) => this.proxy.emitToken(token);
+  emitAccessToken = (token: string, expiresAt: number) =>
+    this.proxy.emitAccessToken(token, expiresAt);
+
+  emitRefreshToken = (refreshToken: string, expiresAt: number) =>
+    this.proxy.emitRefreshToken(refreshToken, expiresAt);
 
   logout = () => this.proxy.logout();
 

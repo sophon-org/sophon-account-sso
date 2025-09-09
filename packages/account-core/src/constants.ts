@@ -14,6 +14,11 @@ export const AccountServerURL: Record<SophonNetworkType, string> = {
   testnet: 'https://my.staging.sophon.xyz',
 };
 
+export const AccountAuthAPIURL: Record<SophonNetworkType, string> = {
+  mainnet: 'https://api.my.sophon.xyz',
+  testnet: 'https://api.my.staging.sophon.xyz',
+};
+
 /**
  * Mapping of possible RPC urls based on
  * sophon networks
@@ -105,3 +110,11 @@ export const CHAIN_CONTRACTS: Record<ChainId, ContractAddresses> = {
     snsRegistry: '0xc1Ef891D1b17AB8E1af3a8Bb24cdA68aBfFD1F49',
   },
 };
+
+export enum DataScopes {
+  email = 'email',
+  google = 'google',
+  discord = 'discord',
+  telegram = 'telegram',
+  x = 'x',
+}

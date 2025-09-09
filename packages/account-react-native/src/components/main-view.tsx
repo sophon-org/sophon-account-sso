@@ -103,10 +103,6 @@ export const SophonMainView = ({
         }}
         style={{
           ...styles.webview,
-          paddingTop: insets?.top,
-          paddingBottom: insets?.bottom,
-          paddingLeft: insets?.left,
-          paddingRight: insets?.right,
         }}
         javaScriptEnabled={true}
         startInLoadingState={true}
@@ -146,8 +142,10 @@ export const SophonMainView = ({
             sendUIMessage('hideModal', payload);
           } else if (action === 'rpc') {
             sendUIMessage('incomingRpc', payload);
-          } else if (action === 'account.token.emitted') {
-            sendUIMessage('setToken', payload);
+          } else if (action === 'account.access.token.emitted') {
+            sendUIMessage('setAccessToken', payload);
+          } else if (action === 'account.refresh.token.emitted') {
+            sendUIMessage('setRefreshToken', payload);
           } else if (action === 'logout') {
             sendUIMessage('logout', payload);
           } else if (action === 'sdkStatusResponse') {

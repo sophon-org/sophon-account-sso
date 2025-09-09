@@ -77,39 +77,41 @@ export default function ConnectAuthorizationView({
               </span>
               Ask for transactions and signatures to be approved
             </p>
-            <div className="flex flex-col mt-4 gap-4">
-              {userScopes.map((key) => {
-                const scope = availableScopes[key];
-                return (
-                  <p key={key} className="flex items-center gap-2">
-                    <span className="inline-flex">
-                      <Checkbox
-                        id={`scope-${key}`}
-                        checked={selectedScopes[key]}
-                        onCheckedChange={(checked) => {
-                          setSelectedScopes((prev) => {
-                            const newScopes = {
-                              ...prev,
-                              [key]:
-                                checked === 'indeterminate' ? false : checked,
-                            };
+            {!!partnerId && !!userScopes?.length && (
+              <div className="flex flex-col mt-4 gap-4">
+                {userScopes.map((key) => {
+                  const scope = availableScopes[key];
+                  return (
+                    <p key={key} className="flex items-center gap-2">
+                      <span className="inline-flex">
+                        <Checkbox
+                          id={`scope-${key}`}
+                          checked={selectedScopes[key]}
+                          onCheckedChange={(checked) => {
+                            setSelectedScopes((prev) => {
+                              const newScopes = {
+                                ...prev,
+                                [key]:
+                                  checked === 'indeterminate' ? false : checked,
+                              };
 
-                            return newScopes;
-                          });
-                        }}
-                        className="cursor-pointer"
-                      />
-                    </span>
-                    <label
-                      htmlFor={`scope-${key}`}
-                      className="inline-flex cursor-pointer"
-                    >
-                      See your {scope.label} account
-                    </label>
-                  </p>
-                );
-              })}
-            </div>
+                              return newScopes;
+                            });
+                          }}
+                          className="cursor-pointer"
+                        />
+                      </span>
+                      <label
+                        htmlFor={`scope-${key}`}
+                        className="inline-flex cursor-pointer"
+                      >
+                        See your {scope.label} account
+                      </label>
+                    </p>
+                  );
+                })}
+              </div>
+            )}
           </div>
           <div className="flex flex-col gap-4">
             <p className="font-bold ">It can't</p>
