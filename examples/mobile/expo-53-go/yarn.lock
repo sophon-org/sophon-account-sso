@@ -2485,23 +2485,47 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-core@link:../../../packages/account-core::locator=%40sophon-labs%2Fexamples-mobile-expo-web%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@sophon-labs/account-core@link:../../../packages/account-core::locator=%40sophon-labs%2Fexamples-mobile-expo-web%40workspace%3A."
+"@sophon-labs/account-core@npm:2.0.7-next.3":
+  version: 2.0.7-next.3
+  resolution: "@sophon-labs/account-core@npm:2.0.7-next.3"
+  dependencies:
+    text-encoding-polyfill: "npm:^0.6.7"
+  peerDependencies:
+    viem: ">=2.21.0"
+  checksum: 10c0/9c49503ad2da8fa84b910a523573aa41619e4b30317271fc045dcb4f9686368f7a84b0c52dfb8353322da40ba4758666e35abb670f4575a37a489755ebc3556b
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"@sophon-labs/account-message-bridge@link:../../../packages/account-message-bridge::locator=%40sophon-labs%2Fexamples-mobile-expo-web%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@sophon-labs/account-message-bridge@link:../../../packages/account-message-bridge::locator=%40sophon-labs%2Fexamples-mobile-expo-web%40workspace%3A."
+"@sophon-labs/account-message-bridge@npm:2.0.7-next.3":
+  version: 2.0.7-next.3
+  resolution: "@sophon-labs/account-message-bridge@npm:2.0.7-next.3"
+  dependencies:
+    eventemitter3: "npm:5.0.1"
+  peerDependencies:
+    react-native-webview: ">=13.12.5"
+  checksum: 10c0/557577eea28a0f38e834cbc13e1690f70cfd40d1a2938e6e7c80ce4df4a561b4fd05f64a62c12e654aa4cc0e7f6c773057d98a0d4d7d468d8e68c93b6d60a2f7
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"@sophon-labs/account-react-native@link:../../../packages/account-react-native::locator=%40sophon-labs%2Fexamples-mobile-expo-web%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@sophon-labs/account-react-native@link:../../../packages/account-react-native::locator=%40sophon-labs%2Fexamples-mobile-expo-web%40workspace%3A."
+"@sophon-labs/account-react-native@npm:2.0.7-next.3":
+  version: 2.0.7-next.3
+  resolution: "@sophon-labs/account-react-native@npm:2.0.7-next.3"
+  dependencies:
+    "@sophon-labs/account-core": "npm:2.0.7-next.3"
+    "@sophon-labs/account-message-bridge": "npm:2.0.7-next.3"
+    eventemitter3: "npm:5.0.1"
+    text-encoding-polyfill: "npm:^0.6.7"
+    zksync-sso: "github:sophon-org/zksync-sso-preview#20250901_1"
+  peerDependencies:
+    expo-network: "*"
+    expo-secure-store: "*"
+    expo-standard-web-crypto: "*"
+    react-native: ">=0.76.6"
+    react-native-webview: ">=13.12.5"
+    viem: ">=2.21.0"
+  checksum: 10c0/bceafc8c4666a118ac512e90ef4cca618dc8f8aac50e043ea712e22048fd51490420d312b547900d7d14b824dbbba4be3741df8a0c04ed619fb8a5c7d096c17a
   languageName: node
-  linkType: soft
+  linkType: hard
 
 "@sophon-labs/examples-mobile-expo-web@workspace:.":
   version: 0.0.0-use.local
@@ -2515,9 +2539,9 @@ __metadata:
     "@react-navigation/native": "npm:^7.1.6"
     "@simplewebauthn/browser": "npm:^13.1.2"
     "@simplewebauthn/server": "npm:^13.1.2"
-    "@sophon-labs/account-core": "link:../../../packages/account-core"
-    "@sophon-labs/account-message-bridge": "link:../../../packages/account-message-bridge"
-    "@sophon-labs/account-react-native": "link:../../../packages/account-react-native"
+    "@sophon-labs/account-core": "npm:2.0.7-next.3"
+    "@sophon-labs/account-message-bridge": "npm:2.0.7-next.3"
+    "@sophon-labs/account-react-native": "npm:2.0.7-next.3"
     "@types/react": "npm:~19.0.10"
     class-variance-authority: "npm:^0.7.1"
     clsx: "npm:^2.1.1"
