@@ -1,5 +1,14 @@
 # @sophon-labs/account-react
 
+## 2.0.7-next.6
+
+### Patch Changes
+
+- Updating react native
+- Updated dependencies
+  - @sophon-labs/account-connector@2.0.7-next.6
+  - @sophon-labs/account-core@2.0.7-next.6
+
 ## 2.0.7-next.5
 
 ### Patch Changes

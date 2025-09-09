@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 2.0.7-next.6
+
+### Patch Changes
+
+- Updating react native
+
 ## 2.0.7-next.5
 
 ### Patch Changes
