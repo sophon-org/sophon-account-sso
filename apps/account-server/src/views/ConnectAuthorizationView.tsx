@@ -1,6 +1,7 @@
 'use client';
 
 import { CheckIcon, PlugsIcon } from '@phosphor-icons/react';
+import type { DataScopes } from '@sophon-labs/account-core';
 import { useEffect, useState } from 'react';
 import { IconRedCheck } from '@/components/icons/icons-red-check';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -14,12 +15,14 @@ import type { Scopes } from '@/types/data-scopes';
 
 export default function ConnectAuthorizationView({
   partnerId,
+  scopes,
 }: Readonly<{
   partnerId?: string;
+  scopes: DataScopes[];
 }>) {
   const isMobile = windowService.isMobile();
   const actorRef = MainStateMachineContext.useActorRef();
-  const { availableScopes, userScopes } = useDataAccessScopes();
+  const { availableScopes, userScopes } = useDataAccessScopes(scopes);
   const [selectedScopes, setSelectedScopes] = useState<Record<string, boolean>>(
     Object.keys(availableScopes).reduce(
       (acc, key) => {

@@ -1,8 +1,9 @@
 import { useDynamicContext } from '@dynamic-labs/sdk-react-core';
+import type { DataScopes } from '@sophon-labs/account-core';
 import { useEffect, useState } from 'react';
 import { AllScopes, type Scopes } from '@/types/data-scopes';
 
-export const useDataAccessScopes = () => {
+export const useDataAccessScopes = (requestedScopes: DataScopes[]) => {
   const { user } = useDynamicContext();
   const [userScopes, setUserScopes] = useState<Scopes[]>([]);
 
@@ -37,9 +38,13 @@ export const useDataAccessScopes = () => {
           contextScopes.push('x');
         }
       });
-      setUserScopes([...contextScopes]);
+      setUserScopes([
+        ...contextScopes.filter((scope) =>
+          requestedScopes.includes(scope as DataScopes),
+        ),
+      ]);
     }
-  }, [user]);
+  }, [user, requestedScopes]);
 
   return {
     userScopes,

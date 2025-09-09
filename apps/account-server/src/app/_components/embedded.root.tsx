@@ -1,5 +1,6 @@
 'use client';
 
+import type { DataScopes } from '@sophon-labs/account-core';
 import {
   sendMessageToRN,
   useRNHandler,
@@ -28,9 +29,10 @@ import WrongNetworkView from '@/views/WrongNetworkView';
 
 interface EmbeddedRootProps {
   partnerId?: string;
+  scopes: DataScopes[];
 }
 
-export default function EmbeddedRoot({ partnerId }: EmbeddedRootProps) {
+export default function EmbeddedRoot({ partnerId, scopes }: EmbeddedRootProps) {
   const [open, setOpen] = useState(false);
   const state = MainStateMachineContext.useSelector((state) => state);
   const actorRef = MainStateMachineContext.useActorRef();
@@ -189,7 +191,7 @@ export default function EmbeddedRoot({ partnerId }: EmbeddedRootProps) {
         drawerType="connection_authorization"
         actions={connectActions.renderActions()}
       >
-        <ConnectAuthorizationView partnerId={partnerId} />
+        <ConnectAuthorizationView partnerId={partnerId} scopes={scopes} />
       </Drawer>
     );
   }

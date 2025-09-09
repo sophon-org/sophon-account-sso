@@ -8,5 +8,5 @@ import DesktopRoot from './_components/desktop.root';
  * @returns The desktop version of the account server.
  */
 export default function RootPage() {
-  return <DesktopRoot />;
+  return <DesktopRoot scopes={[]} />;
 }
