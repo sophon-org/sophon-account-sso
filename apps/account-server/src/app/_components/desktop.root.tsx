@@ -1,5 +1,6 @@
 'use client';
 
+import type { DataScopes } from '@sophon-labs/account-core';
 import { Dialog } from '@/components/dialog';
 import { Button } from '@/components/ui/button';
 import { MainStateMachineContext } from '@/context/state-machine-context';
@@ -23,9 +24,10 @@ import WrongNetworkView from '@/views/WrongNetworkView';
 
 interface DesktopRootProps {
   partnerId?: string;
+  scopes: DataScopes[];
 }
 
-export default function DesktopRoot({ partnerId }: DesktopRootProps) {
+export default function DesktopRoot({ partnerId, scopes }: DesktopRootProps) {
   const state = MainStateMachineContext.useSelector((state) => state);
   const actorRef = MainStateMachineContext.useActorRef();
 
@@ -101,7 +103,7 @@ export default function DesktopRoot({ partnerId }: DesktopRootProps) {
         actions={connectActions.renderActions()}
         showLegalNotice={false}
       >
-        <ConnectAuthorizationView partnerId={partnerId} />
+        <ConnectAuthorizationView partnerId={partnerId} scopes={scopes} />
       </Dialog>
     );
   }

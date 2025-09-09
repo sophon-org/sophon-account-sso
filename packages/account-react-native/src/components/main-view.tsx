@@ -1,3 +1,4 @@
+import type { DataScopes } from '@sophon-labs/account-core';
 import { postMessageToWebApp } from '@sophon-labs/account-message-bridge';
 import { useCallback, useRef, useState } from 'react';
 import { Linking, Platform, StyleSheet, View } from 'react-native';
@@ -6,7 +7,6 @@ import { VIEW_VERSION } from '../constants';
 import { USER_AGENT } from '../constants/user-agent';
 import { useModalVisibility } from '../hooks/use-modal-visibility';
 import { sendUIMessage, useUIEventHandler } from '../messaging/ui';
-import type { DataScopes } from '@sophon-labs/account-core';
 
 export interface SophonMainViewProps {
   debugEnabled?: boolean;

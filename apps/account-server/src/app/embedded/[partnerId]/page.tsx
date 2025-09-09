@@ -1,6 +1,6 @@
+import type { DataScopes } from '@sophon-labs/account-core';
 import type { Viewport } from 'next';
 import EmbeddedRoot from '../../_components/embedded.root';
-import { serverLog } from '@/lib/server-log';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -17,7 +17,16 @@ export default async function EmbeddedPageRoot({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const { scopes } = await searchParams;
-  serverLog(`scopes ${scopes}`);
   const { partnerId } = await params;
-  return <EmbeddedRoot partnerId={partnerId} />;
+
+  const requestedScopes: DataScopes[] = [];
+  if (scopes?.length) {
+    if (typeof scopes === 'string') {
+      requestedScopes.push(scopes as DataScopes);
+    } else {
+      requestedScopes.push(...(scopes as DataScopes[]));
+    }
+  }
+
+  return <EmbeddedRoot partnerId={partnerId} scopes={requestedScopes} />;
 }
