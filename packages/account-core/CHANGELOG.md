@@ -1,5 +1,11 @@
 # @sophon-labs/account-core
 
+## 2.0.7-next.7
+
+### Patch Changes
+
+- Updating how we propagate scopes parameter
+
 ## 2.0.7-next.6
 
 ### Patch Changes

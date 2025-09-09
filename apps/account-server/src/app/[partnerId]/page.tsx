@@ -1,3 +1,4 @@
+import { serverLog } from '@/lib/server-log';
 import DesktopRoot from '../_components/desktop.root';
 
 /**
@@ -9,9 +10,13 @@ import DesktopRoot from '../_components/desktop.root';
  */
 export default async function RootPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ partnerId: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
+  const { scopes } = await searchParams;
+  serverLog(`scopes ${scopes}`);
   const { partnerId } = await params;
   return <DesktopRoot partnerId={partnerId} />;
 }

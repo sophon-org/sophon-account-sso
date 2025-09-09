@@ -88,7 +88,9 @@ export const SophonMainView = ({
   }
 
   if (scopes?.length > 0) {
-    params.set('scopes', scopes.join(','));
+    scopes.forEach((scope) => {
+      params.append('scopes', scope);
+    });
   }
 
   if (partnerId) {
