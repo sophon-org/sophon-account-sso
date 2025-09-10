@@ -199,7 +199,7 @@ export const Drawer = ({
       <VaulDrawer.Portal>
         <VaulDrawer.Overlay className="fixed inset-0 bg-black/40" />
         <VaulDrawer.Content
-          className="bg-gray-100 fixed h-fit outline-none rounded-t-3xl"
+          className="bg-gray-100 fixed outline-none rounded-t-3xl"
           style={{
             bottom: `${insets.bottom}px`,
             left: `${insets.left}px`,
