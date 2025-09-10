@@ -37,7 +37,7 @@ export default function DesktopRoot({ partnerId, scopes }: DesktopRootProps) {
   const { openDrawer, DrawerComponent } = useRequestDrawer();
 
   const signingActions = SigningRequestView.useActions({ openDrawer });
-  const connectActions = ConnectAuthorizationView.useActions();
+  const connectActions = ConnectAuthorizationView.useActions({ openDrawer });
   const transactionActions = TransactionRequestView.useActions({
     openDrawer,
   });
@@ -97,14 +97,17 @@ export default function DesktopRoot({ partnerId, scopes }: DesktopRootProps) {
 
   if (state.matches('incoming-authentication')) {
     return (
-      <Dialog
-        className="relative"
-        dialogType="connection_authorization"
-        actions={connectActions.renderActions()}
-        showLegalNotice={false}
-      >
-        <ConnectAuthorizationView partnerId={partnerId} scopes={scopes} />
-      </Dialog>
+      <>
+        <Dialog
+          className="relative"
+          dialogType="connection_authorization"
+          actions={connectActions.renderActions()}
+          showLegalNotice={false}
+        >
+          <ConnectAuthorizationView partnerId={partnerId} scopes={scopes} />
+        </Dialog>
+        <DrawerComponent />
+      </>
     );
   }
 
