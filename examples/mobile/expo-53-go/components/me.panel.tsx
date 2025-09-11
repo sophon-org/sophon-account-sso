@@ -1,13 +1,16 @@
 import { shortenAddress } from '@sophon-labs/account-core';
-import { useSophonToken } from '@sophon-labs/account-react-native';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  type SophonJWTToken,
+  useSophonToken,
+} from '@sophon-labs/account-react-native';
+import { useCallback, useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 import { Button } from './ui/button';
 
 export default function JWTPanel() {
   const { getAccessToken, getMe } = useSophonToken();
   const [me, setMe] = useState<`0x${string}` | null>(null);
-  const [token, setToken] = useState<{ value: string } | null>(null);
+  const [token, setToken] = useState<SophonJWTToken | null>(null);
   const [loading, setLoading] = useState(false);
 
   const updateAccessToken = useCallback(async () => {
