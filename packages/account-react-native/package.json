@@ -30,6 +30,10 @@
     "!**/__mocks__",
     "!**/.*"
   ],
+  "packageManager": "yarn@4.9.2",
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "scripts": {
     "test": "jest",
     "clean": "del-cli lib",

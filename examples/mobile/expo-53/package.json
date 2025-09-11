@@ -2,6 +2,10 @@
   "name": "@sophon-labs/examples-sandbox-mobile",
   "main": "expo-router/entry",
   "version": "1.0.0",
+  "packageManager": "yarn@4.9.2",
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
