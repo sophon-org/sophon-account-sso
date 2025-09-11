@@ -1,7 +1,7 @@
 'use client';
 
 import { SiwsMessage } from '@sophon-labs/account-core';
-import { createSophonEIP1193Provider } from '@sophon-labs/account-eip6963';
+import { createSophonEIP1193Provider } from '@sophon-labs/account-provider';
 import { getCsrfToken, signIn } from 'next-auth/react';
 import { createWalletClient, custom } from 'viem';
 import { sophon, sophonTestnet } from 'viem/chains';

@@ -508,28 +508,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-core@npm:2.0.7-next.3":
-  version: 2.0.7-next.3
-  resolution: "@sophon-labs/account-core@npm:2.0.7-next.3"
+"@sophon-labs/account-core@npm:2.0.10-next.2":
+  version: 2.0.10-next.2
+  resolution: "@sophon-labs/account-core@npm:2.0.10-next.2"
   dependencies:
     text-encoding-polyfill: "npm:^0.6.7"
   peerDependencies:
     viem: ">=2.21.0"
-  checksum: 10c0/9c49503ad2da8fa84b910a523573aa41619e4b30317271fc045dcb4f9686368f7a84b0c52dfb8353322da40ba4758666e35abb670f4575a37a489755ebc3556b
+  checksum: 10c0/5b09e76afb429d5300e86d12eee0ac00c690ca82bec58a250220e9e8630b9a32123395306633db704e4221e20a66c69f4f2e12079073fd1682151c04e0e90432
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-eip6963@npm:2.0.7-next.3":
-  version: 2.0.7-next.3
-  resolution: "@sophon-labs/account-eip6963@npm:2.0.7-next.3"
+"@sophon-labs/account-provider@npm:2.0.10-next.2":
+  version: 2.0.10-next.2
+  resolution: "@sophon-labs/account-provider@npm:2.0.10-next.2"
   dependencies:
-    "@sophon-labs/account-core": "npm:2.0.7-next.3"
+    "@sophon-labs/account-core": "npm:2.0.10-next.2"
     eventemitter3: "npm:^5.0.1"
     json-rpc-2.0: "npm:^1.7.1"
     zksync-sso: "github:sophon-org/zksync-sso-preview#20250901_1"
   peerDependencies:
     typescript: ^5.0.0
-  checksum: 10c0/69b984f66b1276303f3924b557d5ac2c3627ae20c1828baba011a717253a426422406c6c4c4195d108595e15cf4ba32b0afaec1f4c48073c3ea8ecbf7b069441
+  checksum: 10c0/5b516a9f9dd16d26561578a38fac8425705bf8f3393663f1d3f5599734d1af4f09c3989a18810d06bd883ba23c2798144248115c741e072e25432126620d6b17
   languageName: node
   linkType: hard
 
@@ -537,8 +537,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@sophon-labs/examples-next-authjs@workspace:."
   dependencies:
-    "@sophon-labs/account-core": "npm:2.0.7-next.3"
-    "@sophon-labs/account-eip6963": "npm:2.0.7-next.3"
+    "@sophon-labs/account-provider": "npm:2.0.10-next.2"
     "@tailwindcss/postcss": "npm:^4"
     "@tanstack/react-query": "npm:^5.76.0"
     "@types/node": "npm:^20"
