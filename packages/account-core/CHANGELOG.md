@@ -1,5 +1,11 @@
 # @sophon-labs/account-core
 
+## 2.0.10-next.1
+
+### Patch Changes
+
+- Adding webauthn as direct dependency to connector package
+
 ## 2.0.10-next.0
 
 ### Patch Changes

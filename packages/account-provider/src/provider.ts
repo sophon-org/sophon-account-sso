@@ -12,6 +12,7 @@ import { handleRevokePermissions } from './handlers/handleRevokePermissions';
 import { handleSendTransaction } from './handlers/handleSendTransaction';
 import { handleSignTypedDataV4 } from './handlers/handleSignTypedDataV4';
 import { handleSwitchEthereumChain } from './handlers/handleSwitchEthereumChain';
+import { clearAccounts, getAccounts } from './lib/accounts';
 import { genericRPCHandler } from './lib/genericRPC';
 import { awaitForPopupUnload } from './lib/popup';
 import type { EIP1193Provider, RPCResponse } from './types';
@@ -19,14 +20,26 @@ import type { EIP1193Provider, RPCResponse } from './types';
 // The main provider function
 export function createSophonEIP1193Provider(
   network: SophonNetworkType = 'testnet',
-  authServerUrl: string = AccountServerURL[network],
+  partnerId?: string,
+  customAuthServerUrl?: string,
   customCommunicator?: Communicator,
 ): EIP1193Provider {
   const eventEmitter = new EventEmitter();
 
+  const authServerUrl = customAuthServerUrl ?? AccountServerURL[network];
+  const serverUrl = partnerId ? `${authServerUrl}/${partnerId}` : authServerUrl;
+
+  console.log(
+    'createSophonEIP1193Provider',
+    network,
+    partnerId,
+    authServerUrl,
+    customCommunicator,
+    serverUrl,
+  );
   const communicator =
     customCommunicator ??
-    new PopupCommunicator(authServerUrl, {
+    new PopupCommunicator(serverUrl, {
       width: 400,
       height: 800,
       calculatePosition(width, height) {
@@ -50,15 +63,19 @@ export function createSophonEIP1193Provider(
     };
 
     const response = await communicator.postRequestAndWaitForResponse(request);
-    await awaitForPopupUnload(authServerUrl);
+    await awaitForPopupUnload(serverUrl);
     return response as RPCResponse<T>;
   }
 
   return {
     on: eventEmitter.on.bind(eventEmitter),
     removeListener: eventEmitter.removeListener.bind(eventEmitter),
-
+    disconnect: async () => {
+      clearAccounts(network);
+    },
+    accounts: () => getAccounts(network),
     async request({ method, params }) {
+      console.log('EIP-1193 request:', method, params);
       switch (method) {
         case 'eth_requestAccounts': {
           console.log('EIP-1193 eth_requestAccounts:', method, params);

@@ -1,21 +1,18 @@
 'use client';
 
-import { createSophonEIP6963Emitter } from '@sophon-labs/account-eip6963';
+import { createSophonConnector } from '@sophon-labs/account-connector';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
 import { sophonTestnet } from 'viem/chains';
 import { createConfig, http, type State, WagmiProvider } from 'wagmi';
 
-createSophonEIP6963Emitter('testnet');
-
-export const projectId = '760fb7a448e58431c9cfbab80743ab1c';
-
 const queryClient = new QueryClient();
-
-if (!projectId) throw new Error('Project ID is not defined');
 
 const config = createConfig({
   chains: [sophonTestnet],
+  connectors: [
+    createSophonConnector('testnet', '123b216c-678e-4611-af9a-2d5b7b061258'),
+  ],
   transports: {
     [sophonTestnet.id]: http(),
   },

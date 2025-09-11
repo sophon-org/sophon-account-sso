@@ -1,5 +1,14 @@
 # @sophon-labs/account-react-native
 
+## 2.0.10-next.1
+
+### Patch Changes
+
+- Adding webauthn as direct dependency to connector package
+- Updated dependencies
+  - @sophon-labs/account-message-bridge@2.0.10-next.1
+  - @sophon-labs/account-core@2.0.10-next.1
+
 ## 2.0.10-next.0
 
 ### Patch Changes

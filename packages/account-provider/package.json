@@ -1,7 +1,7 @@
 {
-  "name": "@sophon-labs/account-eip6963",
+  "name": "@sophon-labs/account-provider",
   "version": "2.0.10-next.1",
-  "description": "EIP-6963 provider for Sophon SSO",
+  "description": "EIP-1193 provider for Sophon Account",
   "license": "MIT",
   "author": "Sophon Team",
   "type": "module",
@@ -66,9 +66,9 @@
   },
   "dependencies": {
     "@sophon-labs/account-core": "2.0.10-next.1",
-    "@sophon-labs/account-provider": "2.0.10-next.1",
     "eventemitter3": "^5.0.1",
-    "json-rpc-2.0": "^1.7.1"
+    "json-rpc-2.0": "^1.7.1",
+    "zksync-sso": "github:sophon-org/zksync-sso-preview#20250901_1"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"

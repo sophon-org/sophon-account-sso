@@ -12,10 +12,12 @@ export const SophonWagmiConnector = ({
   const { partnerId, authServerUrl, network, updateConnector, communicator } =
     useSophonContext();
   const connector = useMemo(() => {
-    return createSophonConnector(partnerId, network, {
+    return createSophonConnector(
+      network,
+      partnerId,
       authServerUrl,
       communicator,
-    });
+    );
   }, [partnerId, network, authServerUrl, communicator]);
 
   const internalConnector = useMemo(() => {

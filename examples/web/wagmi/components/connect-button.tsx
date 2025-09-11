@@ -6,8 +6,9 @@ export const ConnectButton = () => {
   const wagmiConfig = useConfig();
   const handleConnect = async () => {
     const connectors = getConnectors(wagmiConfig);
+    console.log(connectors);
     const connector = connectors.find(
-      (provider) => provider.id === `xyz.sophon.staging.my`,
+      (provider) => provider.id === `xyz.sophon.staging.account`,
     );
 
     if (!connector) {
@@ -19,9 +20,6 @@ export const ConnectButton = () => {
       chainId: sophonTestnet.id,
       connector: connector,
     });
-
-    // await 1 second
-    // await new Promise((resolve) => setTimeout(resolve, 100));
 
     console.log('Connected to Sophon, signing message');
     const msgString = `Message to sign`;

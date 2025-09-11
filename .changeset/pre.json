@@ -11,6 +11,7 @@
     "@sophon-labs/account-react-native": "2.0.9"
   },
   "changesets": [
-    "common-zebras-hug"
+    "common-zebras-hug",
+    "new-keys-move"
   ]
 }
