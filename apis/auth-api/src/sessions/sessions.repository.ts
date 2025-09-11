@@ -1,57 +1,59 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { IsNull, Repository } from "typeorm";
+import { Repository, IsNull } from "typeorm";
 import { Session } from "./session.entity";
+import type { SessionRecord } from "./session.domain";
+
+const toDomain = (e: Session): SessionRecord => ({
+	sid: e.sid,
+	userId: e.userId,
+	aud: e.aud,
+	currentRefreshJti: e.currentRefreshJti,
+	createdAt: e.createdAt,
+	revokedAt: e.revokedAt,
+	invalidateBefore: e.invalidateBefore,
+	refreshExpiresAt: e.refreshExpiresAt,
+});
 
 @Injectable()
 export class SessionsRepository {
-	constructor(
-		@InjectRepository(Session)
-		private repo: Repository<Session>,
-	) {}
+	constructor(@InjectRepository(Session) private repo: Repository<Session>) {}
 
-	async create(params: {
-		sid: string;
-		userId: string;
-		aud: string;
-		currentRefreshJti: string;
-		refreshExpiresAt: Date;
-	}): Promise<void> {
-		const session = this.repo.create({
-			sid: params.sid,
-			userId: params.userId,
-			aud: params.aud,
-			currentRefreshJti: params.currentRefreshJti,
-			refreshExpiresAt: params.refreshExpiresAt,
-		});
-		await this.repo.save(session);
+	async create(
+		params: Pick<
+			SessionRecord,
+			"sid" | "userId" | "aud" | "currentRefreshJti" | "refreshExpiresAt"
+		>,
+	): Promise<void> {
+		await this.repo.save(this.repo.create(params));
 	}
 
-	async getBySid(sid: string): Promise<Session | null> {
-		return this.repo.findOne({ where: { sid } });
+	async getBySid(sid: SessionRecord["sid"]): Promise<SessionRecord | null> {
+		const row = await this.repo.findOne({ where: { sid } });
+		return row ? toDomain(row) : null;
 	}
 
-	async rotateRefreshJti(params: {
-		sid: string;
-		newJti: string;
-		newRefreshExpiresAt?: Date;
+	async rotateRefreshJti(args: {
+		sid: SessionRecord["sid"];
+		newJti: SessionRecord["currentRefreshJti"];
+		newRefreshExpiresAt?: SessionRecord["refreshExpiresAt"];
 	}): Promise<void> {
 		await this.repo.update(
-			{ sid: params.sid },
+			{ sid: args.sid },
 			{
-				currentRefreshJti: params.newJti,
-				...(params.newRefreshExpiresAt && {
-					refreshExpiresAt: params.newRefreshExpiresAt,
+				currentRefreshJti: args.newJti,
+				...(args.newRefreshExpiresAt && {
+					refreshExpiresAt: args.newRefreshExpiresAt,
 				}),
 			},
 		);
 	}
 
-	async revokeSid(sid: string): Promise<void> {
+	async revokeSid(sid: SessionRecord["sid"]): Promise<void> {
 		await this.repo.update({ sid }, { revokedAt: new Date() });
 	}
 
-	async revokeAllForUser(userId: string): Promise<void> {
+	async revokeAllForUser(userId: SessionRecord["userId"]): Promise<void> {
 		await this.repo.update(
 			{ userId, revokedAt: IsNull() },
 			{ revokedAt: new Date() },
@@ -59,7 +61,7 @@ export class SessionsRepository {
 	}
 
 	async invalidateAccessBefore(params: {
-		sid: string;
+		sid: SessionRecord["sid"];
 		ts: Date;
 	}): Promise<void> {
 		await this.repo.update(
@@ -68,9 +70,7 @@ export class SessionsRepository {
 		);
 	}
 
-	isActive(row: Session | null): row is Session {
-		return (
-			!!row && !row.revokedAt && new Date(row.refreshExpiresAt) > new Date()
-		);
+	isActive(row: SessionRecord | null): row is SessionRecord {
+		return !!row && !row.revokedAt && row.refreshExpiresAt > new Date();
 	}
 }
