@@ -4,6 +4,7 @@
   "initialVersions": {
     "@sophon-labs/account-api-sdk": "2.0.9",
     "@sophon-labs/account-connector": "2.0.9",
+    "@sophon-labs/account-provider": "2.0.9",
     "@sophon-labs/account-core": "2.0.9",
     "@sophon-labs/account-eip6963": "2.0.9",
     "@sophon-labs/account-message-bridge": "2.0.9",
@@ -11,6 +12,7 @@
     "@sophon-labs/account-react-native": "2.0.9"
   },
   "changesets": [
+    "cold-humans-appear",
     "common-zebras-hug",
     "new-keys-move"
   ]

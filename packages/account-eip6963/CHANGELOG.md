@@ -1,5 +1,14 @@
 # @sophon-labs/account-eip6963
 
+## 2.0.10-next.2
+
+### Patch Changes
+
+- Simplifying connector and provider dependencies
+- Updated dependencies
+  - @sophon-labs/account-provider@2.0.10-next.2
+  - @sophon-labs/account-core@2.0.10-next.2
+
 ## 2.0.10-next.1
 
 ### Patch Changes
