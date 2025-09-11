@@ -1,15 +1,25 @@
 import { shortenAddress } from '@sophon-labs/account-core';
 import { useSophonToken } from '@sophon-labs/account-react-native';
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 import { Button } from './ui/button';
 
 export default function JWTPanel() {
   const { getAccessToken, getMe } = useSophonToken();
   const [me, setMe] = useState<`0x${string}` | null>(null);
-  const token = useMemo(() => {
-    return getAccessToken(false);
+  const [token, setToken] = useState<{ value: string } | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const updateAccessToken = useCallback(async () => {
+    setLoading(true);
+    const newToken = await getAccessToken();
+    setToken(newToken);
+    setLoading(false);
   }, [getAccessToken]);
+
+  useEffect(() => {
+    updateAccessToken();
+  }, [updateAccessToken]);
 
   const fetchMe = async () => {
     const me = await getMe();
@@ -25,7 +35,10 @@ export default function JWTPanel() {
       <Text className="text-xl font-bold mt-4">Me / JWT</Text>
       {token && (
         <Text className="text-sm bg-red-400/10 p-2 rounded-md border border-red-400 text-red-400 text-center">
-          Token: {shortenAddress(token.value as `0x${string}`)}
+          Token:{' '}
+          {loading
+            ? 'Loading...'
+            : shortenAddress(token.value as `0x${string}`)}
         </Text>
       )}
       {me && (
