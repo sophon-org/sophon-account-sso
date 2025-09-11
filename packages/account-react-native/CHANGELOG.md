@@ -1,5 +1,14 @@
 # @sophon-labs/account-react-native
 
+## 2.0.8
+
+### Patch Changes
+
+- Generate token as async function
+- Updated dependencies
+  - @sophon-labs/account-message-bridge@2.0.8
+  - @sophon-labs/account-core@2.0.8
+
 ## 2.0.7
 
 ### Patch Changes
