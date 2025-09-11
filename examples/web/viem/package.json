@@ -13,7 +13,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@sophon-labs/account-provider": "file:../../../packages/account-provider",
+    "@sophon-labs/account-provider": "2.0.10-next.2",
     "next": "15.4.3",
     "react": "19.1.0",
     "react-dom": "19.1.0",

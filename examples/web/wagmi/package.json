@@ -13,8 +13,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@sophon-labs/account-connector": "file:../../../packages/account-connector",
-    "@sophon-labs/account-provider": "file:../../../packages/account-provider",
+    "@sophon-labs/account-connector": "2.0.10-next.2",
     "@tanstack/react-query": "^5.83.0",
     "next": "15.4.3",
     "react": "19.1.0",
@@ -29,9 +28,5 @@
     "@types/react-dom": "^19",
     "tailwindcss": "^4",
     "typescript": "^5"
-  },
-  "resolutions": {
-    "@sophon-labs/account-connector": "file:../../../packages/account-connector",
-    "@sophon-labs/account-provider": "file:../../../packages/account-provider"
   }
 }
