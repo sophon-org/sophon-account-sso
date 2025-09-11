@@ -19,7 +19,7 @@
 		"start:prod": "node dist/main",
 		"migrate-and-start": "yarn db:migrate && yarn start:prod",
 		"lint": "biome check src",
-		"lint:fix": "biome lint src --write",
+		"lint:fix": "biome check src --write",
 		"test": "jest",
 		"test:watch": "jest --watch",
 		"test:cov": "jest --coverage",
