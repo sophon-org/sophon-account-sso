@@ -1,19 +1,15 @@
-import { Pool } from "pg";
-import { getEnv } from "../config/env";
+// sessions/sessions.repository.ts
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { Session } from "./session.entity";
 
-export type SessionRow = {
-	sid: string;
-	user_id: string;
-	aud: string;
-	current_refresh_jti: string;
-	created_at: string;
-	revoked_at: string | null;
-	invalidate_before: string | null;
-	refresh_expires_at: string;
-};
-
+@Injectable()
 export class SessionsRepository {
-	private pool = new Pool({ connectionString: getEnv().DATABASE_URL });
+	constructor(
+		@InjectRepository(Session)
+		private repo: Repository<Session>,
+	) {}
 
 	async create(params: {
 		sid: string;
@@ -22,28 +18,18 @@ export class SessionsRepository {
 		currentRefreshJti: string;
 		refreshExpiresAt: Date;
 	}): Promise<void> {
-		await this.pool.query(
-			`
-      INSERT INTO sessions (sid, user_id, aud, current_refresh_jti, refresh_expires_at)
-      VALUES ($1, $2, $3, $4, $5)
-      ON CONFLICT (sid) DO NOTHING
-      `,
-			[
-				params.sid,
-				params.userId,
-				params.aud,
-				params.currentRefreshJti,
-				params.refreshExpiresAt.toISOString(),
-			],
-		);
+		const session = this.repo.create({
+			sid: params.sid,
+			user_id: params.userId,
+			aud: params.aud,
+			current_refresh_jti: params.currentRefreshJti,
+			refresh_expires_at: params.refreshExpiresAt,
+		});
+		await this.repo.save(session);
 	}
 
-	async getBySid(sid: string): Promise<SessionRow | null> {
-		const r = await this.pool.query<SessionRow>(
-			"SELECT * FROM sessions WHERE sid = $1",
-			[sid],
-		);
-		return r.rows[0] ?? null;
+	async getBySid(sid: string): Promise<Session | null> {
+		return await this.repo.findOne({ where: { sid } });
 	}
 
 	async rotateRefreshJti(params: {
@@ -51,47 +37,36 @@ export class SessionsRepository {
 		newJti: string;
 		newRefreshExpiresAt?: Date;
 	}): Promise<void> {
-		const { sid, newJti, newRefreshExpiresAt } = params;
-		await this.pool.query(
-			`
-      UPDATE sessions
-      SET current_refresh_jti = $2,
-          ${newRefreshExpiresAt ? "refresh_expires_at = $3," : ""}
-          -- keep audit-friendly updated_at if you add one later
-          revoked_at = revoked_at
-      WHERE sid = $1
-      `,
-			newRefreshExpiresAt
-				? [sid, newJti, newRefreshExpiresAt.toISOString()]
-				: [sid, newJti],
-		);
+		await this.repo.update(params.sid, {
+			current_refresh_jti: params.newJti,
+			...(params.newRefreshExpiresAt && {
+				refresh_expires_at: params.newRefreshExpiresAt,
+			}),
+		});
 	}
 
 	async revokeSid(sid: string): Promise<void> {
-		await this.pool.query(
-			"UPDATE sessions SET revoked_at = NOW() WHERE sid = $1",
-			[sid],
-		);
+		await this.repo.update(sid, { revoked_at: new Date() });
 	}
 
 	async revokeAllForUser(userId: string): Promise<void> {
-		await this.pool.query(
-			"UPDATE sessions SET revoked_at = NOW() WHERE user_id = $1 AND revoked_at IS NULL",
-			[userId],
-		);
+		await this.repo
+			.createQueryBuilder()
+			.update(Session)
+			.set({ revoked_at: () => "NOW()" })
+			.where("user_id = :userId", { userId })
+			.andWhere("revoked_at IS NULL")
+			.execute();
 	}
 
 	async invalidateAccessBefore(params: {
 		sid: string;
 		ts: Date;
 	}): Promise<void> {
-		await this.pool.query(
-			"UPDATE sessions SET invalidate_before = $2 WHERE sid = $1",
-			[params.sid, params.ts.toISOString()],
-		);
+		await this.repo.update(params.sid, { invalidate_before: params.ts });
 	}
 
-	isActive(row: SessionRow | null): row is SessionRow {
+	isActive(row: Session | null): row is Session {
 		return (
 			!!row && !row.revoked_at && new Date(row.refresh_expires_at) > new Date()
 		);
