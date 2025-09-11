@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository, IsNull } from "typeorm";
-import { Session } from "./session.entity";
+import { IsNull, Repository } from "typeorm";
 import type { SessionRecord } from "./session.domain";
+import { Session } from "./session.entity";
 
 const toDomain = (e: Session): SessionRecord => ({
 	sid: e.sid,
