@@ -4,8 +4,8 @@ import { Session } from "../sessions/session.entity";
 export default new DataSource({
 	type: "postgres",
 	url: process.env.DATABASE_URL,
-	entities: [Session],
-	migrations: ["src/migrations/*.ts"], // use dist/*.js in prod
-	migrationsTableName: "typeorm_migrations",
+	entities: [__dirname + "/**/*.entity.{ts,js}"],
+	migrations: [__dirname + "/migrations/*.{ts,js}"],
+	migrationsTableName: "auth_migrations",
 	synchronize: false,
 });

@@ -1,7 +1,6 @@
-// sessions/sessions.repository.ts
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { IsNull, Repository } from "typeorm";
 import { Session } from "./session.entity";
 
 @Injectable()
@@ -20,16 +19,16 @@ export class SessionsRepository {
 	}): Promise<void> {
 		const session = this.repo.create({
 			sid: params.sid,
-			user_id: params.userId,
+			userId: params.userId,
 			aud: params.aud,
-			current_refresh_jti: params.currentRefreshJti,
-			refresh_expires_at: params.refreshExpiresAt,
+			currentRefreshJti: params.currentRefreshJti,
+			refreshExpiresAt: params.refreshExpiresAt,
 		});
 		await this.repo.save(session);
 	}
 
 	async getBySid(sid: string): Promise<Session | null> {
-		return await this.repo.findOne({ where: { sid } });
+		return this.repo.findOne({ where: { sid } });
 	}
 
 	async rotateRefreshJti(params: {
@@ -37,38 +36,41 @@ export class SessionsRepository {
 		newJti: string;
 		newRefreshExpiresAt?: Date;
 	}): Promise<void> {
-		await this.repo.update(params.sid, {
-			current_refresh_jti: params.newJti,
-			...(params.newRefreshExpiresAt && {
-				refresh_expires_at: params.newRefreshExpiresAt,
-			}),
-		});
+		await this.repo.update(
+			{ sid: params.sid },
+			{
+				currentRefreshJti: params.newJti,
+				...(params.newRefreshExpiresAt && {
+					refreshExpiresAt: params.newRefreshExpiresAt,
+				}),
+			},
+		);
 	}
 
 	async revokeSid(sid: string): Promise<void> {
-		await this.repo.update(sid, { revoked_at: new Date() });
+		await this.repo.update({ sid }, { revokedAt: new Date() });
 	}
 
 	async revokeAllForUser(userId: string): Promise<void> {
-		await this.repo
-			.createQueryBuilder()
-			.update(Session)
-			.set({ revoked_at: () => "NOW()" })
-			.where("user_id = :userId", { userId })
-			.andWhere("revoked_at IS NULL")
-			.execute();
+		await this.repo.update(
+			{ userId, revokedAt: IsNull() },
+			{ revokedAt: new Date() },
+		);
 	}
 
 	async invalidateAccessBefore(params: {
 		sid: string;
 		ts: Date;
 	}): Promise<void> {
-		await this.repo.update(params.sid, { invalidate_before: params.ts });
+		await this.repo.update(
+			{ sid: params.sid },
+			{ invalidateBefore: params.ts },
+		);
 	}
 
 	isActive(row: Session | null): row is Session {
 		return (
-			!!row && !row.revoked_at && new Date(row.refresh_expires_at) > new Date()
+			!!row && !row.revokedAt && new Date(row.refreshExpiresAt) > new Date()
 		);
 	}
 }

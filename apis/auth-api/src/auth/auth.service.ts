@@ -1,4 +1,3 @@
-// auth.service.ts
 import { randomUUID } from "node:crypto";
 import {
 	BadRequestException,
@@ -353,11 +352,9 @@ export class AuthService {
 			if (!this.sessions.isActive(row)) {
 				throw new UnauthorizedException("session revoked or expired");
 			}
-			if (row.invalidate_before) {
+			if (row.invalidateBefore) {
 				const iatSec = payload.iat ?? 0;
-				const cut = Math.floor(
-					new Date(row.invalidate_before).getTime() / 1000,
-				);
+				const cut = Math.floor(new Date(row.invalidateBefore).getTime() / 1000);
 				if (iatSec < cut) {
 					throw new UnauthorizedException(
 						"access token is too old (invalidated)",
@@ -413,7 +410,7 @@ export class AuthService {
 			throw new UnauthorizedException("session revoked or expired");
 		}
 
-		if (row.current_refresh_jti !== r.jti) {
+		if (row.currentRefreshJti !== r.jti) {
 			await this.sessions.revokeSid(r.sid);
 			throw new UnauthorizedException("refresh token reuse detected");
 		}
