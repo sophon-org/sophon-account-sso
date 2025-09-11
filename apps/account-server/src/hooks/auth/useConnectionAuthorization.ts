@@ -23,11 +23,16 @@ export function useConnectionAuthorization() {
   );
   const { account } = useAccountContext();
   const actorRef = MainStateMachineContext.useActorRef();
-  const { isSigning, signTypeData } = useSignature();
+  const { isSigning, signTypeData, signingError } = useSignature();
   const [authorizing, setAuthorizing] = useState(false);
+  const [authorizationError, setAuthorizationError] = useState<string | null>(
+    null,
+  );
   const { user } = useDynamicContext();
 
   const onRefuseConnection = async () => {
+    setAuthorizationError(null); // Clear any errors when refusing connection
+
     if (windowService.isManaged() && incoming) {
       const signResponse = {
         id: crypto.randomUUID(),
@@ -57,6 +62,7 @@ export function useConnectionAuthorization() {
 
     try {
       setAuthorizing(true);
+      setAuthorizationError(null); // Clear any previous errors
 
       // We just generate tokens if the partnerId is available,
       // otherwise the partner is using EIP-6963 and don't need that
@@ -132,6 +138,12 @@ export function useConnectionAuthorization() {
         );
         actorRef.send({ type: 'ACCEPT' });
       }
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Connection authorization failed';
+      setAuthorizationError(errorMessage);
     } finally {
       setAuthorizing(false);
     }
@@ -143,5 +155,7 @@ export function useConnectionAuthorization() {
     isAuthorizing: authorizing,
     isSigning,
     isLoading: isSigning || authorizing,
+    authorizationError,
+    signingError,
   };
 }

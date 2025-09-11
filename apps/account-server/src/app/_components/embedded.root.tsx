@@ -41,7 +41,7 @@ export default function EmbeddedRoot({ partnerId, scopes }: EmbeddedRootProps) {
   const transactionActions = TransactionRequestView.useActions({
     openDrawer,
   });
-  const connectActions = ConnectAuthorizationView.useActions();
+  const connectActions = ConnectAuthorizationView.useActions({ openDrawer });
   const { account } = useAccountContext();
   useUserIdentification();
 
@@ -192,6 +192,7 @@ export default function EmbeddedRoot({ partnerId, scopes }: EmbeddedRootProps) {
         actions={connectActions.renderActions()}
       >
         <ConnectAuthorizationView partnerId={partnerId} scopes={scopes} />
+        <DrawerComponent />
       </Drawer>
     );
   }
