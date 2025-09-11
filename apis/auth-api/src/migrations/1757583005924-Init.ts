@@ -2,8 +2,8 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
 export class CreateSessions1700000000000 implements MigrationInterface {
-  public async up(q: QueryRunner): Promise<void> {
-    await q.query(`
+	public async up(q: QueryRunner): Promise<void> {
+		await q.query(`
       CREATE TABLE IF NOT EXISTS sessions (
         sid                  uuid PRIMARY KEY,
         user_id              text NOT NULL,
@@ -18,14 +18,14 @@ export class CreateSessions1700000000000 implements MigrationInterface {
       CREATE INDEX IF NOT EXISTS idx_sessions_aud  ON sessions(aud);
       CREATE INDEX IF NOT EXISTS idx_sessions_refresh_exp ON sessions(refresh_expires_at);
     `);
-  }
+	}
 
-  public async down(q: QueryRunner): Promise<void> {
-    await q.query(`
+	public async down(q: QueryRunner): Promise<void> {
+		await q.query(`
       DROP INDEX IF EXISTS idx_sessions_refresh_exp;
       DROP INDEX IF EXISTS idx_sessions_aud;
       DROP INDEX IF EXISTS idx_sessions_user;
       DROP TABLE IF EXISTS sessions;
     `);
-  }
+	}
 }
