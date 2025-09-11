@@ -1,6 +1,6 @@
 {
   "name": "@sophon-labs/account-react",
-  "version": "2.0.7-next.7",
+  "version": "2.0.9",
   "description": "React components for Sophon Account",
   "type": "module",
   "keywords": [],
@@ -9,6 +9,10 @@
   "main": "dist/index.cjs",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
+  "packageManager": "yarn@4.9.2",
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "scripts": {
     "build": "tsup",
     "dev": "npm run build -- --watch",
@@ -17,8 +21,8 @@
     "test:ci": "vitest run --coverage"
   },
   "dependencies": {
-    "@sophon-labs/account-connector": "2.0.7-next.7",
-    "@sophon-labs/account-core": "2.0.7-next.7",
+    "@sophon-labs/account-connector": "2.0.9",
+    "@sophon-labs/account-core": "2.0.9",
     "axios": "^1.11.0",
     "clsx": "^2.1.1",
     "js-cookie": "^3.0.5"

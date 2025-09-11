@@ -1,7 +1,7 @@
 import { sophonSsoConnector } from '@sophon-labs/account-connector';
 import { useEffect, useMemo } from 'react';
 import { useConfig } from 'wagmi';
-import { useSophonContext } from '../hooks';
+import { useSophonContext } from '../hooks/useSophonContext';
 
 export const SophonWagmiConnector = ({
   children,
