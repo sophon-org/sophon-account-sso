@@ -1,96 +1,58 @@
 // utils/jwt.ts
 import { createPrivateKey, createPublicKey, type KeyObject } from "node:crypto";
+import { loadJwtSecrets } from "../aws/secrets-jwt";
 
-/**
- * Caches
- */
-let privateKeyPemCache: string | null = null;
-let publicKeyPemCache: string | null = null;
+const useSecrets = !!process.env.SECRET_ID_JWT_KEYS || !!process.env.APP_ENV;
 
-let privateKeyObjCache: KeyObject | null = null;
-let publicKeyObjCache: KeyObject | null = null;
-
-/** NEW: Refresh key caches */
-let refreshPrivateKeyPemCache: string | null = null;
-let refreshPublicKeyPemCache: string | null = null;
-
-let refreshPrivateKeyObjCache: KeyObject | null = null;
-let refreshPublicKeyObjCache: KeyObject | null = null;
-
-/**
- * Return the raw PEM strings for jsonwebtoken.
- * jsonwebtoken accepts PEM strings directly, so this is usually all you need.
- */
-export async function getPrivateKeyPem(): Promise<string> {
-	if (privateKeyPemCache) return privateKeyPemCache;
-
-	const pem = process.env.PRIVATE_KEY?.replace(/\\n/g, "\n");
-	if (!pem) throw new Error("PRIVATE_KEY is not set");
-
-	privateKeyPemCache = pem;
-	return pem;
+function fromEnvOrThrow(name: string) {
+	const v = process.env[name];
+	if (!v) throw new Error(`${name} is not set`);
+	return v.includes("\\n") ? v.replace(/\\n/g, "\n") : v;
 }
 
-export async function getPublicKeyPem(): Promise<string> {
-	if (publicKeyPemCache) return publicKeyPemCache;
-
-	const pem = process.env.PUBLIC_KEY?.replace(/\\n/g, "\n");
-	if (!pem) throw new Error("PUBLIC_KEY is not set");
-
-	publicKeyPemCache = pem;
-	return pem;
+// PEM getters (jsonwebtoken prefers PEM)
+export async function getPrivateKeyPem() {
+	return useSecrets
+		? (await loadJwtSecrets()).access.privateKeyPem
+		: fromEnvOrThrow("PRIVATE_KEY");
+}
+export async function getPublicKeyPem() {
+	return useSecrets
+		? (await loadJwtSecrets()).access.publicKeyPem
+		: fromEnvOrThrow("PUBLIC_KEY");
+}
+export async function getRefreshPrivateKeyPem() {
+	return useSecrets
+		? (await loadJwtSecrets()).refresh.privateKeyPem
+		: fromEnvOrThrow("REFRESH_PRIVATE_KEY");
+}
+export async function getRefreshPublicKeyPem() {
+	return useSecrets
+		? (await loadJwtSecrets()).refresh.publicKeyPem
+		: fromEnvOrThrow("REFRESH_PUBLIC_KEY");
 }
 
-export async function getRefreshPrivateKeyPem(): Promise<string> {
-	if (refreshPrivateKeyPemCache) return refreshPrivateKeyPemCache;
-
-	const pem = process.env.REFRESH_PRIVATE_KEY?.replace(/\\n/g, "\n");
-	if (!pem) throw new Error("REFRESH_PRIVATE_KEY is not set");
-
-	refreshPrivateKeyPemCache = pem;
-	return pem;
+let pkObj: KeyObject | null = null;
+let pubObj: KeyObject | null = null;
+let rpkObj: KeyObject | null = null;
+let rpubObj: KeyObject | null = null;
+export async function getPrivateKeyObject() {
+	if (!pkObj) pkObj = createPrivateKey({ key: await getPrivateKeyPem() });
+	return pkObj;
 }
-
-export async function getRefreshPublicKeyPem(): Promise<string> {
-	if (refreshPublicKeyPemCache) return refreshPublicKeyPemCache;
-
-	const pem = process.env.REFRESH_PUBLIC_KEY?.replace(/\\n/g, "\n");
-	if (!pem) throw new Error("REFRESH_PUBLIC_KEY is not set");
-
-	refreshPublicKeyPemCache = pem;
-	return pem;
+export async function getPublicKeyObject() {
+	if (!pubObj) pubObj = createPublicKey({ key: await getPublicKeyPem() });
+	return pubObj;
 }
-
-/**
- * Optional: Return Node KeyObjects (validated/parsed).
- * jsonwebtoken also accepts KeyObjects if you prefer.
- */
-export async function getPrivateKeyObject(): Promise<KeyObject> {
-	if (privateKeyObjCache) return privateKeyObjCache;
-	const pem = await getPrivateKeyPem();
-	privateKeyObjCache = createPrivateKey({ key: pem });
-	return privateKeyObjCache;
+export async function getRefreshPrivateKeyObject() {
+	if (!rpkObj)
+		rpkObj = createPrivateKey({ key: await getRefreshPrivateKeyPem() });
+	return rpkObj;
 }
-
-export async function getPublicKeyObject(): Promise<KeyObject> {
-	if (publicKeyObjCache) return publicKeyObjCache;
-	const pem = await getPublicKeyPem();
-	publicKeyObjCache = createPublicKey({ key: pem });
-	return publicKeyObjCache;
-}
-
-export async function getRefreshPrivateKeyObject(): Promise<KeyObject> {
-	if (refreshPrivateKeyObjCache) return refreshPrivateKeyObjCache;
-	const pem = await getRefreshPrivateKeyPem();
-	refreshPrivateKeyObjCache = createPrivateKey({ key: pem });
-	return refreshPrivateKeyObjCache;
-}
-
-export async function getRefreshPublicKeyObject(): Promise<KeyObject> {
-	if (refreshPublicKeyObjCache) return refreshPublicKeyObjCache;
-	const pem = await getRefreshPublicKeyPem();
-	refreshPublicKeyObjCache = createPublicKey({ key: pem });
-	return refreshPublicKeyObjCache;
+export async function getRefreshPublicKeyObject() {
+	if (!rpubObj)
+		rpubObj = createPublicKey({ key: await getRefreshPublicKeyPem() });
+	return rpubObj;
 }
 
 /**
@@ -100,6 +62,16 @@ export async function getRefreshPublicKeyObject(): Promise<KeyObject> {
 export const getPrivateKey = getPrivateKeyPem;
 export const getPublicKey = getPublicKeyPem;
 
-/** NEW: Back-compat aliases for refresh keys (PEM) */
 export const getRefreshPrivateKey = getRefreshPrivateKeyPem;
 export const getRefreshPublicKey = getRefreshPublicKeyPem;
+
+export async function getAccessKid() {
+	return useSecrets
+		? (await loadJwtSecrets()).access.kid
+		: fromEnvOrThrow("JWT_KID");
+}
+export async function getRefreshKid() {
+	return useSecrets
+		? (await loadJwtSecrets()).refresh.kid
+		: fromEnvOrThrow("REFRESH_JWT_KID");
+}
