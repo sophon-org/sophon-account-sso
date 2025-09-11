@@ -35,9 +35,10 @@ export const useLoadingResources = () => {
   const { sdkHasLoaded, primaryWallet } = useDynamicContext();
 
   // This ensures we don't get stuck if primaryWallet or account never load
+  // Extended timeout of 15 seconds so we can also cover account deployment
   useEffect(() => {
     if (isReturningFromOAuth) {
-      const timeout = setTimeout(() => setOauthTimeout(true), 5000);
+      const timeout = setTimeout(() => setOauthTimeout(true), 15000);
       return () => clearTimeout(timeout);
     }
   }, [isReturningFromOAuth]);
