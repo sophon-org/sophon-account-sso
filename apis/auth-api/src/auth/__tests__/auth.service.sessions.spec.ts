@@ -62,10 +62,10 @@ describe("AuthService (sessions + refresh)", () => {
 
 	// sessions repo mock
 	type SessionRow = {
-	currentRefreshJti: string | null;
-	refreshExpiresAt: Date | null;
-	revokedAt: Date | null;
-	invalidateBefore: Date | null;
+		currentRefreshJti: string | null;
+		refreshExpiresAt: Date | null;
+		revokedAt: Date | null;
+		invalidateBefore: Date | null;
 	};
 	const sessionsMock: {
 		create: jest.Mock<Promise<void>, [unknown]>;
