@@ -1,6 +1,6 @@
 {
   "name": "@sophon-labs/account-eip6963",
-  "version": "2.0.9",
+  "version": "2.0.10-next.0",
   "description": "EIP-6963 provider for Sophon SSO",
   "license": "MIT",
   "author": "Sophon Team",
@@ -65,7 +65,7 @@
     "vitest": "^3.2.4"
   },
   "dependencies": {
-    "@sophon-labs/account-core": "2.0.9",
+    "@sophon-labs/account-core": "2.0.10-next.0",
     "eventemitter3": "^5.0.1",
     "json-rpc-2.0": "^1.7.1",
     "zksync-sso": "github:sophon-org/zksync-sso-preview#20250901_1"

@@ -1,5 +1,14 @@
 # @sophon-labs/account-react
 
+## 2.0.10-next.0
+
+### Patch Changes
+
+- Exposing sophon connector and sophon provider helper utility
+- Updated dependencies
+  - @sophon-labs/account-connector@2.0.10-next.0
+  - @sophon-labs/account-core@2.0.10-next.0
+
 ## 2.0.9
 
 ### Patch Changes

@@ -1,0 +1,16 @@
+{
+  "mode": "pre",
+  "tag": "next",
+  "initialVersions": {
+    "@sophon-labs/account-api-sdk": "2.0.9",
+    "@sophon-labs/account-connector": "2.0.9",
+    "@sophon-labs/account-core": "2.0.9",
+    "@sophon-labs/account-eip6963": "2.0.9",
+    "@sophon-labs/account-message-bridge": "2.0.9",
+    "@sophon-labs/account-react": "2.0.9",
+    "@sophon-labs/account-react-native": "2.0.9"
+  },
+  "changesets": [
+    "common-zebras-hug"
+  ]
+}

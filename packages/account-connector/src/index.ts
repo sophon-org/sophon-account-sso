@@ -1,64 +1,59 @@
-import {
-  AccountServerURL,
-  type SophonNetworkType,
-} from '@sophon-labs/account-core';
-import { type Communicator, PopupCommunicator } from 'zksync-sso/communicator';
+import type { SophonNetworkType } from '@sophon-labs/account-core';
+import type { Communicator } from 'zksync-sso/communicator';
 import { zksyncSsoConnector } from 'zksync-sso/connector';
-import { createDelegateProvider as createProxyProvider } from './provider';
+import { createDelegateProvider as createProxyProvider } from './delegate-provider';
+import { paramsBuilder } from './params';
 
-interface SophonSsoConnectorOptions {
+export interface SophonConnectorOptions {
   session?: unknown;
   paymaster?: `0x${string}`;
   communicator?: Communicator;
   authServerUrl: string;
 }
 
-export const sophonSsoConnector = (
+/**
+ * Create a Sophon Account connector for wagmi
+ *
+ * @param partnerId - the partner id
+ * @param network - the network, 'mainnet' or 'testnet'
+ * @param options - the options, see {@link SophonConnectorOptions}
+ * @returns the connector function
+ */
+export const createSophonConnector = (
   partnerId: string,
   network: SophonNetworkType = 'testnet',
-  options?: SophonSsoConnectorOptions,
+  options?: SophonConnectorOptions,
 ) => {
   if (!partnerId) {
     throw new Error('partnerId is required');
   }
-  const authServerUrl = options?.authServerUrl ?? AccountServerURL[network];
-  const finalAuthServerUrl = partnerId
-    ? `${authServerUrl}/${partnerId}`
-    : authServerUrl;
-
-  const params = {
-    authServerUrl: finalAuthServerUrl,
-    metadata: {
-      name: network === 'mainnet' ? 'Sophon Account' : 'Sophon Account Test',
-      icon: '/sophon-icon.png',
-    },
-    connectorMetadata: {
-      id:
-        network === 'mainnet'
-          ? 'xyz.sophon.account'
-          : 'xyz.sophon.staging.account',
-      name: network === 'mainnet' ? 'Sophon Account' : 'Sophon Account Test',
-      icon: 'https://sophon.xyz/favicon.ico',
-      type: 'zksync-sso',
-    },
-    communicator:
-      options?.communicator ||
-      new PopupCommunicator(finalAuthServerUrl, {
-        width: 360,
-        height: 800,
-        calculatePosition(width, height) {
-          return {
-            left: window.screenX + (window.outerWidth - width) / 2,
-            top: window.screenY + (window.outerHeight - height) / 2,
-          };
-        },
-      }),
-  };
+  const params = paramsBuilder(partnerId, network, options);
 
   const connector = zksyncSsoConnector({
     ...params,
-    provider: createProxyProvider(network, params),
+    provider: createSophonProvider(partnerId, network, options),
   });
 
   return connector;
+};
+
+/**
+ * Create a Sophon Account provider for viem
+ *
+ * @param partnerId - the partner id
+ * @param network - the network, 'mainnet' or 'testnet'
+ * @param options - the options, see {@link SophonConnectorOptions}
+ * @returns the provider object
+ */
+export const createSophonProvider = (
+  partnerId: string,
+  network: SophonNetworkType,
+  options?: SophonConnectorOptions,
+) => {
+  if (!partnerId) {
+    throw new Error('partnerId is required');
+  }
+
+  const params = paramsBuilder(partnerId, network, options);
+  return createProxyProvider(network, params);
 };

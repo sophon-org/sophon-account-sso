@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 2.0.10-next.0
+
+### Patch Changes
+
+- Exposing sophon connector and sophon provider helper utility
+
 ## 2.0.9
 
 ### Patch Changes

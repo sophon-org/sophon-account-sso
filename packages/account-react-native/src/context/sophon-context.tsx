@@ -15,6 +15,7 @@ import {
 } from 'viem';
 import { sophon, sophonTestnet } from 'viem/chains';
 import { erc7846Actions } from 'viem/experimental';
+import { eip712WalletActions } from 'viem/zksync';
 import type { WalletProvider } from 'zksync-sso';
 import type { SophonJWTToken } from '@/types';
 import { SophonMainView, type SophonMainViewProps } from '../components';
@@ -147,7 +148,9 @@ export const SophonContextProvider = ({
   const walletClient = createWalletClient({
     chain: chain,
     transport: custom(provider),
-  }).extend(erc7846Actions());
+  })
+    .extend(erc7846Actions())
+    .extend(eip712WalletActions());
 
   const disconnect = useCallback(() => {
     provider?.disconnect();
