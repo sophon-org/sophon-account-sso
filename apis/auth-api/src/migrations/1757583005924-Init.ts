@@ -22,9 +22,6 @@ export class CreateSessions1700000000000 implements MigrationInterface {
 
 	public async down(q: QueryRunner): Promise<void> {
 		await q.query(`
-      DROP INDEX IF EXISTS idx_sessions_refresh_exp;
-      DROP INDEX IF EXISTS idx_sessions_aud;
-      DROP INDEX IF EXISTS idx_sessions_user;
       DROP TABLE IF EXISTS sessions;
     `);
 	}

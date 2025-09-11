@@ -1,4 +1,3 @@
-// auth.module.ts
 import { Module } from "@nestjs/common";
 import { PartnerRegistryModule } from "../partners/partner-registry.module";
 import { Session } from "../sessions/session.entity";
