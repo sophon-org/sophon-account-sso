@@ -2520,34 +2520,34 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-core@npm:2.0.7-next.7":
-  version: 2.0.7-next.7
-  resolution: "@sophon-labs/account-core@npm:2.0.7-next.7"
+"@sophon-labs/account-core@npm:2.0.7":
+  version: 2.0.7
+  resolution: "@sophon-labs/account-core@npm:2.0.7"
   dependencies:
     text-encoding-polyfill: "npm:^0.6.7"
   peerDependencies:
     viem: ">=2.21.0"
-  checksum: 10c0/a104990d5c9eb9ba47f98194c19e4db5e4d54085420b861d837bbd2f1b1b4b2f7b5ef9a1d55928118b14a1ed903527718000e6bd3ea55cf4add5237f4b9252d4
+  checksum: 10c0/275daa51e603a7f91067401e518b878623f8b4f4b21e625c0c75118341b9101f75ba62474578cc193f3995c5fd76b52f111cb161c73fa513407c33c5617dd89b
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-message-bridge@npm:2.0.7-next.7":
-  version: 2.0.7-next.7
-  resolution: "@sophon-labs/account-message-bridge@npm:2.0.7-next.7"
+"@sophon-labs/account-message-bridge@npm:2.0.7":
+  version: 2.0.7
+  resolution: "@sophon-labs/account-message-bridge@npm:2.0.7"
   dependencies:
     eventemitter3: "npm:5.0.1"
   peerDependencies:
     react-native-webview: ">=13.12.5"
-  checksum: 10c0/c6e5b7eb5ac5a718cd59e85881670c0b965f10dc62650d44b7d0e944d1f39cf0244357609b4420ca031e13da39a41ef4fd5fbe124f2486238e1d8a00a6f4b707
+  checksum: 10c0/652f1f4bfdf22c0b9beea5d79f2e620d52891f9937ad7279e4bad596df2a2c6bef25197ca944bf5163c4af714ad2c092f2a8dc0aa1a8c1211e69d835da14d54b
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-react-native@npm:2.0.7-next.7":
-  version: 2.0.7-next.7
-  resolution: "@sophon-labs/account-react-native@npm:2.0.7-next.7"
+"@sophon-labs/account-react-native@npm:2.0.7":
+  version: 2.0.7
+  resolution: "@sophon-labs/account-react-native@npm:2.0.7"
   dependencies:
-    "@sophon-labs/account-core": "npm:2.0.7-next.7"
-    "@sophon-labs/account-message-bridge": "npm:2.0.7-next.7"
+    "@sophon-labs/account-core": "npm:2.0.7"
+    "@sophon-labs/account-message-bridge": "npm:2.0.7"
     eventemitter3: "npm:5.0.1"
     text-encoding-polyfill: "npm:^0.6.7"
     zksync-sso: "github:sophon-org/zksync-sso-preview#20250901_1"
@@ -2558,7 +2558,7 @@ __metadata:
     react-native: ">=0.76.6"
     react-native-webview: ">=13.12.5"
     viem: ">=2.21.0"
-  checksum: 10c0/9850ea7fd4cd5be9fe59723b081cebf2fe87cfe30f372254e6ec57f3ac9a5ab35a24675ae41ee7676f82e92911679ca6b47b2579b580140656b7b097c01d5728
+  checksum: 10c0/1b9a2526261b8b9ba8949323ee25c18737b1775238020f50f0f60e94c8951a20773ab692f0f8ccbbdc00144a504f31e3d808da6cd15aa087254bf6bd348e4789
   languageName: node
   linkType: hard
 
@@ -2574,7 +2574,7 @@ __metadata:
     "@react-navigation/native": "npm:^7.1.6"
     "@simplewebauthn/browser": "npm:^13.1.2"
     "@simplewebauthn/server": "npm:^13.1.2"
-    "@sophon-labs/account-react-native": "npm:2.0.7-next.7"
+    "@sophon-labs/account-react-native": "npm:2.0.7"
     "@types/react": "npm:~19.0.10"
     class-variance-authority: "npm:^0.7.1"
     clsx: "npm:^2.1.1"

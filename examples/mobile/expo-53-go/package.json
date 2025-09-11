@@ -24,7 +24,7 @@
     "@react-navigation/native": "^7.1.6",
     "@simplewebauthn/browser": "^13.1.2",
     "@simplewebauthn/server": "^13.1.2",
-    "@sophon-labs/account-react-native": "2.0.7-next.7",
+    "@sophon-labs/account-react-native": "2.0.7",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "expo": "~53.0.22",

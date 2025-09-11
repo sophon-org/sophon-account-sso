@@ -21,7 +21,7 @@ export const useSophonToken = () => {
     return AccountAuthAPIURL[network];
   }, [network]);
 
-  const refreshAccessToken = useCallback(
+  const getAccessToken = useCallback(
     async (
       forceRefresh = false,
       baseURL?: string,
@@ -75,14 +75,6 @@ export const useSophonToken = () => {
     ],
   );
 
-  const getAccessToken = useCallback(
-    (forceRefresh = false, baseURL?: string): SophonJWTToken | null => {
-      refreshAccessToken(forceRefresh, baseURL);
-      return accessToken;
-    },
-    [accessToken, refreshAccessToken],
-  );
-
   const getMe = useCallback(
     async (baseURL?: string) => {
       if (!accessToken) {
@@ -102,7 +94,6 @@ export const useSophonToken = () => {
   );
 
   return {
-    refreshAccessToken,
     getAccessToken,
     getMe,
   };
