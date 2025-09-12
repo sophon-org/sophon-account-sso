@@ -1,5 +1,17 @@
 # @sophon-labs/account-eip6963
 
+## 2.0.10-next.8
+
+### Patch Changes
+
+- Adding addEventListener check
+
+## 2.0.10-next.7
+
+### Patch Changes
+
+- Fixing problem with wagmi chained calls
+
 ## 2.0.10-next.6
 
 ### Patch Changes

@@ -1,7 +1,7 @@
 {
   "name": "@sophon-labs/account-api-sdk",
   "description": "API SDK wrapper for the Sophon Account",
-  "version": "2.0.10-next.6",
+  "version": "2.0.10-next.8",
   "license": "MIT",
   "author": "Sophon Team",
   "sideEffects": false,
@@ -33,7 +33,7 @@
     "test:ci": "vitest --watch false --passWithNoTests --coverage"
   },
   "dependencies": {
-    "@sophon-labs/account-core": "2.0.10-next.6",
+    "@sophon-labs/account-core": "2.0.10-next.8",
     "axios": "^1.11.0",
     "jsonwebtoken": "^9.0.2",
     "jwks-rsa": "^3.2.0"

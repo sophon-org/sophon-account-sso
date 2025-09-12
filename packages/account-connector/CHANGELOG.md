@@ -1,5 +1,23 @@
 # @sophon-labs/account-connector
 
+## 2.0.10-next.8
+
+### Patch Changes
+
+- Adding addEventListener check
+- Updated dependencies
+  - @sophon-labs/account-provider@2.0.10-next.8
+  - @sophon-labs/account-core@2.0.10-next.8
+
+## 2.0.10-next.7
+
+### Patch Changes
+
+- Fixing problem with wagmi chained calls
+- Updated dependencies
+  - @sophon-labs/account-provider@2.0.10-next.7
+  - @sophon-labs/account-core@2.0.10-next.7
+
 ## 2.0.10-next.6
 
 ### Patch Changes
