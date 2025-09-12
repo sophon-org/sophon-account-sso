@@ -2384,35 +2384,71 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-communicator@link:../../../packages/account-communicator::locator=%40sophon-labs%2Fexamples-mobile-expo-web%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@sophon-labs/account-communicator@link:../../../packages/account-communicator::locator=%40sophon-labs%2Fexamples-mobile-expo-web%40workspace%3A."
+"@sophon-labs/account-communicator@npm:2.0.10-next.3":
+  version: 2.0.10-next.3
+  resolution: "@sophon-labs/account-communicator@npm:2.0.10-next.3"
+  peerDependencies:
+    typescript: ^5.0.0
+  checksum: 10c0/212dbf00ba1d89816e0a2d0d4eb28182c100df424ba88aff98c4f4a8868297765cdeebb088d721052de99bd7ed7965d99fb30af8445e340e93b6938ff1538e25
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"@sophon-labs/account-core@link:../../../packages/account-core::locator=%40sophon-labs%2Fexamples-mobile-expo-web%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@sophon-labs/account-core@link:../../../packages/account-core::locator=%40sophon-labs%2Fexamples-mobile-expo-web%40workspace%3A."
+"@sophon-labs/account-core@npm:2.0.10-next.3":
+  version: 2.0.10-next.3
+  resolution: "@sophon-labs/account-core@npm:2.0.10-next.3"
+  dependencies:
+    text-encoding-polyfill: "npm:^0.6.7"
+  peerDependencies:
+    viem: ">=2.21.0"
+  checksum: 10c0/ddff63161df42afd5d75a4d5322f309800a043a529b4a6ccf8be7412e523d56de27e2be89438c0705bd8e4717db026e95662f067e1dc99775100b27f2e02e669
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"@sophon-labs/account-message-bridge@link:../../../packages/account-message-bridge::locator=%40sophon-labs%2Fexamples-mobile-expo-web%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@sophon-labs/account-message-bridge@link:../../../packages/account-message-bridge::locator=%40sophon-labs%2Fexamples-mobile-expo-web%40workspace%3A."
+"@sophon-labs/account-message-bridge@npm:2.0.10-next.3":
+  version: 2.0.10-next.3
+  resolution: "@sophon-labs/account-message-bridge@npm:2.0.10-next.3"
+  dependencies:
+    eventemitter3: "npm:5.0.1"
+  peerDependencies:
+    react-native-webview: ">=13.12.5"
+  checksum: 10c0/b954e68aecd54492098809546358b27eef05ab2d605683133b7fabc3c1f4e45f71a0dc276f7e4212e01bc92a92074c8c4cecf439db6e87050f4b90a15ad118f5
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"@sophon-labs/account-provider@link:../../../packages/account-provider::locator=%40sophon-labs%2Fexamples-mobile-expo-web%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@sophon-labs/account-provider@link:../../../packages/account-provider::locator=%40sophon-labs%2Fexamples-mobile-expo-web%40workspace%3A."
+"@sophon-labs/account-provider@npm:2.0.10-next.3":
+  version: 2.0.10-next.3
+  resolution: "@sophon-labs/account-provider@npm:2.0.10-next.3"
+  dependencies:
+    "@sophon-labs/account-communicator": "npm:2.0.10-next.3"
+    "@sophon-labs/account-core": "npm:2.0.10-next.3"
+    eventemitter3: "npm:^5.0.1"
+    json-rpc-2.0: "npm:^1.7.1"
+  peerDependencies:
+    typescript: ^5.0.0
+  checksum: 10c0/98e87141d1386c4a2c538b68ddd8a84afd9230ed3d5e1cb7d2ecf431b47ba84f32f74839b27e7c0e24f31f25f8c61357c69c55d87eb2dbc4cd61afd1440d2a12
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"@sophon-labs/account-react-native@link:../../../packages/account-react-native::locator=%40sophon-labs%2Fexamples-mobile-expo-web%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@sophon-labs/account-react-native@link:../../../packages/account-react-native::locator=%40sophon-labs%2Fexamples-mobile-expo-web%40workspace%3A."
+"@sophon-labs/account-react-native@npm:2.0.10-next.3":
+  version: 2.0.10-next.3
+  resolution: "@sophon-labs/account-react-native@npm:2.0.10-next.3"
+  dependencies:
+    "@sophon-labs/account-communicator": "npm:2.0.10-next.3"
+    "@sophon-labs/account-core": "npm:2.0.10-next.3"
+    "@sophon-labs/account-message-bridge": "npm:2.0.10-next.3"
+    "@sophon-labs/account-provider": "npm:2.0.10-next.3"
+    eventemitter3: "npm:5.0.1"
+    text-encoding-polyfill: "npm:^0.6.7"
+  peerDependencies:
+    expo-network: "*"
+    expo-secure-store: "*"
+    expo-standard-web-crypto: "*"
+    react-native: ">=0.76.6"
+    react-native-webview: ">=13.12.5"
+    viem: ">=2.21.0"
+  checksum: 10c0/d1bbaf36af302ef88e5fddef659ddb99269d2461aadeba014263e13b18f00cd48f5d3927aa286624d9bc8410c7bf85d4a97aceb264e09a0f4d8bfbc72545f403
   languageName: node
-  linkType: soft
+  linkType: hard
 
 "@sophon-labs/examples-mobile-expo-web@workspace:.":
   version: 0.0.0-use.local
@@ -2424,11 +2460,7 @@ __metadata:
     "@react-navigation/bottom-tabs": "npm:^7.3.10"
     "@react-navigation/elements": "npm:^2.3.8"
     "@react-navigation/native": "npm:^7.1.6"
-    "@sophon-labs/account-communicator": "link:../../../packages/account-communicator"
-    "@sophon-labs/account-core": "link:../../../packages/account-core"
-    "@sophon-labs/account-message-bridge": "link:../../../packages/account-message-bridge"
-    "@sophon-labs/account-provider": "link:../../../packages/account-provider"
-    "@sophon-labs/account-react-native": "link:../../../packages/account-react-native"
+    "@sophon-labs/account-react-native": "npm:2.0.10-next.3"
     "@types/react": "npm:~19.0.10"
     class-variance-authority: "npm:^0.7.1"
     clsx: "npm:^2.1.1"
@@ -5111,7 +5143,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eventemitter3@npm:5.0.1":
+"eventemitter3@npm:5.0.1, eventemitter3@npm:^5.0.1":
   version: 5.0.1
   resolution: "eventemitter3@npm:5.0.1"
   checksum: 10c0/4ba5c00c506e6c786b4d6262cfbce90ddc14c10d4667e5c83ae993c9de88aa856033994dd2b35b83e8dc1170e224e66a319fa80adc4c32adcd2379bbc75da814
@@ -6788,6 +6820,13 @@ __metadata:
   version: 2.3.1
   resolution: "json-parse-even-better-errors@npm:2.3.1"
   checksum: 10c0/140932564c8f0b88455432e0f33c4cb4086b8868e37524e07e723f4eaedb9425bdc2bafd71bd1d9765bd15fd1e2d126972bc83990f55c467168c228c24d665f3
+  languageName: node
+  linkType: hard
+
+"json-rpc-2.0@npm:^1.7.1":
+  version: 1.7.1
+  resolution: "json-rpc-2.0@npm:1.7.1"
+  checksum: 10c0/260f573fd2f38c04bce63076b9293ed0c222c10bff12dd14fed8b926555af6d390c4bcc888b01dd42f28a8759056b8e4420b9f65f09e64d12d042a541fd88695
   languageName: node
   linkType: hard
 
@@ -10024,6 +10063,13 @@ __metadata:
     glob: "npm:^7.1.4"
     minimatch: "npm:^3.0.4"
   checksum: 10c0/019d33d81adff3f9f1bfcff18125fb2d3c65564f437d9be539270ee74b994986abb8260c7c2ce90e8f30162178b09dbbce33c6389273afac4f36069c48521f57
+  languageName: node
+  linkType: hard
+
+"text-encoding-polyfill@npm:^0.6.7":
+  version: 0.6.7
+  resolution: "text-encoding-polyfill@npm:0.6.7"
+  checksum: 10c0/5486a2320e2384b0153d2835a8e6e3a643ff28fcd05c2e9fa5d69c7879a2b8fdb7faa44708792a9205f074f10606ee3b6470c8f3f4da1be90a014b79057008d0
   languageName: node
   linkType: hard
 

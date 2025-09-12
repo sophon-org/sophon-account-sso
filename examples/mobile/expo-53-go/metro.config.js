@@ -10,18 +10,18 @@ const accountCommunicatorDir = path.resolve(__dirname, "../../../packages/accoun
 const accountProviderDir = path.resolve(__dirname, "../../../packages/account-provider");
 
 const extraNodeModules = {
-  "@sophon-labs/account-message-bridge": accountMessageBridgeDir,
-  "@sophon-labs/account-react-native": accountReactNativeDir,
-  "@sophon-labs/account-core": accountCoreDir,
-  "@sophon-labs/account-communicator": accountCommunicatorDir,
-  "@sophon-labs/account-provider": accountProviderDir,
+  // "@sophon-labs/account-message-bridge": accountMessageBridgeDir,
+  // "@sophon-labs/account-react-native": accountReactNativeDir,
+  // "@sophon-labs/account-core": accountCoreDir,
+  // "@sophon-labs/account-communicator": accountCommunicatorDir,
+  // "@sophon-labs/account-provider": accountProviderDir,
 };
 const watchFolders = [
-  accountMessageBridgeDir,
-  accountReactNativeDir,
-  accountCoreDir,
-  accountCommunicatorDir,
-  accountProviderDir,
+  // accountMessageBridgeDir,
+  // accountReactNativeDir,
+  // accountCoreDir,
+  // accountCommunicatorDir,
+  // accountProviderDir,
 ];
 
 const developConfig = {

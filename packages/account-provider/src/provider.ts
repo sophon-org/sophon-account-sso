@@ -35,7 +35,8 @@ export function createSophonEIP1193Provider(
   const authServerUrl = customAuthServerUrl ?? AccountServerURL[network];
   const serverUrl = partnerId ? `${authServerUrl}/${partnerId}` : authServerUrl;
 
-  let storage = !isSSR() ? localStorage : NoopStorage;
+  let storage =
+    typeof localStorage !== 'undefined' ? localStorage : NoopStorage;
   if (customStorage) {
     storage = customStorage;
   }
