@@ -6,29 +6,36 @@ import {
 export type JwtSecrets = {
 	access: { kid: string; privateKeyPem: string; publicKeyPem: string };
 	refresh: { kid: string; privateKeyPem: string; publicKeyPem: string };
+	databaseUrl: string;
+	dynamicToken: string;
 };
 
-const sm = new SecretsManagerClient({ region: process.env.AWS_REGION });
+const sm = new SecretsManagerClient({
+	region: process.env.AWS_REGION,
+	credentials: {
+		accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
+		secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
+	},
+});
 const stage = (
 	process.env.APP_ENV ??
 	process.env.NODE_ENV ??
-	"development"
+	"staging"
 ).toLowerCase();
-const derivedId =
-	stage === "production"
-		? "sophon/prod/auth/jwt-keys"
-		: stage === "staging"
-			? "sophon/staging/auth/jwt-keys"
-			: "sophon/dev/auth/jwt-keys";
 
-const SECRET_ID = process.env.SECRET_ID_JWT_KEYS || derivedId;
+const DEFAULT_SECRET_ID = `sophon/${stage}/auth`;
+
+const SECRET_ID = process.env.SECRET_ID_JWT_KEYS || DEFAULT_SECRET_ID;
 const CACHE_TTL_MS = Number(process.env.SECRETS_CACHE_TTL_MS ?? 300000);
 
-let cache: { v: JwtSecrets; t: number } | null = null;
-const norm = (p: string) => (p.includes("\\n") ? p.replace(/\\n/g, "\n") : p);
+let cache: { value: JwtSecrets; timestamp: number } | null = null;
+
+const normalize = (value: string) =>
+	value.includes("\\n") ? value.replace(/\\n/g, "\n") : value;
 
 export async function loadJwtSecrets(): Promise<JwtSecrets> {
-	if (cache && Date.now() - cache.t < CACHE_TTL_MS) return cache.v;
+	console.log("loadJwtSecrets");
+	if (cache && Date.now() - cache.timestamp < CACHE_TTL_MS) return cache.value;
 
 	const res = await sm.send(
 		new GetSecretValueCommand({
@@ -41,12 +48,24 @@ export async function loadJwtSecrets(): Promise<JwtSecrets> {
 		(res.SecretBinary ? Buffer.from(res.SecretBinary).toString("utf-8") : "");
 	if (!str) throw new Error("SecretString is empty");
 
-	const s = JSON.parse(str) as JwtSecrets;
-	s.access.privateKeyPem = norm(s.access.privateKeyPem);
-	s.access.publicKeyPem = norm(s.access.publicKeyPem);
-	s.refresh.privateKeyPem = norm(s.refresh.privateKeyPem);
-	s.refresh.publicKeyPem = norm(s.refresh.publicKeyPem);
+	const remoteSecret = JSON.parse(str);
 
-	cache = { v: s, t: Date.now() };
-	return s;
+	const secret: JwtSecrets = {
+		access: {
+			kid: remoteSecret.JWT_ACCESS_KEY_ID,
+			privateKeyPem: normalize(remoteSecret.JWT_ACCESS_PRIVATE_KEY),
+			publicKeyPem: normalize(remoteSecret.JWT_ACCESS_PUBLIC_KEY),
+		},
+		refresh: {
+			kid: remoteSecret.JWT_REFRESH_KEY_ID,
+			privateKeyPem: normalize(remoteSecret.JWT_ACCESS_PRIVATE_KEY),
+			publicKeyPem: normalize(remoteSecret.JWT_ACCESS_PUBLIC_KEY),
+		},
+		databaseUrl: remoteSecret.DATABASE_URL,
+		dynamicToken: remoteSecret.DYNAMICAUTH_API_TOKEN,
+	};
+
+	cache = { value: secret, timestamp: Date.now() };
+
+	return secret;
 }
