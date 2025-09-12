@@ -115,8 +115,9 @@ export class AuthController {
 				refreshToken,
 				refreshTokenExpiresAt,
 			});
-		} catch (_err: unknown) {
-			throw new UnauthorizedException({ error: "invalid refresh token" });
+		} catch (err) {
+			console.error(err);
+			throw new UnauthorizedException({ error: "Unable to refresh token" });
 		}
 	}
 
