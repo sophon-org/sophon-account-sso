@@ -12,6 +12,7 @@ import { Session } from "../sessions/session.entity";
 
 import { PartnerRegistryService } from "../partners/partner-registry.service";
 import { JwtKeysModule } from "../aws/jwt-keys.module"; // your keys module
+import { MeService } from "./me.service";
 
 @Module({
 	imports: [
@@ -20,7 +21,7 @@ import { JwtKeysModule } from "../aws/jwt-keys.module"; // your keys module
 		JwtKeysModule,
 	],
 	controllers: [AuthController],
-	providers: [AuthService, SessionsRepository, PartnerRegistryService],
+	providers: [AuthService, SessionsRepository, PartnerRegistryService, MeService],
 	exports: [AuthService],
 })
 export class AuthModule {}
