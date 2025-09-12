@@ -1,7 +1,9 @@
+// src/auth/auth.service.ts
 import { randomUUID } from "node:crypto";
 import {
 	BadRequestException,
 	ForbiddenException,
+	Inject,
 	Injectable,
 	UnauthorizedException,
 } from "@nestjs/common";
@@ -15,7 +17,6 @@ import jwt, {
 import type { TypedDataDefinition } from "viem";
 import { sophon, sophonTestnet } from "viem/chains";
 
-import { getEnv, getJwtKid } from "../config/env";
 import {
 	type PermissionAllowedField,
 	packScope,
@@ -31,6 +32,8 @@ import {
 } from "../utils/jwt";
 import { verifyEIP1271Signature } from "../utils/signature";
 import type { AccessTokenPayload, RefreshTokenPayload } from "./types";
+import { ConfigType } from "@nestjs/config";
+import { authConfig } from "../config/auth.config";
 
 type NoncePayload = JwtPayload & {
 	address: string;
@@ -47,11 +50,10 @@ export class AuthService {
 	constructor(
 		private readonly partnerRegistry: PartnerRegistryService,
 		private readonly sessions: SessionsRepository,
-	) {
-		this.E = getEnv();
-	}
 
-	private readonly E: ReturnType<typeof getEnv>;
+		@Inject(authConfig.KEY)
+		private readonly auth: ConfigType<typeof authConfig>,
+	) {}
 
 	private mapJwtError(e: unknown, ctx: "nonce" | "access" | "refresh"): never {
 		if (e instanceof TokenExpiredError) {
@@ -88,11 +90,11 @@ export class AuthService {
 				await getPrivateKey(),
 				{
 					algorithm: "RS256",
-					keyid: getJwtKid(),
-					issuer: this.E.NONCE_ISSUER,
+					keyid: this.auth.jwtKid,
+					issuer: this.auth.nonceIssuer,
 					audience,
 					subject: address,
-					expiresIn: this.E.NONCE_TTL_S,
+					expiresIn: this.auth.nonceTtlS,
 				},
 			);
 		} catch (e) {
@@ -110,7 +112,7 @@ export class AuthService {
 	): Promise<string> {
 		const expectedAud = String(typedData.message.audience);
 		await this.partnerRegistry.assertExists(expectedAud);
-		const expectedIss = this.E.NONCE_ISSUER;
+		const expectedIss = this.auth.nonceIssuer;
 
 		let payload!: NoncePayload;
 		try {
@@ -120,6 +122,7 @@ export class AuthService {
 				issuer: expectedIss,
 			}) as NoncePayload;
 		} catch (e) {
+			// eslint-disable-next-line no-console
 			console.error(e);
 			this.mapJwtError(e, "nonce");
 		}
@@ -158,7 +161,7 @@ export class AuthService {
 		const scope = packScope(unpackScope(payload.scope ?? ""));
 
 		const iat = Math.floor(Date.now() / 1000);
-		const expiresInSeconds = this.E.ACCESS_TTL_S;
+		const expiresInSeconds = this.auth.accessTtlS;
 
 		try {
 			return jwt.sign(
@@ -171,8 +174,8 @@ export class AuthService {
 				await getPrivateKey(),
 				{
 					algorithm: "RS256",
-					keyid: getJwtKid(),
-					issuer: this.E.JWT_ISSUER,
+					keyid: this.auth.jwtKid,
+					issuer: this.auth.jwtIssuer,
 					audience: payload.aud,
 					expiresIn: expiresInSeconds,
 				},
@@ -198,7 +201,7 @@ export class AuthService {
 	}> {
 		const expectedAud = String(typedData.message.audience);
 		await this.partnerRegistry.assertExists(expectedAud);
-		const expectedIss = this.E.NONCE_ISSUER;
+		const expectedIss = this.auth.nonceIssuer;
 
 		let payload!: NoncePayload;
 		try {
@@ -208,6 +211,7 @@ export class AuthService {
 				issuer: expectedIss,
 			}) as NoncePayload;
 		} catch (e) {
+			// eslint-disable-next-line no-console
 			console.error(e);
 			this.mapJwtError(e, "nonce");
 		}
@@ -247,8 +251,8 @@ export class AuthService {
 
 		const sid = randomUUID();
 		const iat = Math.floor(Date.now() / 1000);
-		const accessExp = this.E.ACCESS_TTL_S;
-		const refreshExp = this.E.REFRESH_TTL_S;
+		const accessExp = this.auth.accessTtlS;
+		const refreshExp = this.auth.refreshTtlS;
 
 		const accessToken = jwt.sign(
 			{
@@ -262,8 +266,8 @@ export class AuthService {
 			await getPrivateKey(),
 			{
 				algorithm: "RS256",
-				keyid: getJwtKid(),
-				issuer: this.E.JWT_ISSUER,
+				keyid: this.auth.jwtKid,
+				issuer: this.auth.jwtIssuer,
 				audience: payload.aud,
 				expiresIn: accessExp,
 			},
@@ -283,8 +287,8 @@ export class AuthService {
 			await getRefreshPrivateKey(),
 			{
 				algorithm: "RS256",
-				keyid: this.E.REFRESH_JWT_KID,
-				issuer: this.E.REFRESH_ISSUER,
+				keyid: this.auth.refreshJwtKid,
+				issuer: this.auth.refreshIssuer,
 				audience: payload.aud,
 				expiresIn: refreshExp,
 			},
@@ -316,9 +320,9 @@ export class AuthService {
 			httpOnly: true,
 			secure: true,
 			sameSite: "lax" as const,
-			domain: this.E.COOKIE_DOMAIN,
+			domain: this.auth.cookieDomain ?? undefined,
 			path: "/",
-			maxAge: this.E.COOKIE_ACCESS_MAX_AGE_S * 1000,
+			maxAge: this.auth.cookieAccessMaxAgeS * 1000,
 		};
 	}
 
@@ -327,9 +331,9 @@ export class AuthService {
 			httpOnly: true,
 			secure: true,
 			sameSite: "strict" as const,
-			domain: this.E.COOKIE_DOMAIN,
+			domain: this.auth.cookieDomain ?? undefined,
 			path: "/auth/refresh",
-			maxAge: this.E.COOKIE_REFRESH_MAX_AGE_S * 1000,
+			maxAge: this.auth.cookieRefreshMaxAgeS * 1000,
 		};
 	}
 
@@ -343,7 +347,7 @@ export class AuthService {
 			this.mapJwtError(e, "access");
 		}
 
-		if (payload.iss !== this.E.JWT_ISSUER) {
+		if (payload.iss !== this.auth.jwtIssuer) {
 			throw new UnauthorizedException("invalid token issuer");
 		}
 
@@ -372,7 +376,7 @@ export class AuthService {
 		try {
 			r = jwt.verify(refreshToken, await getRefreshPublicKey(), {
 				algorithms: ["RS256"],
-				issuer: this.E.REFRESH_ISSUER,
+				issuer: this.auth.refreshIssuer,
 			}) as RefreshTokenPayload;
 		} catch {
 			return;
@@ -394,9 +398,10 @@ export class AuthService {
 		try {
 			r = jwt.verify(refreshToken, await getRefreshPublicKey(), {
 				algorithms: ["RS256"],
-				issuer: this.E.REFRESH_ISSUER,
+				issuer: this.auth.refreshIssuer,
 			}) as RefreshTokenPayload;
 		} catch (e) {
+			// eslint-disable-next-line no-console
 			console.error(e);
 			this.mapJwtError(e, "refresh");
 		}
@@ -419,8 +424,8 @@ export class AuthService {
 		}
 
 		const iat = Math.floor(Date.now() / 1000);
-		const accessExp = this.E.ACCESS_TTL_S;
-		const refreshExp = this.E.REFRESH_TTL_S;
+		const accessExp = this.auth.accessTtlS;
+		const refreshExp = this.auth.refreshTtlS;
 
 		const newAccess = jwt.sign(
 			{
@@ -434,8 +439,8 @@ export class AuthService {
 			await getPrivateKey(),
 			{
 				algorithm: "RS256",
-				keyid: getJwtKid(),
-				issuer: this.E.JWT_ISSUER,
+				keyid: this.auth.jwtKid,
+				issuer: this.auth.jwtIssuer,
 				audience: r.aud,
 				expiresIn: accessExp,
 			},
@@ -456,8 +461,8 @@ export class AuthService {
 			await getRefreshPrivateKey(),
 			{
 				algorithm: "RS256",
-				keyid: this.E.REFRESH_JWT_KID,
-				issuer: this.E.REFRESH_ISSUER,
+				keyid: this.auth.refreshJwtKid,
+				issuer: this.auth.refreshIssuer,
 				audience: r.aud,
 				expiresIn: refreshExp,
 			},
@@ -467,7 +472,7 @@ export class AuthService {
 		const newRefreshExpiresAt =
 			decoded?.exp != null
 				? new Date(decoded.exp * 1000)
-				: new Date((iat + this.E.REFRESH_TTL_S) * 1000);
+				: new Date((iat + this.auth.refreshTtlS) * 1000);
 
 		await this.sessions.rotateRefreshJti({
 			sid: r.sid,

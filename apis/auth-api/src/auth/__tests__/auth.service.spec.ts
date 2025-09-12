@@ -1,14 +1,17 @@
 import { Test } from "@nestjs/testing";
+import { ConfigModule } from "@nestjs/config";
 import jwt from "jsonwebtoken";
 import { TypedDataDefinition } from "viem";
 import { PartnerRegistryService } from "../../partners/partner-registry.service";
 import { SessionsRepository } from "../../sessions/sessions.repository";
 import { AuthService } from "../auth.service";
+import { authConfig } from "../../config/auth.config";
 
 // --- jsonwebtoken mocks ---
 jest.mock("jsonwebtoken", () => ({
 	sign: jest.fn().mockReturnValue("mocked.token"),
 	verify: jest.fn(),
+	decode: jest.fn(),
 }));
 
 // --- signature verifier mock ---
@@ -16,37 +19,36 @@ jest.mock("../../utils/signature", () => ({
 	verifyEIP1271Signature: jest.fn().mockResolvedValue(true),
 }));
 
-// --- key/env mocks ---
+// --- key mocks ---
 jest.mock("../../utils/jwt", () => ({
 	getPrivateKey: jest.fn().mockResolvedValue("PRIVATE_KEY"),
 	getPublicKey: jest.fn().mockResolvedValue("PUBLIC_KEY"),
+	getRefreshPrivateKey: jest.fn().mockResolvedValue("R_PRIVATE_KEY"),
+	getRefreshPublicKey: jest.fn().mockResolvedValue("R_PUBLIC_KEY"),
 }));
 
-jest.mock("../../config/env", () => {
-	const env = {
-		ACCESS_TTL_S: 60 * 60 * 3,
-		REFRESH_TTL_S: 60 * 60 * 24 * 30,
-		NONCE_TTL_S: 600,
-		COOKIE_ACCESS_MAX_AGE_S: 60 * 60 * 3,
-		COOKIE_REFRESH_MAX_AGE_S: 60 * 60 * 24 * 30,
-		JWT_ISSUER: "https://auth.example.com",
-		NONCE_ISSUER: "https://auth.example.com",
-		REFRESH_ISSUER: "https://auth.example.com",
-		COOKIE_DOMAIN: "localhost",
-		REFRESH_JWT_KID: "test-refresh-kid",
-		COOKIE_SAME_SITE: "lax",
-	};
-	return {
-		getJwtKid: jest.fn().mockReturnValue("test-kid"),
-		JWT_ISSUER: env.JWT_ISSUER,
-		JWT_AUDIENCE: "example-client",
-		ALLOWED_AUDIENCES: ["sophon-web", "sophon-admin", "partner-x"],
-		getEnv: jest.fn().mockReturnValue(env),
-	};
-});
+const MOCK_AUTH = {
+	accessTtlS: 60 * 60 * 3,
+	refreshTtlS: 60 * 60 * 24 * 30,
+	nonceTtlS: 600,
+
+	jwtKid: "test-kid",
+	jwtIssuer: "https://auth.example.com",
+	nonceIssuer: "https://auth.example.com",
+	refreshIssuer: "https://auth.example.com",
+	refreshJwtKid: "test-refresh-kid",
+
+	cookieDomain: "localhost",
+	cookieAccessMaxAgeS: 60 * 60 * 3,
+	cookieRefreshMaxAgeS: 60 * 60 * 24 * 30,
+
+	jwtAudience: "example-client",
+	partnerCdn: "https://cdn.sophon.xyz/partners/sdk",
+} as const;
 
 describe("AuthService", () => {
 	let service: AuthService;
+
 	const partnerRegistryMock = {
 		assertExists: jest.fn().mockResolvedValue(undefined),
 		exists: jest.fn().mockResolvedValue(true),
@@ -62,12 +64,16 @@ describe("AuthService", () => {
 
 	beforeEach(async () => {
 		const module = await Test.createTestingModule({
+			imports: [ConfigModule.forFeature(authConfig)],
 			providers: [
 				AuthService,
 				{ provide: PartnerRegistryService, useValue: partnerRegistryMock },
 				{ provide: SessionsRepository, useValue: sessionsRepositoryMock },
 			],
-		}).compile();
+		})
+			.overrideProvider(authConfig.KEY)
+			.useValue(MOCK_AUTH)
+			.compile();
 
 		service = module.get(AuthService);
 		jest.clearAllMocks();
@@ -98,7 +104,7 @@ describe("AuthService", () => {
 				issuer: "https://auth.example.com",
 				audience: "sophon-web",
 				subject: "0x1234567890abcdef1234567890abcdef12345678",
-				expiresIn: 600, // NONCE_TTL_S default
+				expiresIn: 600,
 			}),
 		);
 	});
@@ -108,7 +114,7 @@ describe("AuthService", () => {
 			nonce: "expected-nonce",
 			address: "0x1234567890abcdef1234567890abcdef12345678",
 			aud: "sophon-web",
-			iss: process.env.NONCE_ISSUER,
+			iss: MOCK_AUTH.nonceIssuer,
 			scope: "email x",
 		});
 
@@ -138,7 +144,7 @@ describe("AuthService", () => {
 			nonce: "anything-here",
 			address: "0x1234567890abcdef1234567890abcdef12345678",
 			aud: "sophon-web",
-			iss: process.env.NONCE_ISSUER,
+			iss: MOCK_AUTH.nonceIssuer,
 			scope: "email x",
 		});
 

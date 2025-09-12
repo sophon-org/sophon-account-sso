@@ -1,4 +1,3 @@
-// utils/jwt.ts
 import { createPrivateKey, createPublicKey, type KeyObject } from "node:crypto";
 import { loadJwtSecrets } from "../aws/secrets-jwt";
 

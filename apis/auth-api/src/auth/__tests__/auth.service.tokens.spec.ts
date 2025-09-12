@@ -4,6 +4,8 @@ import type { TypedDataDefinition } from "viem";
 import { PartnerRegistryService } from "../../partners/partner-registry.service";
 import { SessionsRepository } from "../../sessions/sessions.repository";
 import { AuthService } from "../auth.service";
+import { ConfigModule } from "@nestjs/config";
+import { authConfig } from "../../config/auth.config";
 
 // --- jsonwebtoken mocks ---
 jest.mock("jsonwebtoken", () => ({
@@ -25,27 +27,21 @@ jest.mock("../../utils/jwt", () => ({
 	getRefreshPublicKey: jest.fn().mockResolvedValue("REFRESH_PUBLIC_KEY"),
 }));
 
-jest.mock("../../config/env", () => {
-	const env = {
-		ACCESS_TTL_S: 60 * 60 * 3, // 3h
-		REFRESH_TTL_S: 60 * 60 * 24 * 30, // 30d
-		NONCE_TTL_S: 600, // 10m
-		COOKIE_ACCESS_MAX_AGE_S: 60 * 60 * 3,
-		COOKIE_REFRESH_MAX_AGE_S: 60 * 60 * 24 * 30,
-		COOKIE_DOMAIN: "localhost",
-		JWT_ISSUER: "https://auth.example.com",
-		NONCE_ISSUER: "https://auth.example.com",
-		REFRESH_ISSUER: "https://auth.example.com",
-		REFRESH_JWT_KID: "test-refresh-kid",
-		JWT_KID: "test-kid",
-		JWT_AUDIENCE: "sophon-web",
-		PARTNER_CDN: "https://cdn.sophon.xyz/partners/sdk",
-	};
-	return {
-		getJwtKid: jest.fn().mockReturnValue("test-kid"),
-		getEnv: jest.fn().mockReturnValue(env),
-	};
-});
+const MOCK_AUTH = {
+	accessTtlS: 60 * 60 * 3,
+	refreshTtlS: 60 * 60 * 24 * 30,
+	nonceTtlS: 600,
+	cookieAccessMaxAgeS: 60 * 60 * 3,
+	cookieRefreshMaxAgeS: 60 * 60 * 24 * 30,
+	cookieDomain: "localhost",
+	jwtIssuer: "https://auth.example.com",
+	nonceIssuer: "https://auth.example.com",
+	refreshIssuer: "https://auth.example.com",
+	refreshJwtKid: "test-refresh-kid",
+	jwtKid: "test-kid",
+	jwtAudience: "sophon-web",
+	partnerCdn: "https://cdn.sophon.xyz/partners/sdk",
+} as const;
 
 describe("AuthService (new token features)", () => {
 	let service: AuthService;
@@ -65,12 +61,16 @@ describe("AuthService (new token features)", () => {
 
 	beforeEach(async () => {
 		const module = await Test.createTestingModule({
+			imports: [ConfigModule.forRoot({ isGlobal: false, load: [authConfig] })],
 			providers: [
 				AuthService,
 				{ provide: PartnerRegistryService, useValue: partnerRegistryMock },
 				{ provide: SessionsRepository, useValue: sessionsRepositoryMock },
 			],
-		}).compile();
+		})
+			.overrideProvider(authConfig.KEY)
+			.useValue(MOCK_AUTH)
+			.compile();
 
 		service = module.get(AuthService);
 		jest.clearAllMocks();
