@@ -34,13 +34,6 @@ export const createSophonConnector = (
   communicator?: Communicator,
 ) => {
   const authServerUrl = customAuthServerUrl ?? AccountServerURL[network];
-  console.log(
-    'createSophonConnector',
-    network,
-    partnerId,
-    authServerUrl,
-    communicator,
-  );
   let walletProvider: EIP1193Provider | undefined;
 
   let accountsChanged: Connector['onAccountsChanged'] | undefined;
@@ -150,7 +143,6 @@ export const createSophonConnector = (
 
       const provider = await this.getProvider();
       const accounts = provider.accounts();
-      console.log('accounts', accounts);
 
       const walletClient = createWalletClient({
         account: accounts[0] as Address,
