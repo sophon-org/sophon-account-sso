@@ -8,7 +8,7 @@ export const DEFAULT_UNLOAD_DELAY = 500;
 // blocked
 export const awaitForPopupUnload = (authServerUrl: string) => {
   // no need to wait for it if window is not available
-  if (isSSR()) {
+  if (!isSSR()) {
     return Promise.resolve(true);
   }
 

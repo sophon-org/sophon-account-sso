@@ -1,5 +1,13 @@
 # @sophon-labs/account-api-sdk
 
+## 2.0.10-next.6
+
+### Patch Changes
+
+- Correctly considering ssr
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.10-next.6
+
 ## 2.0.10-next.5
 
 ### Patch Changes

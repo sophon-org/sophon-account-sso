@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 2.0.10-next.6
+
+### Patch Changes
+
+- Correctly considering ssr
+
 ## 2.0.10-next.5
 
 ### Patch Changes

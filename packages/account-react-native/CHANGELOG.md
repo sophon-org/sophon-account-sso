@@ -1,5 +1,16 @@
 # @sophon-labs/account-react-native
 
+## 2.0.10-next.6
+
+### Patch Changes
+
+- Correctly considering ssr
+- Updated dependencies
+  - @sophon-labs/account-message-bridge@2.0.10-next.6
+  - @sophon-labs/account-communicator@2.0.10-next.6
+  - @sophon-labs/account-provider@2.0.10-next.6
+  - @sophon-labs/account-core@2.0.10-next.6
+
 ## 2.0.10-next.5
 
 ### Patch Changes
