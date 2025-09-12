@@ -1,6 +1,6 @@
 {
   "name": "@sophon-labs/account-communicator",
-  "version": "2.0.10-next.9",
+  "version": "2.1.0",
   "description": "Communicator interface and basic implementation for Sophon Account",
   "license": "MIT",
   "author": "Sophon Team",

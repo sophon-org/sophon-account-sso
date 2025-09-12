@@ -1,3 +1,3 @@
-# @sophon-labs/account-provider
+# @sophon-labs/account-communicator
 
-Implementation of the [EIP-1193](https://eips.ethereum.org/EIPS/eip-1193) standard (Ethereum Provider) for Sophon Account.
+Basic implementation of popup communication.

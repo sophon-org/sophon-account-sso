@@ -1,92 +1,10 @@
 # @sophon-labs/account-connector
 
-## 2.0.10-next.9
+## 2.1.0
 
-### Patch Changes
+### Minor Changes
 
-- Error checking on react native
-- Updated dependencies
-  - @sophon-labs/account-provider@2.0.10-next.9
-  - @sophon-labs/account-core@2.0.10-next.9
-
-## 2.0.10-next.8
-
-### Patch Changes
-
-- Adding addEventListener check
-- Updated dependencies
-  - @sophon-labs/account-provider@2.0.10-next.8
-  - @sophon-labs/account-core@2.0.10-next.8
-
-## 2.0.10-next.7
-
-### Patch Changes
-
-- Fixing problem with wagmi chained calls
-- Updated dependencies
-  - @sophon-labs/account-provider@2.0.10-next.7
-  - @sophon-labs/account-core@2.0.10-next.7
-
-## 2.0.10-next.6
-
-### Patch Changes
-
-- Correctly considering ssr
-- Updated dependencies
-  - @sophon-labs/account-provider@2.0.10-next.6
-  - @sophon-labs/account-core@2.0.10-next.6
-
-## 2.0.10-next.5
-
-### Patch Changes
-
-- Fixing provider window error on react native
-- Updated dependencies
-  - @sophon-labs/account-provider@2.0.10-next.5
-  - @sophon-labs/account-core@2.0.10-next.5
-
-## 2.0.10-next.4
-
-### Patch Changes
-
-- Fixing error on react native
-- Updated dependencies
-  - @sophon-labs/account-provider@2.0.10-next.4
-  - @sophon-labs/account-core@2.0.10-next.4
-
-## 2.0.10-next.3
-
-### Patch Changes
-
-- Removing zksync-sso from core packages
-- Updated dependencies
-  - @sophon-labs/account-provider@2.0.10-next.3
-  - @sophon-labs/account-core@2.0.10-next.3
-
-## 2.0.10-next.2
-
-### Patch Changes
-
-- Simplifying connector and provider dependencies
-- Updated dependencies
-  - @sophon-labs/account-provider@2.0.10-next.2
-  - @sophon-labs/account-core@2.0.10-next.2
-
-## 2.0.10-next.1
-
-### Patch Changes
-
-- Adding webauthn as direct dependency to connector package
-- Updated dependencies
-  - @sophon-labs/account-core@2.0.10-next.1
-
-## 2.0.10-next.0
-
-### Patch Changes
-
-- Exposing sophon connector and sophon provider helper utility
-- Updated dependencies
-  - @sophon-labs/account-core@2.0.10-next.0
+- Better code structure, no requirement for zksync-sso on core packages
 
 ## 2.0.9
 
