@@ -100,6 +100,7 @@ export default function DesktopRoot({ partnerId, scopes }: DesktopRootProps) {
       <>
         <Dialog
           className="relative"
+          title={account?.address}
           dialogType="connection_authorization"
           actions={connectActions.renderActions()}
           showLegalNotice={false}
