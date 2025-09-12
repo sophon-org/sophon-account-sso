@@ -1,5 +1,14 @@
 # @sophon-labs/account-eip6963
 
+## 2.0.10-next.4
+
+### Patch Changes
+
+- Fixing error on react native
+- Updated dependencies
+  - @sophon-labs/account-provider@2.0.10-next.4
+  - @sophon-labs/account-core@2.0.10-next.4
+
 ## 2.0.10-next.3
 
 ### Patch Changes

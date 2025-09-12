@@ -1,5 +1,11 @@
 # @sophon-labs/account-eip6963
 
+## 2.0.10-next.4
+
+### Patch Changes
+
+- Fixing error on react native
+
 ## 2.0.10-next.3
 
 ### Patch Changes
