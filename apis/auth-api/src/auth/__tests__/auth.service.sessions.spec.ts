@@ -1,12 +1,13 @@
-// src/auth/__tests__/auth.service.sessions.spec.ts
 import { UnauthorizedException } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import jwt from "jsonwebtoken";
 import type { TypedDataDefinition } from "viem";
+
 import { PartnerRegistryService } from "../../partners/partner-registry.service";
 import { SessionsRepository } from "../../sessions/sessions.repository";
 import { AuthService } from "../auth.service";
 import { authConfig } from "../../config/auth.config";
+import { JwtKeysService } from "../../aws/jwt-keys.service";
 
 // ---- Mocks ----
 
@@ -22,15 +23,6 @@ jest.mock("../../utils/signature", () => ({
 	verifyEIP1271Signature: jest.fn().mockResolvedValue(true),
 }));
 
-// keys
-jest.mock("../../utils/jwt", () => ({
-	getPrivateKey: jest.fn().mockResolvedValue("PRIV"),
-	getPublicKey: jest.fn().mockResolvedValue("PUB"),
-	getRefreshPrivateKey: jest.fn().mockResolvedValue("RPRIV"),
-	getRefreshPublicKey: jest.fn().mockResolvedValue("RPUB"),
-}));
-
-// ----- Config (new) -----
 // Provide the auth config namespace directly to the testing module.
 // Shape mirrors authConfig() return (camelCase).
 const MOCK_AUTH = {
@@ -82,6 +74,15 @@ describe("AuthService (sessions + refresh)", () => {
 		revokeSid: jest.fn(),
 	};
 
+	const jwtKeysServiceMock: jest.Mocked<JwtKeysService> = {
+		getAccessPrivateKey: jest.fn().mockResolvedValue("PRIV"),
+		getAccessPublicKey: jest.fn().mockResolvedValue("PUB"),
+		getRefreshPrivateKey: jest.fn().mockResolvedValue("RPRIV"),
+		getRefreshPublicKey: jest.fn().mockResolvedValue("RPUB"),
+		getAccessKid: jest.fn().mockResolvedValue("kid"),
+		getRefreshKid: jest.fn().mockResolvedValue("rkid"),
+	} as unknown as jest.Mocked<JwtKeysService>;
+
 	const FIXED_NOW_MS = 1_700_000_000_000; // fixed now for deterministic tests
 	let dateNowSpy: jest.SpyInstance<number, []>;
 
@@ -92,6 +93,7 @@ describe("AuthService (sessions + refresh)", () => {
 				{ provide: PartnerRegistryService, useValue: partnerRegistryMock },
 				{ provide: SessionsRepository, useValue: sessionsMock },
 				{ provide: authConfig.KEY, useValue: MOCK_AUTH },
+				{ provide: JwtKeysService, useValue: jwtKeysServiceMock }, // ✅ provide mocked keys service
 			],
 		}).compile();
 

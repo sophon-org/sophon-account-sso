@@ -1,17 +1,26 @@
+// src/auth/auth.module.ts
 import { Module } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { PartnerRegistryModule } from "../partners/partner-registry.module";
-import { Session } from "../sessions/session.entity";
-import { SessionsRepository } from "../sessions/sessions.repository";
-import { AuthController } from "./auth.controller.js";
+
+import { authConfig } from "../config/auth.config";
 import { AuthService } from "./auth.service";
-import { AccessTokenGuard } from "./guards/access-token.guard";
-import { MeService } from "./me.service";
+import { AuthController } from "./auth.controller";
+
+import { SessionsRepository } from "../sessions/sessions.repository";
+import { Session } from "../sessions/session.entity";
+
+import { PartnerRegistryService } from "../partners/partner-registry.service";
+import { JwtKeysModule } from "../aws/jwt-keys.module"; // your keys module
 
 @Module({
-	imports: [PartnerRegistryModule, TypeOrmModule.forFeature([Session])],
+	imports: [
+		ConfigModule.forFeature(authConfig),
+		TypeOrmModule.forFeature([Session]),
+		JwtKeysModule,
+	],
 	controllers: [AuthController],
-	providers: [AuthService, MeService, AccessTokenGuard, SessionsRepository],
+	providers: [AuthService, SessionsRepository, PartnerRegistryService],
 	exports: [AuthService],
 })
 export class AuthModule {}

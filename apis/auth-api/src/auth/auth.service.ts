@@ -24,16 +24,11 @@ import {
 } from "../config/permission-allowed-fields";
 import { PartnerRegistryService } from "../partners/partner-registry.service";
 import { SessionsRepository } from "../sessions/sessions.repository";
-import {
-	getPrivateKey,
-	getPublicKey,
-	getRefreshPrivateKey,
-	getRefreshPublicKey,
-} from "../utils/jwt";
 import { verifyEIP1271Signature } from "../utils/signature";
 import type { AccessTokenPayload, RefreshTokenPayload } from "./types";
 import { ConfigType } from "@nestjs/config";
 import { authConfig } from "../config/auth.config";
+import { JwtKeysService } from "../aws/jwt-keys.service";
 
 type NoncePayload = JwtPayload & {
 	address: string;
@@ -50,7 +45,7 @@ export class AuthService {
 	constructor(
 		private readonly partnerRegistry: PartnerRegistryService,
 		private readonly sessions: SessionsRepository,
-
+		private readonly keys: JwtKeysService,
 		@Inject(authConfig.KEY)
 		private readonly auth: ConfigType<typeof authConfig>,
 	) {}
@@ -87,10 +82,10 @@ export class AuthService {
 					scope: packScope(fields),
 					...(userId?.trim() ? { userId: userId.trim() } : {}),
 				},
-				await getPrivateKey(),
+				await this.keys.getAccessPrivateKey(),
 				{
 					algorithm: "RS256",
-					keyid: this.auth.jwtKid,
+					keyid: await this.keys.getAccessKid(),
 					issuer: this.auth.nonceIssuer,
 					audience,
 					subject: address,
@@ -116,7 +111,7 @@ export class AuthService {
 
 		let payload!: NoncePayload;
 		try {
-			payload = jwt.verify(nonceToken, await getPublicKey(), {
+			payload = jwt.verify(nonceToken, await this.keys.getAccessPublicKey(), {
 				algorithms: ["RS256"],
 				audience: expectedAud,
 				issuer: expectedIss,
@@ -171,10 +166,10 @@ export class AuthService {
 					scope,
 					userId: payload.userId,
 				},
-				await getPrivateKey(),
+				await this.keys.getAccessPrivateKey(),
 				{
 					algorithm: "RS256",
-					keyid: this.auth.jwtKid,
+					keyid: await this.keys.getAccessKid(),
 					issuer: this.auth.jwtIssuer,
 					audience: payload.aud,
 					expiresIn: expiresInSeconds,
@@ -205,7 +200,7 @@ export class AuthService {
 
 		let payload!: NoncePayload;
 		try {
-			payload = jwt.verify(nonceToken, await getPublicKey(), {
+			payload = jwt.verify(nonceToken, await this.keys.getAccessPublicKey(), {
 				algorithms: ["RS256"],
 				audience: expectedAud,
 				issuer: expectedIss,
@@ -263,10 +258,10 @@ export class AuthService {
 				sid,
 				typ: "access",
 			},
-			await getPrivateKey(),
+			await this.keys.getAccessPrivateKey(),
 			{
 				algorithm: "RS256",
-				keyid: this.auth.jwtKid,
+				keyid: await this.keys.getAccessKid(),
 				issuer: this.auth.jwtIssuer,
 				audience: payload.aud,
 				expiresIn: accessExp,
@@ -284,10 +279,10 @@ export class AuthService {
 				jti: refreshJti,
 				typ: "refresh",
 			},
-			await getRefreshPrivateKey(),
+			await this.keys.getRefreshPrivateKey(),
 			{
 				algorithm: "RS256",
-				keyid: this.auth.refreshJwtKid,
+				keyid: await this.keys.getRefreshKid(),
 				issuer: this.auth.refreshIssuer,
 				audience: payload.aud,
 				expiresIn: refreshExp,
@@ -340,7 +335,7 @@ export class AuthService {
 	async verifyAccessToken(token: string): Promise<AccessTokenPayload> {
 		let payload!: AccessTokenPayload;
 		try {
-			payload = jwt.verify(token, await getPublicKey(), {
+			payload = jwt.verify(token, await this.keys.getAccessPublicKey(), {
 				algorithms: ["RS256"],
 			}) as AccessTokenPayload;
 		} catch (e) {
@@ -374,7 +369,7 @@ export class AuthService {
 	async revokeByRefreshToken(refreshToken: string): Promise<void> {
 		let r!: RefreshTokenPayload;
 		try {
-			r = jwt.verify(refreshToken, await getRefreshPublicKey(), {
+			r = jwt.verify(refreshToken, await this.keys.getRefreshPublicKey(), {
 				algorithms: ["RS256"],
 				issuer: this.auth.refreshIssuer,
 			}) as RefreshTokenPayload;
@@ -396,7 +391,7 @@ export class AuthService {
 	}> {
 		let r!: RefreshTokenPayload;
 		try {
-			r = jwt.verify(refreshToken, await getRefreshPublicKey(), {
+			r = jwt.verify(refreshToken, await this.keys.getRefreshPublicKey(), {
 				algorithms: ["RS256"],
 				issuer: this.auth.refreshIssuer,
 			}) as RefreshTokenPayload;
@@ -436,10 +431,10 @@ export class AuthService {
 				sid: r.sid,
 				typ: "access",
 			},
-			await getPrivateKey(),
+			await this.keys.getAccessPrivateKey(),
 			{
 				algorithm: "RS256",
-				keyid: this.auth.jwtKid,
+				keyid: await this.keys.getAccessKid(),
 				issuer: this.auth.jwtIssuer,
 				audience: r.aud,
 				expiresIn: accessExp,
@@ -458,10 +453,10 @@ export class AuthService {
 				jti: newJti,
 				typ: "refresh",
 			},
-			await getRefreshPrivateKey(),
+			await this.keys.getRefreshPrivateKey(),
 			{
 				algorithm: "RS256",
-				keyid: this.auth.refreshJwtKid,
+				keyid: await this.keys.getRefreshKid(),
 				issuer: this.auth.refreshIssuer,
 				audience: r.aud,
 				expiresIn: refreshExp,

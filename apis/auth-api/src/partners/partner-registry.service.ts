@@ -1,8 +1,4 @@
-import {
-	BadRequestException,
-	Injectable,
-	InternalServerErrorException,
-} from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
 const DEFAULT_CDN = "https://cdn.sophon.xyz/partners/sdk";
