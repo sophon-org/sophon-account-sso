@@ -301,13 +301,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@juanelas/base64@npm:^1.1.2":
-  version: 1.1.5
-  resolution: "@juanelas/base64@npm:1.1.5"
-  checksum: 10c0/b8675cc3ec7d68fbcdd19489735f52cdc875bd336bc222fd1632021eb12e0a1e846aebb8261e4f8393214ec5d62cd9e5b8b703c80e5126c5b3390b2a26d99fb2
-  languageName: node
-  linkType: hard
-
 "@napi-rs/wasm-runtime@npm:^0.2.12":
   version: 0.2.12
   resolution: "@napi-rs/wasm-runtime@npm:0.2.12"
@@ -414,41 +407,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@peculiar/asn1-ecc@npm:^2.3.13":
-  version: 2.5.0
-  resolution: "@peculiar/asn1-ecc@npm:2.5.0"
-  dependencies:
-    "@peculiar/asn1-schema": "npm:^2.5.0"
-    "@peculiar/asn1-x509": "npm:^2.5.0"
-    asn1js: "npm:^3.0.6"
-    tslib: "npm:^2.8.1"
-  checksum: 10c0/447c4a03e45ecfbd9775704d9cec594fbdb234a2280e26373284d7959c3b15a216241b7bf85262e78775dd8509689a64d7e783d44745a8b2fe68863c31315985
-  languageName: node
-  linkType: hard
-
-"@peculiar/asn1-schema@npm:^2.3.13, @peculiar/asn1-schema@npm:^2.5.0":
-  version: 2.5.0
-  resolution: "@peculiar/asn1-schema@npm:2.5.0"
-  dependencies:
-    asn1js: "npm:^3.0.6"
-    pvtsutils: "npm:^1.3.6"
-    tslib: "npm:^2.8.1"
-  checksum: 10c0/17a3a68b9ac631beeea6fa6a86b5b95e2d91602d6c477f18374beadfbc71fd4cdbec3290233bf8eae0b216595229450b3cff8ba9c7b96b4a56d57cbbd41ff62f
-  languageName: node
-  linkType: hard
-
-"@peculiar/asn1-x509@npm:^2.5.0":
-  version: 2.5.0
-  resolution: "@peculiar/asn1-x509@npm:2.5.0"
-  dependencies:
-    "@peculiar/asn1-schema": "npm:^2.5.0"
-    asn1js: "npm:^3.0.6"
-    pvtsutils: "npm:^1.3.6"
-    tslib: "npm:^2.8.1"
-  checksum: 10c0/278c81f8a9c025a4276d5d88d955f5374e03cd4181b6aaf4d16ac369f323aff118da531c41de17abd8903c149b4811e3ad457e445ce91ad3d1ac30785d01686e
-  languageName: node
-  linkType: hard
-
 "@scure/base@npm:~1.2.5":
   version: 1.2.6
   resolution: "@scure/base@npm:1.2.6"
@@ -477,28 +435,37 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-core@npm:2.0.10-next.2":
-  version: 2.0.10-next.2
-  resolution: "@sophon-labs/account-core@npm:2.0.10-next.2"
+"@sophon-labs/account-communicator@npm:2.0.10-next.9":
+  version: 2.0.10-next.9
+  resolution: "@sophon-labs/account-communicator@npm:2.0.10-next.9"
+  peerDependencies:
+    typescript: ^5.0.0
+  checksum: 10c0/2489db8b71dfe705c027a6a0d6b4e4a54be4e85e4b0b50f6ee709e2e193c1f3a67a00f398c9dc361c2de4e979c5b5df2330a54672013210c4b543d3e78432288
+  languageName: node
+  linkType: hard
+
+"@sophon-labs/account-core@npm:2.0.10-next.9":
+  version: 2.0.10-next.9
+  resolution: "@sophon-labs/account-core@npm:2.0.10-next.9"
   dependencies:
     text-encoding-polyfill: "npm:^0.6.7"
   peerDependencies:
     viem: ">=2.21.0"
-  checksum: 10c0/5b09e76afb429d5300e86d12eee0ac00c690ca82bec58a250220e9e8630b9a32123395306633db704e4221e20a66c69f4f2e12079073fd1682151c04e0e90432
+  checksum: 10c0/85356be32c7f4cb746f0b2ad6afe6e25d6f239a2e406825d32360d7ab2eaaa74068cb07dfcafd60c82797df5d5b50d62f56231c781ad352b6e13c3f8bda8f40b
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-provider@npm:2.0.10-next.2":
-  version: 2.0.10-next.2
-  resolution: "@sophon-labs/account-provider@npm:2.0.10-next.2"
+"@sophon-labs/account-provider@npm:2.0.10-next.9":
+  version: 2.0.10-next.9
+  resolution: "@sophon-labs/account-provider@npm:2.0.10-next.9"
   dependencies:
-    "@sophon-labs/account-core": "npm:2.0.10-next.2"
+    "@sophon-labs/account-communicator": "npm:2.0.10-next.9"
+    "@sophon-labs/account-core": "npm:2.0.10-next.9"
     eventemitter3: "npm:^5.0.1"
     json-rpc-2.0: "npm:^1.7.1"
-    zksync-sso: "github:sophon-org/zksync-sso-preview#20250901_1"
   peerDependencies:
     typescript: ^5.0.0
-  checksum: 10c0/5b516a9f9dd16d26561578a38fac8425705bf8f3393663f1d3f5599734d1af4f09c3989a18810d06bd883ba23c2798144248115c741e072e25432126620d6b17
+  checksum: 10c0/954e11b0ccfd3b2e331279e3574e64656a014d6591ffb86593feffdb81f7d61fd0d987c0d75ecccf9ba1e2bd2fbc1ffe50340ab833f450230418835d126b1534
   languageName: node
   linkType: hard
 
@@ -506,7 +473,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@sophon-labs/examples-sandbox-viem@workspace:."
   dependencies:
-    "@sophon-labs/account-provider": "npm:2.0.10-next.2"
+    "@sophon-labs/account-provider": "npm:2.0.10-next.9"
     "@tailwindcss/postcss": "npm:^4"
     "@types/node": "npm:^20"
     "@types/react": "npm:^19"
@@ -746,7 +713,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"abitype@npm:^1.0.6, abitype@npm:^1.0.8":
+"abitype@npm:^1.0.8":
   version: 1.1.0
   resolution: "abitype@npm:1.1.0"
   peerDependencies:
@@ -758,43 +725,6 @@ __metadata:
     zod:
       optional: true
   checksum: 10c0/99218d442951c60324fcd96a372c30d71ca8d5434cab62b95d5d80bae89e3024a445a90db323ef1fe4da0d749d86e815ca555a37719b06e6ca03ccad2116c45b
-  languageName: node
-  linkType: hard
-
-"asn1js@npm:^3.0.6":
-  version: 3.0.6
-  resolution: "asn1js@npm:3.0.6"
-  dependencies:
-    pvtsutils: "npm:^1.3.6"
-    pvutils: "npm:^1.1.3"
-    tslib: "npm:^2.8.1"
-  checksum: 10c0/96d35e65e3df819ad9cc2d91d1150a3041fd84687a62faa73405e72a6b4c655bc2450e779fad524969e14eeac1f69db2559f27ef6d06ddeeddada28f72ad9b89
-  languageName: node
-  linkType: hard
-
-"base64-js@npm:^1.3.1":
-  version: 1.5.1
-  resolution: "base64-js@npm:1.5.1"
-  checksum: 10c0/f23823513b63173a001030fae4f2dabe283b99a9d324ade3ad3d148e218134676f1ee8568c877cd79ec1c53158dcf2d2ba527a97c606618928ba99dd930102bf
-  languageName: node
-  linkType: hard
-
-"bigint-conversion@npm:^2.4.3":
-  version: 2.4.3
-  resolution: "bigint-conversion@npm:2.4.3"
-  dependencies:
-    "@juanelas/base64": "npm:^1.1.2"
-  checksum: 10c0/04c7cbc2c89197d6ab3b5272d8e6d6fdacc5fa313780752f465c7a4dbc1fdebb1879154c9dbc173d747070d3445ae19e83a89b78e660f7acef074855e3ee701d
-  languageName: node
-  linkType: hard
-
-"buffer@npm:^6.0.3":
-  version: 6.0.3
-  resolution: "buffer@npm:6.0.3"
-  dependencies:
-    base64-js: "npm:^1.3.1"
-    ieee754: "npm:^1.2.1"
-  checksum: 10c0/2a905fbbcde73cc5d8bd18d1caa23715d5f83a5935867c2329f0ac06104204ba7947be098fe1317fbd8830e26090ff8e764f08cd14fefc977bb248c3487bcbd0
   languageName: node
   linkType: hard
 
@@ -890,13 +820,6 @@ __metadata:
   version: 4.2.11
   resolution: "graceful-fs@npm:4.2.11"
   checksum: 10c0/386d011a553e02bc594ac2ca0bd6d9e4c22d7fa8cfbfc448a6d148c59ea881b092db9dbe3547ae4b88e55f1b01f7c4a2ecc53b310c042793e63aa44cf6c257f2
-  languageName: node
-  linkType: hard
-
-"ieee754@npm:^1.2.1":
-  version: 1.2.1
-  resolution: "ieee754@npm:1.2.1"
-  checksum: 10c0/b0782ef5e0935b9f12883a2e2aa37baa75da6e66ce6515c168697b42160807d9330de9a32ec1ed73149aea02e0d822e572bca6f1e22bdcbd2149e13b050b17bb
   languageName: node
   linkType: hard
 
@@ -1076,13 +999,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ms@npm:^2.1.3":
-  version: 2.1.3
-  resolution: "ms@npm:2.1.3"
-  checksum: 10c0/d924b57e7312b3b63ad21fc5b3dc0af5e78d61a1fc7cfb5457edaf26326bf62be5307cc87ffb6862ef1c2b33b0233cdb5d4f01c4c958cc0d660948b65a287a48
-  languageName: node
-  linkType: hard
-
 "nanoid@npm:^3.3.11, nanoid@npm:^3.3.6":
   version: 3.3.11
   resolution: "nanoid@npm:3.3.11"
@@ -1198,22 +1114,6 @@ __metadata:
     picocolors: "npm:^1.1.1"
     source-map-js: "npm:^1.2.1"
   checksum: 10c0/5127cc7c91ed7a133a1b7318012d8bfa112da9ef092dddf369ae699a1f10ebbd89b1b9f25f3228795b84585c72aabd5ced5fc11f2ba467eedf7b081a66fad024
-  languageName: node
-  linkType: hard
-
-"pvtsutils@npm:^1.3.6":
-  version: 1.3.6
-  resolution: "pvtsutils@npm:1.3.6"
-  dependencies:
-    tslib: "npm:^2.8.1"
-  checksum: 10c0/b1b42646370505ccae536dcffa662303b2c553995211330c8e39dec9ab8c197585d7751c2c5b9ab2f186feda0219d9bb23c34ee1e565573be96450f79d89a13c
-  languageName: node
-  linkType: hard
-
-"pvutils@npm:^1.1.3":
-  version: 1.1.3
-  resolution: "pvutils@npm:1.1.3"
-  checksum: 10c0/23489e6b3c76b6afb6964a20f891d6bef092939f401c78bba186b2bfcdc7a13904a0af0a78f7933346510f8c1228d5ab02d3c80e968fd84d3c76ff98d8ec9aac
   languageName: node
   linkType: hard
 
@@ -1396,7 +1296,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.4.0, tslib@npm:^2.8.0, tslib@npm:^2.8.1":
+"tslib@npm:^2.4.0, tslib@npm:^2.8.0":
   version: 2.8.1
   resolution: "tslib@npm:2.8.1"
   checksum: 10c0/9c4759110a19c53f992d9aae23aac5ced636e99887b51b9e61def52611732872ff7668757d4e4c61f19691e36f4da981cd9485e869b4a7408d689f6bf1f14e62
@@ -1470,32 +1370,5 @@ __metadata:
   version: 5.0.0
   resolution: "yallist@npm:5.0.0"
   checksum: 10c0/a499c81ce6d4a1d260d4ea0f6d49ab4da09681e32c3f0472dee16667ed69d01dae63a3b81745a24bd78476ec4fcf856114cb4896ace738e01da34b2c42235416
-  languageName: node
-  linkType: hard
-
-"zksync-sso@github:sophon-org/zksync-sso-preview#20250901_1":
-  version: 0.0.0-development
-  resolution: "zksync-sso@https://github.com/sophon-org/zksync-sso-preview.git#commit=f5d9b27b244127d6ce21ce2e53b85fa11e8a5c11"
-  dependencies:
-    "@peculiar/asn1-ecc": "npm:^2.3.13"
-    "@peculiar/asn1-schema": "npm:^2.3.13"
-    abitype: "npm:^1.0.6"
-    bigint-conversion: "npm:^2.4.3"
-    buffer: "npm:^6.0.3"
-    ms: "npm:^2.1.3"
-  peerDependencies:
-    "@simplewebauthn/browser": 13.x
-    "@simplewebauthn/server": 13.x
-    "@wagmi/core": 2.x
-  peerDependenciesMeta:
-    "@simplewebauthn/browser":
-      optional: true
-    "@simplewebauthn/server":
-      optional: true
-    "@wagmi/core":
-      optional: true
-    typescript:
-      optional: true
-  checksum: 10c0/e69a700b8b1678804b5fb43ca97162acf3711445175cc6a976f00848cd81a04ee2c92b880d516e50d0e572eb83402c33ecad5ef1ffc5e9326f71cee01cacbf1a
   languageName: node
   linkType: hard
