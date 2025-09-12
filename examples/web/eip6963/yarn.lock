@@ -592,13 +592,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@juanelas/base64@npm:^1.1.2":
-  version: 1.1.5
-  resolution: "@juanelas/base64@npm:1.1.5"
-  checksum: 10c0/b8675cc3ec7d68fbcdd19489735f52cdc875bd336bc222fd1632021eb12e0a1e846aebb8261e4f8393214ec5d62cd9e5b8b703c80e5126c5b3390b2a26d99fb2
-  languageName: node
-  linkType: hard
-
 "@lit-labs/ssr-dom-shim@npm:^1.4.0":
   version: 1.4.0
   resolution: "@lit-labs/ssr-dom-shim@npm:1.4.0"
@@ -1131,41 +1124,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@peculiar/asn1-ecc@npm:^2.3.13":
-  version: 2.4.0
-  resolution: "@peculiar/asn1-ecc@npm:2.4.0"
-  dependencies:
-    "@peculiar/asn1-schema": "npm:^2.4.0"
-    "@peculiar/asn1-x509": "npm:^2.4.0"
-    asn1js: "npm:^3.0.6"
-    tslib: "npm:^2.8.1"
-  checksum: 10c0/b98e2a6754683ac74f88071a717aa6a9797406ad0c77ef72bfdb1d414d0b25d0b9fc8df6e88dad70785b43015ffff4da7366d0802d2a080a16956b1a2ad08ea6
-  languageName: node
-  linkType: hard
-
-"@peculiar/asn1-schema@npm:^2.3.13, @peculiar/asn1-schema@npm:^2.4.0":
-  version: 2.4.0
-  resolution: "@peculiar/asn1-schema@npm:2.4.0"
-  dependencies:
-    asn1js: "npm:^3.0.6"
-    pvtsutils: "npm:^1.3.6"
-    tslib: "npm:^2.8.1"
-  checksum: 10c0/07a825348bd6be668793fc7bfec54628883d8dcf7c447facdba9bc9c2518f1cc9de37b9f907977ed927895505490868adcb2c1a5b0a19c5a1bc01e3cc5dc2e65
-  languageName: node
-  linkType: hard
-
-"@peculiar/asn1-x509@npm:^2.4.0":
-  version: 2.4.0
-  resolution: "@peculiar/asn1-x509@npm:2.4.0"
-  dependencies:
-    "@peculiar/asn1-schema": "npm:^2.4.0"
-    asn1js: "npm:^3.0.6"
-    pvtsutils: "npm:^1.3.6"
-    tslib: "npm:^2.8.1"
-  checksum: 10c0/9a5e22b1c6e6a3791b840e95eefd880495d3d5cfd962c0c441a2efa306d0f3ace8a0e0089a441275ce52ea4406090107779deefb99ec77bd9970508652c95055
-  languageName: node
-  linkType: hard
-
 "@pkgjs/parseargs@npm:^0.11.0":
   version: 0.11.0
   resolution: "@pkgjs/parseargs@npm:0.11.0"
@@ -1409,28 +1367,51 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-core@npm:2.0.7-next.3":
-  version: 2.0.7-next.3
-  resolution: "@sophon-labs/account-core@npm:2.0.7-next.3"
+"@sophon-labs/account-communicator@npm:2.1.0":
+  version: 2.1.0
+  resolution: "@sophon-labs/account-communicator@npm:2.1.0"
+  peerDependencies:
+    typescript: ^5.0.0
+  checksum: 10c0/6c3961327bfdbe395eb51c1b62b9b1e184912864361dac644491463b8ec8b3f9eb3df4ebc04c4d89e6b0537f0c971819e6b77c6a01dbe52e3112885c785f614c
+  languageName: node
+  linkType: hard
+
+"@sophon-labs/account-core@npm:2.1.0":
+  version: 2.1.0
+  resolution: "@sophon-labs/account-core@npm:2.1.0"
   dependencies:
     text-encoding-polyfill: "npm:^0.6.7"
   peerDependencies:
     viem: ">=2.21.0"
-  checksum: 10c0/9c49503ad2da8fa84b910a523573aa41619e4b30317271fc045dcb4f9686368f7a84b0c52dfb8353322da40ba4758666e35abb670f4575a37a489755ebc3556b
+  checksum: 10c0/cafbbb0bf9aac3a6b1561f6b3a6af935ff124aeaeb0283adc91e708c54fcbe0711e726f5ba7fc78bbd5481b5c271ea925a8271ff75dec89bc19f84e86fab7c59
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-eip6963@npm:2.0.7-next.3":
-  version: 2.0.7-next.3
-  resolution: "@sophon-labs/account-eip6963@npm:2.0.7-next.3"
+"@sophon-labs/account-eip6963@npm:2.1.0":
+  version: 2.1.0
+  resolution: "@sophon-labs/account-eip6963@npm:2.1.0"
   dependencies:
-    "@sophon-labs/account-core": "npm:2.0.7-next.3"
+    "@sophon-labs/account-core": "npm:2.1.0"
+    "@sophon-labs/account-provider": "npm:2.1.0"
     eventemitter3: "npm:^5.0.1"
     json-rpc-2.0: "npm:^1.7.1"
-    zksync-sso: "github:sophon-org/zksync-sso-preview#20250901_1"
   peerDependencies:
     typescript: ^5.0.0
-  checksum: 10c0/69b984f66b1276303f3924b557d5ac2c3627ae20c1828baba011a717253a426422406c6c4c4195d108595e15cf4ba32b0afaec1f4c48073c3ea8ecbf7b069441
+  checksum: 10c0/6e43dd26fae402307e06709810024c549be5729ba0c290957a6f88d4e20cbd8a01fee6b163c87820492b8fd658f380829e1a600f4c7d2f30efb0e3ef995e9a1c
+  languageName: node
+  linkType: hard
+
+"@sophon-labs/account-provider@npm:2.1.0":
+  version: 2.1.0
+  resolution: "@sophon-labs/account-provider@npm:2.1.0"
+  dependencies:
+    "@sophon-labs/account-communicator": "npm:2.1.0"
+    "@sophon-labs/account-core": "npm:2.1.0"
+    eventemitter3: "npm:^5.0.1"
+    json-rpc-2.0: "npm:^1.7.1"
+  peerDependencies:
+    typescript: ^5.0.0
+  checksum: 10c0/576759a28275e7fc0c65ac0ecac2c629acd422889763f03a05043b3259f0a9fbdb37c830d60ca811e561b532f5fc303274ab8d86b1bbf38f29e3c7128465a1ab
   languageName: node
   linkType: hard
 
@@ -1438,8 +1419,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@sophon-labs/examples-sandbox-eip6963@workspace:."
   dependencies:
-    "@sophon-labs/account-core": "npm:2.0.7-next.3"
-    "@sophon-labs/account-eip6963": "npm:2.0.7-next.3"
+    "@sophon-labs/account-core": "npm:2.1.0"
+    "@sophon-labs/account-eip6963": "npm:2.1.0"
     "@tailwindcss/postcss": "npm:^4"
     "@tanstack/react-query": "npm:^5.83.0"
     "@types/node": "npm:^20"
@@ -2222,17 +2203,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"asn1js@npm:^3.0.6":
-  version: 3.0.6
-  resolution: "asn1js@npm:3.0.6"
-  dependencies:
-    pvtsutils: "npm:^1.3.6"
-    pvutils: "npm:^1.1.3"
-    tslib: "npm:^2.8.1"
-  checksum: 10c0/96d35e65e3df819ad9cc2d91d1150a3041fd84687a62faa73405e72a6b4c655bc2450e779fad524969e14eeac1f69db2559f27ef6d06ddeeddada28f72ad9b89
-  languageName: node
-  linkType: hard
-
 "async-mutex@npm:^0.2.6":
   version: 0.2.6
   resolution: "async-mutex@npm:0.2.6"
@@ -2298,15 +2268,6 @@ __metadata:
   version: 6.2.2
   resolution: "big.js@npm:6.2.2"
   checksum: 10c0/58d204f6a1a92508dc2eb98d964e2cc6dabb37a3d9fc8a1f0b77a34dead7c11e17b173d9a6df2d5a7a0f78d5c80853a9ce6df29852da59ab10b088e981195165
-  languageName: node
-  linkType: hard
-
-"bigint-conversion@npm:^2.4.3":
-  version: 2.4.3
-  resolution: "bigint-conversion@npm:2.4.3"
-  dependencies:
-    "@juanelas/base64": "npm:^1.1.2"
-  checksum: 10c0/04c7cbc2c89197d6ab3b5272d8e6d6fdacc5fa313780752f465c7a4dbc1fdebb1879154c9dbc173d747070d3445ae19e83a89b78e660f7acef074855e3ee701d
   languageName: node
   linkType: hard
 
@@ -4529,22 +4490,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pvtsutils@npm:^1.3.6":
-  version: 1.3.6
-  resolution: "pvtsutils@npm:1.3.6"
-  dependencies:
-    tslib: "npm:^2.8.1"
-  checksum: 10c0/b1b42646370505ccae536dcffa662303b2c553995211330c8e39dec9ab8c197585d7751c2c5b9ab2f186feda0219d9bb23c34ee1e565573be96450f79d89a13c
-  languageName: node
-  linkType: hard
-
-"pvutils@npm:^1.1.3":
-  version: 1.1.3
-  resolution: "pvutils@npm:1.1.3"
-  checksum: 10c0/23489e6b3c76b6afb6964a20f891d6bef092939f401c78bba186b2bfcdc7a13904a0af0a78f7933346510f8c1228d5ab02d3c80e968fd84d3c76ff98d8ec9aac
-  languageName: node
-  linkType: hard
-
 "qrcode@npm:1.5.3":
   version: 1.5.3
   resolution: "qrcode@npm:1.5.3"
@@ -5260,7 +5205,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.0.0, tslib@npm:^2.1.0, tslib@npm:^2.3.1, tslib@npm:^2.4.0, tslib@npm:^2.6.0, tslib@npm:^2.8.0, tslib@npm:^2.8.1":
+"tslib@npm:^2.0.0, tslib@npm:^2.1.0, tslib@npm:^2.3.1, tslib@npm:^2.4.0, tslib@npm:^2.6.0, tslib@npm:^2.8.0":
   version: 2.8.1
   resolution: "tslib@npm:2.8.1"
   checksum: 10c0/9c4759110a19c53f992d9aae23aac5ced636e99887b51b9e61def52611732872ff7668757d4e4c61f19691e36f4da981cd9485e869b4a7408d689f6bf1f14e62
@@ -5845,33 +5790,6 @@ __metadata:
     y18n: "npm:^4.0.0"
     yargs-parser: "npm:^18.1.2"
   checksum: 10c0/f1ca680c974333a5822732825cca7e95306c5a1e7750eb7b973ce6dc4f97a6b0a8837203c8b194f461969bfe1fb1176d1d423036635285f6010b392fa498ab2d
-  languageName: node
-  linkType: hard
-
-"zksync-sso@github:sophon-org/zksync-sso-preview#20250901_1":
-  version: 0.0.0-development
-  resolution: "zksync-sso@https://github.com/sophon-org/zksync-sso-preview.git#commit=f5d9b27b244127d6ce21ce2e53b85fa11e8a5c11"
-  dependencies:
-    "@peculiar/asn1-ecc": "npm:^2.3.13"
-    "@peculiar/asn1-schema": "npm:^2.3.13"
-    abitype: "npm:^1.0.6"
-    bigint-conversion: "npm:^2.4.3"
-    buffer: "npm:^6.0.3"
-    ms: "npm:^2.1.3"
-  peerDependencies:
-    "@simplewebauthn/browser": 13.x
-    "@simplewebauthn/server": 13.x
-    "@wagmi/core": 2.x
-  peerDependenciesMeta:
-    "@simplewebauthn/browser":
-      optional: true
-    "@simplewebauthn/server":
-      optional: true
-    "@wagmi/core":
-      optional: true
-    typescript:
-      optional: true
-  checksum: 10c0/e69a700b8b1678804b5fb43ca97162acf3711445175cc6a976f00848cd81a04ee2c92b880d516e50d0e572eb83402c33ecad5ef1ffc5e9326f71cee01cacbf1a
   languageName: node
   linkType: hard
 

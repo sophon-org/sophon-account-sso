@@ -1,7 +1,7 @@
 import type { UUID } from 'node:crypto';
+import type { Message } from '@sophon-labs/account-communicator';
 import { EventEmitter } from 'eventemitter3';
 import { useEffect } from 'react';
-import type { Message } from 'zksync-sso/communicator';
 import type { SophonJWTToken } from '@/types';
 
 const SophonUIEvents = new EventEmitter();

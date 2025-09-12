@@ -1,6 +1,6 @@
 {
   "name": "@sophon-labs/account-react-native",
-  "version": "2.0.9",
+  "version": "2.1.0",
   "description": "Library to handle sophon account on react native environments",
   "main": "./dist/module/index.js",
   "types": "./dist/typescript/src/index.d.ts",
@@ -41,11 +41,12 @@
     "dev": "nodemon -e ts,tsx -w ./src -x 'yarn build'"
   },
   "dependencies": {
-    "@sophon-labs/account-core": "2.0.9",
-    "@sophon-labs/account-message-bridge": "2.0.9",
+    "@sophon-labs/account-communicator": "2.1.0",
+    "@sophon-labs/account-core": "2.1.0",
+    "@sophon-labs/account-message-bridge": "2.1.0",
+    "@sophon-labs/account-provider": "2.1.0",
     "eventemitter3": "5.0.1",
-    "text-encoding-polyfill": "^0.6.7",
-    "zksync-sso": "github:sophon-org/zksync-sso-preview#20250901_1"
+    "text-encoding-polyfill": "^0.6.7"
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^19.6.0",

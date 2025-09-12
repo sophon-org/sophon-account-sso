@@ -120,6 +120,7 @@ export class AuthService {
 				issuer: expectedIss,
 			}) as NoncePayload;
 		} catch (e) {
+			console.error(e);
 			this.mapJwtError(e, "nonce");
 		}
 
@@ -207,6 +208,7 @@ export class AuthService {
 				issuer: expectedIss,
 			}) as NoncePayload;
 		} catch (e) {
+			console.error(e);
 			this.mapJwtError(e, "nonce");
 		}
 
@@ -395,12 +397,13 @@ export class AuthService {
 				issuer: this.E.REFRESH_ISSUER,
 			}) as RefreshTokenPayload;
 		} catch (e) {
+			console.error(e);
 			this.mapJwtError(e, "refresh");
 		}
 
 		const rTyp = (r as RefreshTokenPayload & { typ?: string }).typ;
 		if (rTyp && rTyp !== "refresh") {
-			throw new UnauthorizedException("invalid refresh token");
+			throw new UnauthorizedException(`Invalid refresh token type: ${rTyp}`);
 		}
 
 		await this.partnerRegistry.assertExists(r.aud);

@@ -54,6 +54,8 @@ PODS:
     - Yoga
   - ExpoNetwork (7.0.5):
     - ExpoModulesCore
+  - ExpoSecureStore (14.0.1):
+    - ExpoModulesCore
   - ExpoSplashScreen (0.29.24):
     - ExpoModulesCore
   - ExpoSymbols (0.2.2):
@@ -1913,6 +1915,7 @@ DEPENDENCIES:
   - ExpoLinking (from `../node_modules/expo-linking/ios`)
   - ExpoModulesCore (from `../node_modules/expo-modules-core`)
   - ExpoNetwork (from `../node_modules/expo-network/ios`)
+  - ExpoSecureStore (from `../node_modules/expo-secure-store/ios`)
   - ExpoSplashScreen (from `../node_modules/expo-splash-screen/ios`)
   - ExpoSymbols (from `../node_modules/expo-symbols/ios`)
   - ExpoSystemUI (from `../node_modules/expo-system-ui/ios`)
@@ -2030,6 +2033,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-modules-core"
   ExpoNetwork:
     :path: "../node_modules/expo-network/ios"
+  ExpoSecureStore:
+    :path: "../node_modules/expo-secure-store/ios"
   ExpoSplashScreen:
     :path: "../node_modules/expo-splash-screen/ios"
   ExpoSymbols:
@@ -2193,6 +2198,7 @@ SPEC CHECKSUMS:
   ExpoLinking: 0381341519ca7180a3a057d20edb1cf6a908aaf4
   ExpoModulesCore: dd965804a882f1dbb6036fceea4d912461aeaa0d
   ExpoNetwork: 15bf53158b439ce75e1df0df3a9ff5051c492db8
+  ExpoSecureStore: d006eea5e316283099d46f80a6b10055b89a6008
   ExpoSplashScreen: 0e176e85073dfb9686c100c7f9637975d00608dd
   ExpoSymbols: b9f255ce49868d46a73f30e12859efeb8117bcad
   ExpoSystemUI: fb8213e39d19e0861320fa69eb60cad7a839c080

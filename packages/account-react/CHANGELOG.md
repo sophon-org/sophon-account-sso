@@ -1,5 +1,11 @@
 # @sophon-labs/account-react
 
+## 2.1.0
+
+### Minor Changes
+
+- Better code structure, no requirement for zksync-sso on core packages
+
 ## 2.0.9
 
 ### Patch Changes

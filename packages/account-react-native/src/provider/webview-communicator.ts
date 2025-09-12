@@ -1,5 +1,5 @@
 import type { UUID } from 'node:crypto';
-import type { Communicator, Message } from 'zksync-sso/communicator';
+import type { Communicator, Message } from '@sophon-labs/account-communicator';
 import {
   registerUIEventHandler,
   type SophonUIActions,
