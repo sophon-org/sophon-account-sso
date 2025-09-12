@@ -1,3 +1,5 @@
+import { isSSR } from '@sophon-labs/account-core';
+
 export const DEFAULT_UNLOAD_TIMEOUT = 1000;
 export const DEFAULT_UNLOAD_DELAY = 500;
 
@@ -5,6 +7,11 @@ export const DEFAULT_UNLOAD_DELAY = 500;
 // while there's pending requests, for now we just wait a little bit to avoid getting the popup
 // blocked
 export const awaitForPopupUnload = (authServerUrl: string) => {
+  // no need to wait for it if window is not available
+  if (isSSR()) {
+    return Promise.resolve(true);
+  }
+
   return new Promise((resolve) => {
     const waitLimitTimeout = setTimeout(() => {
       resolve(true);
