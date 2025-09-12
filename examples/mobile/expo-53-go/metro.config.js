@@ -1,30 +1,27 @@
-const { getDefaultConfig } = require('expo/metro-config');
-const { withNativeWind } = require('nativewind/metro');
+const { getDefaultConfig } = require("expo/metro-config");
+const { withNativeWind } = require("nativewind/metro");
 
-const path = require('node:path');
+const path = require("node:path");
 
-const accountMessageBridgeDir = path.resolve(
-  __dirname,
-  '../../../packages/account-message-bridge',
-);
-const accountReactNativeDir = path.resolve(
-  __dirname,
-  '../../../packages/account-react-native',
-);
-const accountCoreDir = path.resolve(
-  __dirname,
-  '../../../packages/account-core',
-);
+const accountMessageBridgeDir = path.resolve(__dirname, "../../../packages/account-message-bridge");
+const accountReactNativeDir = path.resolve(__dirname, "../../../packages/account-react-native");
+const accountCoreDir = path.resolve(__dirname, "../../../packages/account-core");
+const accountCommunicatorDir = path.resolve(__dirname, "../../../packages/account-communicator");
+const accountProviderDir = path.resolve(__dirname, "../../../packages/account-provider");
 
 const extraNodeModules = {
-  '@sophon-labs/account-message-bridge': accountMessageBridgeDir,
-  '@sophon-labs/account-react-native': accountReactNativeDir,
-  '@sophon-labs/account-core': accountCoreDir,
+  "@sophon-labs/account-message-bridge": accountMessageBridgeDir,
+  "@sophon-labs/account-react-native": accountReactNativeDir,
+  "@sophon-labs/account-core": accountCoreDir,
+  "@sophon-labs/account-communicator": accountCommunicatorDir,
+  "@sophon-labs/account-provider": accountProviderDir,
 };
 const watchFolders = [
   accountMessageBridgeDir,
   accountReactNativeDir,
   accountCoreDir,
+  accountCommunicatorDir,
+  accountProviderDir,
 ];
 
 const developConfig = {
@@ -43,7 +40,7 @@ const developConfig = {
     }),
     // @see https://github.com/pmndrs/zustand/discussions/1967
     resolveRequest: (context, moduleName, platform) => {
-      if (moduleName.includes('zustand')) {
+      if (moduleName.includes("zustand")) {
         const result = require.resolve(moduleName); // gets CommonJS version
         return context.resolveRequest(context, result, platform);
       }
@@ -65,4 +62,4 @@ const modulesConfig = {
   //   resetCache: true,
 };
 
-module.exports = withNativeWind(modulesConfig, { input: './app/global.css' });
+module.exports = withNativeWind(modulesConfig, { input: "./app/global.css" });
