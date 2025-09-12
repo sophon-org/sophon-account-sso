@@ -121,6 +121,7 @@ export class AuthService {
 				issuer: expectedIss,
 			}) as NoncePayload;
 		} catch (e) {
+			console.error(e);
 			this.mapJwtError(e, "nonce");
 		}
 
@@ -208,6 +209,7 @@ export class AuthService {
 				issuer: expectedIss,
 			}) as NoncePayload;
 		} catch (e) {
+			console.error(e);
 			this.mapJwtError(e, "nonce");
 		}
 
@@ -398,6 +400,7 @@ export class AuthService {
 				issuer: this.E.REFRESH_ISSUER,
 			}) as RefreshTokenPayload;
 		} catch (e) {
+			console.error(e);
 			this.mapJwtError(e, "refresh");
 		}
 
