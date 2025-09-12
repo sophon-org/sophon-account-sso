@@ -62,10 +62,10 @@ describe("AuthService (sessions + refresh)", () => {
 
 	// sessions repo mock
 	type SessionRow = {
-		current_refresh_jti: string | null;
-		refresh_expires_at: Date | null;
-		revoked_at: Date | null;
-		invalidate_before: Date | null;
+		currentRefreshJti: string | null;
+		refreshExpiresAt: Date | null;
+		revokedAt: Date | null;
+		invalidateBefore: Date | null;
 	};
 	const sessionsMock: {
 		create: jest.Mock<Promise<void>, [unknown]>;
@@ -210,10 +210,10 @@ describe("AuthService (sessions + refresh)", () => {
 		});
 
 		const row: SessionRow = {
-			current_refresh_jti: "j1",
-			refresh_expires_at: new Date(FIXED_NOW_MS + 10_000),
-			revoked_at: new Date(FIXED_NOW_MS), // inactive
-			invalidate_before: null,
+			currentRefreshJti: "j1",
+			refreshExpiresAt: new Date(FIXED_NOW_MS + 10_000),
+			revokedAt: new Date(FIXED_NOW_MS), // inactive
+			invalidateBefore: null,
 		};
 		sessionsMock.getBySid.mockResolvedValueOnce(row);
 		sessionsMock.isActive.mockReturnValueOnce(false);
@@ -235,10 +235,10 @@ describe("AuthService (sessions + refresh)", () => {
 		});
 
 		const row: SessionRow = {
-			current_refresh_jti: "j2",
-			refresh_expires_at: new Date(FIXED_NOW_MS + 10_000),
-			revoked_at: null,
-			invalidate_before: new Date(FIXED_NOW_MS - 10_000), // 10s earlier than now, but 90s after iat
+			currentRefreshJti: "j2",
+			refreshExpiresAt: new Date(FIXED_NOW_MS + 10_000),
+			revokedAt: null,
+			invalidateBefore: new Date(FIXED_NOW_MS - 10_000), // 10s earlier than now, but 90s after iat
 		};
 		sessionsMock.getBySid.mockResolvedValueOnce(row);
 		sessionsMock.isActive.mockReturnValueOnce(true);
@@ -264,10 +264,10 @@ describe("AuthService (sessions + refresh)", () => {
 
 		// session row (active, current jti matches)
 		const row: SessionRow = {
-			current_refresh_jti: "old-jti",
-			refresh_expires_at: new Date(FIXED_NOW_MS + 10_000),
-			revoked_at: null,
-			invalidate_before: null,
+			currentRefreshJti: "old-jti",
+			refreshExpiresAt: new Date(FIXED_NOW_MS + 10_000),
+			revokedAt: null,
+			invalidateBefore: null,
 		};
 		sessionsMock.getBySid.mockResolvedValueOnce(row);
 		sessionsMock.isActive.mockReturnValueOnce(true);
@@ -315,10 +315,10 @@ describe("AuthService (sessions + refresh)", () => {
 		});
 
 		const row: SessionRow = {
-			current_refresh_jti: "current-jti", // mismatch
-			refresh_expires_at: new Date(FIXED_NOW_MS + 10_000),
-			revoked_at: null,
-			invalidate_before: null,
+			currentRefreshJti: "current-jti", // mismatch
+			refreshExpiresAt: new Date(FIXED_NOW_MS + 10_000),
+			revokedAt: null,
+			invalidateBefore: null,
 		};
 		sessionsMock.getBySid.mockResolvedValueOnce(row);
 		sessionsMock.isActive.mockReturnValueOnce(true);

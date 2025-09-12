@@ -1,99 +1,76 @@
-import { Pool } from "pg";
-import { getEnv } from "../config/env";
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { IsNull, Repository } from "typeorm";
+import type { SessionRecord } from "./session.domain";
+import { Session } from "./session.entity";
 
-export type SessionRow = {
-	sid: string;
-	user_id: string;
-	aud: string;
-	current_refresh_jti: string;
-	created_at: string;
-	revoked_at: string | null;
-	invalidate_before: string | null;
-	refresh_expires_at: string;
-};
+const toDomain = (e: Session): SessionRecord => ({
+	sid: e.sid,
+	userId: e.userId,
+	aud: e.aud,
+	currentRefreshJti: e.currentRefreshJti,
+	createdAt: e.createdAt,
+	revokedAt: e.revokedAt,
+	invalidateBefore: e.invalidateBefore,
+	refreshExpiresAt: e.refreshExpiresAt,
+});
 
+@Injectable()
 export class SessionsRepository {
-	private pool = new Pool({ connectionString: getEnv().DATABASE_URL });
+	constructor(@InjectRepository(Session) private repo: Repository<Session>) {}
 
-	async create(params: {
-		sid: string;
-		userId: string;
-		aud: string;
-		currentRefreshJti: string;
-		refreshExpiresAt: Date;
+	async create(
+		params: Pick<
+			SessionRecord,
+			"sid" | "userId" | "aud" | "currentRefreshJti" | "refreshExpiresAt"
+		>,
+	): Promise<void> {
+		await this.repo.save(this.repo.create(params));
+	}
+
+	async getBySid(sid: SessionRecord["sid"]): Promise<SessionRecord | null> {
+		const row = await this.repo.findOne({ where: { sid } });
+		return row ? toDomain(row) : null;
+	}
+
+	async rotateRefreshJti(args: {
+		sid: SessionRecord["sid"];
+		newJti: SessionRecord["currentRefreshJti"];
+		newRefreshExpiresAt?: SessionRecord["refreshExpiresAt"];
 	}): Promise<void> {
-		await this.pool.query(
-			`
-      INSERT INTO sessions (sid, user_id, aud, current_refresh_jti, refresh_expires_at)
-      VALUES ($1, $2, $3, $4, $5)
-      ON CONFLICT (sid) DO NOTHING
-      `,
-			[
-				params.sid,
-				params.userId,
-				params.aud,
-				params.currentRefreshJti,
-				params.refreshExpiresAt.toISOString(),
-			],
+		await this.repo.update(
+			{ sid: args.sid },
+			{
+				currentRefreshJti: args.newJti,
+				...(args.newRefreshExpiresAt && {
+					refreshExpiresAt: args.newRefreshExpiresAt,
+				}),
+			},
 		);
 	}
 
-	async getBySid(sid: string): Promise<SessionRow | null> {
-		const r = await this.pool.query<SessionRow>(
-			"SELECT * FROM sessions WHERE sid = $1",
-			[sid],
-		);
-		return r.rows[0] ?? null;
+	async revokeSid(sid: SessionRecord["sid"]): Promise<void> {
+		await this.repo.update({ sid }, { revokedAt: new Date() });
 	}
 
-	async rotateRefreshJti(params: {
-		sid: string;
-		newJti: string;
-		newRefreshExpiresAt?: Date;
-	}): Promise<void> {
-		const { sid, newJti, newRefreshExpiresAt } = params;
-		await this.pool.query(
-			`
-      UPDATE sessions
-      SET current_refresh_jti = $2,
-          ${newRefreshExpiresAt ? "refresh_expires_at = $3," : ""}
-          -- keep audit-friendly updated_at if you add one later
-          revoked_at = revoked_at
-      WHERE sid = $1
-      `,
-			newRefreshExpiresAt
-				? [sid, newJti, newRefreshExpiresAt.toISOString()]
-				: [sid, newJti],
-		);
-	}
-
-	async revokeSid(sid: string): Promise<void> {
-		await this.pool.query(
-			"UPDATE sessions SET revoked_at = NOW() WHERE sid = $1",
-			[sid],
-		);
-	}
-
-	async revokeAllForUser(userId: string): Promise<void> {
-		await this.pool.query(
-			"UPDATE sessions SET revoked_at = NOW() WHERE user_id = $1 AND revoked_at IS NULL",
-			[userId],
+	async revokeAllForUser(userId: SessionRecord["userId"]): Promise<void> {
+		await this.repo.update(
+			{ userId, revokedAt: IsNull() },
+			{ revokedAt: new Date() },
 		);
 	}
 
 	async invalidateAccessBefore(params: {
-		sid: string;
+		sid: SessionRecord["sid"];
 		ts: Date;
 	}): Promise<void> {
-		await this.pool.query(
-			"UPDATE sessions SET invalidate_before = $2 WHERE sid = $1",
-			[params.sid, params.ts.toISOString()],
+		await this.repo.update(
+			{ sid: params.sid },
+			{ invalidateBefore: params.ts },
 		);
 	}
 
-	isActive(row: SessionRow | null): row is SessionRow {
-		return (
-			!!row && !row.revoked_at && new Date(row.refresh_expires_at) > new Date()
-		);
+	isActive(row: SessionRecord | null): row is SessionRecord {
+		return !!row && !row.revokedAt && row.refreshExpiresAt > new Date();
 	}
 }

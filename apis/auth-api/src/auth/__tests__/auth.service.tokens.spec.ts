@@ -186,10 +186,10 @@ describe("AuthService (new token features)", () => {
 
 		sessionsRepositoryMock.getBySid.mockResolvedValueOnce({
 			sid: "session-1",
-			current_refresh_jti: "jti-old",
-			revoked_at: null,
-			refresh_expires_at: new Date(Date.now() + 60_000),
-			invalidate_before: null,
+			currentRefreshJti: "jti-old",
+			revokedAt: null,
+			refreshExpiresAt: new Date(Date.now() + 60_000),
+			invalidatedBefore: null,
 		});
 		sessionsRepositoryMock.isActive.mockReturnValue(true);
 
