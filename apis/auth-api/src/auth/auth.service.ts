@@ -403,7 +403,7 @@ export class AuthService {
 
 		const rTyp = (r as RefreshTokenPayload & { typ?: string }).typ;
 		if (rTyp && rTyp !== "refresh") {
-			throw new UnauthorizedException("invalid refresh token");
+			throw new UnauthorizedException(`Invalid refresh token type: ${rTyp}`);
 		}
 
 		await this.partnerRegistry.assertExists(r.aud);
