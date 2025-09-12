@@ -1,9 +1,8 @@
 import { AccountAuthAPIURL } from '@sophon-labs/account-core';
 import { useCallback, useMemo } from 'react';
 import type { SophonJWTToken } from '../types';
+import { ACCESS_TOKEN_EXPIRATION_THRESHOLD } from '../utils/token';
 import { useSophonContext } from './useSophonContext';
-
-const ACCESS_TOKEN_EXPIRATION_THRESHOLD = 1000 * 60 * 5; // 5 mins before
 
 /**
  * Hook that handles the authentication token and the logic regarging its refreshing
