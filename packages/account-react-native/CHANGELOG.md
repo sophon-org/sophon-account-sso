@@ -1,5 +1,16 @@
 # @sophon-labs/account-react-native
 
+## 2.0.10-next.3
+
+### Patch Changes
+
+- Removing zksync-sso from core packages
+- Updated dependencies
+  - @sophon-labs/account-message-bridge@2.0.10-next.3
+  - @sophon-labs/account-communicator@2.0.10-next.3
+  - @sophon-labs/account-provider@2.0.10-next.3
+  - @sophon-labs/account-core@2.0.10-next.3
+
 ## 2.0.10-next.2
 
 ### Patch Changes

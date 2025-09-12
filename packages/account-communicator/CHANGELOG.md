@@ -1,5 +1,11 @@
 # @sophon-labs/account-eip6963
 
+## 2.0.10-next.3
+
+### Patch Changes
+
+- Removing zksync-sso from core packages
+
 ## 2.0.10-next.2
 
 ### Patch Changes
