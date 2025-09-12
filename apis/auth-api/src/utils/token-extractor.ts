@@ -16,5 +16,5 @@ export function extractRefreshToken(req: Request): string | undefined {
 		? auth.slice("Bearer ".length)
 		: undefined;
 
-	return fromCookie || fromXHeader || fromAuth || undefined;
+	return fromAuth || fromXHeader || fromCookie || undefined;
 }
