@@ -7,7 +7,7 @@ import { clearAccounts, getAccounts, setAccounts } from '../accounts';
 import * as rpc from '../genericRPC';
 import { awaitForPopupUnload } from '../popup';
 
-vi.mock(import('zksync-sso/communicator'), () => {
+vi.mock(import('@sophon-labs/account-communicator'), () => {
   const PopupCommunicator = vi.fn();
   PopupCommunicator.prototype.postRequestAndWaitForResponse = vi.fn();
   return { PopupCommunicator };
@@ -25,7 +25,7 @@ vi.mock('../rpc', () => ({
 
 describe('eip1193 provider', () => {
   beforeEach(() => {
-    clearAccounts('testnet');
+    clearAccounts(localStorage, 'testnet');
   });
 
   it('should return a valid provider interface', async () => {
@@ -56,9 +56,10 @@ describe('eip1193 provider', () => {
     const { request } = createSophonEIP1193Provider(
       network,
       undefined,
+      undefined,
       testCommunicator,
     );
-    setAccounts(network, [account]);
+    setAccounts(localStorage, network, [account]);
 
     // when
     const result = await request({ method: 'eth_accounts', params: [] });
@@ -82,6 +83,7 @@ describe('eip1193 provider', () => {
     };
     const { request } = createSophonEIP1193Provider(
       network,
+      undefined,
       undefined,
       testCommunicator,
     );
@@ -108,6 +110,7 @@ describe('eip1193 provider', () => {
     };
     const { request } = createSophonEIP1193Provider(
       network,
+      undefined,
       undefined,
       testCommunicator,
     );
@@ -147,6 +150,7 @@ describe('eip1193 provider', () => {
       const { request } = createSophonEIP1193Provider(
         'testnet',
         undefined,
+        undefined,
         testCommunicator,
       );
 
@@ -181,6 +185,7 @@ describe('eip1193 provider', () => {
       const { request } = createSophonEIP1193Provider(
         'testnet',
         undefined,
+        undefined,
         testCommunicator,
       );
 
@@ -212,9 +217,12 @@ describe('eip1193 provider', () => {
       onMessage: vi.fn(),
       ready: vi.fn(),
     };
-    setAccounts('testnet', ['0x1234567890123456789012345678901234567890']);
+    setAccounts(localStorage, 'testnet', [
+      '0x1234567890123456789012345678901234567890',
+    ]);
     const { request } = createSophonEIP1193Provider(
       'testnet',
+      undefined,
       undefined,
       testCommunicator,
     );
@@ -229,7 +237,7 @@ describe('eip1193 provider', () => {
     expect(result).toEqual([]);
     expect(testCommunicator.postRequestAndWaitForResponse).toHaveBeenCalled();
     expect(awaitForPopupUnload).toHaveBeenCalled();
-    expect(getAccounts('testnet')).toEqual([]);
+    expect(getAccounts(localStorage, 'testnet')).toEqual([]);
   });
 
   it.each([
@@ -264,6 +272,7 @@ describe('eip1193 provider', () => {
 
       const { request } = createSophonEIP1193Provider(
         'testnet',
+        undefined,
         undefined,
         testCommunicator,
       );

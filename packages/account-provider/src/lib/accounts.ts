@@ -1,22 +1,29 @@
-import type { SophonNetworkType } from '@sophon-labs/account-core';
+import type { SophonNetworkType, StorageLike } from '@sophon-labs/account-core';
 
 const STORAGE_KEY_PREFIX = 'sophon::accounts::';
 
-export const getAccounts = (network: SophonNetworkType): string[] => {
+export const getAccounts = (
+  storage: StorageLike,
+  network: SophonNetworkType,
+): string[] => {
   const key = `${STORAGE_KEY_PREFIX}${network}`;
-  const saved = localStorage.getItem(key);
+  const saved = storage.getItem(key);
   return saved ? JSON.parse(saved) : [];
 };
 
 export const setAccounts = (
+  storage: StorageLike,
   network: SophonNetworkType,
   accounts: string[],
 ): void => {
   const key = `${STORAGE_KEY_PREFIX}${network}`;
-  localStorage.setItem(key, JSON.stringify(accounts));
+  storage.setItem(key, JSON.stringify(accounts));
 };
 
-export const clearAccounts = (network: SophonNetworkType): void => {
+export const clearAccounts = (
+  storage: StorageLike,
+  network: SophonNetworkType,
+): void => {
   const key = `${STORAGE_KEY_PREFIX}${network}`;
-  localStorage.removeItem(key);
+  storage.removeItem(key);
 };

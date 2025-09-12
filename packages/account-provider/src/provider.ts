@@ -4,7 +4,9 @@ import {
 } from '@sophon-labs/account-communicator';
 import {
   AccountServerURL,
+  isSSR,
   type SophonNetworkType,
+  type StorageLike,
 } from '@sophon-labs/account-core';
 import { EventEmitter } from 'eventemitter3';
 import { handleAccounts } from './handlers/handleAccounts';
@@ -18,6 +20,7 @@ import { handleSwitchEthereumChain } from './handlers/handleSwitchEthereumChain'
 import { clearAccounts, getAccounts } from './lib/accounts';
 import { genericRPCHandler } from './lib/genericRPC';
 import { awaitForPopupUnload } from './lib/popup';
+import { NoopStorage } from './storage';
 import type { EIP1193Provider, RPCResponse } from './types';
 
 // The main provider function
@@ -26,11 +29,16 @@ export function createSophonEIP1193Provider(
   partnerId?: string,
   customAuthServerUrl?: string,
   customCommunicator?: Communicator,
+  customStorage?: StorageLike,
 ): EIP1193Provider {
   const eventEmitter = new EventEmitter();
-
   const authServerUrl = customAuthServerUrl ?? AccountServerURL[network];
   const serverUrl = partnerId ? `${authServerUrl}/${partnerId}` : authServerUrl;
+
+  let storage = !isSSR() ? localStorage : NoopStorage;
+  if (customStorage) {
+    storage = customStorage;
+  }
 
   console.log(
     'createSophonEIP1193Provider',
@@ -74,20 +82,25 @@ export function createSophonEIP1193Provider(
     on: eventEmitter.on.bind(eventEmitter),
     removeListener: eventEmitter.removeListener.bind(eventEmitter),
     disconnect: async () => {
-      clearAccounts(network);
+      clearAccounts(storage, network);
     },
-    accounts: () => getAccounts(network),
+    accounts: () => getAccounts(storage, network),
     async request({ method, params }) {
       console.log('EIP-1193 request:', method, params);
       switch (method) {
         case 'eth_requestAccounts': {
           console.log('EIP-1193 eth_requestAccounts:', method, params);
-          return handleRequestAccounts(network, executeRequest, eventEmitter);
+          return handleRequestAccounts(
+            storage,
+            network,
+            executeRequest,
+            eventEmitter,
+          );
         }
 
         case 'eth_accounts': {
           console.log('EIP-1193 eth_accounts:', method, params);
-          return handleAccounts(network);
+          return handleAccounts(storage, network);
         }
 
         case 'eth_chainId': {
@@ -117,12 +130,22 @@ export function createSophonEIP1193Provider(
 
         case 'wallet_revokePermissions': {
           console.log('EIP-1193 wallet_revokePermissions:', method, params);
-          return handleRevokePermissions(network, executeRequest, eventEmitter);
+          return handleRevokePermissions(
+            storage,
+            network,
+            executeRequest,
+            eventEmitter,
+          );
         }
 
         case 'wallet_requestPermissions': {
           console.log('EIP-1193 wallet_requestPermissions:', method, params);
-          return handleRequestAccounts(network, executeRequest, eventEmitter);
+          return handleRequestAccounts(
+            storage,
+            network,
+            executeRequest,
+            eventEmitter,
+          );
         }
 
         default: {

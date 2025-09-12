@@ -1,10 +1,15 @@
 'use client';
 
 import {
+  type Communicator,
+  PopupCommunicator,
+} from '@sophon-labs/account-communicator';
+import {
   AccountServerURL,
   type DataScopes,
   type SophonNetworkType,
 } from '@sophon-labs/account-core';
+import type { EIP1193Provider } from '@sophon-labs/account-provider';
 import {
   createContext,
   useCallback,
@@ -22,8 +27,6 @@ import {
 import { sophon, sophonTestnet } from 'viem/chains';
 import { eip712WalletActions } from 'viem/zksync';
 import type { Connector } from 'wagmi';
-import type { WalletProvider } from 'zksync-sso';
-import { type Communicator, PopupCommunicator } from 'zksync-sso/communicator';
 import { setCookieAuthToken } from '../cookie';
 import { SophonAppStorage, StorageKeys } from '../storage/storage';
 import type { SophonJWTToken } from '../types/auth';
@@ -36,7 +39,7 @@ export interface SophonContextConfig {
   account?: SophonAccount;
   setAccount: (account?: SophonAccount) => void;
   chain: Chain;
-  provider?: WalletProvider;
+  provider?: EIP1193Provider;
   accessToken?: SophonJWTToken | null;
   updateAccessToken: (data: SophonJWTToken) => void;
   refreshToken?: SophonJWTToken | null;

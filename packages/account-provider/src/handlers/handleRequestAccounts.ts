@@ -1,4 +1,4 @@
-import type { SophonNetworkType } from '@sophon-labs/account-core';
+import type { SophonNetworkType, StorageLike } from '@sophon-labs/account-core';
 import type EventEmitter from 'eventemitter3';
 import { getAccounts, setAccounts } from '../lib/accounts';
 import type { RequestSender } from '../types';
@@ -18,13 +18,14 @@ interface RequestAccountsResponse {
  * @returns The accounts available for the user on the given network.
  */
 export const handleRequestAccounts = async (
+  storage: StorageLike,
   network: SophonNetworkType,
   sender: RequestSender<RequestAccountsResponse>,
   eventEmitter: EventEmitter,
 ) => {
   // If there are already accounts cached, return them, no need to ask for the
   // account server again
-  const accounts = getAccounts(network);
+  const accounts = getAccounts(storage, network);
   if (accounts.length > 0) {
     return accounts;
   }
@@ -38,7 +39,7 @@ export const handleRequestAccounts = async (
   const currentAccounts = address ? [address] : [];
 
   eventEmitter.emit('accountsChanged', currentAccounts);
-  setAccounts(network, currentAccounts);
+  setAccounts(storage, network, currentAccounts);
 
   return currentAccounts;
 };

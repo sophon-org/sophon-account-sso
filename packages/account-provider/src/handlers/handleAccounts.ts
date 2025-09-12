@@ -1,4 +1,4 @@
-import type { SophonNetworkType } from '@sophon-labs/account-core';
+import type { SophonNetworkType, StorageLike } from '@sophon-labs/account-core';
 import { getAccounts } from '../lib/accounts';
 
 /**
@@ -10,6 +10,9 @@ import { getAccounts } from '../lib/accounts';
  * @param eventEmitter - The event emitter to use.
  * @returns The accounts available for the user on the given network.
  */
-export const handleAccounts = async (network: SophonNetworkType) => {
-  return getAccounts(network);
+export const handleAccounts = async (
+  storage: StorageLike,
+  network: SophonNetworkType,
+) => {
+  return getAccounts(storage, network);
 };

@@ -148,7 +148,7 @@ function assignOriginalError(error: unknown): unknown {
 }
 
 function hasKey(obj: Record<string, unknown>, key: string) {
-  return Object.hasOwn(obj, key);
+  return Object.keys(obj).includes(key);
 }
 
 function hasStringProperty<T>(obj: unknown, prop: keyof T): obj is T {

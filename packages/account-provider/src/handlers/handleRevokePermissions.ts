@@ -1,4 +1,4 @@
-import type { SophonNetworkType } from '@sophon-labs/account-core';
+import type { SophonNetworkType, StorageLike } from '@sophon-labs/account-core';
 import type EventEmitter from 'eventemitter3';
 import { setAccounts } from '../lib/accounts';
 import type { RequestSender } from '../types';
@@ -18,12 +18,13 @@ interface RequestAccountsResponse {
  * @returns The accounts available for the user on the given network.
  */
 export const handleRevokePermissions = async (
+  storage: StorageLike,
   network: SophonNetworkType,
   sender: RequestSender<RequestAccountsResponse>,
   eventEmitter: EventEmitter,
 ) => {
   const currentAccounts: string[] = [];
-  setAccounts(network, currentAccounts);
+  setAccounts(storage, network, currentAccounts);
 
   try {
     // Send logout request to the account server popup

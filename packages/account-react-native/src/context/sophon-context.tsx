@@ -5,6 +5,7 @@ import {
   type DataScopes,
   type SophonNetworkType,
 } from '@sophon-labs/account-core';
+import type { EIP1193Provider } from '@sophon-labs/account-provider';
 import { createContext, useCallback, useMemo, useState } from 'react';
 import {
   type Address,
@@ -16,7 +17,6 @@ import {
 import { sophon, sophonTestnet } from 'viem/chains';
 import { erc7846Actions } from 'viem/experimental';
 import { eip712WalletActions } from 'viem/zksync';
-import type { WalletProvider } from 'zksync-sso';
 import type { SophonJWTToken } from '@/types';
 import { SophonMainView, type SophonMainViewProps } from '../components';
 import { useUIEventHandler } from '../messaging';
@@ -33,7 +33,7 @@ export interface SophonContextConfig {
   account?: SophonAccount;
   setAccount: (account?: SophonAccount) => void;
   chain: Chain;
-  provider?: WalletProvider;
+  provider?: EIP1193Provider;
   network: SophonNetworkType;
   accessToken?: SophonJWTToken | null;
   refreshToken?: SophonJWTToken | null;

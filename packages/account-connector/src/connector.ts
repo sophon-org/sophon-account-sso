@@ -1,3 +1,4 @@
+import type { Communicator } from '@sophon-labs/account-communicator';
 import {
   AccountServerURL,
   type SophonNetworkType,
@@ -25,7 +26,6 @@ import {
 } from 'viem';
 import { sophon, sophonTestnet } from 'viem/chains';
 import { eip712WalletActions } from 'viem/zksync';
-import type { Communicator } from 'zksync-sso/communicator';
 
 export const createSophonConnector = (
   network: SophonNetworkType = 'testnet',
