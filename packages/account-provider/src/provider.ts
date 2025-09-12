@@ -4,7 +4,6 @@ import {
 } from '@sophon-labs/account-communicator';
 import {
   AccountServerURL,
-  isSSR,
   type SophonNetworkType,
   type StorageLike,
 } from '@sophon-labs/account-core';

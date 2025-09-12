@@ -1,5 +1,16 @@
 # @sophon-labs/account-react-native
 
+## 2.0.10-next.5
+
+### Patch Changes
+
+- Fixing provider window error on react native
+- Updated dependencies
+  - @sophon-labs/account-message-bridge@2.0.10-next.5
+  - @sophon-labs/account-communicator@2.0.10-next.5
+  - @sophon-labs/account-provider@2.0.10-next.5
+  - @sophon-labs/account-core@2.0.10-next.5
+
 ## 2.0.10-next.4
 
 ### Patch Changes

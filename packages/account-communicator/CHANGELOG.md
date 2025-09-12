@@ -1,5 +1,11 @@
 # @sophon-labs/account-eip6963
 
+## 2.0.10-next.5
+
+### Patch Changes
+
+- Fixing provider window error on react native
+
 ## 2.0.10-next.4
 
 ### Patch Changes
