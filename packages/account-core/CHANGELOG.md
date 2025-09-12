@@ -1,5 +1,11 @@
 # @sophon-labs/account-core
 
+## 2.0.10-next.9
+
+### Patch Changes
+
+- Error checking on react native
+
 ## 2.0.10-next.8
 
 ### Patch Changes

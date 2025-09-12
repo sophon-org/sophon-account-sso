@@ -22,15 +22,18 @@ export default function JWTPanel() {
 
   useEffect(() => {
     updateAccessToken();
-  }, [updateAccessToken]);
+  }, []);
 
   const fetchMe = async () => {
     const me = await getMe();
     setMe(me.sub as `0x${string}`);
   };
 
-  const refreshMe = () => {
-    getAccessToken(true);
+  const refreshMe = async () => {
+    setLoading(true);
+    const newToken = await getAccessToken(true);
+    setToken(newToken);
+    setLoading(false);
   };
 
   return (

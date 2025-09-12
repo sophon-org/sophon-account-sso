@@ -13,7 +13,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@sophon-labs/account-connector": "2.0.10-next.7",
+    "@sophon-labs/account-connector": "2.0.10-next.8",
     "@tanstack/react-query": "^5.83.0",
     "next": "15.4.3",
     "react": "19.1.0",

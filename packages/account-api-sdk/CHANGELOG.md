@@ -1,5 +1,13 @@
 # @sophon-labs/account-api-sdk
 
+## 2.0.10-next.9
+
+### Patch Changes
+
+- Error checking on react native
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.10-next.9
+
 ## 2.0.10-next.8
 
 ### Patch Changes

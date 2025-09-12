@@ -1,7 +1,7 @@
 {
   "name": "@sophon-labs/account-connector",
   "description": "Web3 wallet connector with SSO features",
-  "version": "2.0.10-next.8",
+  "version": "2.0.10-next.9",
   "license": "MIT",
   "author": "Sophon Team",
   "type": "module",
@@ -46,8 +46,8 @@
     "vitest": "^3.2.4"
   },
   "dependencies": {
-    "@sophon-labs/account-core": "2.0.10-next.8",
-    "@sophon-labs/account-provider": "2.0.10-next.8",
+    "@sophon-labs/account-core": "2.0.10-next.9",
+    "@sophon-labs/account-provider": "2.0.10-next.9",
     "@wagmi/core": "^2.17.3"
   },
   "peerDependencies": {

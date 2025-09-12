@@ -34,7 +34,7 @@ export const useSophonToken = () => {
 
       // if the token is expired, refresh it
       if (forceRefresh || accessExpiresAt < new Date()) {
-        if (!refreshToken) {
+        if (!refreshToken?.value) {
           console.warn('No refresh token found to use');
           return null;
         }
@@ -49,6 +49,14 @@ export const useSophonToken = () => {
             },
           },
         );
+
+        if (!response.ok) {
+          console.warn(
+            `Failed to refresh access token: ${response.statusText}`,
+          );
+          return null;
+        }
+
         const data = await response.json();
 
         updateAccessToken({
@@ -79,7 +87,7 @@ export const useSophonToken = () => {
 
   const getMe = useCallback(
     async (baseURL?: string) => {
-      if (!accessToken) {
+      if (!accessToken?.value) {
         console.warn('No access token found to use');
         return null;
       }
