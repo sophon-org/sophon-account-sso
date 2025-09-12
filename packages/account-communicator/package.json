@@ -1,0 +1,50 @@
+{
+  "name": "@sophon-labs/account-communicator",
+  "version": "2.0.10-next.9",
+  "description": "Communicator interface and basic implementation for Sophon Account",
+  "license": "MIT",
+  "author": "Sophon Team",
+  "type": "module",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "require": "./dist/index.cjs"
+      }
+    }
+  },
+  "packageManager": "yarn@4.9.2",
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "------------------------- UNIT TESTING -------------------------": "",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:ci": "vitest run --coverage",
+    "----------------------- INTEGRATION TESTING ---------------------": "",
+    "test:e2e:ci": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:dev": "npm-run-all --parallel dev test:e2e:ui"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^10.0.0",
+    "@playwright/test": "^1.54.1",
+    "@types/node": "^20.0.0",
+    "tsup": "^8.5.0",
+    "typescript": "^5.0.0",
+    "vitest": "^3.2.4"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

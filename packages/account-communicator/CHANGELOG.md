@@ -1,0 +1,225 @@
+# @sophon-labs/account-eip6963
+
+## 2.0.10-next.9
+
+### Patch Changes
+
+- Error checking on react native
+
+## 2.0.10-next.8
+
+### Patch Changes
+
+- Adding addEventListener check
+
+## 2.0.10-next.7
+
+### Patch Changes
+
+- Fixing problem with wagmi chained calls
+
+## 2.0.10-next.6
+
+### Patch Changes
+
+- Correctly considering ssr
+
+## 2.0.10-next.5
+
+### Patch Changes
+
+- Fixing provider window error on react native
+
+## 2.0.10-next.4
+
+### Patch Changes
+
+- Fixing error on react native
+
+## 2.0.10-next.3
+
+### Patch Changes
+
+- Removing zksync-sso from core packages
+
+## 2.0.10-next.2
+
+### Patch Changes
+
+- Simplifying connector and provider dependencies
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.10-next.2
+
+## 2.0.10-next.1
+
+### Patch Changes
+
+- Adding webauthn as direct dependency to connector package
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.10-next.1
+
+## 2.0.10-next.0
+
+### Patch Changes
+
+- Exposing sophon connector and sophon provider helper utility
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.10-next.0
+
+## 2.0.9
+
+### Patch Changes
+
+- Exposing react native types
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.9
+
+## 2.0.8
+
+### Patch Changes
+
+- Generate token as async function
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.8
+
+## 2.0.7
+
+### Patch Changes
+
+- 56e2cef: Support for session refresh
+- eb7a995: Updating how we propagate scopes parameter
+- 9783296: Updating hooks parameter
+- 4c3f83a: Updating react native
+- b6ef1d9: Support for better mobile flow
+- Support for session refreshing and data scope
+- 3fc2f7a: Datascopes on react native
+- a261a6e: Exposing SNSName again
+- 3f61011: Bumping version
+- Updated dependencies [56e2cef]
+- Updated dependencies [eb7a995]
+- Updated dependencies [9783296]
+- Updated dependencies [4c3f83a]
+- Updated dependencies [b6ef1d9]
+- Updated dependencies
+- Updated dependencies [3fc2f7a]
+- Updated dependencies [a261a6e]
+- Updated dependencies [3f61011]
+  - @sophon-labs/account-core@2.0.7
+
+## 2.0.7-next.7
+
+### Patch Changes
+
+- Updating how we propagate scopes parameter
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.7-next.7
+
+## 2.0.7-next.6
+
+### Patch Changes
+
+- Updating react native
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.7-next.6
+
+## 2.0.7-next.5
+
+### Patch Changes
+
+- Datascopes on react native
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.7-next.5
+
+## 2.0.7-next.4
+
+### Patch Changes
+
+- Updating hooks parameter
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.7-next.4
+
+## 2.0.7-next.3
+
+### Patch Changes
+
+- Support for session refresh
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.7-next.3
+
+## 2.0.7-next.2
+
+### Patch Changes
+
+- Bumping version
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.7-next.2
+
+## 2.0.7-next.1
+
+### Patch Changes
+
+- Exposing SNSName again
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.7-next.1
+
+## 2.0.7-next.0
+
+### Patch Changes
+
+- Support for better mobile flow
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.7-next.0
+
+## 2.0.6
+
+### Patch Changes
+
+- Exposing again SIWS helper and adding example
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.6
+
+## 2.0.5
+
+### Patch Changes
+
+- Using partner id when using react sdk
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.5
+
+## 2.0.4
+
+### Patch Changes
+
+- Updating SetToken on react sdk
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.4
+
+## 2.0.3
+
+### Patch Changes
+
+- Adding paymaster address on production
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.3
+
+## 2.0.2
+
+### Patch Changes
+
+- Revoking permissions on server when disconnecting on react package
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.2
+
+## 2.0.1
+
+### Patch Changes
+
+- Bumping version to minor to avoid version conflict.
+- Updated dependencies
+  - @sophon-labs/account-core@2.0.1
+
+## 2.0.0
+
+### Major Changes
+
+- Initial stable version for 2.x

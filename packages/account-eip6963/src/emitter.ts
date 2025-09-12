@@ -4,11 +4,12 @@ import {
   SophonIconTestnet,
   type SophonNetworkType,
 } from '@sophon-labs/account-core';
+import { createSophonEIP1193Provider } from '@sophon-labs/account-provider';
 import { announceEip6963Provider } from './eip6963';
-import { createSophonEIP1193Provider } from './provider';
 
 export function createSophonEIP6963Emitter(
   network: SophonNetworkType = 'testnet',
+  partnerId?: string,
   authServerUrl: string = AccountServerURL[network],
 ) {
   // Skip on server-side
@@ -17,7 +18,11 @@ export function createSophonEIP6963Emitter(
   }
 
   // Create the provider
-  const provider = createSophonEIP1193Provider(network, authServerUrl);
+  const provider = createSophonEIP1193Provider(
+    network,
+    partnerId,
+    authServerUrl,
+  );
 
   // Announce it via EIP-6963
   announceEip6963Provider({
