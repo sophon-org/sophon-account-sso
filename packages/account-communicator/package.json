@@ -1,7 +1,7 @@
 {
-  "name": "@sophon-labs/account-provider",
+  "name": "@sophon-labs/account-communicator",
   "version": "2.0.10-next.2",
-  "description": "EIP-1193 provider for Sophon Account",
+  "description": "Communicator interface and basic implementation for Sophon Account",
   "license": "MIT",
   "author": "Sophon Team",
   "type": "module",
@@ -17,26 +17,6 @@
       "require": {
         "types": "./dist/index.d.cts",
         "require": "./dist/index.cjs"
-      }
-    },
-    "./mainnet": {
-      "import": {
-        "types": "./dist/mainnet.d.ts",
-        "import": "./dist/mainnet.js"
-      },
-      "require": {
-        "types": "./dist/mainnet.d.cts",
-        "require": "./dist/mainnet.cjs"
-      }
-    },
-    "./testnet": {
-      "import": {
-        "types": "./dist/testnet.d.ts",
-        "import": "./dist/testnet.js"
-      },
-      "require": {
-        "types": "./dist/testnet.d.cts",
-        "require": "./dist/testnet.cjs"
       }
     }
   },
@@ -63,12 +43,6 @@
     "tsup": "^8.5.0",
     "typescript": "^5.0.0",
     "vitest": "^3.2.4"
-  },
-  "dependencies": {
-    "@sophon-labs/account-communicator": "2.0.10-next.2",
-    "@sophon-labs/account-core": "2.0.10-next.2",
-    "eventemitter3": "^5.0.1",
-    "json-rpc-2.0": "^1.7.1"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"

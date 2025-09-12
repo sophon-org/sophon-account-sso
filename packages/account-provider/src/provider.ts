@@ -1,9 +1,12 @@
 import {
+  type Communicator,
+  PopupCommunicator,
+} from '@sophon-labs/account-communicator';
+import {
   AccountServerURL,
   type SophonNetworkType,
 } from '@sophon-labs/account-core';
 import { EventEmitter } from 'eventemitter3';
-import { type Communicator, PopupCommunicator } from 'zksync-sso/communicator';
 import { handleAccounts } from './handlers/handleAccounts';
 import { handleChainId } from './handlers/handleChainId';
 import { handlePersonalSign } from './handlers/handlePersonalSign';
