@@ -3,6 +3,7 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from '@react-navigation/native';
+import { DataScopes } from '@sophon-labs/account-core';
 import { SophonContextProvider } from '@sophon-labs/account-react-native';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
@@ -26,6 +27,7 @@ export default function RootLayout() {
     <SophonContextProvider
       network={'testnet'}
       partnerId="123b216c-678e-4611-af9a-2d5b7b061258"
+      dataScopes={[DataScopes.email]}
     >
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <Stack>

@@ -435,37 +435,37 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-communicator@npm:2.0.10-next.9":
-  version: 2.0.10-next.9
-  resolution: "@sophon-labs/account-communicator@npm:2.0.10-next.9"
+"@sophon-labs/account-communicator@npm:2.1.0":
+  version: 2.1.0
+  resolution: "@sophon-labs/account-communicator@npm:2.1.0"
   peerDependencies:
     typescript: ^5.0.0
-  checksum: 10c0/2489db8b71dfe705c027a6a0d6b4e4a54be4e85e4b0b50f6ee709e2e193c1f3a67a00f398c9dc361c2de4e979c5b5df2330a54672013210c4b543d3e78432288
+  checksum: 10c0/6c3961327bfdbe395eb51c1b62b9b1e184912864361dac644491463b8ec8b3f9eb3df4ebc04c4d89e6b0537f0c971819e6b77c6a01dbe52e3112885c785f614c
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-core@npm:2.0.10-next.9":
-  version: 2.0.10-next.9
-  resolution: "@sophon-labs/account-core@npm:2.0.10-next.9"
+"@sophon-labs/account-core@npm:2.1.0":
+  version: 2.1.0
+  resolution: "@sophon-labs/account-core@npm:2.1.0"
   dependencies:
     text-encoding-polyfill: "npm:^0.6.7"
   peerDependencies:
     viem: ">=2.21.0"
-  checksum: 10c0/85356be32c7f4cb746f0b2ad6afe6e25d6f239a2e406825d32360d7ab2eaaa74068cb07dfcafd60c82797df5d5b50d62f56231c781ad352b6e13c3f8bda8f40b
+  checksum: 10c0/cafbbb0bf9aac3a6b1561f6b3a6af935ff124aeaeb0283adc91e708c54fcbe0711e726f5ba7fc78bbd5481b5c271ea925a8271ff75dec89bc19f84e86fab7c59
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-provider@npm:2.0.10-next.9":
-  version: 2.0.10-next.9
-  resolution: "@sophon-labs/account-provider@npm:2.0.10-next.9"
+"@sophon-labs/account-provider@npm:2.1.0":
+  version: 2.1.0
+  resolution: "@sophon-labs/account-provider@npm:2.1.0"
   dependencies:
-    "@sophon-labs/account-communicator": "npm:2.0.10-next.9"
-    "@sophon-labs/account-core": "npm:2.0.10-next.9"
+    "@sophon-labs/account-communicator": "npm:2.1.0"
+    "@sophon-labs/account-core": "npm:2.1.0"
     eventemitter3: "npm:^5.0.1"
     json-rpc-2.0: "npm:^1.7.1"
   peerDependencies:
     typescript: ^5.0.0
-  checksum: 10c0/954e11b0ccfd3b2e331279e3574e64656a014d6591ffb86593feffdb81f7d61fd0d987c0d75ecccf9ba1e2bd2fbc1ffe50340ab833f450230418835d126b1534
+  checksum: 10c0/576759a28275e7fc0c65ac0ecac2c629acd422889763f03a05043b3259f0a9fbdb37c830d60ca811e561b532f5fc303274ab8d86b1bbf38f29e3c7128465a1ab
   languageName: node
   linkType: hard
 
@@ -473,7 +473,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@sophon-labs/examples-sandbox-viem@workspace:."
   dependencies:
-    "@sophon-labs/account-provider": "npm:2.0.10-next.9"
+    "@sophon-labs/account-provider": "npm:2.1.0"
     "@tailwindcss/postcss": "npm:^4"
     "@types/node": "npm:^20"
     "@types/react": "npm:^19"
