@@ -21,7 +21,12 @@ import { MeService } from "./me.service";
 		JwtKeysModule,
 	],
 	controllers: [AuthController],
-	providers: [AuthService, SessionsRepository, PartnerRegistryService, MeService],
+	providers: [
+		AuthService,
+		SessionsRepository,
+		PartnerRegistryService,
+		MeService,
+	],
 	exports: [AuthService],
 })
 export class AuthModule {}
