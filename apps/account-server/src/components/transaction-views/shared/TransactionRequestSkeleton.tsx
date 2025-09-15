@@ -1,15 +1,21 @@
 import MessageContainer from '@/components/ui/messageContainer';
 import VerificationImage from '@/components/ui/verification-image';
 
-export default function TransactionRequestSkeleton() {
+export default function TransactionRequestSkeleton({
+  isMobile,
+}: {
+  isMobile: boolean;
+}) {
   return (
     <div className="text-center flex flex-col items-center justify-center gap-8">
       {/* Verification Image Skeleton */}
-      <VerificationImage
-        icon={
-          <div className="w-10 h-10 bg-gray-300 rounded-full animate-pulse" />
-        }
-      />
+      {!isMobile && (
+        <VerificationImage
+          icon={
+            <div className="w-10 h-10 bg-gray-300 rounded-full animate-pulse" />
+          }
+        />
+      )}
 
       {/* Title Skeleton */}
       <div className="flex flex-col items-center justify-center">
@@ -18,7 +24,7 @@ export default function TransactionRequestSkeleton() {
 
       {/* Content Skeleton */}
       <div className="w-full">
-        <MessageContainer>
+        <MessageContainer isMobile={isMobile}>
           <div className="text-sm text-black flex flex-col gap-4">
             {/* Token/Contract Name Skeleton */}
             <div className="flex flex-col gap-1">
@@ -39,10 +45,12 @@ export default function TransactionRequestSkeleton() {
             </div>
 
             {/* Additional Info Skeleton (for complex transactions) */}
-            <div className="flex flex-col gap-1">
-              <div className="h-4 w-24 bg-gray-300 rounded animate-pulse" />
-              <div className="h-4 w-40 bg-gray-300 rounded animate-pulse" />
-            </div>
+            {!isMobile && (
+              <div className="flex flex-col gap-1">
+                <div className="h-4 w-24 bg-gray-300 rounded animate-pulse" />
+                <div className="h-4 w-40 bg-gray-300 rounded animate-pulse" />
+              </div>
+            )}
           </div>
         </MessageContainer>
       </div>

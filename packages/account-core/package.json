@@ -1,7 +1,7 @@
 {
   "name": "@sophon-labs/account-core",
   "description": "Core package for the Sophon Account with common utilities",
-  "version": "2.0.6",
+  "version": "2.1.1",
   "license": "MIT",
   "author": "Sophon Team",
   "type": "module",
@@ -20,6 +20,10 @@
         "require": "./dist/index.cjs"
       }
     }
+  },
+  "packageManager": "yarn@4.9.2",
+  "engines": {
+    "node": ">=20.9.0"
   },
   "scripts": {
     "build": "tsup",
@@ -44,5 +48,8 @@
     "vite": "^7.0.5",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4"
+  },
+  "dependencies": {
+    "text-encoding-polyfill": "^0.6.7"
   }
 }

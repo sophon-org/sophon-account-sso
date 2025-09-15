@@ -5,6 +5,7 @@ import MessageContainer from '@/components/ui/messageContainer';
 import TypedDataDisplay from '@/components/ui/typed-data-display';
 import VerificationImage from '@/components/ui/verification-image';
 import { useSigningRequestActions } from '@/hooks/actions/useSigningRequestActions';
+import { windowService } from '@/service/window.service';
 
 type DrawerContentType =
   | 'raw-transaction'
@@ -20,6 +21,7 @@ interface SigningRequestViewProps {
 export default function SigningRequestView({
   openDrawer,
 }: SigningRequestViewProps = {}) {
+  const isMobile = windowService.isMobile();
   const { account, incoming, typedDataSigning, messageSigning } =
     useSigningRequestActions({ openDrawer });
 
@@ -29,7 +31,9 @@ export default function SigningRequestView({
 
   return (
     <div className="text-center flex flex-col items-center justify-center gap-8 mt-3">
-      <VerificationImage icon={<IconSignature className="w-10 h-10" />} />
+      {!isMobile && (
+        <VerificationImage icon={<IconSignature className="w-10 h-10" />} />
+      )}
       <div className="flex flex-col items-center justify-center">
         <h5 className="text-2xl font-bold">Signature request</h5>
         <p className="hidden">https://my.staging.sophon.xyz</p>
@@ -44,7 +48,7 @@ export default function SigningRequestView({
               </p>
             </div>
           </Card>
-          <MessageContainer showBottomButton={!!openDrawer}>
+          <MessageContainer showBottomButton={!!openDrawer} isMobile={isMobile}>
             <div className="text-sm text-black">
               <TypedDataDisplay data={typedDataSigning.message} />
             </div>

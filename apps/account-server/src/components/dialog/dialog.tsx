@@ -1,18 +1,16 @@
-import {
-  getSVGAvatarFromString,
-  shortenAddress,
-} from '@sophon-labs/account-core';
+import { NutIcon } from '@phosphor-icons/react';
+import { getSVGAvatarFromString } from '@sophon-labs/account-core';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { isAddress } from 'viem';
 import { sophonTestnet } from 'viem/chains';
 import { sendMessage } from '@/events';
+import { useAddressWithSns } from '@/hooks/useAddressWithSns';
 import { trackDialogInteraction } from '@/lib/analytics';
 import { cn } from '@/lib/cn';
 import { SOPHON_VIEM_CHAIN } from '@/lib/constants';
 import { IconBack } from '../icons/icon-back';
 import { IconClose } from '../icons/icon-close';
-import { IconSettings } from '../icons/icon-settings';
 import { IconSophon } from '../icons/icon-sophon';
 import { LegalNotice } from '../legal';
 import {
@@ -47,9 +45,12 @@ export const DialogHeader = ({
 
   const avatarUrl = titleIsAddress && getSVGAvatarFromString(title || '');
 
-  const titleDisplay = titleIsAddress
-    ? shortenAddress(title as `0x${string}`)
-    : title;
+  const { addressOrName } = useAddressWithSns(
+    title as `0x${string}` | undefined,
+    true,
+  );
+
+  const titleDisplay = titleIsAddress ? addressOrName : title;
 
   return (
     <div
@@ -102,7 +103,7 @@ export const DialogHeader = ({
         {!!showSettings && (
           <DropdownMenu>
             <DropdownMenuTrigger className=" cursor-pointer">
-              <IconSettings className="m-w-6 m-h-6" />
+              <NutIcon weight="fill" size={24} className="m-w-6 m-h-6" />
             </DropdownMenuTrigger>
             <DropdownMenuContent className="mr-5">
               <DropdownMenuItem
@@ -241,10 +242,19 @@ export function Dialog({
       ref={scrollContainerRef}
       className={cn('bg-white h-full w-full overflow-auto', className)}
       style={{
-        background:
-          'linear-gradient(180deg, rgba(255, 255, 255, 0.00) 0%, #FFF 75%), url(/images/skybg.webp) lightgray -46.312px 0px / 395.062% 100% no-repeat',
+        background: 'linear-gradient(180deg, #DDEFFF 0%, #FFF 60%)',
       }}
     >
+      <video
+        className="absolute inset-0 w-full h-full object-cover opacity-20"
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="auto"
+      >
+        <source src="/videos/clouds.webm" type="video/webm" />
+      </video>
       {showTestnetBanner && (
         <div className="fixed bg-yellow-500 px-4 top-0 z-60 text-center text-white justify-self-center items-center rounded-b-lg">
           <strong className="text-xs">TESTNET</strong>

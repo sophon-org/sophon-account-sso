@@ -2,6 +2,10 @@
   "name": "@sophon-labs/examples-sandbox-mobile",
   "main": "expo-router/entry",
   "version": "1.0.0",
+  "packageManager": "yarn@4.9.2",
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
@@ -15,12 +19,7 @@
     "@react-navigation/bottom-tabs": "^7.3.10",
     "@react-navigation/elements": "^2.3.8",
     "@react-navigation/native": "^7.1.6",
-    "@simplewebauthn/browser": "^13.1.2",
-    "@simplewebauthn/server": "^13.1.2",
-    "@sophon-labs/account-core": "link:../../../packages/account-core",
-    "@sophon-labs/account-message-bridge": "link:../../../packages/account-message-bridge",
-    "@sophon-labs/account-react-native": "link:../../../packages/account-react-native",
-    "crypto-browserify": "^3.12.1",
+    "@sophon-labs/account-react-native": "2.1.0",
     "expo": "~53.0.20",
     "expo-blur": "~14.1.5",
     "expo-constants": "~17.1.6",
@@ -49,9 +48,7 @@
     "react-native-screens": "~4.11.1",
     "react-native-web": "~0.20.0",
     "react-native-webview": "13.13.5",
-    "text-encoding-polyfill": "^0.6.7",
-    "viem": "2.36.0",
-    "zksync-sso": "github:sophon-org/zksync-sso-preview#20250901_1"
+    "viem": "2.36.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

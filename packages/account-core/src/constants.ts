@@ -14,6 +14,11 @@ export const AccountServerURL: Record<SophonNetworkType, string> = {
   testnet: 'https://my.staging.sophon.xyz',
 };
 
+export const AccountAuthAPIURL: Record<SophonNetworkType, string> = {
+  mainnet: 'https://api.my.sophon.xyz',
+  testnet: 'https://api.my.staging.sophon.xyz',
+};
+
 /**
  * Mapping of possible RPC urls based on
  * sophon networks
@@ -92,6 +97,7 @@ export const CHAIN_CONTRACTS: Record<ChainId, ContractAddresses> = {
     recovery: '0x4c15F20fb91Fb90d2ba204194E312b595F75709F',
     oidcKeyRegistry: '0x0000000000000000000000000000000000000000',
     recoveryOidc: '0x0000000000000000000000000000000000000000',
+    snsRegistry: '0xc1Ef891D1b17AB8E1af3a8Bb24cdA68aBfFD1F49',
   },
   '50104': {
     session: '0x3E9AEF9331C4c558227542D9393a685E414165a3',
@@ -101,5 +107,14 @@ export const CHAIN_CONTRACTS: Record<ChainId, ContractAddresses> = {
     recovery: '0x4c15F20fb91Fb90d2ba204194E312b595F75709F',
     oidcKeyRegistry: '0x0000000000000000000000000000000000000000',
     recoveryOidc: '0x0000000000000000000000000000000000000000',
+    snsRegistry: '0xc1Ef891D1b17AB8E1af3a8Bb24cdA68aBfFD1F49',
   },
 };
+
+export enum DataScopes {
+  email = 'email',
+  google = 'google',
+  discord = 'discord',
+  telegram = 'telegram',
+  x = 'x',
+}

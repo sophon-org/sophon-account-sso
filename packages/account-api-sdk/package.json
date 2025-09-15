@@ -1,7 +1,7 @@
 {
   "name": "@sophon-labs/account-api-sdk",
   "description": "API SDK wrapper for the Sophon Account",
-  "version": "2.0.6",
+  "version": "2.1.1",
   "license": "MIT",
   "author": "Sophon Team",
   "sideEffects": false,
@@ -20,6 +20,10 @@
       }
     }
   },
+  "packageManager": "yarn@4.9.2",
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
@@ -29,7 +33,7 @@
     "test:ci": "vitest --watch false --passWithNoTests --coverage"
   },
   "dependencies": {
-    "@sophon-labs/account-core": "2.0.6",
+    "@sophon-labs/account-core": "2.1.1",
     "axios": "^1.11.0",
     "jsonwebtoken": "^9.0.2",
     "jwks-rsa": "^3.2.0"

@@ -9,6 +9,6 @@ export * from './useGetSwapTransaction';
 export * from './useSocialAccounts';
 export * from './useSophonAccount';
 export * from './useSophonActions';
+export * from './useSophonClient';
 export * from './useSophonConnector';
-export * from './useSophonContext';
 export * from './useSophonToken';

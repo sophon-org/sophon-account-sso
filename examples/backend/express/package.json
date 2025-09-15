@@ -6,11 +6,12 @@
     "dev-ts": "ts-node ./src/index.ts",
     "type-check": "tsc --noEmit"
   },
+  "packageManager": "yarn@4.9.2",
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=20.9.0"
   },
   "dependencies": {
-    "@sophon-labs/account-api-sdk": "2.0.1",
+    "@sophon-labs/account-api-sdk": "2.0.7-next.0",
     "express": "^5.1.0",
     "helmet": "^8.1.0"
   },

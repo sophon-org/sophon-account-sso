@@ -1,11 +1,4 @@
-interface StorageLike {
-  getItem(key: string): string | null;
-  setItem(key: string, value: string): void;
-  removeItem(key: string): void;
-  clear(): void;
-}
-
-export const isSSR = () => typeof window === 'undefined';
+import type { StorageLike } from '@sophon-labs/account-core';
 
 export const SophonAppStorage: StorageLike = {
   getItem: (key: string) => localStorage.getItem(key) ?? null,
@@ -15,6 +8,7 @@ export const SophonAppStorage: StorageLike = {
 };
 
 export enum StorageKeys {
-  USER_TOKEN = 'sophon::user_token',
+  USER_ACCESS_TOKEN = 'sophon::user_access_token',
   USER_ACCOUNT = 'sophon::user_account',
+  USER_REFRESH_TOKEN = 'sophon::user_refresh_token',
 }

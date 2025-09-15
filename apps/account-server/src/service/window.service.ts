@@ -1,9 +1,10 @@
+import { isSSR } from '@sophon-labs/account-core';
 import type { FromWebActions } from '@sophon-labs/account-message-bridge';
 import {
   registerRNHandler,
   sendMessageToRN,
 } from '@sophon-labs/account-message-bridge';
-import { isSSR } from '@/lib/is-ssr';
+import { env } from '@/env';
 
 /**
  * Simple interface to be used by all possible comnunications services,
@@ -35,12 +36,22 @@ interface WindowCommunicationService {
   /**
    * Emits a token to the bridge
    */
-  emitToken: (token: string) => void;
+  emitAccessToken: (token: string, expiresAt: number) => void;
+
+  /**
+   * Emits a refresh token to the bridge
+   */
+  emitRefreshToken: (refreshToken: string, expiresAt: number) => void;
 
   /**
    * Sends logout signal to the bridge
    */
   logout: () => void;
+
+  /**
+   * @returns if this service represents a mobile environment
+   */
+  isMobile: () => boolean;
 
   listen: (callback: (message: unknown) => void) => () => void;
 }
@@ -58,13 +69,24 @@ const noopWindowService: WindowCommunicationService = {
     alert(`sendMessage noop ${JSON.stringify(message)}`);
   },
 
-  emitToken: (token: string) => {
-    console.log('Token emitted (noop):', token);
+  emitAccessToken: (token: string, expiresAt: number) => {
+    console.log('Token emitted (noop):', token, 'expiresAt:', expiresAt);
+  },
+
+  emitRefreshToken: (refreshToken: string, expiresAt: number) => {
+    console.log(
+      'Refresh Token emitted (noop):',
+      refreshToken,
+      'expiresAt:',
+      expiresAt,
+    );
   },
 
   logout: () => {
     console.log('Logout (noop)');
   },
+
+  isMobile: () => false,
 
   listen: () => {
     return () => {};
@@ -82,21 +104,31 @@ const popupWindowService: WindowCommunicationService = {
 
   close: () => {
     window.opener.postMessage({ event: 'PopupUnload' }, '*');
-    // window.close();
   },
 
   sendMessage: (message: unknown) => {
-    // alert(`sendMessage webview ${JSON.stringify(message)}`);
     window.opener.postMessage(message, '*');
   },
 
-  emitToken: (token: string) => {
-    window.opener.postMessage({ type: 'token', payload: token }, '*');
+  emitAccessToken: (value: string, expiresAt: number) => {
+    window.opener.postMessage(
+      { type: 'access.token', payload: { value, expiresAt } },
+      '*',
+    );
+  },
+
+  emitRefreshToken: (value: string, expiresAt: number) => {
+    window.opener.postMessage(
+      { type: 'refresh.token', payload: { value, expiresAt } },
+      '*',
+    );
   },
 
   logout: () => {
     window.opener.postMessage({ type: 'logout' }, '*');
   },
+
+  isMobile: () => false,
 
   listen: (callback: (message: unknown) => void) => {
     const listener = (event: MessageEvent) => {
@@ -107,6 +139,45 @@ const popupWindowService: WindowCommunicationService = {
     return () => {
       window.removeEventListener('message', listener);
     };
+  },
+};
+
+const embeddedWindowService: WindowCommunicationService = {
+  name: 'embedded',
+
+  isManaged: () => !isSSR() && !!window.parent,
+
+  reload: () => {
+    window.location.reload();
+  },
+
+  close: () => {
+    sendMessageToRN('closeModal', {});
+  },
+
+  sendMessage: (message: unknown) => {
+    sendMessageToRN('rpc', message as FromWebActions['rpc']);
+  },
+
+  emitAccessToken: (value: string, expiresAt: number) => {
+    sendMessageToRN('account.access.token.emitted', { value, expiresAt });
+  },
+
+  emitRefreshToken: (value: string, expiresAt: number) => {
+    sendMessageToRN('account.refresh.token.emitted', {
+      value,
+      expiresAt,
+    });
+  },
+
+  logout: () => {
+    sendMessageToRN('logout', null);
+  },
+
+  isMobile: () => true,
+
+  listen: (callback: (message: unknown) => void) => {
+    return registerRNHandler('rpc', callback);
   },
 };
 
@@ -125,13 +196,22 @@ const webViewWindowService: WindowCommunicationService = {
     sendMessageToRN('rpc', message as FromWebActions['rpc']);
   },
 
-  emitToken: (token: string) => {
-    sendMessageToRN('account.token.emitted', token);
+  emitAccessToken: (value: string, expiresAt: number) => {
+    sendMessageToRN('account.access.token.emitted', { value, expiresAt });
+  },
+
+  emitRefreshToken: (value: string, expiresAt: number) => {
+    sendMessageToRN('account.refresh.token.emitted', {
+      value,
+      expiresAt,
+    });
   },
 
   logout: () => {
     sendMessageToRN('logout', null);
   },
+
+  isMobile: () => true,
 
   listen: (callback: (message: unknown) => void) => {
     return registerRNHandler('rpc', callback);
@@ -141,6 +221,7 @@ const webViewWindowService: WindowCommunicationService = {
 const availableServices: WindowCommunicationService[] = [
   popupWindowService,
   webViewWindowService,
+  ...(env.NEXT_PUBLIC_EMBEDDED_FLOW_ENABLED ? [embeddedWindowService] : []),
 ];
 
 class DelegateWindowService implements WindowCommunicationService {
@@ -163,9 +244,15 @@ class DelegateWindowService implements WindowCommunicationService {
 
   sendMessage = (message: unknown) => this.proxy.sendMessage(message);
 
-  emitToken = (token: string) => this.proxy.emitToken(token);
+  emitAccessToken = (token: string, expiresAt: number) =>
+    this.proxy.emitAccessToken(token, expiresAt);
+
+  emitRefreshToken = (refreshToken: string, expiresAt: number) =>
+    this.proxy.emitRefreshToken(refreshToken, expiresAt);
 
   logout = () => this.proxy.logout();
+
+  isMobile = () => this.proxy.isMobile();
 
   listen = (callback: (message: unknown) => void) =>
     this.proxy.listen(callback);

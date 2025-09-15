@@ -7,14 +7,8 @@ Library to handle sophon account on react native environments
 Before you start, you need these libraries:
 
 ```sh
-# Passkey requirements
-npm install @simplewebauthn/browser @simplewebauthn/server
-
 # Expo packages
-npx expo install expo-standard-web-crypto expo-crypto expo-network
-
-# Overall native requirements
-npm install react-native-mmkv react-native-webview text-encoding-polyfill
+npx expo install react-native-webview expo-standard-web-crypto expo-crypto expo-network expo-secure-store
 ```
 
 After that, you are ready to install our SDK:

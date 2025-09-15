@@ -17,7 +17,7 @@ export default function WaitOtpView() {
     (state) => state.context.email,
   );
   const { verifyOTP, resendOTP, otpError } = useAuthCallbacks();
-  const isMobile = windowService.name === 'webview';
+  const isMobile = windowService.isMobile();
   const [otpLoading, setOtpLoading] = useState(false);
 
   return (

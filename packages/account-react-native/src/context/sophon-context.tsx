@@ -1,15 +1,12 @@
+import '../pollyfills';
+// everything else
 import {
   AccountServerURL,
+  type DataScopes,
   type SophonNetworkType,
 } from '@sophon-labs/account-core';
-import { addNetworkStateListener, getNetworkStateAsync } from 'expo-network';
-import {
-  createContext,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import type { EIP1193Provider } from '@sophon-labs/account-provider';
+import { createContext, useCallback, useMemo, useState } from 'react';
 import {
   type Address,
   type Chain,
@@ -19,7 +16,8 @@ import {
 } from 'viem';
 import { sophon, sophonTestnet } from 'viem/chains';
 import { erc7846Actions } from 'viem/experimental';
-import type { WalletProvider } from 'zksync-sso';
+import { eip712WalletActions } from 'viem/zksync';
+import type { SophonJWTToken } from '@/types';
 import { SophonMainView, type SophonMainViewProps } from '../components';
 import { useUIEventHandler } from '../messaging';
 import {
@@ -35,18 +33,27 @@ export interface SophonContextConfig {
   account?: SophonAccount;
   setAccount: (account?: SophonAccount) => void;
   chain: Chain;
-  provider?: WalletProvider;
-  token?: string | null;
+  provider?: EIP1193Provider;
+  network: SophonNetworkType;
+  accessToken?: SophonJWTToken | null;
+  refreshToken?: SophonJWTToken | null;
+  updateAccessToken: (data: SophonJWTToken) => void;
+  updateRefreshToken: (data: SophonJWTToken) => void;
   disconnect: () => void;
-  hasInternet: boolean;
+  error?: string;
+  setError: (error: string) => void;
 }
 
 export const SophonContext = createContext<SophonContextConfig>({
   partnerId: '',
   chain: sophonTestnet,
   setAccount: () => {},
+  network: 'testnet',
+  updateAccessToken: () => {},
+  updateRefreshToken: () => {},
   disconnect: () => {},
-  hasInternet: false,
+  error: undefined,
+  setError: (_: string) => {},
 });
 
 export interface SophonAccount {
@@ -59,33 +66,21 @@ export const SophonContextProvider = ({
   authServerUrl,
   partnerId,
   insets,
+  dataScopes = [],
 }: {
   children: React.ReactNode;
   network: SophonNetworkType;
   authServerUrl?: string;
   partnerId: string;
   insets?: SophonMainViewProps['insets'];
+  dataScopes: DataScopes[];
 }) => {
-  const [isConnected, setIsConnected] = useState(false);
-
-  useEffect(() => {
-    const listener = addNetworkStateListener(() => {
-      setTimeout(async () => {
-        const { isConnected, isInternetReachable } =
-          await getNetworkStateAsync();
-        setIsConnected(!!isConnected && !!isInternetReachable);
-      }, 500);
-    });
-
-    return () => {
-      listener.remove();
-    };
-  }, []);
-
+  const [error, setError] = useState<string>();
   const serverUrl = useMemo(
     () => authServerUrl ?? AccountServerURL[network],
     [authServerUrl, network],
   );
+
   const [account, setAccount] = useState<SophonAccount | undefined>(
     SophonAppStorage.getItem(StorageKeys.USER_ACCOUNT)
       ? JSON.parse(SophonAppStorage.getItem(StorageKeys.USER_ACCOUNT)!)
@@ -100,14 +95,43 @@ export const SophonContextProvider = ({
     return provider;
   }, [serverUrl, chain]);
 
-  const [token, setToken] = useState(
-    SophonAppStorage.getItem(StorageKeys.USER_TOKEN),
+  const [accessToken, setAccessToken] = useState(
+    SophonAppStorage.getItem(StorageKeys.USER_ACCESS_TOKEN)
+      ? JSON.parse(SophonAppStorage.getItem(StorageKeys.USER_ACCESS_TOKEN)!)
+      : undefined,
   );
 
-  useUIEventHandler('setToken', (incomingToken) => {
-    SophonAppStorage.setItem(StorageKeys.USER_TOKEN, incomingToken);
-    setToken(incomingToken);
+  const [refreshToken, setRefreshToken] = useState(
+    SophonAppStorage.getItem(StorageKeys.USER_REFRESH_TOKEN)
+      ? JSON.parse(SophonAppStorage.getItem(StorageKeys.USER_REFRESH_TOKEN)!)
+      : undefined,
+  );
+
+  useUIEventHandler('setAccessToken', (incomingToken) => {
+    updateAccessToken(incomingToken);
   });
+
+  useUIEventHandler('setRefreshToken', (incomingToken) => {
+    updateRefreshToken(incomingToken);
+  });
+
+  const updateAccessToken = useCallback((newToken: SophonJWTToken) => {
+    setAccessToken(newToken);
+    SophonAppStorage.setItem(
+      StorageKeys.USER_ACCESS_TOKEN,
+      JSON.stringify(newToken),
+    );
+  }, []);
+
+  const updateRefreshToken = useCallback((newToken: SophonJWTToken) => {
+    setRefreshToken(newToken);
+    SophonAppStorage.setItem(
+      StorageKeys.USER_REFRESH_TOKEN,
+      JSON.stringify(newToken),
+    );
+  }, []);
+
+  useUIEventHandler('mainViewError', setError);
 
   const setAccountWithEffect = useCallback((account?: SophonAccount) => {
     setAccount(account);
@@ -123,15 +147,12 @@ export const SophonContextProvider = ({
 
   const walletClient = createWalletClient({
     chain: chain,
-    transport: custom({
-      async request({ method, params }) {
-        return await provider?.request({ method, params });
-      },
-    }),
-  }).extend(erc7846Actions());
+    transport: custom(provider),
+  })
+    .extend(erc7846Actions())
+    .extend(eip712WalletActions());
 
   const disconnect = useCallback(() => {
-    // await walletClient.disconnect();
     provider?.disconnect();
     SophonAppStorage.clear();
     setAccount(undefined);
@@ -145,10 +166,15 @@ export const SophonContextProvider = ({
       walletClient,
       account,
       setAccount: setAccountWithEffect,
-      token,
+      accessToken,
+      refreshToken,
       disconnect,
       partnerId,
-      hasInternet: isConnected,
+      error,
+      setError,
+      network,
+      updateAccessToken,
+      updateRefreshToken,
     }),
     [
       network,
@@ -156,10 +182,15 @@ export const SophonContextProvider = ({
       walletClient,
       account,
       chain,
-      token,
+      accessToken,
+      refreshToken,
       disconnect,
       partnerId,
-      isConnected,
+      error,
+      setError,
+      network,
+      updateAccessToken,
+      updateRefreshToken,
     ],
   );
 
@@ -170,10 +201,10 @@ export const SophonContextProvider = ({
   return (
     <SophonContext.Provider value={contextValue}>
       <SophonMainView
+        scopes={dataScopes}
         insets={insets}
         authServerUrl={serverUrl}
         partnerId={partnerId}
-        hasInternet={isConnected}
       />
       {children}
     </SophonContext.Provider>

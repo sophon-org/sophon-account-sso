@@ -12,6 +12,7 @@ import MessageContainerButton from '@/components/ui/message-container-button';
 import MessageContainer from '@/components/ui/messageContainer';
 import VerificationImage from '@/components/ui/verification-image';
 import { useTransactionRequestActions } from '@/hooks/actions/useTransactionRequestActions';
+import { windowService } from '@/service/window.service';
 import type { EnrichedTransactionRequest } from '@/types/auth';
 import { TransactionType } from '@/types/auth';
 
@@ -43,6 +44,7 @@ interface TransactionRequestViewProps {
 export default function TransactionRequestView({
   openDrawer,
 }: TransactionRequestViewProps = {}) {
+  const isMobile = windowService.isMobile();
   const {
     incomingRequest,
     transactionRequest,
@@ -55,14 +57,17 @@ export default function TransactionRequestView({
   }
 
   if (isLoading || !enrichedTransactionRequest) {
-    return <TransactionRequestSkeleton />;
+    return <TransactionRequestSkeleton isMobile={isMobile} />;
   }
 
   return (
     <div className="text-center flex flex-col items-center justify-center gap-8">
-      <VerificationImage
-        icon={<TransactionIcon transaction={enrichedTransactionRequest} />}
-      />
+      {!isMobile && (
+        <VerificationImage
+          icon={<TransactionIcon transaction={enrichedTransactionRequest} />}
+        />
+      )}
+
       <div className="flex flex-col items-center justify-center">
         <TransactionTitle transaction={enrichedTransactionRequest} />
         <p className="hidden">https://my.staging.sophon.xyz</p>
@@ -70,7 +75,7 @@ export default function TransactionRequestView({
 
       <div className="w-full">
         <ContractWarning transaction={enrichedTransactionRequest} />
-        <MessageContainer showBottomButton={!!openDrawer}>
+        <MessageContainer showBottomButton={!!openDrawer} isMobile={isMobile}>
           {renderTransactionContent(enrichedTransactionRequest)}
           {openDrawer && (
             <MessageContainerButton

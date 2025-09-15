@@ -1,10 +1,10 @@
 'use client';
 
+import type { DataScopes } from '@sophon-labs/account-core';
 import { Dialog } from '@/components/dialog';
 import { Button } from '@/components/ui/button';
 import { MainStateMachineContext } from '@/context/state-machine-context';
 import { sendMessage } from '@/events';
-
 import { useAccountContext } from '@/hooks/useAccountContext';
 import { useRequestDrawer } from '@/hooks/useRequestDrawer';
 import { useUserIdentification } from '@/hooks/useUserIdentification';
@@ -24,9 +24,10 @@ import WrongNetworkView from '@/views/WrongNetworkView';
 
 interface DesktopRootProps {
   partnerId?: string;
+  scopes: DataScopes[];
 }
 
-export default function DesktopRoot({ partnerId }: DesktopRootProps) {
+export default function DesktopRoot({ partnerId, scopes }: DesktopRootProps) {
   const state = MainStateMachineContext.useSelector((state) => state);
   const actorRef = MainStateMachineContext.useActorRef();
 
@@ -36,7 +37,7 @@ export default function DesktopRoot({ partnerId }: DesktopRootProps) {
   const { openDrawer, DrawerComponent } = useRequestDrawer();
 
   const signingActions = SigningRequestView.useActions({ openDrawer });
-  const connectActions = ConnectAuthorizationView.useActions();
+  const connectActions = ConnectAuthorizationView.useActions({ openDrawer });
   const transactionActions = TransactionRequestView.useActions({
     openDrawer,
   });
@@ -96,14 +97,18 @@ export default function DesktopRoot({ partnerId }: DesktopRootProps) {
 
   if (state.matches('incoming-authentication')) {
     return (
-      <Dialog
-        className="relative"
-        dialogType="connection_authorization"
-        actions={connectActions.renderActions()}
-        showLegalNotice={false}
-      >
-        <ConnectAuthorizationView partnerId={partnerId} />
-      </Dialog>
+      <>
+        <Dialog
+          className="relative"
+          title={account?.address}
+          dialogType="connection_authorization"
+          actions={connectActions.renderActions()}
+          showLegalNotice={false}
+        >
+          <ConnectAuthorizationView partnerId={partnerId} scopes={scopes} />
+        </Dialog>
+        <DrawerComponent />
+      </>
     );
   }
 

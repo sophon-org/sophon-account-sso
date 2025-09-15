@@ -1,3 +1,4 @@
+import type { DataScopes } from '@sophon-labs/account-core';
 import { postMessageToWebApp } from '@sophon-labs/account-message-bridge';
 import { useCallback, useRef, useState } from 'react';
 import { Linking, Platform, StyleSheet, View } from 'react-native';
@@ -17,13 +18,14 @@ export interface SophonMainViewProps {
   };
   authServerUrl?: string;
   partnerId: string;
-  hasInternet: boolean;
+  scopes: DataScopes[];
 }
 export const SophonMainView = ({
   debugEnabled = false,
   insets,
   authServerUrl,
   partnerId,
+  scopes,
 }: SophonMainViewProps) => {
   const webViewRef = useRef<WebView>(null);
   const { visible } = useModalVisibility();
@@ -42,6 +44,13 @@ export const SophonMainView = ({
   );
 
   useUIEventHandler(
+    'sdkStatusRequest',
+    useCallback(() => {
+      postMessageToWebApp(webViewRef, 'sdkStatusRequest', {});
+    }, []),
+  );
+
+  useUIEventHandler(
     'outgoingRpc',
     useCallback(
       (payload) => {
@@ -52,7 +61,38 @@ export const SophonMainView = ({
     ),
   );
 
+  useUIEventHandler('refreshMainView', () => {
+    webViewRef.current?.reload();
+  });
+
   const params = new URLSearchParams();
+
+  // Propagate the insets to the account server, so we can properly render the webview
+  // on the mobile device without overlapping the status bar and bottom navigation bar
+  if (insets) {
+    if (insets.top) {
+      params.set('it', insets.top.toString());
+    }
+
+    if (insets.bottom) {
+      params.set('ib', insets.bottom.toString());
+    }
+
+    if (insets.left) {
+      params.set('il', insets.left.toString());
+    }
+
+    if (insets.right) {
+      params.set('ir', insets.right.toString());
+    }
+  }
+
+  if (scopes?.length > 0) {
+    scopes.forEach((scope) => {
+      params.append('scopes', scope);
+    });
+  }
+
   if (partnerId) {
     params.set('version', VIEW_VERSION);
     params.set('platformOS', Platform.OS);
@@ -64,6 +104,7 @@ export const SophonMainView = ({
   return (
     <View style={containerStyles}>
       <WebView
+        data-testid="sophon-mainview"
         key={authServerUrl}
         ref={webViewRef}
         source={{
@@ -71,10 +112,6 @@ export const SophonMainView = ({
         }}
         style={{
           ...styles.webview,
-          paddingTop: insets?.top,
-          paddingBottom: insets?.bottom,
-          paddingLeft: insets?.left,
-          paddingRight: insets?.right,
         }}
         javaScriptEnabled={true}
         startInLoadingState={true}
@@ -114,14 +151,18 @@ export const SophonMainView = ({
             sendUIMessage('hideModal', payload);
           } else if (action === 'rpc') {
             sendUIMessage('incomingRpc', payload);
-          } else if (action === 'account.token.emitted') {
-            sendUIMessage('setToken', payload);
+          } else if (action === 'account.access.token.emitted') {
+            sendUIMessage('setAccessToken', payload);
+          } else if (action === 'account.refresh.token.emitted') {
+            sendUIMessage('setRefreshToken', payload);
           } else if (action === 'logout') {
             sendUIMessage('logout', payload);
+          } else if (action === 'sdkStatusResponse') {
+            sendUIMessage('sdkStatusResponse', payload);
           }
         }}
         onError={(event) => {
-          console.error(event);
+          sendUIMessage('mainViewError', event.nativeEvent.description);
           sendUIMessage('hideModal', null);
         }}
         onContentProcessDidTerminate={() => {}}

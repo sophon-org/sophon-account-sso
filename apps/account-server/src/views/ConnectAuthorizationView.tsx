@@ -1,6 +1,7 @@
 'use client';
 
 import { CheckIcon, PlugsIcon } from '@phosphor-icons/react';
+import type { DataScopes } from '@sophon-labs/account-core';
 import { useEffect, useState } from 'react';
 import { IconRedCheck } from '@/components/icons/icons-red-check';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -9,15 +10,19 @@ import VerificationImage from '@/components/ui/verification-image';
 import { MainStateMachineContext } from '@/context/state-machine-context';
 import { useConnectAuthorizationActions } from '@/hooks/actions/useConnectAuthorizationActions';
 import { useDataAccessScopes } from '@/hooks/useDataAccessScopes';
+import { windowService } from '@/service/window.service';
 import type { Scopes } from '@/types/data-scopes';
 
 export default function ConnectAuthorizationView({
   partnerId,
+  scopes,
 }: Readonly<{
   partnerId?: string;
+  scopes: DataScopes[];
 }>) {
+  const isMobile = windowService.isMobile();
   const actorRef = MainStateMachineContext.useActorRef();
-  const { availableScopes, userScopes } = useDataAccessScopes();
+  const { availableScopes, userScopes } = useDataAccessScopes(scopes);
   const [selectedScopes, setSelectedScopes] = useState<Record<string, boolean>>(
     Object.keys(availableScopes).reduce(
       (acc, key) => {
@@ -50,14 +55,16 @@ export default function ConnectAuthorizationView({
 
   return (
     <div className="text-center flex flex-col items-center justify-center gap-8 mt-3">
-      <VerificationImage
-        icon={<PlugsIcon className="w-10 h-10 text-white" />}
-      />
+      {!isMobile && (
+        <VerificationImage
+          icon={<PlugsIcon className="w-10 h-10 text-white" />}
+        />
+      )}
       <div className="flex flex-col items-center justify-center">
         <h5 className="text-2xl font-bold">Connection request</h5>
         <p className="hidden">https://my.staging.sophon.xyz</p>
       </div>
-      <MessageContainer>
+      <MessageContainer isMobile={isMobile}>
         <div className="flex flex-col gap-4 text-base text-black">
           <div className="flex flex-col gap-2">
             <p className="font-bold ">It can</p>
@@ -73,39 +80,41 @@ export default function ConnectAuthorizationView({
               </span>
               Ask for transactions and signatures to be approved
             </p>
-            <div className="flex flex-col mt-4 gap-4">
-              {userScopes.map((key) => {
-                const scope = availableScopes[key];
-                return (
-                  <p key={key} className="flex items-center gap-2">
-                    <span className="inline-flex">
-                      <Checkbox
-                        id={`scope-${key}`}
-                        checked={selectedScopes[key]}
-                        onCheckedChange={(checked) => {
-                          setSelectedScopes((prev) => {
-                            const newScopes = {
-                              ...prev,
-                              [key]:
-                                checked === 'indeterminate' ? false : checked,
-                            };
+            {!!partnerId && !!userScopes?.length && (
+              <div className="flex flex-col mt-4 gap-4">
+                {userScopes.map((key) => {
+                  const scope = availableScopes[key];
+                  return (
+                    <p key={key} className="flex items-center gap-2">
+                      <span className="inline-flex">
+                        <Checkbox
+                          id={`scope-${key}`}
+                          checked={selectedScopes[key]}
+                          onCheckedChange={(checked) => {
+                            setSelectedScopes((prev) => {
+                              const newScopes = {
+                                ...prev,
+                                [key]:
+                                  checked === 'indeterminate' ? false : checked,
+                              };
 
-                            return newScopes;
-                          });
-                        }}
-                        className="cursor-pointer"
-                      />
-                    </span>
-                    <label
-                      htmlFor={`scope-${key}`}
-                      className="inline-flex cursor-pointer"
-                    >
-                      See your {scope.label} account
-                    </label>
-                  </p>
-                );
-              })}
-            </div>
+                              return newScopes;
+                            });
+                          }}
+                          className="cursor-pointer"
+                        />
+                      </span>
+                      <label
+                        htmlFor={`scope-${key}`}
+                        className="inline-flex cursor-pointer"
+                      >
+                        See your {scope.label} account
+                      </label>
+                    </p>
+                  );
+                })}
+              </div>
+            )}
           </div>
           <div className="flex flex-col gap-4">
             <p className="font-bold ">It can't</p>

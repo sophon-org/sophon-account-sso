@@ -43,6 +43,12 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
   useEffect(() => {
     // biome-ignore lint/suspicious/noExplicitAny: review that in the future TODO
     const messageHandler = (data: any) => {
+      // Do nothing, the server is already answering a request, don't
+      // overlap with current request/response flow.
+      if (data.id && data.requestId) {
+        return;
+      }
+
       // Store the incoming request if it's an RPC request
       if (data?.id && data?.content) {
         const method = data.content?.action?.method;
@@ -61,7 +67,7 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
           setMessageSigningRequest(null);
           setTransactionRequest(null);
           setAuthenticationRequest({
-            domain: 'http://samplerequest.com',
+            domain: 'https://sophon.xyz', // placeholder
           });
         } else if (method === 'wallet_requestPermissions') {
           // Handle wallet permissions as profile request

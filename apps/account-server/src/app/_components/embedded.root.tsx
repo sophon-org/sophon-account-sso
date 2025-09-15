@@ -1,16 +1,19 @@
 'use client';
 
-import { shortenAddress } from '@sophon-labs/account-core';
-import { useRNHandler } from '@sophon-labs/account-message-bridge';
+import type { DataScopes } from '@sophon-labs/account-core';
+import {
+  sendMessageToRN,
+  useRNHandler,
+} from '@sophon-labs/account-message-bridge';
 import { useCallback, useEffect, useState } from 'react';
-import { Loader } from '@/components/loader';
 import { Button } from '@/components/ui/button';
 import { Drawer } from '@/components/ui/drawer';
 import { MainStateMachineContext } from '@/context/state-machine-context';
+import { env } from '@/env';
 import { sendMessage } from '@/events';
 import { useEventHandler } from '@/events/hooks';
-import { useConnectionAuthorization } from '@/hooks/auth/useConnectionAuthorization';
 import { useAccountContext } from '@/hooks/useAccountContext';
+import { useRequestDrawer } from '@/hooks/useRequestDrawer';
 import { useUserIdentification } from '@/hooks/useUserIdentification';
 import { serverLog } from '@/lib/server-log';
 import { CompletedView } from '@/views/CompletedView';
@@ -26,15 +29,42 @@ import WrongNetworkView from '@/views/WrongNetworkView';
 
 interface EmbeddedRootProps {
   partnerId?: string;
+  scopes: DataScopes[];
 }
 
-export default function EmbeddedRoot({ partnerId }: EmbeddedRootProps) {
+export default function EmbeddedRoot({ partnerId, scopes }: EmbeddedRootProps) {
   const [open, setOpen] = useState(false);
   const state = MainStateMachineContext.useSelector((state) => state);
   const actorRef = MainStateMachineContext.useActorRef();
-  const { onRefuseConnection, onAcceptConnection, isLoading } =
-    useConnectionAuthorization();
+  const { openDrawer, DrawerComponent } = useRequestDrawer();
+  const signingActions = SigningRequestView.useActions({ openDrawer });
+  const transactionActions = TransactionRequestView.useActions({
+    openDrawer,
+  });
+  const connectActions = ConnectAuthorizationView.useActions({ openDrawer });
+  const { account } = useAccountContext();
   useUserIdentification();
+
+  useEffect(() => {
+    // Only enable this flow if the  flag is enabled, for some
+    // really specific cases we should use this flow, mainly for local development
+    if (env.NEXT_PUBLIC_EMBEDDED_FLOW_ENABLED) {
+      const callback = (event: MessageEvent) => {
+        if (
+          event.origin === env.NEXT_PUBLIC_EMBEDDED_FLOW_ORIGIN &&
+          event.data.type === 'embedded'
+        ) {
+          // @ts-ignore
+          window.onMessageFromRN(event.data.payload);
+        }
+      };
+
+      window.addEventListener('message', callback);
+      return () => {
+        window.removeEventListener('message', callback);
+      };
+    }
+  }, []);
 
   useRNHandler(
     'openModal',
@@ -43,8 +73,29 @@ export default function EmbeddedRoot({ partnerId }: EmbeddedRootProps) {
     }, []),
   );
 
+  useRNHandler(
+    'closeModal',
+    useCallback(() => {
+      setOpen(false);
+    }, []),
+  );
+
+  useRNHandler(
+    'sdkStatusRequest',
+    useCallback(() => {
+      sendMessageToRN('sdkStatusResponse', {
+        isDrawerOpen: open,
+        isReady: !state.context.isLoadingResources,
+        isAuthenticated: state.context.isAuthenticated,
+        connectedAccount: account?.address,
+      });
+    }, [state, open, account?.address]),
+  );
+
   useEffect(() => {
-    serverLog(`>>> 🔥 <<< STATE ${JSON.stringify(state, null, 2)}`);
+    serverLog(
+      `>>> 🔥 <<< STATE ${JSON.stringify(state.value)} / ${state.context.requests.incoming?.id}`,
+    );
   }, [state]);
 
   useEventHandler('flow.complete', () => {
@@ -54,8 +105,6 @@ export default function EmbeddedRoot({ partnerId }: EmbeddedRootProps) {
   useEventHandler('modal.open', () => {
     setOpen(true);
   });
-
-  const { account } = useAccountContext();
 
   const handleCloseModal = (isOpen: boolean) => {
     setOpen(isOpen);
@@ -90,31 +139,43 @@ export default function EmbeddedRoot({ partnerId }: EmbeddedRootProps) {
     state.matches('incoming-message-signature')
   ) {
     return (
-      <Drawer
-        open={open}
-        onOpenChange={handleCloseModal}
-        showHeader={false}
-        showLogo={false}
-        showLegalNotice={false}
-        drawerType="signing_request"
-      >
-        <SigningRequestView />
-      </Drawer>
+      <>
+        <Drawer
+          open={open}
+          onOpenChange={handleCloseModal}
+          showHeader={true}
+          showProfileImage={true}
+          title={account?.address}
+          showLogo={false}
+          showLegalNotice={false}
+          drawerType="signing_request"
+          actions={signingActions.renderActions()}
+        >
+          <SigningRequestView openDrawer={openDrawer} />
+        </Drawer>
+        <DrawerComponent />
+      </>
     );
   }
 
   if (state.matches('incoming-transaction')) {
     return (
-      <Drawer
-        open={open}
-        onOpenChange={handleCloseModal}
-        showHeader={false}
-        showLogo={false}
-        showLegalNotice={false}
-        drawerType="transaction_request"
-      >
-        <TransactionRequestView />
-      </Drawer>
+      <>
+        <Drawer
+          open={open}
+          onOpenChange={handleCloseModal}
+          showHeader={true}
+          showProfileImage={true}
+          title={account?.address}
+          showLogo={false}
+          showLegalNotice={false}
+          drawerType="transaction_request"
+          actions={transactionActions.renderActions()}
+        >
+          <TransactionRequestView openDrawer={openDrawer} />
+        </Drawer>
+        <DrawerComponent />
+      </>
     );
   }
 
@@ -123,35 +184,15 @@ export default function EmbeddedRoot({ partnerId }: EmbeddedRootProps) {
       <Drawer
         open={open}
         onOpenChange={handleCloseModal}
-        showHeader={true}
-        showProfileImage={true}
+        showHeader={false}
+        showProfileImage={false}
         showLegalNotice={false}
         showLogo={false}
         drawerType="connection_authorization"
-        actions={
-          <div className="flex items-center justify-center gap-2 w-full">
-            <Button
-              variant="transparent"
-              disabled={isLoading}
-              onClick={onRefuseConnection}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="button"
-              disabled={isLoading}
-              onClick={onAcceptConnection}
-            >
-              {isLoading ? (
-                <Loader className="w-4 h-4 border-white border-r-transparent" />
-              ) : (
-                'Connect'
-              )}
-            </Button>
-          </div>
-        }
+        actions={connectActions.renderActions()}
       >
-        <ConnectAuthorizationView partnerId={partnerId} />
+        <ConnectAuthorizationView partnerId={partnerId} scopes={scopes} />
+        <DrawerComponent />
       </Drawer>
     );
   }
@@ -261,7 +302,7 @@ export default function EmbeddedRoot({ partnerId }: EmbeddedRootProps) {
         showProfileImage={true}
         showLegalNotice={false}
         showLogo={false}
-        title={shortenAddress(account.address)}
+        title={account.address}
         drawerType="user_profile"
         // onSettings={() => {
         //   // goToSettings();

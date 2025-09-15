@@ -23,11 +23,16 @@ export function useConnectionAuthorization() {
   );
   const { account } = useAccountContext();
   const actorRef = MainStateMachineContext.useActorRef();
-  const { isSigning, signTypeData } = useSignature();
+  const { isSigning, signTypeData, signingError } = useSignature();
   const [authorizing, setAuthorizing] = useState(false);
+  const [authorizationError, setAuthorizationError] = useState<string | null>(
+    null,
+  );
   const { user } = useDynamicContext();
 
   const onRefuseConnection = async () => {
+    setAuthorizationError(null); // Clear any errors when refusing connection
+
     if (windowService.isManaged() && incoming) {
       const signResponse = {
         id: crypto.randomUUID(),
@@ -57,6 +62,7 @@ export function useConnectionAuthorization() {
 
     try {
       setAuthorizing(true);
+      setAuthorizationError(null); // Clear any previous errors
 
       // We just generate tokens if the partnerId is available,
       // otherwise the partner is using EIP-6963 and don't need that
@@ -102,7 +108,12 @@ export function useConnectionAuthorization() {
 
         const authSignature = await signTypeData(signAuth);
 
-        const token = await verifyAuthorization(
+        const {
+          accessToken,
+          accessTokenExpiresAt,
+          refreshToken,
+          refreshTokenExpiresAt,
+        } = await verifyAuthorization(
           account.address,
           signAuth,
           authSignature,
@@ -110,11 +121,13 @@ export function useConnectionAuthorization() {
           true,
         );
 
-        serverLog(`Token: ${token}`);
+        serverLog(`Token: ${accessToken}`);
+        serverLog(`Refresh Token: ${refreshToken}`);
 
         // we don't store the token, we just send it during the account authorization
         // TODO: better handling token expiration
-        windowService.emitToken(token);
+        windowService.emitAccessToken(accessToken, accessTokenExpiresAt);
+        windowService.emitRefreshToken(refreshToken, refreshTokenExpiresAt);
       }
 
       if (windowService.isManaged() && incoming) {
@@ -125,6 +138,12 @@ export function useConnectionAuthorization() {
         );
         actorRef.send({ type: 'ACCEPT' });
       }
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Connection authorization failed';
+      setAuthorizationError(errorMessage);
     } finally {
       setAuthorizing(false);
     }
@@ -136,5 +155,7 @@ export function useConnectionAuthorization() {
     isAuthorizing: authorizing,
     isSigning,
     isLoading: isSigning || authorizing,
+    authorizationError,
+    signingError,
   };
 }

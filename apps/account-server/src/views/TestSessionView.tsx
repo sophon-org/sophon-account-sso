@@ -81,8 +81,6 @@ export default function TestSessionView() {
       account!.address,
     );
     await sendTransaction(createSessionTx);
-
-    console.log('done');
   };
 
   const handleTestSession = async () => {
