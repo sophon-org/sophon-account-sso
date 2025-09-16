@@ -10,10 +10,11 @@ posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY, {
 });
 
 const isProduction = process.env.NODE_ENV === 'production';
+const isDevelopment = process.env.NODE_ENV === 'development';
 const SENTRY_DSN = process.env.NEXT_PUBLIC_SENTRY_DSN;
 
 Sentry.init({
-  dsn: SENTRY_DSN,
+  dsn: isDevelopment ? undefined : SENTRY_DSN,
 
   // Add optional integrations for additional features
   integrations: [Sentry.replayIntegration()],
@@ -33,6 +34,27 @@ Sentry.init({
 
   // Setting this option to true will print useful information to the console while you're setting up Sentry.
   debug: false,
+
+  beforeSend(event) {
+    const errorMessage = event.exception?.values?.[0]?.value || '';
+
+    // Filter user cancellations and network noise
+    const noisyPatterns = [
+      'User cancelled',
+      'User rejected',
+      'User denied',
+      'Failed to fetch',
+      'fetch failed',
+      'extension://',
+      'NetworkError',
+    ];
+
+    if (noisyPatterns.some((pattern) => errorMessage.includes(pattern))) {
+      return null; // Don't send to Sentry
+    }
+
+    return event;
+  },
 });
 
 export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
