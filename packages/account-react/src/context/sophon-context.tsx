@@ -112,7 +112,9 @@ export const SophonContextProvider = ({
       setAccount(JSON.parse(context));
     }
 
-    const tokenContext = SophonAppStorage.getItem(StorageKeys.USER_TOKEN);
+    const tokenContext = SophonAppStorage.getItem(
+      StorageKeys.USER_ACCESS_TOKEN,
+    );
     if (tokenContext) {
       setAccessToken(JSON.parse(tokenContext));
     }
@@ -133,7 +135,10 @@ export const SophonContextProvider = ({
   const updateAccessToken = useCallback((newToken: SophonJWTToken) => {
     setCookieAuthToken(newToken.value);
     setAccessToken(newToken);
-    SophonAppStorage.setItem(StorageKeys.USER_TOKEN, JSON.stringify(newToken));
+    SophonAppStorage.setItem(
+      StorageKeys.USER_ACCESS_TOKEN,
+      JSON.stringify(newToken),
+    );
   }, []);
 
   const updateRefreshToken = useCallback((newToken: SophonJWTToken) => {

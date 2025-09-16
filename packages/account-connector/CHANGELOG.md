@@ -1,5 +1,14 @@
 # @sophon-labs/account-connector
 
+## 2.1.1
+
+### Patch Changes
+
+- Support for refresh token on react sdk without react context
+- Updated dependencies
+  - @sophon-labs/account-provider@2.1.1
+  - @sophon-labs/account-core@2.1.1
+
 ## 2.1.0
 
 ### Minor Changes

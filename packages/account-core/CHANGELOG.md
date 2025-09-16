@@ -1,5 +1,11 @@
 # @sophon-labs/account-core
 
+## 2.1.1
+
+### Patch Changes
+
+- Support for refresh token on react sdk without react context
+
 ## 2.1.0
 
 ### Minor Changes
