@@ -1,6 +1,6 @@
 import { Test, type TestingModule } from "@nestjs/testing";
-import { JwksController } from "../jwks.controller";
 import { JwtKeysService } from "../../aws/jwt-keys.service"; // adjust the path if needed
+import { JwksController } from "../jwks.controller";
 
 describe("JwksController", () => {
 	let controller: JwksController;

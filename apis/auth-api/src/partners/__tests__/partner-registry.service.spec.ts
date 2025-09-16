@@ -1,7 +1,7 @@
-import { PartnerRegistryService } from "../partner-registry.service";
-import { Test } from "@nestjs/testing";
 import { ConfigModule } from "@nestjs/config";
+import { Test } from "@nestjs/testing";
 import { authConfig } from "../../config/auth.config";
+import { PartnerRegistryService } from "../partner-registry.service";
 
 describe("PartnerRegistryService", () => {
 	const VALID_ID = "123b216c-678e-4611-af9a-2d5b7b061258";

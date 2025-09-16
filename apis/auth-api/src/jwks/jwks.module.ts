@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
-import { JwksController } from "./jwks.controller.js";
 import { JwtKeysModule } from "../aws/jwt-keys.module";
+import { JwksController } from "./jwks.controller.js";
 
 @Module({
 	imports: [JwtKeysModule],

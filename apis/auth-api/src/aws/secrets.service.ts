@@ -1,10 +1,13 @@
-import { Injectable, InternalServerErrorException } from "@nestjs/common";
-import { Inject } from "@nestjs/common";
-import { awsConfig, AwsConfig } from "../config/aws.config";
 import {
-	SecretsManagerClient,
 	GetSecretValueCommand,
+	SecretsManagerClient,
 } from "@aws-sdk/client-secrets-manager";
+import {
+	Inject,
+	Injectable,
+	InternalServerErrorException,
+} from "@nestjs/common";
+import { AwsConfig, awsConfig } from "../config/aws.config";
 
 export type JwtSecrets = {
 	access: { kid: string; privateKeyPem: string; publicKeyPem: string };

@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
-import { SecretsService } from "./secrets.service";
 import { JwtKeysService } from "./jwt-keys.service";
+import { SecretsService } from "./secrets.service";
 
 @Module({
 	providers: [SecretsService, JwtKeysService],

@@ -7,7 +7,7 @@ import {
 	Injectable,
 	UnauthorizedException,
 } from "@nestjs/common";
-
+import { ConfigType } from "@nestjs/config";
 import jwt, {
 	JsonWebTokenError,
 	type JwtPayload,
@@ -16,7 +16,8 @@ import jwt, {
 } from "jsonwebtoken";
 import type { TypedDataDefinition } from "viem";
 import { sophon, sophonTestnet } from "viem/chains";
-
+import { JwtKeysService } from "../aws/jwt-keys.service";
+import { authConfig } from "../config/auth.config";
 import {
 	type PermissionAllowedField,
 	packScope,
@@ -26,9 +27,6 @@ import { PartnerRegistryService } from "../partners/partner-registry.service";
 import { SessionsRepository } from "../sessions/sessions.repository";
 import { verifyEIP1271Signature } from "../utils/signature";
 import type { AccessTokenPayload, RefreshTokenPayload } from "./types";
-import { ConfigType } from "@nestjs/config";
-import { authConfig } from "../config/auth.config";
-import { JwtKeysService } from "../aws/jwt-keys.service";
 
 type NoncePayload = JwtPayload & {
 	address: string;

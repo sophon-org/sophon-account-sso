@@ -1,18 +1,17 @@
 import { Module } from "@nestjs/common";
-import { APP_FILTER } from "@nestjs/core";
 import { ConfigModule } from "@nestjs/config";
+import { APP_FILTER } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
 
 import { AuthModule } from "./auth/auth.module";
-import { AllExceptionsFilter } from "./common/all-exceptions.filter";
-import { JwksModule } from "./jwks/jwks.module";
-
-import { authConfig } from "./config/auth.config";
-import { dbConfig } from "./config/db.config";
-import { validationSchema } from "./config/validation.schema";
-import { awsConfig } from "./config/aws.config";
 import { AwsModule } from "./aws/aws.module";
 import { JwtKeysService } from "./aws/jwt-keys.service";
+import { AllExceptionsFilter } from "./common/all-exceptions.filter";
+import { authConfig } from "./config/auth.config";
+import { awsConfig } from "./config/aws.config";
+import { dbConfig } from "./config/db.config";
+import { validationSchema } from "./config/validation.schema";
+import { JwksModule } from "./jwks/jwks.module";
 
 @Module({
 	imports: [

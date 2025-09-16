@@ -1,13 +1,12 @@
-import { Test } from "@nestjs/testing";
 import { ConfigModule } from "@nestjs/config";
+import { Test } from "@nestjs/testing";
 import jwt from "jsonwebtoken";
 import type { TypedDataDefinition } from "viem";
-
+import { JwtKeysService } from "../../aws/jwt-keys.service";
+import { authConfig } from "../../config/auth.config";
 import { PartnerRegistryService } from "../../partners/partner-registry.service";
 import { SessionsRepository } from "../../sessions/sessions.repository";
 import { AuthService } from "../auth.service";
-import { authConfig } from "../../config/auth.config";
-import { JwtKeysService } from "../../aws/jwt-keys.service";
 
 // --- jsonwebtoken mocks ---
 jest.mock("jsonwebtoken", () => ({
