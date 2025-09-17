@@ -9,16 +9,18 @@ posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY, {
   capture_pageleave: true,
 });
 
+const isProduction = process.env.NODE_ENV === 'production';
+const isDevelopment = process.env.NODE_ENV === 'development';
 const SENTRY_DSN = process.env.NEXT_PUBLIC_SENTRY_DSN;
 
 Sentry.init({
-  dsn: SENTRY_DSN,
+  dsn: isDevelopment ? undefined : SENTRY_DSN,
 
   // Add optional integrations for additional features
   integrations: [Sentry.replayIntegration()],
 
   // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
-  tracesSampleRate: 1,
+  tracesSampleRate: isProduction ? 0.1 : 0,
   // Enable logs to be sent to Sentry
   enableLogs: true,
 
@@ -32,6 +34,27 @@ Sentry.init({
 
   // Setting this option to true will print useful information to the console while you're setting up Sentry.
   debug: false,
+
+  beforeSend(event) {
+    const errorMessage = event.exception?.values?.[0]?.value || '';
+
+    // Filter user cancellations and network noise
+    const noisyPatterns = [
+      'User cancelled',
+      'User rejected',
+      'User denied',
+      'Failed to fetch',
+      'fetch failed',
+      'extension://',
+      'NetworkError',
+    ];
+
+    if (noisyPatterns.some((pattern) => errorMessage.includes(pattern))) {
+      return null; // Don't send to Sentry
+    }
+
+    return event;
+  },
 });
 
 export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
