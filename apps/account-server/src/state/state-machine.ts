@@ -193,6 +193,9 @@ export const userWalletRequestStateMachine = createMachine({
             ACCOUNT_ERROR: {
               target: 'idle',
             },
+            LOGIN_SUCCESS: {
+              target: 'complete',
+            },
           },
         },
         deployment: {
