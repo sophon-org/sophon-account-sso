@@ -24,7 +24,7 @@ export default function ContractWarning({ transaction }: ContractWarningProps) {
       return null;
     }
 
-    if (transaction.decodedData && transaction?.decodedData?.args?.length > 0) {
+    if (transaction?.decodedData?.args?.length) {
       return (
         <Card elevated className="py-4 px-6 flex items-center gap-4 w-full">
           <WarningCircleIcon weight="fill" className="w-6 h-6 text-red-500" />

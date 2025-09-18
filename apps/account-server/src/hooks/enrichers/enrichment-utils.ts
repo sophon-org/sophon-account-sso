@@ -197,8 +197,7 @@ export const getOpenChainSignature = async (
     }
 
     // Extract method ID (first 4 bytes after 0x)
-    //const methodId = transactionData.slice(0, 10);
-    const methodId = '0xa9059cbb';
+    const methodId = transactionData.slice(0, 10);
 
     const response = await fetch(
       `https://api.openchain.xyz/signature-database/v1/lookup?function=${methodId}&filter=true`,
