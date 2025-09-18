@@ -34,7 +34,7 @@ export const useAddressWithSns = (
   const cachedTryToResolveAddress = useCallback(tryToResolveAddress, []);
 
   useEffect(() => {
-    if (address && !addressOrName) {
+    if (address) {
       const cachedName = sns.getCachedSNSName(address);
 
       if (cachedName) {
@@ -46,8 +46,11 @@ export const useAddressWithSns = (
         setAddressOrName(address);
       }
       cachedTryToResolveAddress();
+    } else {
+      // Reset when no address is provided
+      setAddressOrName(undefined);
     }
-  }, [address, addressOrName, sns, shortAddress, cachedTryToResolveAddress]);
+  }, [address, sns, shortAddress, cachedTryToResolveAddress]);
 
   return {
     tryToResolveAddress,
