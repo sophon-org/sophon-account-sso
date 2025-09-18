@@ -25,6 +25,9 @@ import {
   SophonAppStorage,
   StorageKeys,
 } from '../provider';
+import { freshInstallActions } from '../provider/fresh-install';
+
+freshInstallActions();
 
 export interface SophonContextConfig {
   partnerId: string;
@@ -40,6 +43,7 @@ export interface SophonContextConfig {
   updateAccessToken: (data: SophonJWTToken) => void;
   updateRefreshToken: (data: SophonJWTToken) => void;
   disconnect: () => void;
+  logout: () => void;
   error?: string;
   setError: (error: string) => void;
 }
@@ -52,6 +56,7 @@ export const SophonContext = createContext<SophonContextConfig>({
   updateAccessToken: () => {},
   updateRefreshToken: () => {},
   disconnect: () => {},
+  logout: () => {},
   error: undefined,
   setError: (_: string) => {},
 });
@@ -152,11 +157,19 @@ export const SophonContextProvider = ({
     .extend(erc7846Actions())
     .extend(eip712WalletActions());
 
-  const disconnect = useCallback(() => {
-    provider?.disconnect();
+  const disconnect = useCallback(async () => {
+    await provider?.disconnect();
     SophonAppStorage.clear();
     setAccount(undefined);
   }, [provider]);
+
+  const logout = useCallback(async () => {
+    await provider.request({
+      method: 'wallet_revokePermissions',
+      params: [],
+    });
+    await disconnect();
+  }, [provider, disconnect]);
 
   const contextValue = useMemo<SophonContextConfig>(
     () => ({
@@ -175,6 +188,7 @@ export const SophonContextProvider = ({
       network,
       updateAccessToken,
       updateRefreshToken,
+      logout,
     }),
     [
       network,
@@ -191,6 +205,7 @@ export const SophonContextProvider = ({
       network,
       updateAccessToken,
       updateRefreshToken,
+      logout,
     ],
   );
 

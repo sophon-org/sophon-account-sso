@@ -12,6 +12,7 @@ export default function JWTPanel() {
   const [me, setMe] = useState<`0x${string}` | null>(null);
   const [token, setToken] = useState<SophonJWTToken | null>(null);
   const [loading, setLoading] = useState(false);
+  const [loadingMe, setLoadingMe] = useState(false);
 
   const updateAccessToken = useCallback(async () => {
     setLoading(true);
@@ -25,8 +26,17 @@ export default function JWTPanel() {
   }, []);
 
   const fetchMe = async () => {
+    setLoadingMe(true);
     const me = await getMe();
     setMe(me.sub as `0x${string}`);
+    setLoadingMe(false);
+  };
+
+  const getToken = async () => {
+    setLoading(true);
+    const accessToken = await getAccessToken();
+    setToken(accessToken);
+    setLoading(false);
   };
 
   const refreshMe = async () => {
@@ -49,18 +59,24 @@ export default function JWTPanel() {
       )}
       {me && (
         <Text className="text-sm bg-red-400/10 p-2 mt-2 rounded-md border border-red-400 text-red-400 text-center">
-          Me: {shortenAddress(me)}
+          Me: {loadingMe ? 'Loading...' : shortenAddress(me)}
         </Text>
       )}
       <View className="flex flex-row gap-2 mt-2 w-full">
         <Button
-          className="bg-purple-400 text-white p-2 rounded-md hover:bg-purple-500 hover:cursor-pointer border-1 border-black/40 w-1/2"
+          className="bg-purple-400 text-white p-2 rounded-md hover:bg-purple-500 hover:cursor-pointer border-1 border-black/40 w-1/3"
           onPress={fetchMe}
         >
           <Text>Fetch Me</Text>
         </Button>
         <Button
-          className="bg-purple-400 text-white p-2 rounded-md hover:bg-purple-500 hover:cursor-pointer border-1 border-black/40 w-1/2"
+          className="bg-purple-400 text-white p-2 rounded-md hover:bg-purple-500 hover:cursor-pointer border-1 border-black/40 w-1/3"
+          onPress={getToken}
+        >
+          <Text>Get Token</Text>
+        </Button>
+        <Button
+          className="bg-purple-400 text-white p-2 rounded-md hover:bg-purple-500 hover:cursor-pointer border-1 border-black/40 w-1/3"
           onPress={refreshMe}
         >
           <Text>Refresh Me</Text>

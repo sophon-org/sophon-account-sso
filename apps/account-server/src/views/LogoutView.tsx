@@ -3,8 +3,10 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDisconnect } from 'wagmi';
 import { IconGreenCheck } from '@/components/icons/icons-green-check';
 import { Loader } from '@/components/loader';
+import { MainStateMachineContext } from '@/context/state-machine-context';
 import { useAccountContext } from '@/hooks/useAccountContext';
 import { LOCAL_STORAGE_KEY } from '@/lib/constants';
+import { windowService } from '@/service/window.service';
 
 type LogoutState = 'logging-out' | 'success';
 
@@ -14,6 +16,8 @@ export const LogoutView = () => {
   const { handleLogOut, user } = useDynamicContext();
   const hasLoggedOut = useRef(false);
   const [logoutState, setLogoutState] = useState<LogoutState>('logging-out');
+  const actorRef = MainStateMachineContext.useActorRef();
+  const isMobile = windowService.isMobile();
 
   const handleLogout = useCallback(async () => {
     if (hasLoggedOut.current) {
@@ -37,23 +41,35 @@ export const LogoutView = () => {
 
       setLogoutState('success');
 
-      setTimeout(() => {
-        window.close();
-      }, 2500);
+      if (isMobile) {
+        actorRef.send({ type: 'ACCEPT' });
+      } else {
+        setTimeout(() => {
+          actorRef.send({ type: 'ACCEPT' });
+        }, 1000);
+      }
     } catch (error) {
       console.error('Logout failed:', error);
       setLogoutState('success');
-      setTimeout(() => {
-        window.close();
-      }, 2500);
+      if (isMobile) {
+        actorRef.send({ type: 'ACCEPT' });
+      } else {
+        setTimeout(() => {
+          actorRef.send({ type: 'ACCEPT' });
+        }, 1000);
+      }
     }
-  }, [handleLogOut, user, disconnect, logout]);
+  }, [handleLogOut, user, disconnect, logout, actorRef, isMobile]);
 
   useEffect(() => {
-    setTimeout(() => {
+    if (isMobile) {
       handleLogout();
-    }, 2000);
-  }, [handleLogout]);
+    } else {
+      setTimeout(() => {
+        handleLogout();
+      }, 1000);
+    }
+  }, [handleLogout, isMobile]);
 
   const renderLoggingOut = () => (
     <div className="flex flex-col items-center justify-center space-y-6 animate-in fade-in duration-300">
