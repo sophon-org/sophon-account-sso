@@ -8,7 +8,7 @@ Before you start, you need these libraries:
 
 ```sh
 # Expo packages
-npx expo install react-native-webview expo-standard-web-crypto expo-crypto expo-network expo-secure-store
+npx expo install react-native-webview expo-standard-web-crypto expo-crypto expo-network expo-secure-store @react-native-async-storage/async-storage
 ```
 
 After that, you are ready to install our SDK:

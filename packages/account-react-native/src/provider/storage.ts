@@ -27,7 +27,7 @@ export const SophonAppStorage: StorageLike = {
   clear: () => {
     Object.values(StorageKeys).forEach((entry) => {
       const normalizedKey = normalizeKey(entry);
-      SophonAppStorage.setItem(normalizedKey, '');
+      SecureStore.setItem(normalizedKey, '');
       SecureStore.deleteItemAsync(normalizedKey);
     });
   },
