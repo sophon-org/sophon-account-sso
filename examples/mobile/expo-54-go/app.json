@@ -38,9 +38,7 @@
       [
         "expo-asset",
         {
-          "assets": [
-            "./assets"
-          ]
+          "assets": ["./assets"]
         }
       ],
       "expo-secure-store",
