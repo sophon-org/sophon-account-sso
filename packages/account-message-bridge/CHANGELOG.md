@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 2.1.2
+
+### Patch Changes
+
+- Bugfixes and disconnect/logout support
+
 ## 2.1.1
 
 ### Patch Changes

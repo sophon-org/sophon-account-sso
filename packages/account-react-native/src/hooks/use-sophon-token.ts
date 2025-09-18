@@ -28,12 +28,15 @@ export const useSophonToken = () => {
         return null;
       }
 
-      const accessExpiresAt = new Date(
-        accessToken.expiresAt * 1000 - ACCESS_TOKEN_EXPIRATION_THRESHOLD,
+      const now = new Date();
+      const expiresAt = new Date(accessToken.expiresAt * 1000);
+      const isExpired = expiresAt < now;
+      const needsRefreshAt = new Date(
+        expiresAt.getTime() - ACCESS_TOKEN_EXPIRATION_THRESHOLD,
       );
 
       // if the token is expired, refresh it
-      if (forceRefresh || accessExpiresAt < new Date()) {
+      if (forceRefresh || needsRefreshAt < now) {
         if (!refreshToken?.value) {
           console.warn('No refresh token found to use');
           return null;
@@ -51,10 +54,13 @@ export const useSophonToken = () => {
         );
 
         if (!response.ok) {
-          console.warn(
-            `Failed to refresh access token: ${response.statusText}`,
-          );
-          return null;
+          // if we got an error, but the token is not expired, then try to reuse the token for now
+          if (isExpired) {
+            throw new Error(
+              `Failed to refresh access token: ${response.statusText}`,
+            );
+          }
+          return accessToken;
         }
 
         const data = await response.json();
@@ -87,20 +93,21 @@ export const useSophonToken = () => {
 
   const getMe = useCallback(
     async (baseURL?: string) => {
-      if (!accessToken?.value) {
+      const token = await getAccessToken(false, baseURL);
+      if (!token?.value) {
         console.warn('No access token found to use');
         return null;
       }
 
       const response = await fetch(`${baseURL ?? baseAuthAPIURL}/auth/me`, {
         headers: {
-          authorization: `Bearer ${accessToken.value}`,
+          authorization: `Bearer ${token.value}`,
         },
       });
       const data = await response.json();
       return data;
     },
-    [accessToken, baseAuthAPIURL],
+    [getAccessToken, baseAuthAPIURL],
   );
 
   return {
