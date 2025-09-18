@@ -24,6 +24,19 @@ export default function ContractWarning({ transaction }: ContractWarningProps) {
       return null;
     }
 
+    if (transaction.decodedData && transaction?.decodedData?.args?.length > 0) {
+      return (
+        <Card elevated className="py-4 px-6 flex items-center gap-4 w-full">
+          <WarningCircleIcon weight="fill" className="w-6 h-6 text-red-500" />
+          <p className="text-xs text-black flex-1 text-left max-w-[264px]">
+            This contract is not verified. Make sure you trust it before
+            proceeding. We are showing the transaction details based on commonly
+            known interactions.
+          </p>
+        </Card>
+      );
+    }
+
     return (
       <Card elevated className="py-4 px-6 flex items-center gap-4 w-full">
         <WarningCircleIcon weight="fill" className="w-6 h-6 text-red-500" />
