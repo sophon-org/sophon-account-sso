@@ -2543,7 +2543,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-async-storage/async-storage@npm:2.2.0":
+"@react-native-async-storage/async-storage@npm:2.2.0, @react-native-async-storage/async-storage@npm:^2.2.0":
   version: 2.2.0
   resolution: "@react-native-async-storage/async-storage@npm:2.2.0"
   dependencies:
@@ -2891,11 +2891,72 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-react-native@link:../../packages/account-react-native::locator=%40sophon-labs%2Fexamples-mobile-expo-web%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@sophon-labs/account-react-native@link:../../packages/account-react-native::locator=%40sophon-labs%2Fexamples-mobile-expo-web%40workspace%3A."
+"@sophon-labs/account-communicator@npm:2.1.2":
+  version: 2.1.2
+  resolution: "@sophon-labs/account-communicator@npm:2.1.2"
+  peerDependencies:
+    typescript: ^5.0.0
+  checksum: 10c0/d9ddafb30fc2938a2208541a7b6d5b69dab3f482cd56de9df2e157d3ce831d3edfa2628060eb4697683ebc0dea712a92711a3462fcacd596cc6b001411c91c52
   languageName: node
-  linkType: soft
+  linkType: hard
+
+"@sophon-labs/account-core@npm:2.1.2":
+  version: 2.1.2
+  resolution: "@sophon-labs/account-core@npm:2.1.2"
+  dependencies:
+    text-encoding-polyfill: "npm:^0.6.7"
+  peerDependencies:
+    viem: ">=2.21.0"
+  checksum: 10c0/3ef257d8f7693d5de5a5ce8f4940cc627b7e2c127bd1c31f8d0a4be8ddb3d7f390a834a3e00277513f11c978cd390bb99c5a7fc0e344389888f983016f190ea2
+  languageName: node
+  linkType: hard
+
+"@sophon-labs/account-message-bridge@npm:2.1.2":
+  version: 2.1.2
+  resolution: "@sophon-labs/account-message-bridge@npm:2.1.2"
+  dependencies:
+    eventemitter3: "npm:5.0.1"
+  peerDependencies:
+    react-native-webview: ">=13.12.5"
+  checksum: 10c0/68bdc325495898e2830891cd28d04a92a9f4c35e499fd545743b7f9bde7d54a42338ed395800430949188660f48fbd98a0e5612c7d59939ccbeca029390ca742
+  languageName: node
+  linkType: hard
+
+"@sophon-labs/account-provider@npm:2.1.2":
+  version: 2.1.2
+  resolution: "@sophon-labs/account-provider@npm:2.1.2"
+  dependencies:
+    "@sophon-labs/account-communicator": "npm:2.1.2"
+    "@sophon-labs/account-core": "npm:2.1.2"
+    eventemitter3: "npm:^5.0.1"
+    json-rpc-2.0: "npm:^1.7.1"
+  peerDependencies:
+    typescript: ^5.0.0
+  checksum: 10c0/f3f1a0fa68ea42cf58f68ddf379a357025e7f80ff5c2c57d19e34a9513170102d512dfe2f9f8d64e420f6778955d1e3080a341b7a74b5d5a3ca2128463819bbc
+  languageName: node
+  linkType: hard
+
+"@sophon-labs/account-react-native@npm:2.1.2":
+  version: 2.1.2
+  resolution: "@sophon-labs/account-react-native@npm:2.1.2"
+  dependencies:
+    "@react-native-async-storage/async-storage": "npm:^2.2.0"
+    "@sophon-labs/account-communicator": "npm:2.1.2"
+    "@sophon-labs/account-core": "npm:2.1.2"
+    "@sophon-labs/account-message-bridge": "npm:2.1.2"
+    "@sophon-labs/account-provider": "npm:2.1.2"
+    eventemitter3: "npm:5.0.1"
+    text-encoding-polyfill: "npm:^0.6.7"
+  peerDependencies:
+    expo-network: "*"
+    expo-secure-store: "*"
+    expo-standard-web-crypto: "*"
+    react-native: ">=0.76.6"
+    react-native-webview: ">=13.12.5"
+    viem: ">=2.21.0"
+  checksum: 10c0/a18c6a1b0d6a2e57e553d6d5ed185bc61459eacc0f2168add41de28531306733b3b7cb09bbe4a8dae4294292e6cb88d10e2dcad9b5c8c651684808e27dac0c6b
+  languageName: node
+  linkType: hard
 
 "@sophon-labs/examples-mobile-expo-web@workspace:.":
   version: 0.0.0-use.local
@@ -2909,7 +2970,7 @@ __metadata:
     "@react-navigation/bottom-tabs": "npm:^7.3.10"
     "@react-navigation/elements": "npm:^2.3.8"
     "@react-navigation/native": "npm:^7.1.6"
-    "@sophon-labs/account-react-native": "link:../../packages/account-react-native"
+    "@sophon-labs/account-react-native": "npm:2.1.2"
     "@types/react": "npm:~19.1.10"
     class-variance-authority: "npm:^0.7.1"
     clsx: "npm:^2.1.1"
@@ -5661,7 +5722,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eventemitter3@npm:5.0.1":
+"eventemitter3@npm:5.0.1, eventemitter3@npm:^5.0.1":
   version: 5.0.1
   resolution: "eventemitter3@npm:5.0.1"
   checksum: 10c0/4ba5c00c506e6c786b4d6262cfbce90ddc14c10d4667e5c83ae993c9de88aa856033994dd2b35b83e8dc1170e224e66a319fa80adc4c32adcd2379bbc75da814

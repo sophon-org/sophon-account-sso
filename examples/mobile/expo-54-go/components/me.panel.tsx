@@ -27,21 +27,21 @@ export default function JWTPanel() {
 
   const fetchMe = async () => {
     setLoadingMe(true);
-    const me = await getMe('http://localhost:4001');
+    const me = await getMe();
     setMe(me.sub as `0x${string}`);
     setLoadingMe(false);
   };
 
   const getToken = async () => {
     setLoading(true);
-    const accessToken = await getAccessToken(false, 'http://localhost:4001');
+    const accessToken = await getAccessToken();
     setToken(accessToken);
     setLoading(false);
   };
 
   const refreshMe = async () => {
     setLoading(true);
-    const newToken = await getAccessToken(true, 'http://localhost:4001');
+    const newToken = await getAccessToken(true);
     setToken(newToken);
     setLoading(false);
   };
