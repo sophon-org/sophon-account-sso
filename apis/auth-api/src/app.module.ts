@@ -30,7 +30,13 @@ import { JwksModule } from "./jwks/jwks.module";
 				jwtKeys: JwtKeysService,
 			) => {
 				let url = db.url || process.env.DATABASE_URL;
-				if (!url) url = (await jwtKeys.getDatabaseUrl()) ?? undefined;
+				if (!url) {
+					url = await jwtKeys.getDatabaseUrl();
+				}
+
+				if (!url) {
+					throw new Error("Database URL is not set");
+				}
 
 				return {
 					type: "postgres",
