@@ -19,7 +19,7 @@ export const validationSchema = Joi.object({
 		.uri()
 		.default("https://cdn.sophon.xyz/partners/sdk"),
 
-	DATABASE_URL: Joi.string().required(),
+	DATABASE_URL: Joi.string().optional(),
 
 	NODE_ENV: Joi.string()
 		.valid("development", "test", "production")

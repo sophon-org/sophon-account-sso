@@ -5,6 +5,7 @@ import {
 	ServiceUnavailableException,
 } from "@nestjs/common";
 import type { JwtPayload } from "jsonwebtoken";
+import { SecretsService } from "src/aws/secrets.service";
 import {
 	type PermissionAllowedField,
 	unpackScope,
@@ -34,7 +35,8 @@ export class MeService {
 	private readonly baseUrl =
 		process.env.DYNAMICAUTH_BASE_URL ?? "https://app.dynamicauth.com";
 	private readonly envId = process.env.DYNAMICAUTH_ENV_ID as string;
-	private readonly apiToken = process.env.DYNAMICAUTH_API_TOKEN as string;
+
+	constructor(private readonly secrets: SecretsService) {}
 
 	/**
 	 * Build /auth/me response using:
@@ -42,10 +44,13 @@ export class MeService {
 	 * - DynamicAuth user profile (optional fields gated by scope)
 	 */
 	async buildMeResponse(payload: JwtPayload): Promise<MeResponseDto> {
-		this.ensureConfigured();
+		const apiToken =
+			(process.env.DYNAMICAUTH_API_TOKEN as string) ??
+			(await this.secrets.loadJwtSecrets()).dynamicToken;
+		this.ensureConfigured(apiToken);
 
 		const userId = this.pickUserId(payload);
-		const user = await this.fetchDynamicAuthUser(userId);
+		const user = await this.fetchDynamicAuthUser(userId, apiToken);
 
 		const scope = (payload as unknown as { scope?: string }).scope ?? "";
 		const scopeArr = unpackScope(scope);
@@ -66,8 +71,8 @@ export class MeService {
 		};
 	}
 
-	private ensureConfigured(): void {
-		if (!this.envId || !this.apiToken) {
+	private ensureConfigured(apiToken: string): void {
+		if (!this.envId || !apiToken) {
 			throw new InternalServerErrorException(
 				"DynamicAuth is not configured (DYNAMICAUTH_ENV_ID / DYNAMICAUTH_API_TOKEN).",
 			);
@@ -84,6 +89,7 @@ export class MeService {
 
 	private async fetchDynamicAuthUser(
 		userId: string,
+		apiToken: string,
 	): Promise<DynamicAuthUser["user"]> {
 		const url = `${this.baseUrl.replace(/\/+$/, "")}/api/v0/environments/${encodeURIComponent(
 			this.envId,
@@ -97,7 +103,7 @@ export class MeService {
 				method: "GET",
 				signal: ac.signal,
 				headers: {
-					Authorization: `Bearer ${this.apiToken}`,
+					Authorization: `Bearer ${apiToken}`,
 					Accept: "application/json",
 				},
 			});

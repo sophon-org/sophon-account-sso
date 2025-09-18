@@ -19,12 +19,16 @@ export default function ContractTransactionView({
         </p>
       </div>
 
-      {transaction.isVerified && transaction.decodedData && (
+      {transaction.decodedData && (
         <div>
-          <p className="text-sm font-bold">
-            Executing "{transaction.decodedData.functionName || 'Unknown'}"
-            <span className="font-normal"> with parameters:</span>
-          </p>
+          {transaction.isVerified ||
+            (!transaction.isVerified &&
+              transaction.decodedData.args.length > 0 && (
+                <p className="text-sm font-bold">
+                  Executing "{transaction.decodedData.functionName || 'Unknown'}
+                  "<span className="font-normal"> with parameters:</span>
+                </p>
+              ))}
           {transaction.decodedData.args.map((arg) => (
             <div key={arg.name} className="text-sm text-black mb-2">
               <div className="flex items-start">

@@ -45,6 +45,7 @@ export interface SophonContextConfig {
   refreshToken?: SophonJWTToken | null;
   updateRefreshToken: (data: SophonJWTToken) => void;
   connect: () => Promise<void>;
+  logout: () => Promise<void>;
   disconnect: () => Promise<void>;
   network: SophonNetworkType;
   connector: Connector;
@@ -60,6 +61,7 @@ export const SophonContext = createContext<SophonContextConfig>({
   updateRefreshToken: () => {},
   connect: async () => {},
   disconnect: async () => {},
+  logout: async () => {},
   network: 'testnet',
   connector: null,
   updateConnector: () => {},
@@ -186,17 +188,21 @@ export const SophonContextProvider = ({
   );
 
   const disconnect = useCallback(async () => {
+    await connector.disconnect();
+    SophonAppStorage.clear();
+    setAccount(undefined);
+  }, [connector]);
+
+  const logout = useCallback(async () => {
     const logoutRequest = {
       id: crypto.randomUUID(),
       content: {
         action: { method: 'wallet_revokePermissions', params: [] },
       },
     };
-    communicator?.postMessage(logoutRequest);
-    await connector.disconnect();
-    SophonAppStorage.clear();
-    setAccount(undefined);
-  }, [connector, communicator]);
+    await communicator?.postMessage(logoutRequest);
+    await disconnect();
+  }, [communicator, disconnect]);
 
   const contextValue = useMemo<SophonContextConfig>(
     () => ({
@@ -217,6 +223,7 @@ export const SophonContextProvider = ({
       communicator,
       refreshToken,
       updateRefreshToken,
+      logout,
     }),
     [
       network,
@@ -235,6 +242,7 @@ export const SophonContextProvider = ({
       communicator,
       refreshToken,
       updateRefreshToken,
+      logout,
     ],
   );
 

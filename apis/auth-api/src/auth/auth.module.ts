@@ -2,6 +2,7 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { SecretsModule } from "src/aws/secrets.module";
 import { JwtKeysModule } from "../aws/jwt-keys.module"; // your keys module
 import { authConfig } from "../config/auth.config";
 import { PartnerRegistryService } from "../partners/partner-registry.service";
@@ -16,6 +17,7 @@ import { MeService } from "./me.service";
 		ConfigModule.forFeature(authConfig),
 		TypeOrmModule.forFeature([Session]),
 		JwtKeysModule,
+		SecretsModule,
 	],
 	controllers: [AuthController],
 	providers: [

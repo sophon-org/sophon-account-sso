@@ -40,14 +40,6 @@ export function createSophonEIP1193Provider(
     storage = customStorage;
   }
 
-  console.log(
-    'createSophonEIP1193Provider',
-    network,
-    partnerId,
-    authServerUrl,
-    customCommunicator,
-    serverUrl,
-  );
   const communicator =
     customCommunicator ??
     new PopupCommunicator(serverUrl, {

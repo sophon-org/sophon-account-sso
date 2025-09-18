@@ -1,5 +1,13 @@
 # @sophon-labs/account-api-sdk
 
+## 2.1.2
+
+### Patch Changes
+
+- Bugfixes and disconnect/logout support
+- Updated dependencies
+  - @sophon-labs/account-core@2.1.2
+
 ## 2.1.1
 
 ### Patch Changes

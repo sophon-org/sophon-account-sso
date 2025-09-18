@@ -199,7 +199,7 @@ export const Drawer = ({
       <VaulDrawer.Portal>
         <VaulDrawer.Overlay className="fixed inset-0 bg-black/40" />
         <VaulDrawer.Content
-          className="bg-gray-100 fixed outline-none rounded-t-3xl"
+          className="bg-gray-100 fixed outline-none rounded-t-3xl flex flex-col max-h-[85vh]"
           style={{
             bottom: `${insets.bottom}px`,
             left: `${insets.left}px`,
@@ -223,15 +223,17 @@ export const Drawer = ({
           )}
           <div
             ref={scrollContainerRef}
-            className={`overflow-y-auto max-h-[60vh] px-4 pb-4`}
+            className={`overflow-y-auto flex-1 min-h-0 px-4 pb-4`}
           >
             {isOffline ? <OfflineContent /> : children}
           </div>
-          <DrawerFooter
-            showLegalNotice={showLegalNotice}
-            showLogo={showLogo}
-            actions={actions}
-          />
+          <div className="flex-shrink-0">
+            <DrawerFooter
+              showLegalNotice={showLegalNotice}
+              showLogo={showLogo}
+              actions={actions}
+            />
+          </div>
         </VaulDrawer.Content>
       </VaulDrawer.Portal>
     </VaulDrawer.Root>

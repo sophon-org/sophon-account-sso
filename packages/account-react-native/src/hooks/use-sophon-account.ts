@@ -4,8 +4,15 @@ import type { CustomRPCError } from '@/types';
 import { useSophonContext } from './use-sophon-context';
 
 export const useSophonAccount = () => {
-  const { walletClient, setAccount, provider, account, disconnect, error } =
-    useSophonContext();
+  const {
+    walletClient,
+    setAccount,
+    provider,
+    account,
+    disconnect,
+    error,
+    logout,
+  } = useSophonContext();
   const [accountError, setAccountError] = useState<string>();
   const [isConnecting, setIsConnecting] = useState(false);
 
@@ -36,6 +43,7 @@ export const useSophonAccount = () => {
     isConnected,
     connect,
     disconnect,
+    logout,
     account,
     provider,
     walletClient,
