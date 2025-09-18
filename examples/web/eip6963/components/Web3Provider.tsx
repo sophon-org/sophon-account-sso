@@ -10,7 +10,8 @@ import { createConfig, http, type State, WagmiProvider } from 'wagmi';
 const CHAIN_ID = (process.env.NEXT_PUBLIC_CHAIN_ID as string) ?? '531050104';
 createSophonEIP6963Emitter(
   CHAIN_ID === '50104' ? 'mainnet' : 'testnet',
-  //'http://localhost:3000',
+  undefined,
+  'http://localhost:3000',
 );
 
 export const projectId = '760fb7a448e58431c9cfbab80743ab1c';

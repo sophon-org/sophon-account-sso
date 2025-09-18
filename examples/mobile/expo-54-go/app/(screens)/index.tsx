@@ -5,7 +5,7 @@ import {
 } from '@sophon-labs/account-react-native';
 import { useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
-import { Chain, erc20Abi, parseEther, parseUnits } from 'viem';
+import { erc20Abi, parseEther, parseUnits } from 'viem';
 import { sophonTestnet } from 'viem/chains';
 import { nftAbi } from '@/abis/nft';
 import { unverifiedAbi } from '@/abis/unverified';
@@ -20,6 +20,7 @@ export default function HomeScreen() {
     isConnected,
     account,
     disconnect,
+    logout,
     accountError,
     isConnecting,
   } = useSophonAccount();
@@ -60,6 +61,12 @@ export default function HomeScreen() {
               className="mt-4 bg-red-500/90 w-full max-w-[80%]"
             >
               <Text className="text-xl font-bold text-white">Disconnect</Text>
+            </Button>
+            <Button
+              onPress={logout}
+              className="mt-4 bg-red-500/90 w-full max-w-[80%]"
+            >
+              <Text className="text-xl font-bold text-white">Logout</Text>
             </Button>
           </>
         )}

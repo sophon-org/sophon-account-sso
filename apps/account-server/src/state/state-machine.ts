@@ -362,22 +362,15 @@ export const userWalletRequestStateMachine = createMachine({
       on: {
         ACCEPT: {
           target: 'completed',
-          actions: 'clearRequests',
+          actions: 'logout',
         },
         CANCEL: {
           target: 'completed',
-          actions: 'cancelRequests',
+          actions: 'logout',
         },
         LOGOUT: {
           target: 'login-required',
-          actions: [
-            'clearRequests',
-            assign(({ context }) => ({
-              ...context,
-              isAuthenticated: false,
-              isLoadingResources: false,
-            })),
-          ],
+          actions: 'logout',
         },
       },
     },
