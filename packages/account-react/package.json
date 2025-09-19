@@ -23,7 +23,7 @@
   "dependencies": {
     "@sophon-labs/account-connector": "2.1.2",
     "@sophon-labs/account-core": "2.1.2",
-    "axios": "^1.11.0",
+    "axios": "1.12.2",
     "clsx": "^2.1.1",
     "js-cookie": "^3.0.5"
   },
