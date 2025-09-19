@@ -34,7 +34,7 @@
   },
   "dependencies": {
     "@sophon-labs/account-core": "2.1.2",
-    "axios": "^1.11.0",
+    "axios": "^1.12.2",
     "jsonwebtoken": "^9.0.2",
     "jwks-rsa": "^3.2.0"
   },

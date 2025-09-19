@@ -39,7 +39,7 @@
     "eventemitter3": "5.0.1",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.525.0",
-    "next": "15.3.3",
+    "next": "^15.5.3",
     "pino-pretty": "^13.0.0",
     "posthog-js": "^1.259.0",
     "qr-code-styling": "^1.9.2",
@@ -50,7 +50,7 @@
     "text-encoding-polyfill": "^0.6.7",
     "vaul": "^1.1.2",
     "viem": "^2.36.0",
-    "wagmi": "^2.16.9",
+    "wagmi": "2.17.0",
     "xstate": "5.20.1",
     "zksync-sso": "github:sophon-org/zksync-sso-preview#20250901_1",
     "zod": "^3.25.71"

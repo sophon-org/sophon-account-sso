@@ -361,65 +361,65 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/env@npm:15.4.3":
-  version: 15.4.3
-  resolution: "@next/env@npm:15.4.3"
-  checksum: 10c0/3f189da5eb1d70bad1dab21740f912b5931509111de4ac9782de3fa5641e4025ed515634370df2f9e1aec44780443fb07ec5b0c893d2879a589d7dfbecdc58e2
+"@next/env@npm:15.5.3":
+  version: 15.5.3
+  resolution: "@next/env@npm:15.5.3"
+  checksum: 10c0/00f5541f8d23ddb0758247fae90440b66aa5eb49568bf24e0952d5a417bd47c3610ede61b6658d3f861c13a2c07685a5f1e6d13af2fe5101d2575b3ba2d9e432
   languageName: node
   linkType: hard
 
-"@next/swc-darwin-arm64@npm:15.4.3":
-  version: 15.4.3
-  resolution: "@next/swc-darwin-arm64@npm:15.4.3"
+"@next/swc-darwin-arm64@npm:15.5.3":
+  version: 15.5.3
+  resolution: "@next/swc-darwin-arm64@npm:15.5.3"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@next/swc-darwin-x64@npm:15.4.3":
-  version: 15.4.3
-  resolution: "@next/swc-darwin-x64@npm:15.4.3"
+"@next/swc-darwin-x64@npm:15.5.3":
+  version: 15.5.3
+  resolution: "@next/swc-darwin-x64@npm:15.5.3"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@next/swc-linux-arm64-gnu@npm:15.4.3":
-  version: 15.4.3
-  resolution: "@next/swc-linux-arm64-gnu@npm:15.4.3"
+"@next/swc-linux-arm64-gnu@npm:15.5.3":
+  version: 15.5.3
+  resolution: "@next/swc-linux-arm64-gnu@npm:15.5.3"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@next/swc-linux-arm64-musl@npm:15.4.3":
-  version: 15.4.3
-  resolution: "@next/swc-linux-arm64-musl@npm:15.4.3"
+"@next/swc-linux-arm64-musl@npm:15.5.3":
+  version: 15.5.3
+  resolution: "@next/swc-linux-arm64-musl@npm:15.5.3"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@next/swc-linux-x64-gnu@npm:15.4.3":
-  version: 15.4.3
-  resolution: "@next/swc-linux-x64-gnu@npm:15.4.3"
+"@next/swc-linux-x64-gnu@npm:15.5.3":
+  version: 15.5.3
+  resolution: "@next/swc-linux-x64-gnu@npm:15.5.3"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@next/swc-linux-x64-musl@npm:15.4.3":
-  version: 15.4.3
-  resolution: "@next/swc-linux-x64-musl@npm:15.4.3"
+"@next/swc-linux-x64-musl@npm:15.5.3":
+  version: 15.5.3
+  resolution: "@next/swc-linux-x64-musl@npm:15.5.3"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@next/swc-win32-arm64-msvc@npm:15.4.3":
-  version: 15.4.3
-  resolution: "@next/swc-win32-arm64-msvc@npm:15.4.3"
+"@next/swc-win32-arm64-msvc@npm:15.5.3":
+  version: 15.5.3
+  resolution: "@next/swc-win32-arm64-msvc@npm:15.5.3"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@next/swc-win32-x64-msvc@npm:15.4.3":
-  version: 15.4.3
-  resolution: "@next/swc-win32-x64-msvc@npm:15.4.3"
+"@next/swc-win32-x64-msvc@npm:15.5.3":
+  version: 15.5.3
+  resolution: "@next/swc-win32-x64-msvc@npm:15.5.3"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
@@ -538,24 +538,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-core@npm:2.0.0-next.39":
-  version: 2.0.0-next.39
-  resolution: "@sophon-labs/account-core@npm:2.0.0-next.39"
-  checksum: 10c0/3a2f532ee1ad7aba14955803f4939a9993af6e92e70cabc05f9988c76f5f3a951c5ad39f5fa727f26fa935ab68e7030989858427bf51e244cc7a62c11098f652
+"@sophon-labs/account-core@npm:2.0.1":
+  version: 2.0.1
+  resolution: "@sophon-labs/account-core@npm:2.0.1"
+  peerDependencies:
+    viem: ">=2.21.0"
+  checksum: 10c0/aeefbbaba7152b596a30ba3f49f2a19dcdddb26faa173896cf245c07471d9877e90f58f6b793ddfcf5a79d1d08cb87122ab3050de1800a6e2f3a298fd73c8a36
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-eip6963@npm:2.0.0-next.39":
-  version: 2.0.0-next.39
-  resolution: "@sophon-labs/account-eip6963@npm:2.0.0-next.39"
+"@sophon-labs/account-eip6963@npm:2.0.1":
+  version: 2.0.1
+  resolution: "@sophon-labs/account-eip6963@npm:2.0.1"
   dependencies:
-    "@sophon-labs/account-core": "npm:2.0.0-next.39"
+    "@sophon-labs/account-core": "npm:2.0.1"
     eventemitter3: "npm:^5.0.1"
     json-rpc-2.0: "npm:^1.7.1"
-    zksync-sso: "npm:0.4.1"
+    zksync-sso: "github:sophon-org/zksync-sso-preview#20250901_1"
   peerDependencies:
     typescript: ^5.0.0
-  checksum: 10c0/de417ef3393a48f088f46eb0dc9d9c31485e64b1b9c42ef3afa5bf3eade2b3132d498782920e400b2980f6652d1afe1f39c94821bb7c57b5d24a104414014c40
+  checksum: 10c0/6ef36e155815af1357510b991229e006c64f02e7b1ab44410106b7971250e45bcfd7efd205d5b3de1d8d996cd9b70c1696ea54818a98c73ca8a39a5ed6c846c9
   languageName: node
   linkType: hard
 
@@ -565,21 +567,21 @@ __metadata:
   dependencies:
     "@dotenvx/dotenvx": "npm:^1.49.0"
     "@playwright/test": "npm:^1.54.1"
-    "@sophon-labs/account-core": "npm:2.0.0-next.39"
-    "@sophon-labs/account-eip6963": "npm:2.0.0-next.39"
+    "@sophon-labs/account-core": "npm:2.0.1"
+    "@sophon-labs/account-eip6963": "npm:2.0.1"
     "@tailwindcss/postcss": "npm:^4"
     "@types/node": "npm:^20"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
     ethers: "npm:^6.9.2"
-    next: "npm:15.4.3"
+    next: "npm:^15.5.3"
     pino-pretty: "npm:^13.1.1"
     react: "npm:19.1.0"
     react-dom: "npm:19.1.0"
     tailwindcss: "npm:^4"
     typescript: "npm:^5"
     zksync-ethers: "npm:^6.0.0"
-    zksync-sso: "npm:0.4.1"
+    zksync-sso: "github:sophon-org/zksync-sso-preview#20250901_1"
   languageName: unknown
   linkType: soft
 
@@ -1718,19 +1720,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"next@npm:15.4.3":
-  version: 15.4.3
-  resolution: "next@npm:15.4.3"
+"next@npm:^15.5.3":
+  version: 15.5.3
+  resolution: "next@npm:15.5.3"
   dependencies:
-    "@next/env": "npm:15.4.3"
-    "@next/swc-darwin-arm64": "npm:15.4.3"
-    "@next/swc-darwin-x64": "npm:15.4.3"
-    "@next/swc-linux-arm64-gnu": "npm:15.4.3"
-    "@next/swc-linux-arm64-musl": "npm:15.4.3"
-    "@next/swc-linux-x64-gnu": "npm:15.4.3"
-    "@next/swc-linux-x64-musl": "npm:15.4.3"
-    "@next/swc-win32-arm64-msvc": "npm:15.4.3"
-    "@next/swc-win32-x64-msvc": "npm:15.4.3"
+    "@next/env": "npm:15.5.3"
+    "@next/swc-darwin-arm64": "npm:15.5.3"
+    "@next/swc-darwin-x64": "npm:15.5.3"
+    "@next/swc-linux-arm64-gnu": "npm:15.5.3"
+    "@next/swc-linux-arm64-musl": "npm:15.5.3"
+    "@next/swc-linux-x64-gnu": "npm:15.5.3"
+    "@next/swc-linux-x64-musl": "npm:15.5.3"
+    "@next/swc-win32-arm64-msvc": "npm:15.5.3"
+    "@next/swc-win32-x64-msvc": "npm:15.5.3"
     "@swc/helpers": "npm:0.5.15"
     caniuse-lite: "npm:^1.0.30001579"
     postcss: "npm:8.4.31"
@@ -1773,7 +1775,7 @@ __metadata:
       optional: true
   bin:
     next: dist/bin/next
-  checksum: 10c0/72b587d09ece0bf590f208550527fbacac9cc590684cdd203f2dc10a9b89ea2986e17ec5d21be7605dfba1e8443224c785c6619817d5d7797abb01421d7997a4
+  checksum: 10c0/d928a2c3a850abcdd905183f9ce119212892126a294b61239d76ac249defd1210ae1864add43edc5b4e369879168c519938b445d8267456180af2a2c2f7b2eee
   languageName: node
   linkType: hard
 
@@ -2521,9 +2523,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zksync-sso@npm:0.4.1":
-  version: 0.4.1
-  resolution: "zksync-sso@npm:0.4.1"
+"zksync-sso@github:sophon-org/zksync-sso-preview#20250901_1":
+  version: 0.0.0-development
+  resolution: "zksync-sso@https://github.com/sophon-org/zksync-sso-preview.git#commit=f5d9b27b244127d6ce21ce2e53b85fa11e8a5c11"
   dependencies:
     "@peculiar/asn1-ecc": "npm:^2.3.13"
     "@peculiar/asn1-schema": "npm:^2.3.13"
@@ -2544,6 +2546,6 @@ __metadata:
       optional: true
     typescript:
       optional: true
-  checksum: 10c0/2a7446a7e5af2acb12e5e7ec8ee01fd0461d804c06de18497a7c1c9327a52df89ca09442c39ac83e1d1f2d6af862dbcf7fc7e1043b4c6d3066dedf986a93c8a7
+  checksum: 10c0/e69a700b8b1678804b5fb43ca97162acf3711445175cc6a976f00848cd81a04ee2c92b880d516e50d0e572eb83402c33ecad5ef1ffc5e9326f71cee01cacbf1a
   languageName: node
   linkType: hard
