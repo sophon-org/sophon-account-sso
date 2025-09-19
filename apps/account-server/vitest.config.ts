@@ -1,3 +1,4 @@
+import path from 'node:path';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vitest/config';
 
@@ -7,7 +8,6 @@ export default defineConfig({
     globals: true, // https://vitest.dev/guide/cli.html
     environment: 'jsdom',
     include: ['./src/**/*.{test,spec}.?(c|m)[jt]s?(x)'],
-
     reporters: ['default'],
     outputFile: 'account-auth-server.junit.xml',
     setupFiles: ['./test.setup.ts'],
@@ -28,6 +28,11 @@ export default defineConfig({
       ],
       provider: 'v8',
       reporter: ['text', 'json'],
+    },
+  },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
     },
   },
 });
