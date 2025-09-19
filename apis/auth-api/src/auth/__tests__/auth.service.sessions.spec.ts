@@ -2,6 +2,8 @@ import { UnauthorizedException } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import jwt from "jsonwebtoken";
 import type { TypedDataDefinition } from "viem";
+import { JwtKeysService } from "../../aws/jwt-keys.service";
+import { authConfig } from "../../config/auth.config";
 import { PartnerRegistryService } from "../../partners/partner-registry.service";
 import { SessionsRepository } from "../../sessions/sessions.repository";
 import { AuthService } from "../auth.service";
@@ -20,36 +22,26 @@ jest.mock("../../utils/signature", () => ({
 	verifyEIP1271Signature: jest.fn().mockResolvedValue(true),
 }));
 
-// keys
-jest.mock("../../utils/jwt", () => ({
-	getPrivateKey: jest.fn().mockResolvedValue("PRIV"),
-	getPublicKey: jest.fn().mockResolvedValue("PUB"),
-	getRefreshPrivateKey: jest.fn().mockResolvedValue("RPRIV"),
-	getRefreshPublicKey: jest.fn().mockResolvedValue("RPUB"),
-}));
+// Provide the auth config namespace directly to the testing module.
+// Shape mirrors authConfig() return (camelCase).
+const MOCK_AUTH = {
+	accessTtlS: 60 * 60 * 3, // 3h
+	refreshTtlS: 60 * 60 * 24 * 90, // 90d
+	nonceTtlS: 600, // 10m
 
-// env
-const MOCK_ENV = {
-	ACCESS_TTL_S: 60 * 60 * 3, // 3h
-	REFRESH_TTL_S: 60 * 60 * 24 * 90, // 90d
-	NONCE_TTL_S: 600, // 10m
-	COOKIE_ACCESS_MAX_AGE_S: 60 * 60 * 3,
-	COOKIE_REFRESH_MAX_AGE_S: 60 * 60 * 24 * 90,
+	jwtKid: "test-kid",
+	jwtIssuer: "https://auth.example.com",
+	nonceIssuer: "https://auth.example.com/nonce",
+	refreshIssuer: "https://auth.example.com/refresh",
+	refreshJwtKid: "refresh-kid",
 
-	JWT_KID: "test-kid",
-	JWT_ISSUER: "https://auth.example.com",
-	NONCE_ISSUER: "https://auth.example.com/nonce",
-	REFRESH_ISSUER: "https://auth.example.com/refresh",
-	REFRESH_JWT_KID: "refresh-kid",
+	cookieDomain: "localhost",
+	cookieAccessMaxAgeS: 60 * 60 * 3,
+	cookieRefreshMaxAgeS: 60 * 60 * 24 * 90,
 
-	COOKIE_DOMAIN: "localhost",
-	JWT_AUDIENCE: "example-client",
-	PARTNER_CDN: "https://cdn.sophon.xyz/partners/sdk",
-};
-jest.mock("../../config/env", () => ({
-	getEnv: jest.fn(() => MOCK_ENV),
-	getJwtKid: jest.fn(() => MOCK_ENV.JWT_KID),
-}));
+	jwtAudience: "example-client",
+	partnerCdn: "https://cdn.sophon.xyz/partners/sdk",
+} as const;
 
 describe("AuthService (sessions + refresh)", () => {
 	let service: AuthService;
@@ -81,6 +73,15 @@ describe("AuthService (sessions + refresh)", () => {
 		revokeSid: jest.fn(),
 	};
 
+	const jwtKeysServiceMock: jest.Mocked<JwtKeysService> = {
+		getAccessPrivateKey: jest.fn().mockResolvedValue("PRIV"),
+		getAccessPublicKey: jest.fn().mockResolvedValue("PUB"),
+		getRefreshPrivateKey: jest.fn().mockResolvedValue("RPRIV"),
+		getRefreshPublicKey: jest.fn().mockResolvedValue("RPUB"),
+		getAccessKid: jest.fn().mockResolvedValue("kid"),
+		getRefreshKid: jest.fn().mockResolvedValue("rkid"),
+	} as unknown as jest.Mocked<JwtKeysService>;
+
 	const FIXED_NOW_MS = 1_700_000_000_000; // fixed now for deterministic tests
 	let dateNowSpy: jest.SpyInstance<number, []>;
 
@@ -90,6 +91,8 @@ describe("AuthService (sessions + refresh)", () => {
 				AuthService,
 				{ provide: PartnerRegistryService, useValue: partnerRegistryMock },
 				{ provide: SessionsRepository, useValue: sessionsMock },
+				{ provide: authConfig.KEY, useValue: MOCK_AUTH },
+				{ provide: JwtKeysService, useValue: jwtKeysServiceMock }, // ✅ provide mocked keys service
 			],
 		}).compile();
 
@@ -109,7 +112,7 @@ describe("AuthService (sessions + refresh)", () => {
 			nonce: "nonce.jwt",
 			address: "0x1234567890abcdef1234567890abcdef12345678",
 			aud: "sophon-web",
-			iss: MOCK_ENV.NONCE_ISSUER,
+			iss: MOCK_AUTH.nonceIssuer,
 			scope: "email x",
 			userId: "u1",
 		});
@@ -120,7 +123,7 @@ describe("AuthService (sessions + refresh)", () => {
 			.mockImplementationOnce(() => "refresh.jwt"); // refresh
 
 		// decode refresh for exp -> session.refresh_expires_at
-		const expSecs = Math.floor(FIXED_NOW_MS / 1000) + MOCK_ENV.REFRESH_TTL_S;
+		const expSecs = Math.floor(FIXED_NOW_MS / 1000) + MOCK_AUTH.refreshTtlS;
 		(jwt.decode as jest.Mock).mockReturnValue({ exp: expSecs });
 
 		const typedData: TypedDataDefinition = {
@@ -187,7 +190,7 @@ describe("AuthService (sessions + refresh)", () => {
 
 	it("verifyAccessToken: no sid → only issuer/aud checked", async () => {
 		(jwt.verify as jest.Mock).mockReturnValueOnce({
-			iss: MOCK_ENV.JWT_ISSUER,
+			iss: MOCK_AUTH.jwtIssuer,
 			aud: "sophon-web",
 			sub: "0xabc",
 			iat: Math.floor(FIXED_NOW_MS / 1000),
@@ -201,7 +204,7 @@ describe("AuthService (sessions + refresh)", () => {
 
 	it("verifyAccessToken: sid present but session inactive → throws", async () => {
 		(jwt.verify as jest.Mock).mockReturnValueOnce({
-			iss: MOCK_ENV.JWT_ISSUER,
+			iss: MOCK_AUTH.jwtIssuer,
 			aud: "sophon-web",
 			sub: "0xabc",
 			iat: Math.floor(FIXED_NOW_MS / 1000),
@@ -226,7 +229,7 @@ describe("AuthService (sessions + refresh)", () => {
 	it("verifyAccessToken: sid present, active, but iat < invalidate_before → throws", async () => {
 		const iat = Math.floor(FIXED_NOW_MS / 1000) - 100; // token issued 100s before now
 		(jwt.verify as jest.Mock).mockReturnValueOnce({
-			iss: MOCK_ENV.JWT_ISSUER,
+			iss: MOCK_AUTH.jwtIssuer,
 			aud: "sophon-web",
 			sub: "0xabc",
 			iat,
@@ -251,7 +254,7 @@ describe("AuthService (sessions + refresh)", () => {
 	it("refresh: success path rotates jti and returns new tokens", async () => {
 		// verified refresh token payload
 		(jwt.verify as jest.Mock).mockReturnValueOnce({
-			iss: MOCK_ENV.REFRESH_ISSUER,
+			iss: MOCK_AUTH.refreshIssuer,
 			aud: "sophon-web",
 			sub: "0xabc",
 			iat: Math.floor(FIXED_NOW_MS / 1000) - 100,
@@ -278,8 +281,7 @@ describe("AuthService (sessions + refresh)", () => {
 			.mockImplementationOnce(() => "new.refresh.jwt");
 
 		// decode new refresh exp
-		const nextExpSecs =
-			Math.floor(FIXED_NOW_MS / 1000) + MOCK_ENV.REFRESH_TTL_S;
+		const nextExpSecs = Math.floor(FIXED_NOW_MS / 1000) + MOCK_AUTH.refreshTtlS;
 		(jwt.decode as jest.Mock).mockReturnValue({ exp: nextExpSecs });
 
 		const { accessToken, refreshToken } = await service.refresh("refresh.jwt");
@@ -303,7 +305,7 @@ describe("AuthService (sessions + refresh)", () => {
 
 	it("refresh: reuse detection → revokes session and throws", async () => {
 		(jwt.verify as jest.Mock).mockReturnValueOnce({
-			iss: MOCK_ENV.REFRESH_ISSUER,
+			iss: MOCK_AUTH.refreshIssuer,
 			aud: "sophon-web",
 			sub: "0xabc",
 			iat: Math.floor(FIXED_NOW_MS / 1000) - 100,
@@ -331,7 +333,7 @@ describe("AuthService (sessions + refresh)", () => {
 
 	it("revokeByRefreshToken: valid refresh token → revokes", async () => {
 		(jwt.verify as jest.Mock).mockReturnValueOnce({
-			iss: MOCK_ENV.REFRESH_ISSUER,
+			iss: MOCK_AUTH.refreshIssuer,
 			aud: "sophon-web",
 			sub: "0xabc",
 			sid: "sid-5",
@@ -354,7 +356,7 @@ describe("AuthService (sessions + refresh)", () => {
 
 	it("revokeByRefreshToken: non-refresh typ → no-op", async () => {
 		(jwt.verify as jest.Mock).mockReturnValueOnce({
-			iss: MOCK_ENV.REFRESH_ISSUER,
+			iss: MOCK_AUTH.refreshIssuer,
 			aud: "sophon-web",
 			sub: "0xabc",
 			sid: "sid-6",
@@ -366,15 +368,15 @@ describe("AuthService (sessions + refresh)", () => {
 		expect(sessionsMock.revokeSid).not.toHaveBeenCalled();
 	});
 
-	it("cookie options reflect env", () => {
+	it("cookie options reflect config", () => {
 		const a = service.cookieOptions();
 		expect(a).toMatchObject({
 			httpOnly: true,
 			secure: true,
 			sameSite: "lax",
-			domain: "localhost",
+			domain: MOCK_AUTH.cookieDomain,
 			path: "/",
-			maxAge: MOCK_ENV.COOKIE_ACCESS_MAX_AGE_S * 1000,
+			maxAge: MOCK_AUTH.cookieAccessMaxAgeS * 1000,
 		});
 
 		const r = service.refreshCookieOptions();
@@ -382,9 +384,9 @@ describe("AuthService (sessions + refresh)", () => {
 			httpOnly: true,
 			secure: true,
 			sameSite: "strict",
-			domain: "localhost",
+			domain: MOCK_AUTH.cookieDomain,
 			path: "/auth/refresh",
-			maxAge: MOCK_ENV.COOKIE_REFRESH_MAX_AGE_S * 1000,
+			maxAge: MOCK_AUTH.cookieRefreshMaxAgeS * 1000,
 		});
 	});
 });
