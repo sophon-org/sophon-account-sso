@@ -18,6 +18,13 @@ import { CONTRACTS, SOPHON_VIEM_CHAIN } from '@/lib/constants';
 export const DYNAMIC_SALT_PREFIX = 'DynamicLabs';
 export const SOPHON_SALT_PREFIX = 'SophonLabs';
 
+/**
+ * Returns the uniqueId for a dynamic created account, on sophon account v1.
+ * Here we used a salt prefix exclusive to dynamic and the owner was the deployer as well.
+ *
+ * @param ownerAddress - The address of the owner of the account
+ * @returns The uniqueId
+ */
 export const getDynamicSmartAccountUniqueId = (ownerAddress: Address) => {
   const generatedSalt = `0x${Buffer.from(toBytes(DYNAMIC_SALT_PREFIX, { size: 32 })).toString('hex')}`;
   const salt = keccak256(
@@ -27,17 +34,28 @@ export const getDynamicSmartAccountUniqueId = (ownerAddress: Address) => {
   return salt;
 };
 
+/**
+ * Returns the final uniqueAccountId for a sophon account v2 deployed account. On this version
+ * we deploy the account on the backend, and because of that the owner is not the message sender
+ *
+ * @param ownerAddress - The address of the owner of the account
+ * @param deployAccount - The address of the account that deployed the account
+ * @returns The final uniqueAccountId
+ */
 export const getSophonSmartAccountUniqueId = (
   ownerAddress: Address,
   deployAccount: Address,
 ) => {
-  const uniqueIds: Hex[] = [toHex(SOPHON_SALT_PREFIX), ownerAddress];
-  const partialSalt = keccak256(toHex(concat(uniqueIds)));
-
-  const salt = keccak256(
-    concat([toBytes(partialSalt), toBytes(deployAccount)]),
+  const uniqueIds: Hex[] = [
+    toHex(SOPHON_SALT_PREFIX),
+    ownerAddress.toLowerCase() as `0x${string}`,
+  ];
+  const uniqueId = keccak256(toHex(concat(uniqueIds)));
+  const uniqueAccountId = keccak256(
+    concat([toBytes(uniqueId), toBytes(deployAccount)]),
   );
-  return salt;
+
+  return uniqueAccountId;
 };
 
 export const getAccountAddressByUniqueId = async (uniqueId: Hash) => {
