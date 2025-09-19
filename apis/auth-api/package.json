@@ -31,7 +31,8 @@
 		"migration:create": "yarn typeorm migration:create src/migrations/Init",
 		"migration:generate": "yarn typeorm:ds migration:generate src/migrations/Init",
 		"migration:run": "yarn typeorm:ds migration:run",
-		"migration:revert": "yarn typeorm:ds migration:revert"
+		"migration:revert": "yarn typeorm:ds migration:revert",
+		"codegen": "graphql-codegen"
 	},
 	"dependencies": {
 		"@aws-sdk/client-secrets-manager": "^3.886.0",
@@ -46,8 +47,12 @@
 		"cookie-parser": "^1.4.7",
 		"dotenv": "^17.0.0",
 		"ethers": "^6.14.4",
+		"graphql": "^16.11.0",
+		"graphql-request": "^7.2.0",
 		"joi": "^18.0.1",
 		"jsonwebtoken": "^9.0.2",
+		"lru-cache": "^11.2.1",
+		"p-retry": "^7.0.0",
 		"reflect-metadata": "^0.2.2",
 		"rxjs": "^7.8.1",
 		"siwe": "^3.0.0",
@@ -63,6 +68,10 @@
 		"@babel/preset-typescript": "^7.27.1",
 		"@biomejs/biome": "^2.0.6",
 		"@dotenvx/dotenvx": "^1.49.0",
+		"@graphql-codegen/cli": "^6.0.0",
+		"@graphql-codegen/typescript": "^5.0.0",
+		"@graphql-codegen/typescript-graphql-request": "^6.3.0",
+		"@graphql-codegen/typescript-operations": "^5.0.0",
 		"@jest/globals": "^30.0.3",
 		"@nestjs/cli": "^11.0.0",
 		"@nestjs/schematics": "^11.0.0",
