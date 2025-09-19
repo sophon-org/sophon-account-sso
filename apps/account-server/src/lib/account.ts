@@ -5,6 +5,7 @@ import {
   http,
   type Transport,
   type WalletClient,
+  zeroAddress,
 } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { eip712WalletActions } from 'viem/zksync';
@@ -20,7 +21,6 @@ import {
 
 const MAX_RETRIES = 5;
 const RETRY_DELAY = 500;
-const NON_EXISTING = '0x0000000000000000000000000000000000000000';
 
 // this part should be on the backend
 export const deployAccount = async (ownerAddress: `0x${string}`) => {
@@ -35,12 +35,12 @@ export const deployAccount = async (ownerAddress: `0x${string}`) => {
     ),
   ]);
 
-  if (dynamicAccountAddress && dynamicAccountAddress !== NON_EXISTING) {
+  if (dynamicAccountAddress && dynamicAccountAddress !== zeroAddress) {
     console.log('account already deployed on sophon v1', dynamicAccountAddress);
     return { address: dynamicAccountAddress };
   }
 
-  if (sophonAccountAddress && sophonAccountAddress !== NON_EXISTING) {
+  if (sophonAccountAddress && sophonAccountAddress !== zeroAddress) {
     console.log('account already deployed on sophon v2', sophonAccountAddress);
     return { address: sophonAccountAddress };
   }
