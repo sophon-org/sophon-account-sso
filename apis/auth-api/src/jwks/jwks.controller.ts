@@ -1,29 +1,34 @@
 import { createPublicKey } from "node:crypto";
-import { Controller, Get } from "@nestjs/common";
-import { getPublicKey } from "../utils/jwt"; // returns PEM string
+import { Controller, Get, Header } from "@nestjs/common";
+import { JwtKeysService } from "../aws/jwt-keys.service";
 
 @Controller("/.well-known")
 export class JwksController {
+	constructor(private readonly keys: JwtKeysService) {}
+
 	@Get("jwks.json")
+	@Header("Cache-Control", "public, max-age=300, must-revalidate")
 	async getJwks() {
 		try {
-			const publicKeyPem = await getPublicKey();
-			const keyObj = createPublicKey(publicKeyPem);
-			// biome-ignore lint/suspicious/noExplicitAny: TODO: review this
-			const exported = keyObj.export({ format: "jwk" }) as any;
+			const [publicKeyPem, kid] = await Promise.all([
+				this.keys.getAccessPublicKey(),
+				this.keys.getAccessKid(),
+			]);
+			const jwk = createPublicKey(publicKeyPem).export({
+				format: "jwk",
+			}) as JsonWebKey;
 
 			return {
 				keys: [
 					{
-						...exported,
+						...jwk,
 						alg: "RS256",
 						use: "sig",
-						kid: process.env.JWT_KID || "default-key",
+						kid,
 					},
 				],
 			};
-		} catch (err) {
-			console.error("[JWKS] Failed to load public key:", err);
+		} catch {
 			return { keys: [] };
 		}
 	}

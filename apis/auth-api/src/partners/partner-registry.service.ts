@@ -1,34 +1,29 @@
-import {
-	BadRequestException,
-	Injectable,
-	InternalServerErrorException,
-} from "@nestjs/common";
-import { getEnv } from "../config/env";
+import { BadRequestException, Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 
-const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
-const REQUEST_TIMEOUT_MS = 2500; // 2.5s
+const DEFAULT_CDN = "https://cdn.sophon.xyz/partners/sdk";
+const CACHE_TTL_MS = 5 * 60 * 1000;
+const REQUEST_TIMEOUT_MS = 2500;
 
 @Injectable()
 export class PartnerRegistryService {
 	private cache = new Map<string, number>();
 
-	/**
-	 * Returns true if <PARTNER_CDN>/<partnerId>.json exists.
-	 * Uses positive-result caching to reduce CDN load.
-	 */
+	constructor(private readonly config: ConfigService) {}
+
 	async exists(partnerId: string): Promise<boolean> {
 		if (
-			process.env.NODE_ENV === "test" ||
-			process.env.BYPASS_PARTNER_CDN_CHECK === "true"
+			this.config.get("NODE_ENV") === "test" ||
+			this.config.get("BYPASS_PARTNER_CDN_CHECK") === "true"
 		) {
 			return true;
 		}
 
-		if (!getEnv().PARTNER_CDN) {
-			throw new InternalServerErrorException(
-				"Server misconfiguration: PARTNER_CDN is not set",
-			);
-		}
+		const cdn =
+			this.config.get<string>("partners.cdn") ??
+			this.config.get<string>("auth.partnerCdn") ??
+			this.config.get<string>("PARTNER_CDN") ??
+			DEFAULT_CDN;
 
 		const id = String(partnerId ?? "").trim();
 		if (!id) return false;
@@ -36,48 +31,22 @@ export class PartnerRegistryService {
 		const exp = this.cache.get(id);
 		if (exp && exp > Date.now()) return true;
 
-		const url = this.buildUrl(id);
-
+		const url = `${cdn.replace(/\/+$/, "")}/${encodeURIComponent(id)}.json`;
 		const ok =
 			(await this.probe(url, "HEAD")) || (await this.probe(url, "GET"));
-		if (ok) {
-			this.cache.set(id, Date.now() + CACHE_TTL_MS);
-		}
+		if (ok) this.cache.set(id, Date.now() + CACHE_TTL_MS);
 		return ok;
 	}
 
-	/**
-	 * Throws a 4xx HttpException if the partner does not exist or input is invalid.
-	 */
-	async assertExists(partnerId: string): Promise<void> {
-		const id = String(partnerId ?? "").trim();
-		if (!id) {
-			throw new BadRequestException("audience is required");
-		}
-		const ok = await this.exists(id);
-		if (!ok) {
-			throw new BadRequestException(`Audience not allowed: ${id}`);
-		}
-	}
-
-	private buildUrl(partnerId: string): string {
-		return `${getEnv().PARTNER_CDN.replace(/\/+$/, "")}/${encodeURIComponent(
-			partnerId,
-		)}.json`;
-	}
-
 	private async probe(url: string, method: "HEAD" | "GET"): Promise<boolean> {
-		// Node 18+ has global fetch; if you’re on older Node, install `undici` and import it.
 		const ac = new AbortController();
 		const t = setTimeout(() => ac.abort(), REQUEST_TIMEOUT_MS);
-
 		try {
 			const res = await fetch(url, {
 				method,
 				signal: ac.signal,
 				headers: method === "GET" ? { accept: "application/json" } : undefined,
 			});
-			// Some CDNs return 403/405 for HEAD; treat those as “unknown” so GET can try.
 			if (res.ok) return true;
 			if (method === "HEAD" && (res.status === 403 || res.status === 405))
 				return false;
@@ -86,6 +55,14 @@ export class PartnerRegistryService {
 			return false;
 		} finally {
 			clearTimeout(t);
+		}
+	}
+
+	async assertExists(partnerId: string): Promise<void> {
+		const id = String(partnerId ?? "").trim();
+		if (!id) throw new BadRequestException("audience is required");
+		if (!(await this.exists(id))) {
+			throw new BadRequestException(`Audience not allowed: ${id}`);
 		}
 	}
 }

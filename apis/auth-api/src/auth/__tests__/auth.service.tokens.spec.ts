@@ -1,6 +1,11 @@
+// src/auth/__tests__/auth.service.new-token-features.spec.ts
+
+import { ConfigModule } from "@nestjs/config";
 import { Test } from "@nestjs/testing";
 import jwt from "jsonwebtoken";
 import type { TypedDataDefinition } from "viem";
+import { JwtKeysService } from "../../aws/jwt-keys.service";
+import { authConfig } from "../../config/auth.config";
 import { PartnerRegistryService } from "../../partners/partner-registry.service";
 import { SessionsRepository } from "../../sessions/sessions.repository";
 import { AuthService } from "../auth.service";
@@ -17,35 +22,21 @@ jest.mock("../../utils/signature", () => ({
 	verifyEIP1271Signature: jest.fn().mockResolvedValue(true),
 }));
 
-// --- key/env mocks ---
-jest.mock("../../utils/jwt", () => ({
-	getPrivateKey: jest.fn().mockResolvedValue("PRIVATE_KEY"),
-	getPublicKey: jest.fn().mockResolvedValue("PUBLIC_KEY"),
-	getRefreshPrivateKey: jest.fn().mockResolvedValue("REFRESH_PRIVATE_KEY"),
-	getRefreshPublicKey: jest.fn().mockResolvedValue("REFRESH_PUBLIC_KEY"),
-}));
-
-jest.mock("../../config/env", () => {
-	const env = {
-		ACCESS_TTL_S: 60 * 60 * 3, // 3h
-		REFRESH_TTL_S: 60 * 60 * 24 * 30, // 30d
-		NONCE_TTL_S: 600, // 10m
-		COOKIE_ACCESS_MAX_AGE_S: 60 * 60 * 3,
-		COOKIE_REFRESH_MAX_AGE_S: 60 * 60 * 24 * 30,
-		COOKIE_DOMAIN: "localhost",
-		JWT_ISSUER: "https://auth.example.com",
-		NONCE_ISSUER: "https://auth.example.com",
-		REFRESH_ISSUER: "https://auth.example.com",
-		REFRESH_JWT_KID: "test-refresh-kid",
-		JWT_KID: "test-kid",
-		JWT_AUDIENCE: "sophon-web",
-		PARTNER_CDN: "https://cdn.sophon.xyz/partners/sdk",
-	};
-	return {
-		getJwtKid: jest.fn().mockReturnValue("test-kid"),
-		getEnv: jest.fn().mockReturnValue(env),
-	};
-});
+const MOCK_AUTH = {
+	accessTtlS: 60 * 60 * 3,
+	refreshTtlS: 60 * 60 * 24 * 30,
+	nonceTtlS: 600,
+	cookieAccessMaxAgeS: 60 * 60 * 3,
+	cookieRefreshMaxAgeS: 60 * 60 * 24 * 30,
+	cookieDomain: "localhost",
+	jwtIssuer: "https://auth.example.com",
+	nonceIssuer: "https://auth.example.com",
+	refreshIssuer: "https://auth.example.com",
+	refreshJwtKid: "test-refresh-kid",
+	jwtKid: "test-kid",
+	jwtAudience: "sophon-web",
+	partnerCdn: "https://cdn.sophon.xyz/partners/sdk",
+} as const;
 
 describe("AuthService (new token features)", () => {
 	let service: AuthService;
@@ -63,14 +54,46 @@ describe("AuthService (new token features)", () => {
 		rotateRefreshJti: jest.fn().mockResolvedValue(undefined),
 	};
 
+	type JwtKeysServiceMock = {
+		getAccessPrivateKey: jest.Mock<Promise<string>, []>;
+		getAccessPublicKey: jest.Mock<Promise<string>, []>;
+		getRefreshPrivateKey: jest.Mock<Promise<string>, []>;
+		getRefreshPublicKey: jest.Mock<Promise<string>, []>;
+		getAccessKid: jest.Mock<Promise<string>, []>;
+		getRefreshKid: jest.Mock<Promise<string>, []>;
+	};
+
+	const jwtKeysServiceMock: JwtKeysServiceMock = {
+		getAccessPrivateKey: jest
+			.fn<Promise<string>, []>()
+			.mockResolvedValue("PRIVATE_KEY"),
+		getAccessPublicKey: jest
+			.fn<Promise<string>, []>()
+			.mockResolvedValue("PUBLIC_KEY"),
+		getRefreshPrivateKey: jest
+			.fn<Promise<string>, []>()
+			.mockResolvedValue("REFRESH_PRIVATE_KEY"),
+		getRefreshPublicKey: jest
+			.fn<Promise<string>, []>()
+			.mockResolvedValue("REFRESH_PUBLIC_KEY"),
+		getAccessKid: jest.fn<Promise<string>, []>().mockResolvedValue("test-kid"),
+		getRefreshKid: jest
+			.fn<Promise<string>, []>()
+			.mockResolvedValue("test-refresh-kid"),
+	};
 	beforeEach(async () => {
 		const module = await Test.createTestingModule({
+			imports: [ConfigModule.forRoot({ isGlobal: false, load: [authConfig] })],
 			providers: [
 				AuthService,
 				{ provide: PartnerRegistryService, useValue: partnerRegistryMock },
 				{ provide: SessionsRepository, useValue: sessionsRepositoryMock },
+				{ provide: JwtKeysService, useValue: jwtKeysServiceMock },
 			],
-		}).compile();
+		})
+			.overrideProvider(authConfig.KEY)
+			.useValue(MOCK_AUTH)
+			.compile();
 
 		service = module.get(AuthService);
 		jest.clearAllMocks();
@@ -133,7 +156,7 @@ describe("AuthService (new token features)", () => {
 		expect((jwt.sign as jest.Mock).mock.calls[0][2]).toEqual(
 			expect.objectContaining({
 				algorithm: "RS256",
-				keyid: "test-kid",
+				keyid: MOCK_AUTH.jwtKid,
 				issuer: "https://auth.example.com",
 				audience: "sophon-web",
 				expiresIn: 60 * 60 * 3,
@@ -156,7 +179,7 @@ describe("AuthService (new token features)", () => {
 		expect((jwt.sign as jest.Mock).mock.calls[1][2]).toEqual(
 			expect.objectContaining({
 				algorithm: "RS256",
-				keyid: "test-refresh-kid",
+				keyid: MOCK_AUTH.refreshJwtKid,
 				issuer: "https://auth.example.com",
 				audience: "sophon-web",
 				expiresIn: 60 * 60 * 24 * 30,

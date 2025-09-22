@@ -13,6 +13,7 @@ import {
   enrichSOPHTransaction,
   getContractInfo,
   getFunctionParameters,
+  getOpenChainSignature,
   getTokenBalance,
   getTokenFromAddress,
 } from './enrichers';
@@ -101,6 +102,21 @@ export const useEnrichTransactionRequest = (
               }
             } catch (_error) {
               decodedData = null;
+            }
+          } else if (!contractInfo.isVerified) {
+            try {
+              // If contract is not verified, try to get the function signature from OpenChain
+              const signatureData = await getOpenChainSignature(
+                transactionRequest.data || '',
+              );
+              if (signatureData) {
+                decodedData = {
+                  functionName: signatureData.functionName,
+                  args: signatureData.args,
+                };
+              }
+            } catch (_error) {
+              // Silently fail, decodedData remains null
             }
           }
 

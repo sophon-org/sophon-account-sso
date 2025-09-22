@@ -1,17 +1,53 @@
 import { Module } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
 import { APP_FILTER } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { AuthModule } from "./auth/auth.module.js";
-import { AllExceptionsFilter } from "./common/all-exceptions.filter.js";
-import { JwksModule } from "./jwks/jwks.module.js";
+
+import { AuthModule } from "./auth/auth.module";
+import { AwsModule } from "./aws/aws.module";
+import { JwtKeysService } from "./aws/jwt-keys.service";
+import { AllExceptionsFilter } from "./common/all-exceptions.filter";
+import { authConfig } from "./config/auth.config";
+import { awsConfig } from "./config/aws.config";
+import { dbConfig } from "./config/db.config";
+import { validationSchema } from "./config/validation.schema";
+import { JwksModule } from "./jwks/jwks.module";
 
 @Module({
 	imports: [
-		TypeOrmModule.forRoot({
-			type: "postgres",
-			url: process.env.DATABASE_URL,
-			autoLoadEntities: true,
+		ConfigModule.forRoot({
+			isGlobal: true,
+			load: [authConfig, dbConfig, awsConfig],
+			validationSchema,
+			cache: true,
+			expandVariables: true,
 		}),
+		TypeOrmModule.forRootAsync({
+			inject: [dbConfig.KEY, JwtKeysService],
+			imports: [AwsModule],
+			useFactory: async (
+				db: ReturnType<typeof dbConfig>,
+				jwtKeys: JwtKeysService,
+			) => {
+				let url = db.url || process.env.DATABASE_URL;
+				if (!url) {
+					url = await jwtKeys.getDatabaseUrl();
+				}
+
+				if (!url) {
+					throw new Error("Database URL is not set");
+				}
+
+				return {
+					type: "postgres",
+					url,
+					autoLoadEntities: true,
+					synchronize: false,
+				};
+			},
+		}),
+
+		AwsModule,
 		AuthModule,
 		JwksModule,
 	],

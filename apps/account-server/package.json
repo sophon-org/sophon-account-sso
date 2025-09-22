@@ -9,7 +9,7 @@
     "postinstall": "npx --yes playwright install",
     "------------------------- TESTING -------------------------": "",
     "test": "dotenvx run -f .env -- vitest --watch false --passWithNoTests",
-    "test:dev": "vitest --watch true --passWithNoTests",
+    "test:dev": "dotenvx run -f .env -- vitest --watch true --passWithNoTests",
     "test:ci": "vitest --watch false --passWithNoTests --coverage",
     "test:e2e:ci": "playwright test",
     "test:e2e:ui": "playwright test --ui",
