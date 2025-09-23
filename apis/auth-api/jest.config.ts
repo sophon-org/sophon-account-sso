@@ -21,7 +21,7 @@ const config: Config = {
 		"^@hyperindex/(.*)$": "<rootDir>/hyperindex/$1",
 	},
 	moduleFileExtensions: ["js", "json", "ts"],
-	moduleDirectories: ['node_modules', '<rootDir>/src'],
+	moduleDirectories: ["node_modules", "<rootDir>/src"],
 	rootDir: ".",
 	testRegex: ".*\\.spec\\.ts$",
 	transform: {
