@@ -89,6 +89,10 @@ export class AuthController {
 	@ApiOkResponse({ description: "Rotates access and refresh tokens" })
 	async refresh(@Req() req: Request, @Res() res: Response) {
 		const rt = extractRefreshToken(req);
+		console.log("Refreshing token", rt);
+		console.log("Refreshing headers", req.headers);
+		console.log("Refreshing cookies", req.cookies);
+
 		if (!rt) {
 			throw new UnauthorizedException({ error: "missing refresh token" });
 		}
