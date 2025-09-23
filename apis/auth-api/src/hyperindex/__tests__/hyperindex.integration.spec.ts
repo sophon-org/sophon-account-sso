@@ -24,7 +24,7 @@ describe("HyperindexService (integration)", () => {
 		if (!apiKey) throw new Error("Set HYPERINDEX_API_KEY");
 
 		// Useful config echo
-		// eslint-disable-next-line no-console
+
 		console.log("[hyperindex:test] cfg", {
 			url,
 			hasApiKey: Boolean(apiKey),
@@ -76,7 +76,6 @@ describe("HyperindexService (integration)", () => {
 				// ignore preview parsing errors
 			}
 
-			// eslint-disable-next-line no-console
 			console.log("[hyperindex:fetch] >>>", {
 				url: String(input),
 				method: init?.method,
@@ -97,7 +96,6 @@ describe("HyperindexService (integration)", () => {
 					// ignore body preview errors
 				}
 
-				// eslint-disable-next-line no-console
 				console.log("[hyperindex:fetch] <<<", {
 					status: res.status,
 					durationMs: dur,
@@ -107,7 +105,7 @@ describe("HyperindexService (integration)", () => {
 				return res;
 			} catch (e) {
 				const dur = Date.now() - started;
-				// eslint-disable-next-line no-console
+
 				console.log("[hyperindex:fetch] !!! error", {
 					durationMs: dur,
 					error: String(e),
@@ -125,11 +123,10 @@ describe("HyperindexService (integration)", () => {
 	it(
 		"fetches K1OwnerState from the real API",
 		async () => {
-			// eslint-disable-next-line no-console
 			console.time("[hyperindex:test] total");
 
 			const rows = await service.getK1OwnerStateByOwner(TEST_OWNER);
-			// eslint-disable-next-line no-console
+
 			console.log("[hyperindex:test] rows.length =", rows.length);
 
 			if (rows.length === 0) {
@@ -137,7 +134,7 @@ describe("HyperindexService (integration)", () => {
 			}
 
 			const row = rows.find((r) => r.k1Owner?.toLowerCase?.() === TEST_OWNER);
-			// eslint-disable-next-line no-console
+
 			console.log("[hyperindex:test] row =", row);
 
 			expect(row).toBeDefined();
@@ -145,7 +142,6 @@ describe("HyperindexService (integration)", () => {
 				EXPECTED_ACCOUNT,
 			);
 
-			// eslint-disable-next-line no-console
 			console.timeEnd("[hyperindex:test] total");
 		},
 		jestTimeoutMs,

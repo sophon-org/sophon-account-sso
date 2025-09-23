@@ -118,7 +118,6 @@ export class AuthService {
 				issuer: expectedIss,
 			}) as NoncePayload;
 		} catch (e) {
-			// eslint-disable-next-line no-console
 			console.error(e);
 			this.mapJwtError(e, "nonce");
 		}
@@ -208,7 +207,6 @@ export class AuthService {
 				issuer: expectedIss,
 			}) as NoncePayload;
 		} catch (e) {
-			// eslint-disable-next-line no-console
 			console.error(e);
 			this.mapJwtError(e, "nonce");
 		}
@@ -403,7 +401,6 @@ export class AuthService {
 				issuer: this.auth.refreshIssuer,
 			}) as RefreshTokenPayload;
 		} catch (e) {
-			// eslint-disable-next-line no-console
 			console.error(e);
 			this.mapJwtError(e, "refresh");
 		}
