@@ -82,7 +82,7 @@ export class HyperindexService {
     `;
 
 		const data = await this.gql<{ K1OwnerState: K1OwnerState[] }>(query, {
-			k1Owner: addr,
+			k1Owner: this.normalizeAddress(addr),
 		});
 
 		return data.K1OwnerState ?? [];
@@ -92,6 +92,5 @@ export class HyperindexService {
 		const v = (s ?? "").trim().toLowerCase();
 		if (/^0x[0-9a-f]{40}$/.test(v)) return v;
 		return null;
-		// If your indexer stores checksum casing, you can keep original case instead.
 	}
 }
