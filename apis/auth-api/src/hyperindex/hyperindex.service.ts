@@ -1,4 +1,9 @@
-import { BadRequestException, Inject, Injectable } from "@nestjs/common";
+import {
+	BadGatewayException,
+	GatewayTimeoutException,
+	Inject,
+	Injectable,
+} from "@nestjs/common";
 import { ConfigType } from "@nestjs/config";
 import { hyperindexConfig } from "../config/hyperindex.config";
 
@@ -21,9 +26,6 @@ export class HyperindexService {
 		query: string,
 		variables?: Record<string, unknown>,
 	): Promise<T> {
-		const controller = new AbortController();
-		const t = setTimeout(() => controller.abort(), this.cfg.timeoutMs);
-
 		try {
 			const res = await fetch(this.cfg.graphqlUrl, {
 				method: "POST",
@@ -34,43 +36,50 @@ export class HyperindexService {
 						: {}),
 				},
 				body: JSON.stringify({ query, variables }),
-				signal: controller.signal,
+
+				signal: AbortSignal.timeout(this.cfg.timeoutMs),
 			});
 
-			const json = (await res.json()) as GqlResp<T>;
-
-			if (!res.ok || json.errors?.length) {
-				const msg =
-					json.errors?.map((e) => e.message).join("; ") || `HTTP ${res.status}`;
-				throw new BadRequestException(`HyperIndex error: ${msg}`);
+			if (!res.ok) {
+				throw new BadGatewayException(`HyperIndex HTTP ${res.status}`);
 			}
 
+			let json: GqlResp<T>;
+			try {
+				json = (await res.json()) as GqlResp<T>;
+			} catch {
+				throw new BadGatewayException("HyperIndex returned non-JSON");
+			}
+
+			if (json.errors?.length) {
+				throw new BadGatewayException("HyperIndex GraphQL error");
+			}
 			if (!json.data) {
-				throw new BadRequestException("HyperIndex returned empty data");
+				throw new BadGatewayException("HyperIndex returned empty data");
 			}
 
 			return json.data;
-		} catch (e) {
-			if (e instanceof Error && e.name === "AbortError") {
-				throw new BadRequestException("HyperIndex request timed out");
+		} catch (e: unknown) {
+			if (
+				e instanceof Error &&
+				(e.name === "TimeoutError" || e.name === "AbortError")
+			) {
+				throw new GatewayTimeoutException("HyperIndex request timed out");
 			}
 			throw e;
-		} finally {
-			clearTimeout(t);
 		}
 	}
 
 	/**
-	 * Fetch K1OwnerState rows by exact k1Owner (case-insensitive).
-	 * If you want partial matching later, add another method.
+	 * Fetch K1OwnerState rows by exact k1Owner ( lowercasing).
+	 * Ensure indexer stores lowercase; .
 	 */
 	async getK1OwnerStateByOwner(k1Owner: string): Promise<K1OwnerState[]> {
 		const addr = this.normalizeAddress(k1Owner);
 		if (!addr) {
-			throw new BadRequestException("Invalid k1Owner address");
+			throw new BadGatewayException("Invalid k1Owner address");
 		}
 
-		// Hasura-style filtering (HyperIndex commonly exposes Hasura)
 		const query = /* GraphQL */ `
       query ($k1Owner: String!) {
         K1OwnerState(where: { k1Owner: { _eq: $k1Owner } }) {
@@ -90,7 +99,6 @@ export class HyperindexService {
 
 	private normalizeAddress(s: string | undefined | null): string | null {
 		const v = (s ?? "").trim().toLowerCase();
-		if (/^0x[0-9a-f]{40}$/.test(v)) return v;
-		return null;
+		return /^0x[0-9a-f]{40}$/.test(v) ? v : null;
 	}
 }
