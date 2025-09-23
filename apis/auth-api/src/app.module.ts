@@ -12,6 +12,7 @@ import { awsConfig } from "./config/aws.config";
 import { dbConfig } from "./config/db.config";
 import { validationSchema } from "./config/validation.schema";
 import { JwksModule } from "./jwks/jwks.module";
+import { AppController } from "./app.controller";
 
 @Module({
 	imports: [
@@ -51,6 +52,7 @@ import { JwksModule } from "./jwks/jwks.module";
 		AuthModule,
 		JwksModule,
 	],
+	controllers: [AppController],
 	providers: [{ provide: APP_FILTER, useClass: AllExceptionsFilter }],
 })
 export class AppModule {}
