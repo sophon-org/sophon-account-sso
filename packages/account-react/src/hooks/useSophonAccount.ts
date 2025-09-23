@@ -7,7 +7,7 @@ import { useSophonContext } from './useSophonContext';
  * @returns a set of properties and actions to handle sophon account
  */
 export const useSophonAccount = () => {
-  const { provider, account, connect, disconnect, logout } = useSophonContext();
+  const { provider, account, connect, disconnect } = useSophonContext();
 
   const isConnected = useMemo(() => !!account, [account]);
 
@@ -17,6 +17,5 @@ export const useSophonAccount = () => {
     provider,
     connect,
     disconnect,
-    logout,
   };
 };

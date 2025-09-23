@@ -5,6 +5,7 @@ import {
   PopupCommunicator,
 } from '@sophon-labs/account-communicator';
 import {
+  AccountAuthAPIURL,
   AccountServerURL,
   type DataScopes,
   type SophonNetworkType,
@@ -27,7 +28,7 @@ import {
 import { sophon, sophonTestnet } from 'viem/chains';
 import { eip712WalletActions } from 'viem/zksync';
 import type { Connector } from 'wagmi';
-import { setCookieAuthToken } from '../cookie';
+import { clearCookieAuthToken, setCookieAuthToken } from '../cookie';
 import { SophonAppStorage, StorageKeys } from '../storage/storage';
 import type { SophonJWTToken } from '../types/auth';
 import { SophonMessageHandler } from './sophon-message-handler';
@@ -45,7 +46,6 @@ export interface SophonContextConfig {
   refreshToken?: SophonJWTToken | null;
   updateRefreshToken: (data: SophonJWTToken) => void;
   connect: () => Promise<void>;
-  logout: () => Promise<void>;
   disconnect: () => Promise<void>;
   network: SophonNetworkType;
   connector: Connector;
@@ -61,7 +61,6 @@ export const SophonContext = createContext<SophonContextConfig>({
   updateRefreshToken: () => {},
   connect: async () => {},
   disconnect: async () => {},
-  logout: async () => {},
   network: 'testnet',
   connector: null,
   updateConnector: () => {},
@@ -188,21 +187,38 @@ export const SophonContextProvider = ({
   );
 
   const disconnect = useCallback(async () => {
-    await connector.disconnect();
+    // Get refresh token before clearing storage
+    const refreshTokenSerialized = SophonAppStorage.getItem(
+      StorageKeys.USER_REFRESH_TOKEN,
+    );
+
+    // Immediately clear local state (fast UX)
+    clearCookieAuthToken();
     SophonAppStorage.clear();
     setAccount(undefined);
-  }, [connector]);
 
-  const logout = useCallback(async () => {
-    const logoutRequest = {
-      id: crypto.randomUUID(),
-      content: {
-        action: { method: 'wallet_revokePermissions', params: [] },
-      },
-    };
-    await communicator?.postMessage(logoutRequest);
-    await disconnect();
-  }, [communicator, disconnect]);
+    // Disconnect wallet
+    await connector.disconnect();
+
+    // API logout in background
+    try {
+      const baseAuthAPIURL = AccountAuthAPIURL[network];
+
+      if (refreshTokenSerialized) {
+        const refreshToken = JSON.parse(refreshTokenSerialized);
+        fetch(`${baseAuthAPIURL}/auth/logout`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${refreshToken.value}`,
+          },
+        }).catch(() => {}); // Silent fail, don't block UX
+      }
+    } catch (error) {
+      // Don't block disconnect for any errors
+      console.warn('Background logout API call failed:', error);
+    }
+  }, [connector, network]);
 
   const contextValue = useMemo<SophonContextConfig>(
     () => ({
@@ -223,7 +239,6 @@ export const SophonContextProvider = ({
       communicator,
       refreshToken,
       updateRefreshToken,
-      logout,
     }),
     [
       network,
@@ -242,7 +257,6 @@ export const SophonContextProvider = ({
       communicator,
       refreshToken,
       updateRefreshToken,
-      logout,
     ],
   );
 
