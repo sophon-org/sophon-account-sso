@@ -1,4 +1,3 @@
-// src/hyperindex/__tests__/hyperindex.integration.spec.ts
 import "dotenv/config";
 import { Test } from "@nestjs/testing";
 import { hyperindexConfig } from "src/config/hyperindex.config";
@@ -24,8 +23,6 @@ describe("HyperindexService (integration)", () => {
 	beforeAll(async () => {
 		if (!url) throw new Error("Set HYPERINDEX_GRAPHQL_URL");
 		if (!apiKey) throw new Error("Set HYPERINDEX_API_KEY");
-
-		// Useful config echo
 
 		console.log("[hyperindex:test] cfg", {
 			url,

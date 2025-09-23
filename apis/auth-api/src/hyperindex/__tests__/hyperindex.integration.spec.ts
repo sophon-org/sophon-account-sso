@@ -23,8 +23,6 @@ describe("HyperindexService (integration)", () => {
 		if (!url) throw new Error("Set HYPERINDEX_GRAPHQL_URL");
 		if (!apiKey) throw new Error("Set HYPERINDEX_API_KEY");
 
-		// Useful config echo
-
 		console.log("[hyperindex:test] cfg", {
 			url,
 			hasApiKey: Boolean(apiKey),

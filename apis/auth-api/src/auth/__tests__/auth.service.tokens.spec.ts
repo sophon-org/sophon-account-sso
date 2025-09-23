@@ -1,5 +1,3 @@
-// src/auth/__tests__/auth.service.new-token-features.spec.ts
-
 import { ConfigModule } from "@nestjs/config";
 import { Test } from "@nestjs/testing";
 import jwt from "jsonwebtoken";
