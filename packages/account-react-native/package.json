@@ -46,6 +46,7 @@
     "@sophon-labs/account-core": "2.1.2",
     "@sophon-labs/account-message-bridge": "2.1.2",
     "@sophon-labs/account-provider": "2.1.2",
+    "axios": "^1.11.0",
     "eventemitter3": "5.0.1",
     "text-encoding-polyfill": "^0.6.7"
   },

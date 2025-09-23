@@ -12,6 +12,7 @@ import { unverifiedAbi } from '@/abis/unverified';
 import { verifiedAbi } from '@/abis/verified';
 import JWTPanel from '@/components/me.panel';
 import { SendContractButton } from '@/components/send-contract-button';
+import { TestDashboard } from '@/components/test-dashboard';
 import { Button } from '@/components/ui/button';
 
 export default function HomeScreen() {
@@ -20,7 +21,6 @@ export default function HomeScreen() {
     isConnected,
     account,
     disconnect,
-    logout,
     accountError,
     isConnecting,
   } = useSophonAccount();
@@ -29,12 +29,33 @@ export default function HomeScreen() {
   const [typedDataSignature, setTypedDataSignature] = useState<string>();
   const [transaction, setTransaction] = useState<string>();
   const [error, setError] = useState<string>('');
+  const [showTestDashboard, setShowTestDashboard] = useState(false);
 
   const handleAuthenticate = async () => {
     console.log('handleAuthenticate - before connect');
     await connect();
     console.log('handleAuthenticate - after connect');
   };
+
+  // If showing test dashboard, render it instead of the main screen
+  if (showTestDashboard) {
+    return (
+      <View className="flex-1 bg-white">
+        {/* Header with back button */}
+        <View className="bg-gray-800 px-4 py-3 flex-row items-center justify-between">
+          <Button
+            onPress={() => setShowTestDashboard(false)}
+            className="bg-violet-500/30 border border-violet-500/50"
+          >
+            <Text className="text-white">← Back</Text>
+          </Button>
+          <Text className="text-white text-lg font-semibold">Hook Testing</Text>
+          <View className="w-16" />
+        </View>
+        <TestDashboard />
+      </View>
+    );
+  }
 
   return (
     <ScrollView>
@@ -62,11 +83,12 @@ export default function HomeScreen() {
             >
               <Text className="text-xl font-bold text-white">Disconnect</Text>
             </Button>
+
             <Button
-              onPress={logout}
-              className="mt-4 bg-red-500/90 w-full max-w-[80%]"
+              onPress={() => setShowTestDashboard(true)}
+              className="mt-4 bg-violet-500/30 border border-violet-500/50 w-full max-w-[80%]"
             >
-              <Text className="text-xl font-bold text-white">Logout</Text>
+              <Text className="text-white font-bold">🧪 Test React Hooks</Text>
             </Button>
           </>
         )}

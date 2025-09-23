@@ -1,4 +1,4 @@
-import { createSophonConnector } from '@sophon-labs/account-connector';
+import { sophonSsoConnector } from '@sophon-labs/account-connector';
 import { useEffect, useMemo } from 'react';
 import { useConfig } from 'wagmi';
 import { useSophonContext } from '../hooks/useSophonContext';
@@ -12,12 +12,10 @@ export const SophonWagmiConnector = ({
   const { partnerId, authServerUrl, network, updateConnector, communicator } =
     useSophonContext();
   const connector = useMemo(() => {
-    return createSophonConnector(
-      network,
-      partnerId,
+    return sophonSsoConnector(partnerId, network, {
       authServerUrl,
       communicator,
-    );
+    });
   }, [partnerId, network, authServerUrl, communicator]);
 
   const internalConnector = useMemo(() => {

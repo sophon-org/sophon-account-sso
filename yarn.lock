@@ -4643,6 +4643,7 @@ __metadata:
     "@sophon-labs/account-message-bridge": "npm:2.1.2"
     "@sophon-labs/account-provider": "npm:2.1.2"
     "@types/jest": "npm:^29.5.5"
+    axios: "npm:^1.11.0"
     commitlint: "npm:^19.6.1"
     del-cli: "npm:^5.1.0"
     eventemitter3: "npm:5.0.1"
