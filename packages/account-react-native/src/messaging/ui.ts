@@ -18,6 +18,7 @@ export type SophonUIActions = {
   logout: unknown;
   timeout: UUID;
   refreshMainView: unknown;
+  clearMainViewCache: unknown;
   mainViewError: string;
   // from server:
   sdkStatusResponse: unknown;
