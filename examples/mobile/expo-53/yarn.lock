@@ -1764,6 +1764,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native-async-storage/async-storage@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "@react-native-async-storage/async-storage@npm:2.2.0"
+  dependencies:
+    merge-options: "npm:^3.0.4"
+  peerDependencies:
+    react-native: ^0.0.0-0 || >=0.65 <1.0
+  checksum: 10c0/84900eba46a40225c4ac9bf5eb58885200dc1e789d873ecda46a2a213870cc7110536ed1fd7a74b873071f3603c093958fbd84c635d6f6d4f94bfbb616ffa0ef
+  languageName: node
+  linkType: hard
+
 "@react-native/assets-registry@npm:0.79.5":
   version: 0.79.5
   resolution: "@react-native/assets-registry@npm:0.79.5"
@@ -2090,23 +2101,72 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-core@link:../../packages/account-core::locator=%40sophon-labs%2Fexamples-sandbox-mobile%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@sophon-labs/account-core@link:../../packages/account-core::locator=%40sophon-labs%2Fexamples-sandbox-mobile%40workspace%3A."
+"@sophon-labs/account-communicator@npm:2.1.4":
+  version: 2.1.4
+  resolution: "@sophon-labs/account-communicator@npm:2.1.4"
+  peerDependencies:
+    typescript: ^5.0.0
+  checksum: 10c0/b62b49fdc25999c7a638c97d95156077c5130251c4d997ee3e5967fa245bdb3b6f19a76bc867c7c7cb79c0651870b0ee538aaaabcae8a813289305d6924a8f36
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"@sophon-labs/account-provider@link:../../packages/account-provider::locator=%40sophon-labs%2Fexamples-sandbox-mobile%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@sophon-labs/account-provider@link:../../packages/account-provider::locator=%40sophon-labs%2Fexamples-sandbox-mobile%40workspace%3A."
+"@sophon-labs/account-core@npm:2.1.4":
+  version: 2.1.4
+  resolution: "@sophon-labs/account-core@npm:2.1.4"
+  dependencies:
+    text-encoding-polyfill: "npm:^0.6.7"
+  peerDependencies:
+    viem: ">=2.21.0"
+  checksum: 10c0/4b80afd411451d698ceb7ad613b5983d711308da53f8be36d784f5a43703f3105e32a01bcaafc0a56f924001711711506db24febf2f527cd00ae166d5977eea9
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"@sophon-labs/account-react-native@link:../../packages/account-react-native::locator=%40sophon-labs%2Fexamples-sandbox-mobile%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@sophon-labs/account-react-native@link:../../packages/account-react-native::locator=%40sophon-labs%2Fexamples-sandbox-mobile%40workspace%3A."
+"@sophon-labs/account-message-bridge@npm:2.1.4":
+  version: 2.1.4
+  resolution: "@sophon-labs/account-message-bridge@npm:2.1.4"
+  dependencies:
+    eventemitter3: "npm:5.0.1"
+  peerDependencies:
+    react-native-webview: ">=13.12.5"
+  checksum: 10c0/5d4c9914f3084e1cb95f0ac0a30c6fab4489fa3e9b02eabb3e91055fc06918587e42a89233b1be534d409564dd6c754bba2d8e83defa3e49c365ae1fa4bdddd6
   languageName: node
-  linkType: soft
+  linkType: hard
+
+"@sophon-labs/account-provider@npm:2.1.4":
+  version: 2.1.4
+  resolution: "@sophon-labs/account-provider@npm:2.1.4"
+  dependencies:
+    "@sophon-labs/account-communicator": "npm:2.1.4"
+    "@sophon-labs/account-core": "npm:2.1.4"
+    eventemitter3: "npm:^5.0.1"
+    json-rpc-2.0: "npm:^1.7.1"
+  peerDependencies:
+    typescript: ^5.0.0
+  checksum: 10c0/b8ed0ed4e4d4198ec691ed75df5f2b034b5d125f6ae2c7552d79cb912c04092f62e8658a306da69826d671b6835e73aee2bb347ea57cdb2ba64bbe6c5a4a45b4
+  languageName: node
+  linkType: hard
+
+"@sophon-labs/account-react-native@npm:2.1.4":
+  version: 2.1.4
+  resolution: "@sophon-labs/account-react-native@npm:2.1.4"
+  dependencies:
+    "@react-native-async-storage/async-storage": "npm:^2.2.0"
+    "@sophon-labs/account-communicator": "npm:2.1.4"
+    "@sophon-labs/account-core": "npm:2.1.4"
+    "@sophon-labs/account-message-bridge": "npm:2.1.4"
+    "@sophon-labs/account-provider": "npm:2.1.4"
+    eventemitter3: "npm:5.0.1"
+    text-encoding-polyfill: "npm:^0.6.7"
+  peerDependencies:
+    expo-network: "*"
+    expo-secure-store: "*"
+    expo-standard-web-crypto: "*"
+    react-native: ">=0.76.6"
+    react-native-webview: ">=13.12.5"
+    viem: ">=2.21.0"
+  checksum: 10c0/ea0d0351e7e7920f99ef4ed54bf2e03dd3696906f74faa16aa674d7ea1c7c2cbc9784e8152d1ebb991ae2019190eb96cc450ba0a7defc58eb0bb6d64eccbda90
+  languageName: node
+  linkType: hard
 
 "@sophon-labs/examples-sandbox-mobile@workspace:.":
   version: 0.0.0-use.local
@@ -2118,9 +2178,7 @@ __metadata:
     "@react-navigation/bottom-tabs": "npm:^7.3.10"
     "@react-navigation/elements": "npm:^2.3.8"
     "@react-navigation/native": "npm:^7.1.6"
-    "@sophon-labs/account-core": "link:../../packages/account-core"
-    "@sophon-labs/account-provider": "link:../../packages/account-provider"
-    "@sophon-labs/account-react-native": "link:../../packages/account-react-native"
+    "@sophon-labs/account-react-native": "npm:2.1.4"
     "@types/react": "npm:~19.0.10"
     expo: "npm:~53.0.20"
     expo-blur: "npm:~14.1.5"
@@ -3828,7 +3886,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eventemitter3@npm:5.0.1":
+"eventemitter3@npm:5.0.1, eventemitter3@npm:^5.0.1":
   version: 5.0.1
   resolution: "eventemitter3@npm:5.0.1"
   checksum: 10c0/4ba5c00c506e6c786b4d6262cfbce90ddc14c10d4667e5c83ae993c9de88aa856033994dd2b35b83e8dc1170e224e66a319fa80adc4c32adcd2379bbc75da814
