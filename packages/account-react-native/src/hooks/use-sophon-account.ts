@@ -12,11 +12,17 @@ export const useSophonAccount = () => {
     account,
     error,
     logout,
+    disconnect,
   } = useSophonContext();
   const [accountError, setAccountError] = useState<string>();
   const [isConnecting, setIsConnecting] = useState(false);
 
   const connect = useCallback(async () => {
+    // to make sure that we have no cached account, before connecting we force a local disconnect
+    try {
+      await disconnect();
+    } catch {}
+
     try {
       setIsConnecting(true);
       setAccountError(undefined);
@@ -37,7 +43,13 @@ export const useSophonAccount = () => {
     }
   }, [walletClient, setAccount]);
 
-  const isConnected = useMemo(() => !!account, [account]);
+  // Make sure to only return that the user is connected after
+  // context initialization is complete, that way we make sure that
+  // we don't load  cached stuff from previous installation
+  const isConnected = useMemo(
+    () => !!account && initialized,
+    [account, initialized],
+  );
 
   return {
     initialized,

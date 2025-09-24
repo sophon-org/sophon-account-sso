@@ -61,6 +61,12 @@ export const SophonMainView = ({
     ),
   );
 
+  useUIEventHandler('clearMainViewCache', () => {
+    webViewRef.current?.clearCache?.(true);
+    webViewRef.current?.clearHistory?.();
+    webViewRef.current?.clearFormData?.();
+  });
+
   useUIEventHandler('refreshMainView', () => {
     webViewRef.current?.reload();
   });

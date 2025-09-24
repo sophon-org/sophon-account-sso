@@ -1,17 +1,22 @@
 import { shortenAddress } from '@sophon-labs/account-core';
 import {
+  SophonJWTToken,
   useSophonAccount,
   useSophonToken,
 } from '@sophon-labs/account-react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { erc20Abi, parseEther, parseUnits } from 'viem';
 import { sophonTestnet } from 'viem/chains';
 
 export default function HomeScreen() {
-  const { account, connect, isConnected, disconnect, walletClient } =
+  const { account, connect, isConnected, logout, walletClient } =
     useSophonAccount();
-  const { token } = useSophonToken();
+  const { getAccessToken } = useSophonToken();
+  const [token, setToken] = useState<SophonJWTToken | null>(null);
+  useEffect(() => {
+    getAccessToken().then((token) => setToken(token));
+  }, [getAccessToken]);
 
   const [error, setError] = useState<string>('');
   const [signature, setSignature] = useState<string>();
@@ -213,7 +218,8 @@ export default function HomeScreen() {
               onPress={() => {
                 setSignature(undefined);
                 setTransaction(undefined);
-                disconnect();
+                setToken(null);
+                logout();
               }}
             />
           </View>

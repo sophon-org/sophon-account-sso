@@ -48,6 +48,7 @@ export interface SophonContextConfig {
   updateAccessToken: (data: SophonJWTToken) => void;
   updateRefreshToken: (data: SophonJWTToken) => void;
   logout: () => Promise<void>;
+  disconnect: () => Promise<void>;
   error?: string;
   setError: (error: string) => void;
 }
@@ -61,6 +62,7 @@ export const SophonContext = createContext<SophonContextConfig>({
   updateAccessToken: () => {},
   updateRefreshToken: () => {},
   logout: async () => {},
+  disconnect: async () => {},
   error: undefined,
   setError: (_: string) => {},
 });
@@ -206,6 +208,7 @@ export const SophonContextProvider = ({
       updateAccessToken,
       updateRefreshToken,
       logout,
+      disconnect,
     }),
     [
       initialized,
@@ -223,6 +226,7 @@ export const SophonContextProvider = ({
       updateAccessToken,
       updateRefreshToken,
       logout,
+      disconnect,
     ],
   );
 

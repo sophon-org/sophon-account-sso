@@ -15,7 +15,6 @@ import { useEventHandler } from '@/events/hooks';
 import { useAccountContext } from '@/hooks/useAccountContext';
 import { useRequestDrawer } from '@/hooks/useRequestDrawer';
 import { useUserIdentification } from '@/hooks/useUserIdentification';
-import { serverLog } from '@/lib/server-log';
 import { CompletedView } from '@/views/CompletedView';
 import ConnectAuthorizationView from '@/views/ConnectAuthorizationView';
 import { LoadingView } from '@/views/LoadingView';
@@ -91,12 +90,6 @@ export default function EmbeddedRoot({ partnerId, scopes }: EmbeddedRootProps) {
       });
     }, [state, open, account?.address]),
   );
-
-  useEffect(() => {
-    serverLog(
-      `>>> 🔥 <<< STATE ${JSON.stringify(state.value)} / ${state.context.requests.incoming?.id}`,
-    );
-  }, [state]);
 
   useEventHandler('flow.complete', () => {
     setOpen(false);
