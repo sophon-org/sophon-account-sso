@@ -1,6 +1,6 @@
 import { shortenAddress } from '@sophon-labs/account-core';
 import {
-  SophonJWTToken,
+  type SophonJWTToken,
   useSophonAccount,
   useSophonToken,
 } from '@sophon-labs/account-react-native';

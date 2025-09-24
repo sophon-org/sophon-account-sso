@@ -152,7 +152,6 @@ export function useConnectionAuthorization() {
       }
 
       // we don't store the token, we just send it during the account authorization
-      // TODO: better handling token expiration
       windowService.emitAccessToken(accessToken, accessTokenExpiresAt);
       windowService.emitRefreshToken(refreshToken, refreshTokenExpiresAt);
     }
