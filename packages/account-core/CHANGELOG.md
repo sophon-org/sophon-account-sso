@@ -1,5 +1,11 @@
 # @sophon-labs/account-core
 
+## 2.1.4
+
+### Patch Changes
+
+- Cleanup on authentication on fresh install
+
 ## 2.1.3
 
 ### Patch Changes

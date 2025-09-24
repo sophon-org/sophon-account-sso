@@ -1,5 +1,16 @@
 # @sophon-labs/account-react-native
 
+## 2.1.4
+
+### Patch Changes
+
+- Cleanup on authentication on fresh install
+- Updated dependencies
+  - @sophon-labs/account-message-bridge@2.1.4
+  - @sophon-labs/account-communicator@2.1.4
+  - @sophon-labs/account-provider@2.1.4
+  - @sophon-labs/account-core@2.1.4
+
 ## 2.1.3
 
 ### Patch Changes
