@@ -1,5 +1,13 @@
 # @sophon-labs/account-api-sdk
 
+## 2.1.3
+
+### Patch Changes
+
+- Removing disconnect from react native and adding is initialized
+- Updated dependencies
+  - @sophon-labs/account-core@2.1.3
+
 ## 2.1.2
 
 ### Patch Changes

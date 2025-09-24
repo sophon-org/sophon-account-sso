@@ -1,5 +1,14 @@
 # @sophon-labs/account-eip6963
 
+## 2.1.3
+
+### Patch Changes
+
+- Removing disconnect from react native and adding is initialized
+- Updated dependencies
+  - @sophon-labs/account-provider@2.1.3
+  - @sophon-labs/account-core@2.1.3
+
 ## 2.1.2
 
 ### Patch Changes
