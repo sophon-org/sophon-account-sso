@@ -5,11 +5,11 @@ import { useSophonContext } from './use-sophon-context';
 
 export const useSophonAccount = () => {
   const {
+    initialized,
     walletClient,
     setAccount,
     provider,
     account,
-    disconnect,
     error,
     logout,
   } = useSophonContext();
@@ -40,9 +40,9 @@ export const useSophonAccount = () => {
   const isConnected = useMemo(() => !!account, [account]);
 
   return {
+    initialized,
     isConnected,
     connect,
-    disconnect,
     logout,
     account,
     provider,
