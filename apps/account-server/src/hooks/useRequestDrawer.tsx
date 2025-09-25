@@ -166,7 +166,7 @@ export const useRequestDrawer = () => {
               </button>
             </div>
 
-            <div className="overflow-auto max-h-[60vh]">
+            <div className="overflow-auto max-h-[60vh] pb-4">
               {renderDrawerContent()}
             </div>
           </VaulDrawer.Content>

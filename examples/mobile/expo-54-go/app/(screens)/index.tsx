@@ -17,13 +17,18 @@ import { Button } from '@/components/ui/button';
 
 export default function HomeScreen() {
   const {
+    initialized,
     connect,
     isConnected,
     account,
-    disconnect,
+    logout,
     accountError,
     isConnecting,
   } = useSophonAccount();
+
+  console.log('is connected', isConnected);
+  console.log('is initialized', initialized);
+
   const { walletClient } = useSophonClient();
   const [signature, setSignature] = useState<string>();
   const [typedDataSignature, setTypedDataSignature] = useState<string>();
@@ -32,10 +37,16 @@ export default function HomeScreen() {
   const [showTestDashboard, setShowTestDashboard] = useState(false);
 
   const handleAuthenticate = async () => {
-    console.log('handleAuthenticate - before connect');
     await connect();
-    console.log('handleAuthenticate - after connect');
   };
+
+  if (!initialized) {
+    return (
+      <View className="flex-1 items-center justify-center bg-white py-8 h-screen">
+        <Text className="text-xl font-bold text-black">Initializing...</Text>
+      </View>
+    );
+  }
 
   // If showing test dashboard, render it instead of the main screen
   if (showTestDashboard) {
@@ -78,19 +89,20 @@ export default function HomeScreen() {
               {shortenAddress(account?.address)}
             </Text>
             <Button
-              onPress={disconnect}
+              onPress={logout}
               className="mt-4 bg-red-500/90 w-full max-w-[80%]"
             >
-              <Text className="text-xl font-bold text-white">Disconnect</Text>
-            </Button>
-
-            <Button
-              onPress={() => setShowTestDashboard(true)}
-              className="mt-4 bg-violet-500/30 border border-violet-500/50 w-full max-w-[80%]"
-            >
-              <Text className="text-white font-bold">🧪 Test React Hooks</Text>
+              <Text className="text-white font-bold">Logout</Text>
             </Button>
           </>
+        )}
+        {isConnected && (
+          <Button
+            onPress={() => setShowTestDashboard(true)}
+            className="mt-4 bg-violet-500/30 border border-violet-500/50 w-full max-w-[80%]"
+          >
+            <Text className="text-white font-bold">🧪 Test React Hooks</Text>
+          </Button>
         )}
         {isConnected && (
           <View className="mt-4 w-full max-w-[80%]">

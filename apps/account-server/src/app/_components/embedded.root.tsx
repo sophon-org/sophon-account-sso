@@ -9,13 +9,13 @@ import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Drawer } from '@/components/ui/drawer';
 import { MainStateMachineContext } from '@/context/state-machine-context';
+import { logWithUser } from '@/debug/log';
 import { env } from '@/env';
 import { sendMessage } from '@/events';
 import { useEventHandler } from '@/events/hooks';
 import { useAccountContext } from '@/hooks/useAccountContext';
 import { useRequestDrawer } from '@/hooks/useRequestDrawer';
 import { useUserIdentification } from '@/hooks/useUserIdentification';
-import { serverLog } from '@/lib/server-log';
 import { CompletedView } from '@/views/CompletedView';
 import ConnectAuthorizationView from '@/views/ConnectAuthorizationView';
 import { LoadingView } from '@/views/LoadingView';
@@ -70,6 +70,7 @@ export default function EmbeddedRoot({ partnerId, scopes }: EmbeddedRootProps) {
     'openModal',
     useCallback(() => {
       setOpen(true);
+      logWithUser('From RN > opened auth modal');
     }, []),
   );
 
@@ -77,33 +78,32 @@ export default function EmbeddedRoot({ partnerId, scopes }: EmbeddedRootProps) {
     'closeModal',
     useCallback(() => {
       setOpen(false);
+      logWithUser('From RN > closed auth modal');
     }, []),
   );
 
   useRNHandler(
     'sdkStatusRequest',
     useCallback(() => {
-      sendMessageToRN('sdkStatusResponse', {
+      const payload = {
         isDrawerOpen: open,
         isReady: !state.context.isLoadingResources,
         isAuthenticated: state.context.isAuthenticated,
         connectedAccount: account?.address,
-      });
+      };
+      sendMessageToRN('sdkStatusResponse', payload);
+      logWithUser(`From RN > sdk status request ${JSON.stringify(payload)}`);
     }, [state, open, account?.address]),
   );
 
-  useEffect(() => {
-    serverLog(
-      `>>> 🔥 <<< STATE ${JSON.stringify(state.value)} / ${state.context.requests.incoming?.id}`,
-    );
-  }, [state]);
-
   useEventHandler('flow.complete', () => {
     setOpen(false);
+    logWithUser('flow complete');
   });
 
   useEventHandler('modal.open', () => {
     setOpen(true);
+    logWithUser('modal open');
   });
 
   const handleCloseModal = (isOpen: boolean) => {

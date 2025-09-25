@@ -46,6 +46,7 @@ export const SophonMainView = ({
   useUIEventHandler(
     'sdkStatusRequest',
     useCallback(() => {
+      // @ts-ignore
       postMessageToWebApp(webViewRef, 'sdkStatusRequest', {});
     }, []),
   );
@@ -60,6 +61,12 @@ export const SophonMainView = ({
       [isReady],
     ),
   );
+
+  useUIEventHandler('clearMainViewCache', () => {
+    webViewRef.current?.clearCache?.(true);
+    webViewRef.current?.clearHistory?.();
+    webViewRef.current?.clearFormData?.();
+  });
 
   useUIEventHandler('refreshMainView', () => {
     webViewRef.current?.reload();

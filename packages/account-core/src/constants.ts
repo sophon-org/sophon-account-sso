@@ -11,12 +11,12 @@ export type SophonNetworkType = 'mainnet' | 'testnet';
  */
 export const AccountServerURL: Record<SophonNetworkType, string> = {
   mainnet: 'https://my.sophon.xyz',
-  testnet: 'https://my.staging.sophon.xyz',
+  testnet: 'https://account-stg.israelcrisanto.com',
 };
 
 export const AccountAuthAPIURL: Record<SophonNetworkType, string> = {
   mainnet: 'https://api.my.sophon.xyz',
-  testnet: 'https://api.my.staging.sophon.xyz',
+  testnet: 'https://api-stg-auth.israelcrisanto.com',
 };
 
 /**
