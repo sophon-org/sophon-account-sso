@@ -1,5 +1,11 @@
 # @sophon-labs/account-eip6963
 
+## 2.1.6-next.0
+
+### Patch Changes
+
+- Preview version for better social network auth
+
 ## 2.1.5
 
 ### Patch Changes

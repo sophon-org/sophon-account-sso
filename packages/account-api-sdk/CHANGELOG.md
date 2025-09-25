@@ -1,5 +1,13 @@
 # @sophon-labs/account-api-sdk
 
+## 2.1.6-next.0
+
+### Patch Changes
+
+- Preview version for better social network auth
+- Updated dependencies
+  - @sophon-labs/account-core@2.1.6-next.0
+
 ## 2.1.5
 
 ### Patch Changes
