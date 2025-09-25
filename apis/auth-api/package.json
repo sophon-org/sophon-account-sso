@@ -30,8 +30,8 @@
 		"typeorm:ds": "typeorm-ts-node-commonjs -d src/database/data-source.ts",
 		"migration:create": "yarn typeorm migration:create src/migrations/Init",
 		"migration:generate": "yarn typeorm:ds migration:generate src/migrations/Init",
-		"migration:run:ts": "ts-node --swc src/cli/migrate.ts",
-		"migration:revert:ts": "ts-node --swc src/cli/revert.ts"
+		"migration:run": "ts-node --swc src/cli/migrate.ts",
+		"migration:revert": "ts-node --swc src/cli/revert.ts"
 	},
 	"dependencies": {
 		"@aws-sdk/client-secrets-manager": "^3.886.0",
