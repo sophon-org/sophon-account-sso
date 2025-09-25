@@ -1,25 +1,26 @@
 import {
+	BadRequestException,
 	Controller,
 	Get,
-	Req,
-	UnauthorizedException,
+	Param,
 	UseGuards,
 } from "@nestjs/common";
-import { ApiBearerAuth, ApiOkResponse, ApiTags } from "@nestjs/swagger";
-import type { Request } from "express";
+import {
+	ApiBearerAuth,
+	ApiOkResponse,
+	ApiParam,
+	ApiTags,
+} from "@nestjs/swagger";
 import { AccessTokenGuard } from "../auth/guards/access-token.guard";
-import type { AccessTokenPayload } from "../auth/types";
 import { K1OwnerStateDto } from "./dto/k1-owner-state.dto";
 import { HyperindexService } from "./hyperindex.service";
 
-function requireAddress(
-	user: AccessTokenPayload & { sub?: string },
-): `0x${string}` {
-	const addr = user?.sub?.toLowerCase();
-	if (!addr || !/^0x[0-9a-f]{40}$/.test(addr)) {
-		throw new UnauthorizedException("Invalid or missing subject address");
+function normalizeAddress(s: string | undefined | null): `0x${string}` {
+	const v = (s ?? "").trim().toLowerCase();
+	if (!/^0x[0-9a-f]{40}$/.test(v)) {
+		throw new BadRequestException("Invalid address");
 	}
-	return addr as `0x${string}`;
+	return v as `0x${string}`;
 }
 
 @ApiTags("Me")
@@ -29,11 +30,19 @@ function requireAddress(
 export class MeController {
 	constructor(private readonly hyperindex: HyperindexService) {}
 
-	@Get("k1-owner-state")
+	/**
+	 * New form: explicit EOA argument (preferred).
+	 * GET /me/k1-owner-state/:owner
+	 */
+	@Get("k1-owner-state/:owner")
+	@ApiParam({
+		name: "owner",
+		description: "EOA address (0x...) to fetch K1 owner state for",
+		example: "0x19e7e376e7c213b7e7e7e46cc70a5dd086daff2a",
+	})
 	@ApiOkResponse({ type: K1OwnerStateDto, isArray: true })
-	async myK1OwnerState(@Req() req: Request) {
-		const { user } = req as Request & { user: AccessTokenPayload };
-		const address = requireAddress(user);
+	async k1OwnerStateForOwner(@Param("owner") owner: string) {
+		const address = normalizeAddress(owner);
 		return this.hyperindex.getK1OwnerStateByOwner(address);
 	}
 }

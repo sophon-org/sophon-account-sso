@@ -2,10 +2,11 @@ import { Test } from "@nestjs/testing";
 import { hyperindexConfig } from "src/config/hyperindex.config";
 import { HyperindexService } from "src/hyperindex/hyperindex.service";
 
-const TEST_OWNER = "0xbe62f79d58c2d8cd71d1dee9523f9ed42f6fea85";
-const EXPECTED_ACCOUNT = "0x9da29e75d10e1cb83acc93f2ecf5854c037d801c";
+const TEST_OWNER = "0xe749b7469a9911e451600cb31b5ca180743183ce";
+const EXPECTED_ACCOUNT = "0x53baecdbe5e418cf7c55f7421c3a687e617e21b8";
 
-const url = process.env.HYPERINDEX_GRAPHQL_URL ?? "";
+const url = "https://indexer.hyperindex.xyz/0789a2f/v1/graphql";
+
 const apiKey = process.env.HYPERINDEX_API_KEY ?? "";
 const svcTimeoutMs = Number(process.env.HYPERINDEX_TIMEOUT_MS ?? 8000);
 const jestTimeoutMs = Number(

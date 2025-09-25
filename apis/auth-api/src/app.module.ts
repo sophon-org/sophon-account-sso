@@ -11,6 +11,7 @@ import { authConfig } from "./config/auth.config";
 import { awsConfig } from "./config/aws.config";
 import { dbConfig } from "./config/db.config";
 import { validationSchema } from "./config/validation.schema";
+import { HyperindexModule } from "./hyperindex/hyperindex.module";
 import { JwksModule } from "./jwks/jwks.module";
 
 @Module({
@@ -33,10 +34,7 @@ import { JwksModule } from "./jwks/jwks.module";
 				if (!url) {
 					url = await jwtKeys.getDatabaseUrl();
 				}
-
-				if (!url) {
-					throw new Error("Database URL is not set");
-				}
+				if (!url) throw new Error("Database URL is not set");
 
 				return {
 					type: "postgres",
@@ -46,10 +44,10 @@ import { JwksModule } from "./jwks/jwks.module";
 				};
 			},
 		}),
-
 		AwsModule,
 		AuthModule,
 		JwksModule,
+		HyperindexModule,
 	],
 	controllers: [AppController],
 	providers: [{ provide: APP_FILTER, useClass: AllExceptionsFilter }],
