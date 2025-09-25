@@ -1,5 +1,14 @@
 # @sophon-labs/account-eip6963
 
+## 2.1.5
+
+### Patch Changes
+
+- Changing initialization order on rn
+- Updated dependencies
+  - @sophon-labs/account-communicator@2.1.5
+  - @sophon-labs/account-core@2.1.5
+
 ## 2.1.4
 
 ### Patch Changes

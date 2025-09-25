@@ -1,5 +1,16 @@
 # @sophon-labs/account-react-native
 
+## 2.1.5
+
+### Patch Changes
+
+- Changing initialization order on rn
+- Updated dependencies
+  - @sophon-labs/account-message-bridge@2.1.5
+  - @sophon-labs/account-communicator@2.1.5
+  - @sophon-labs/account-provider@2.1.5
+  - @sophon-labs/account-core@2.1.5
+
 ## 2.1.4
 
 ### Patch Changes
