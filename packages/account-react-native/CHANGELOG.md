@@ -1,5 +1,16 @@
 # @sophon-labs/account-react-native
 
+## 2.1.6-next.2
+
+### Patch Changes
+
+- Waiting for server isReady before moving on
+- Updated dependencies
+  - @sophon-labs/account-message-bridge@2.1.6-next.2
+  - @sophon-labs/account-communicator@2.1.6-next.2
+  - @sophon-labs/account-provider@2.1.6-next.2
+  - @sophon-labs/account-core@2.1.6-next.2
+
 ## 2.1.6-next.1
 
 ### Patch Changes

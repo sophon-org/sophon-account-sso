@@ -1,5 +1,14 @@
 # @sophon-labs/account-react
 
+## 2.1.6-next.2
+
+### Patch Changes
+
+- Waiting for server isReady before moving on
+- Updated dependencies
+  - @sophon-labs/account-connector@2.1.6-next.2
+  - @sophon-labs/account-core@2.1.6-next.2
+
 ## 2.1.6-next.1
 
 ### Patch Changes
