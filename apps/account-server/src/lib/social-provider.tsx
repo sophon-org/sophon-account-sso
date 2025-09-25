@@ -35,7 +35,7 @@ export function clearSocialProviderFromURL(): void {
 // Icon utilities
 export function getSocialProviderIcon(
   provider: ProviderEnum,
-  className = 'w-10 h-10 animate-bounce',
+  className = 'w-10 h-10',
 ) {
   switch (provider) {
     case 'google':
