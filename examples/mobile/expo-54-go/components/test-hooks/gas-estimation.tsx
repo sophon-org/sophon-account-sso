@@ -4,6 +4,7 @@ import {
 } from '@sophon-labs/account-react-native';
 import { useEffect, useMemo, useState } from 'react';
 import { Alert, ScrollView, Text, TextInput, View } from 'react-native';
+import { formatEther } from 'viem';
 import { Button } from '../ui/button';
 
 export const GasEstimation = () => {
@@ -83,11 +84,9 @@ export const GasEstimation = () => {
     return value.toString();
   };
 
-  const formatEther = (value: bigint | undefined | null) => {
+  const formatEtherValue = (value: bigint | undefined | null) => {
     if (!value) return '0';
-    // Convert wei to ether (divide by 10^18)
-    const ether = Number(value) / Number(BigInt(10) ** BigInt(18));
-    return ether.toFixed(8);
+    return formatEther(value);
   };
 
   // Quick preset functions
@@ -282,7 +281,9 @@ export const GasEstimation = () => {
                   {totalFeeEstimate?.toString() || '0'} wei
                 </Text>
                 <Text className="text-sm text-gray-600">
-                  ≈ {totalFeeEstimate ? formatEther(totalFeeEstimate) : '0'} ETH
+                  ≈{' '}
+                  {totalFeeEstimate ? formatEtherValue(totalFeeEstimate) : '0'}{' '}
+                  ETH
                 </Text>
               </View>
             </View>
