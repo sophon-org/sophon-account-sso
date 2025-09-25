@@ -1,5 +1,16 @@
 # @sophon-labs/account-react-native
 
+## 2.1.6-next.4
+
+### Patch Changes
+
+- Reviewing retry logic on communicator
+- Updated dependencies
+  - @sophon-labs/account-message-bridge@2.1.6-next.4
+  - @sophon-labs/account-communicator@2.1.6-next.4
+  - @sophon-labs/account-provider@2.1.6-next.4
+  - @sophon-labs/account-core@2.1.6-next.4
+
 ## 2.1.6-next.3
 
 ### Patch Changes

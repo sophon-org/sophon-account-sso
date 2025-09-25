@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 2.1.6-next.4
+
+### Patch Changes
+
+- Reviewing retry logic on communicator
+
 ## 2.1.6-next.3
 
 ### Patch Changes
