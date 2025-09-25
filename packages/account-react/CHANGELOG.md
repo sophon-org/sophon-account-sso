@@ -1,5 +1,14 @@
 # @sophon-labs/account-react
 
+## 2.1.6-next.3
+
+### Patch Changes
+
+- Upgrading view version number for retrocompatibility
+- Updated dependencies
+  - @sophon-labs/account-connector@2.1.6-next.3
+  - @sophon-labs/account-core@2.1.6-next.3
+
 ## 2.1.6-next.2
 
 ### Patch Changes

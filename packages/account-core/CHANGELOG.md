@@ -1,5 +1,11 @@
 # @sophon-labs/account-core
 
+## 2.1.6-next.3
+
+### Patch Changes
+
+- Upgrading view version number for retrocompatibility
+
 ## 2.1.6-next.2
 
 ### Patch Changes
