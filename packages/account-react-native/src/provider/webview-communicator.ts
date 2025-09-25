@@ -10,7 +10,6 @@ import { getTimeoutRPC } from '../messaging/utils';
 const HEALTH_CHECK_TIMEOUT = 1000;
 
 export class WebViewCommunicator implements Communicator {
-  // private initialized = false;
   private readonly listeners = new Map<
     (payload: SophonUIActions['incomingRpc']) => void,
     { reject: (_: Error) => void; deregister: () => void }
@@ -80,55 +79,42 @@ export class WebViewCommunicator implements Communicator {
   };
 
   private currentRequestId?: UUID;
-  private currentCheckId?: NodeJS.Timeout;
 
   private readonly waitContextToBeReady = async (requestId?: UUID) => {
     if (this.currentRequestId === requestId) {
       return;
     }
 
-    // if there is another request in progress, cancel it
-    if (this.currentCheckId) {
-      clearInterval(this.currentCheckId);
-      sendUIMessage('outgoingRpc', getTimeoutRPC(this.currentRequestId));
-      this.currentCheckId = undefined;
-      this.currentRequestId = undefined;
-    }
-
     this.currentRequestId = requestId;
-    let maxRetries = 3;
 
     const checkIfReady = async () => {
       const payload = await this.waitWebViewToBeReady();
 
       // got active connection, show the modal
       if (payload) {
-        clearInterval(this.currentCheckId);
-        this.currentCheckId = undefined;
         this.currentRequestId = undefined;
         sendUIMessage('showModal', {});
         return true;
       }
 
       // try to refresh the main view in case of retry, just to make sure that the page is loaded
-      // and sort out user connection issues
+      // and sort out user connection issues, but only do that after the first try, the happy path is
+      // that the user is connected and the response is received immediately
       sendUIMessage('refreshMainView', {});
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
-      if (--maxRetries <= 0) {
-        clearInterval(this.currentCheckId);
-
-        this.currentCheckId = undefined;
-        this.currentRequestId = undefined;
-
-        // simulate the RPC response to send a timeout error and release resources
-        sendUIMessage('incomingRpc', getTimeoutRPC(requestId));
-      }
       return false;
     };
 
-    const isReady = await checkIfReady();
+    let retries = 3;
+    let isReady = false;
+    do {
+      isReady = await checkIfReady();
+    } while (!isReady && retries-- > 0);
+
     if (!isReady) {
-      this.currentCheckId = setInterval(checkIfReady, HEALTH_CHECK_TIMEOUT);
+      this.currentRequestId = undefined;
+      sendUIMessage('incomingRpc', getTimeoutRPC(requestId));
     }
   };
   ready = async () => {
