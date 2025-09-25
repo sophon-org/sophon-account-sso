@@ -1,5 +1,23 @@
 # @sophon-labs/account-core
 
+## 2.1.5
+
+### Patch Changes
+
+- Changing initialization order on rn
+
+## 2.1.4
+
+### Patch Changes
+
+- Cleanup on authentication on fresh install
+
+## 2.1.3
+
+### Patch Changes
+
+- Removing disconnect from react native and adding is initialized
+
 ## 2.1.2
 
 ### Patch Changes

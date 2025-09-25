@@ -6,7 +6,13 @@ import {
   type SophonNetworkType,
 } from '@sophon-labs/account-core';
 import type { EIP1193Provider } from '@sophon-labs/account-provider';
-import { createContext, useCallback, useMemo, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import {
   type Address,
   type Chain,
@@ -27,9 +33,8 @@ import {
 } from '../provider';
 import { freshInstallActions } from '../provider/fresh-install';
 
-freshInstallActions();
-
 export interface SophonContextConfig {
+  initialized: boolean;
   partnerId: string;
   authServerUrl?: string;
   walletClient?: WalletClient;
@@ -42,21 +47,22 @@ export interface SophonContextConfig {
   refreshToken?: SophonJWTToken | null;
   updateAccessToken: (data: SophonJWTToken) => void;
   updateRefreshToken: (data: SophonJWTToken) => void;
-  disconnect: () => void;
-  logout: () => void;
+  logout: () => Promise<void>;
+  disconnect: () => Promise<void>;
   error?: string;
   setError: (error: string) => void;
 }
 
 export const SophonContext = createContext<SophonContextConfig>({
+  initialized: false,
   partnerId: '',
   chain: sophonTestnet,
   setAccount: () => {},
   network: 'testnet',
   updateAccessToken: () => {},
   updateRefreshToken: () => {},
-  disconnect: () => {},
-  logout: () => {},
+  logout: async () => {},
+  disconnect: async () => {},
   error: undefined,
   setError: (_: string) => {},
 });
@@ -86,11 +92,37 @@ export const SophonContextProvider = ({
     [authServerUrl, network],
   );
 
-  const [account, setAccount] = useState<SophonAccount | undefined>(
-    SophonAppStorage.getItem(StorageKeys.USER_ACCOUNT)
-      ? JSON.parse(SophonAppStorage.getItem(StorageKeys.USER_ACCOUNT)!)
-      : undefined,
-  );
+  const [initialized, setInitialized] = useState(false);
+  const [accessToken, setAccessToken] = useState<SophonJWTToken | undefined>();
+  const [refreshToken, setRefreshToken] = useState<
+    SophonJWTToken | undefined
+  >();
+  const [account, setAccount] = useState<SophonAccount | undefined>();
+
+  useEffect(() => {
+    freshInstallActions();
+  }, []);
+
+  useUIEventHandler('initialized', () => {
+    if (SophonAppStorage.getItem(StorageKeys.USER_ACCOUNT)) {
+      setAccount(
+        JSON.parse(SophonAppStorage.getItem(StorageKeys.USER_ACCOUNT)!),
+      );
+    }
+    if (SophonAppStorage.getItem(StorageKeys.USER_ACCESS_TOKEN)) {
+      setAccessToken(
+        JSON.parse(SophonAppStorage.getItem(StorageKeys.USER_ACCESS_TOKEN)!),
+      );
+    }
+    if (SophonAppStorage.getItem(StorageKeys.USER_REFRESH_TOKEN)) {
+      setRefreshToken(
+        JSON.parse(SophonAppStorage.getItem(StorageKeys.USER_REFRESH_TOKEN)!),
+      );
+    }
+
+    setInitialized(true);
+  });
+
   const chain = useMemo(
     () => (network === 'mainnet' ? sophon : sophonTestnet),
     [network],
@@ -99,18 +131,6 @@ export const SophonContextProvider = ({
     const provider = createWalletProvider(serverUrl, chain);
     return provider;
   }, [serverUrl, chain]);
-
-  const [accessToken, setAccessToken] = useState(
-    SophonAppStorage.getItem(StorageKeys.USER_ACCESS_TOKEN)
-      ? JSON.parse(SophonAppStorage.getItem(StorageKeys.USER_ACCESS_TOKEN)!)
-      : undefined,
-  );
-
-  const [refreshToken, setRefreshToken] = useState(
-    SophonAppStorage.getItem(StorageKeys.USER_REFRESH_TOKEN)
-      ? JSON.parse(SophonAppStorage.getItem(StorageKeys.USER_REFRESH_TOKEN)!)
-      : undefined,
-  );
 
   useUIEventHandler('setAccessToken', (incomingToken) => {
     updateAccessToken(incomingToken);
@@ -173,6 +193,7 @@ export const SophonContextProvider = ({
 
   const contextValue = useMemo<SophonContextConfig>(
     () => ({
+      initialized,
       mainnet: network === 'mainnet',
       chain,
       authServerUrl: serverUrl,
@@ -181,7 +202,6 @@ export const SophonContextProvider = ({
       setAccount: setAccountWithEffect,
       accessToken,
       refreshToken,
-      disconnect,
       partnerId,
       error,
       setError,
@@ -189,8 +209,10 @@ export const SophonContextProvider = ({
       updateAccessToken,
       updateRefreshToken,
       logout,
+      disconnect,
     }),
     [
+      initialized,
       network,
       serverUrl,
       walletClient,
@@ -198,7 +220,6 @@ export const SophonContextProvider = ({
       chain,
       accessToken,
       refreshToken,
-      disconnect,
       partnerId,
       error,
       setError,
@@ -206,6 +227,7 @@ export const SophonContextProvider = ({
       updateAccessToken,
       updateRefreshToken,
       logout,
+      disconnect,
     ],
   );
 

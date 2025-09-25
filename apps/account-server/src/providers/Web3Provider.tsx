@@ -44,11 +44,17 @@ export const Web3Provider = ({
           },
           // This is called after everything is validated and the user should be considered authenticated
           onAuthSuccess({ primaryWallet }) {
+            console.log('onAuthSuccess', primaryWallet);
             if (primaryWallet) {
               sendMessage('k1.login', {
                 address: primaryWallet.address as `0x${string}`,
                 wallet: primaryWallet,
               });
+              // on dynamic, the first signature always takes more time
+              // so we trigger a signature on authentication to speedup the process
+              primaryWallet.signMessage(
+                'Hello from sophon, heating up the wallet.',
+              );
             }
             sendMessage('modal.open', null);
           },

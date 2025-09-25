@@ -8,6 +8,7 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
     <SophonContextProvider
       network="testnet"
       partnerId="123b216c-678e-4611-af9a-2d5b7b061258"
+      // authServerUrl="http://localhost:3000"
       dataScopes={[DataScopes.email]}
       insets={{
         top: 0,

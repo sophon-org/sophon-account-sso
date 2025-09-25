@@ -14,28 +14,28 @@ const accountCoreDir = path.resolve(
   __dirname,
   '../../../packages/account-core',
 );
-// const accountConnectorDir = path.resolve(
-//   __dirname,
-//   "../../packages/account-connector"
-// );
-// const zksyncSsoDir = path.resolve(
-//   __dirname,
-//   "../../../zksync-sso/packages/sdk"
-// );
+const accountCommunicatorDir = path.resolve(
+  __dirname,
+  '../../../packages/account-communicator',
+);
+const accountProviderDir = path.resolve(
+  __dirname,
+  '../../../packages/account-provider',
+);
 
 const extraNodeModules = {
   '@sophon-labs/account-message-bridge': accountMessageBridgeDir,
   '@sophon-labs/account-react-native': accountReactNativeDir,
   '@sophon-labs/account-core': accountCoreDir,
-  // "@sophon-labs/account-connector": accountConnectorDir,
-  // "zksync-sso": zksyncSsoDir,
+  '@sophon-labs/account-communicator': accountCommunicatorDir,
+  '@sophon-labs/account-provider': accountProviderDir,
 };
 const watchFolders = [
   accountMessageBridgeDir,
   accountReactNativeDir,
   accountCoreDir,
-  // accountConnectorDir,
-  // zksyncSsoDir,
+  accountCommunicatorDir,
+  accountProviderDir,
 ];
 
 const developConfig = {
