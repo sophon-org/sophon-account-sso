@@ -65,9 +65,11 @@ export class WebViewCommunicator implements Communicator {
       const unregister = registerUIEventHandler(
         'sdkStatusResponse',
         (payload) => {
-          clearTimeout(healthCheckTimeout);
-          unregister();
-          resolve(payload);
+          if (payload?.isReady) {
+            clearTimeout(healthCheckTimeout);
+            unregister();
+            resolve(payload);
+          }
         },
       );
     });
