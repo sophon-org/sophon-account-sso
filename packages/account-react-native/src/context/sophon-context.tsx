@@ -104,7 +104,6 @@ export const SophonContextProvider = ({
   }, []);
 
   useUIEventHandler('initialized', () => {
-    setInitialized(true);
     if (SophonAppStorage.getItem(StorageKeys.USER_ACCOUNT)) {
       setAccount(
         JSON.parse(SophonAppStorage.getItem(StorageKeys.USER_ACCOUNT)!),
@@ -120,6 +119,8 @@ export const SophonContextProvider = ({
         JSON.parse(SophonAppStorage.getItem(StorageKeys.USER_REFRESH_TOKEN)!),
       );
     }
+
+    setInitialized(true);
   });
 
   const chain = useMemo(

@@ -2936,9 +2936,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-react-native@npm:2.1.4":
+"@sophon-labs/account-react-native@file:../../../packages/account-react-native::locator=%40sophon-labs%2Fexamples-mobile-expo-web%40workspace%3A.":
   version: 2.1.4
-  resolution: "@sophon-labs/account-react-native@npm:2.1.4"
+  resolution: "@sophon-labs/account-react-native@file:../../../packages/account-react-native#../../../packages/account-react-native::hash=e6031e&locator=%40sophon-labs%2Fexamples-mobile-expo-web%40workspace%3A."
   dependencies:
     "@react-native-async-storage/async-storage": "npm:^2.2.0"
     "@sophon-labs/account-communicator": "npm:2.1.4"
@@ -2954,7 +2954,7 @@ __metadata:
     react-native: ">=0.76.6"
     react-native-webview: ">=13.12.5"
     viem: ">=2.21.0"
-  checksum: 10c0/ea0d0351e7e7920f99ef4ed54bf2e03dd3696906f74faa16aa674d7ea1c7c2cbc9784e8152d1ebb991ae2019190eb96cc450ba0a7defc58eb0bb6d64eccbda90
+  checksum: 10c0/5e0b6acbefb4edc4a1d57202ad7ca98b4bd67ba6240534408609c428976733d7568c4d43cf579656b8ddfba6aaaaa1de1ba947e813fd335952a7ddaea7c0ecfe
   languageName: node
   linkType: hard
 
@@ -2970,7 +2970,7 @@ __metadata:
     "@react-navigation/bottom-tabs": "npm:^7.3.10"
     "@react-navigation/elements": "npm:^2.3.8"
     "@react-navigation/native": "npm:^7.1.6"
-    "@sophon-labs/account-react-native": "npm:2.1.4"
+    "@sophon-labs/account-react-native": "file:../../../packages/account-react-native"
     "@types/react": "npm:~19.1.10"
     class-variance-authority: "npm:^0.7.1"
     clsx: "npm:^2.1.1"
