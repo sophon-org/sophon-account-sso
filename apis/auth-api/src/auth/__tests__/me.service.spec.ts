@@ -1,6 +1,6 @@
 import type { JwtPayload } from "jsonwebtoken";
-import { MeService } from "../me.service";
 import { SecretsService } from "src/aws/secrets.service";
+import { MeService } from "../me.service";
 
 describe("MeService", () => {
 	const ENV_ID = "de970e83-79d8-40ba-80fb-697bfa73f3ed";

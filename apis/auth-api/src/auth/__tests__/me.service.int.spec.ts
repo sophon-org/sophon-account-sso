@@ -1,6 +1,6 @@
 import type { JwtPayload } from "jsonwebtoken";
-import { MeService } from "../me.service";
 import { SecretsService } from "src/aws/secrets.service";
+import { MeService } from "../me.service";
 
 // Gate live integration with an env flag so it won't run in CI accidentally
 const RUN_LIVE = process.env.RUN_LIVE_DYNAMICAUTH_TESTS === "1";
