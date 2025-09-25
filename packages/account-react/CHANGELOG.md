@@ -1,5 +1,14 @@
 # @sophon-labs/account-react
 
+## 2.1.6-next.1
+
+### Patch Changes
+
+- Adding social network to redirect url
+- Updated dependencies
+  - @sophon-labs/account-connector@2.1.6-next.1
+  - @sophon-labs/account-core@2.1.6-next.1
+
 ## 2.1.6-next.0
 
 ### Patch Changes

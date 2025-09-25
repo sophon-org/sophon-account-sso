@@ -13,6 +13,7 @@
     "@sophon-labs/account-react-native": "2.1.5"
   },
   "changesets": [
-    "dirty-paws-buy"
+    "dirty-paws-buy",
+    "icy-parrots-clap"
   ]
 }

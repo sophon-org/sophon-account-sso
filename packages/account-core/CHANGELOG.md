@@ -1,5 +1,11 @@
 # @sophon-labs/account-core
 
+## 2.1.6-next.1
+
+### Patch Changes
+
+- Adding social network to redirect url
+
 ## 2.1.6-next.0
 
 ### Patch Changes

@@ -17,6 +17,22 @@ const DEFAULT_ALLOWED_SOCIAL_URLS = [
   'https://appleid.apple.com/auth/authorize',
 ];
 
+const mapSocialProviderToKey = (url: string) => {
+  if (url.startsWith('https://accounts.google.com/o/oauth2/v2/auth')) {
+    return 'google';
+  }
+  if (url.startsWith('https://x.com/i/oauth2/authorize')) {
+    return 'twitter';
+  }
+  if (url.startsWith('https://discord.com/api/oauth2/authorize')) {
+    return 'discord';
+  }
+  if (url.startsWith('https://appleid.apple.com/auth/authorize')) {
+    return 'apple';
+  }
+  return 'unknown';
+};
+
 export interface SophonMainViewProps {
   debugEnabled?: boolean;
   insets?: {
@@ -163,7 +179,15 @@ export const SophonMainView = ({
                 postMessageToWebApp(webViewRef, 'authSessionCancel', {});
               } else {
                 const uri = new URL(result.url);
-                const redirectTo = `${authServerUrl}/embedded/${partnerId}?${new URLSearchParams([...params, ...uri.searchParams]).toString()}`;
+                const redirectParams = new URLSearchParams([
+                  ...params,
+                  ...uri.searchParams,
+                ]);
+                redirectParams.set(
+                  'socialProvider',
+                  mapSocialProviderToKey(request.url),
+                );
+                const redirectTo = `${authServerUrl}/embedded/${partnerId}?${redirectParams.toString()}`;
                 postMessageToWebApp(webViewRef, 'authSessionRedirect', {
                   url: redirectTo,
                 });
