@@ -3092,60 +3092,60 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-communicator@npm:2.1.6-next.1":
-  version: 2.1.6-next.1
-  resolution: "@sophon-labs/account-communicator@npm:2.1.6-next.1"
+"@sophon-labs/account-communicator@npm:2.1.6-next.2":
+  version: 2.1.6-next.2
+  resolution: "@sophon-labs/account-communicator@npm:2.1.6-next.2"
   peerDependencies:
     typescript: ^5.0.0
-  checksum: 10c0/30ea5f6dc01fba16e3158b8ee5d6bc3ee0087d33fab5d0909e6075893222915e317c2b31170cfc694f3e5e600491f87e65ca55961fd9e7dcf014e3ad7322dd17
+  checksum: 10c0/9ce63a48cf01b8561b94e49355c4927fcd09a669259e8e58591985d33761c21529714e8c3f0b32eaf8c79dd4ad5c86b30243be452b3ec394166682def8f9ce14
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-core@npm:2.1.6-next.1":
-  version: 2.1.6-next.1
-  resolution: "@sophon-labs/account-core@npm:2.1.6-next.1"
+"@sophon-labs/account-core@npm:2.1.6-next.2":
+  version: 2.1.6-next.2
+  resolution: "@sophon-labs/account-core@npm:2.1.6-next.2"
   dependencies:
     text-encoding-polyfill: "npm:^0.6.7"
   peerDependencies:
     viem: ">=2.21.0"
-  checksum: 10c0/758f614b99e4e0654aee75f7642d48a9aa6d4b9b2df4cd468da199af73d019c54da1cfbe5b287ea5d81add6fba0cc7045f07fa843fd6ba5ea60c0bd76e1f282b
+  checksum: 10c0/d708606a7bcad79718587e5c758735fbc7adf8d0f724d55d490d0ed0c2ecfa244146a13492734b18439bc2567cf5785306882ab038b26275db8da991d0d992eb
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-message-bridge@npm:2.1.6-next.1":
-  version: 2.1.6-next.1
-  resolution: "@sophon-labs/account-message-bridge@npm:2.1.6-next.1"
+"@sophon-labs/account-message-bridge@npm:2.1.6-next.2":
+  version: 2.1.6-next.2
+  resolution: "@sophon-labs/account-message-bridge@npm:2.1.6-next.2"
   dependencies:
     eventemitter3: "npm:5.0.1"
   peerDependencies:
     react-native-webview: ">=13.12.5"
-  checksum: 10c0/5c05aada728467d62d2228384567f4635efec85f4327bd0cd5fdd3a50f749af1a24decfe2048d8a55cb1fb2b43597237c10ee28cbc368fcb45953ed18c6f93e4
+  checksum: 10c0/a61f4c85333ffe46585a10570cdddc84842e76791147534912daaa20a350170e45d603cc001ae1a3bcaeccda3c0bef8409badab1ea9c54fbdee57782efa382ab
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-provider@npm:2.1.6-next.1":
-  version: 2.1.6-next.1
-  resolution: "@sophon-labs/account-provider@npm:2.1.6-next.1"
+"@sophon-labs/account-provider@npm:2.1.6-next.2":
+  version: 2.1.6-next.2
+  resolution: "@sophon-labs/account-provider@npm:2.1.6-next.2"
   dependencies:
-    "@sophon-labs/account-communicator": "npm:2.1.6-next.1"
-    "@sophon-labs/account-core": "npm:2.1.6-next.1"
+    "@sophon-labs/account-communicator": "npm:2.1.6-next.2"
+    "@sophon-labs/account-core": "npm:2.1.6-next.2"
     eventemitter3: "npm:^5.0.1"
     json-rpc-2.0: "npm:^1.7.1"
   peerDependencies:
     typescript: ^5.0.0
-  checksum: 10c0/978428b9a7c49ca908093435396cfe8dfbfd7c4ee3a85f7fa37c05bc112e3e63cca16c13a638bd3943e16c886b370f23aea485f88dd8660532f2863883b228fa
+  checksum: 10c0/c330a571bac99ef332b1030087df02b438646c27cd23e1c044a0e1acd18950f89ed2f89c3be9f770a1bdbcc9a1e95a52c192ace4a6480ffaf94bbf64bff83b36
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-react-native@npm:2.1.6-next.1":
-  version: 2.1.6-next.1
-  resolution: "@sophon-labs/account-react-native@npm:2.1.6-next.1"
+"@sophon-labs/account-react-native@npm:2.1.6-next.2":
+  version: 2.1.6-next.2
+  resolution: "@sophon-labs/account-react-native@npm:2.1.6-next.2"
   dependencies:
     "@react-native-async-storage/async-storage": "npm:^2.2.0"
-    "@sophon-labs/account-communicator": "npm:2.1.6-next.1"
-    "@sophon-labs/account-core": "npm:2.1.6-next.1"
-    "@sophon-labs/account-message-bridge": "npm:2.1.6-next.1"
-    "@sophon-labs/account-provider": "npm:2.1.6-next.1"
+    "@sophon-labs/account-communicator": "npm:2.1.6-next.2"
+    "@sophon-labs/account-core": "npm:2.1.6-next.2"
+    "@sophon-labs/account-message-bridge": "npm:2.1.6-next.2"
+    "@sophon-labs/account-provider": "npm:2.1.6-next.2"
     eventemitter3: "npm:5.0.1"
     text-encoding-polyfill: "npm:^0.6.7"
   peerDependencies:
@@ -3157,7 +3157,7 @@ __metadata:
     react-native: ">=0.76.6"
     react-native-webview: ">=13.12.5"
     viem: ">=2.21.0"
-  checksum: 10c0/407f587dacd148f40388296eb4e0e5a0ace8cf1f83909ee1a228011e5c47f3c044322c8c2fe1b220a05351f588eb044e75ea8fc75011e581e64c362788523448
+  checksum: 10c0/28c21b45e6bcf19dacf4d746a6feb382af469f5884a2fc9bb5d9d459b3fb90887b7085d9b27a666aff33834c3de2837dc808facaf77633201245920986c99476
   languageName: node
   linkType: hard
 
@@ -3175,7 +3175,7 @@ __metadata:
     "@react-navigation/bottom-tabs": "npm:^7.3.10"
     "@react-navigation/elements": "npm:^2.3.8"
     "@react-navigation/native": "npm:^7.1.6"
-    "@sophon-labs/account-react-native": "npm:2.1.6-next.1"
+    "@sophon-labs/account-react-native": "npm:2.1.6-next.2"
     "@types/react": "npm:~19.1.10"
     class-variance-authority: "npm:^0.7.1"
     clsx: "npm:^2.1.1"
