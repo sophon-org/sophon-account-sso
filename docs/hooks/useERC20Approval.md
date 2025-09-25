@@ -209,6 +209,8 @@ Function to refetch current allowance.
 
 For infinite approvals (max uint256):
 
+> **Security Warning**: Infinite approvals grant unlimited spending permission to the spender contract. Only use with trusted contracts and consider revoking approvals when no longer needed. For better security, use exact amount approvals with `useERC20Approval` instead.
+
 ```tsx
 import { useERC20InfiniteApproval } from '@sophon-labs/account-react'
 
