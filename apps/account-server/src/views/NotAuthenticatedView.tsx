@@ -1,8 +1,10 @@
 import { ProviderEnum } from '@dynamic-labs/types';
+import { useSearchParams } from 'next/navigation';
 import { type FormEventHandler, useState } from 'react';
 import { IconApple } from '@/components/icons/icon-apple';
 import { IconDiscord } from '@/components/icons/icon-discord';
 import { IconGoogle } from '@/components/icons/icon-google';
+import { IconTelegram } from '@/components/icons/icon-telegram';
 import { IconTwitter } from '@/components/icons/icon-twitter';
 import { Loader } from '@/components/loader';
 import { LogoSophon } from '@/components/logos/logo-sophon';
@@ -15,6 +17,25 @@ import { trackAuthMethodSelected, trackAuthStarted } from '@/lib/analytics';
 import { windowService } from '@/service/window.service';
 
 const SOCIAL_PROVIDERS = {
+  [ProviderEnum.Google]: {
+    icon: IconGoogle,
+    label: 'Google',
+  },
+  [ProviderEnum.Twitter]: {
+    icon: IconTwitter,
+    label: 'Twitter',
+  },
+  [ProviderEnum.Discord]: {
+    icon: IconDiscord,
+    label: 'Discord',
+  },
+  [ProviderEnum.Telegram]: {
+    icon: IconTelegram,
+    label: 'Telegram',
+  },
+};
+
+const SOCIAL_PROVIDERS_NEW = {
   [ProviderEnum.Google]: {
     icon: IconGoogle,
     label: 'Google',
@@ -56,6 +77,9 @@ const MobileView = ({
   onSocialAuth,
   error,
 }: ViewProps) => {
+  const searchParams = useSearchParams();
+  const viewVersion = searchParams.get('version');
+  const supportsApple = viewVersion === '2.0';
   return (
     <div className="flex flex-col">
       <div className="flex flex-col gap-6 justify-center items-center mt-12 mb-8">
@@ -64,24 +88,24 @@ const MobileView = ({
 
       <div className="flex flex-col gap-6 px-6">
         <div className="flex flex-row gap-2">
-          {Object.entries(SOCIAL_PROVIDERS).map(
-            ([provider, { icon: Icon }]) => (
-              <button
-                type="button"
-                key={provider}
-                className="p-2 h-16 w-full bg-white text-black rounded-2xl border border-[rgba(15, 14, 13, 0.08)] hover:bg-gray-100 transition-all duration-300 cursor-pointer pointer-events-auto disabled:opacity-50 disabled:cursor-not-allowed justify-items-center"
-                onClick={() => onSocialAuth(provider as ProviderEnum)}
-              >
-                {socialProvider === provider ? (
-                  <Loader className="w-4 h-4 border-white border-r-transparent" />
-                ) : (
-                  <div className="flex items-center justify-center">
-                    <Icon />
-                  </div>
-                )}
-              </button>
-            ),
-          )}
+          {Object.entries(
+            supportsApple ? SOCIAL_PROVIDERS_NEW : SOCIAL_PROVIDERS,
+          ).map(([provider, { icon: Icon }]) => (
+            <button
+              type="button"
+              key={provider}
+              className="p-2 h-16 w-full bg-white text-black rounded-2xl border border-[rgba(15, 14, 13, 0.08)] hover:bg-gray-100 transition-all duration-300 cursor-pointer pointer-events-auto disabled:opacity-50 disabled:cursor-not-allowed justify-items-center"
+              onClick={() => onSocialAuth(provider as ProviderEnum)}
+            >
+              {socialProvider === provider ? (
+                <Loader className="w-4 h-4 border-white border-r-transparent" />
+              ) : (
+                <div className="flex items-center justify-center">
+                  <Icon />
+                </div>
+              )}
+            </button>
+          ))}
         </div>
         <div className="space-y-4">
           <form key="email-form" onSubmit={onSubmitEmailHandler}>
@@ -127,6 +151,9 @@ const WebView = ({
   onSelectWallet,
   error,
 }: ViewProps) => {
+  const searchParams = useSearchParams();
+  const viewVersion = searchParams.get('version');
+  const supportsApple = viewVersion === '2.0';
   return (
     <div className="flex flex-col gap-14">
       <div className="flex flex-col gap-6 justify-center items-center">
@@ -145,22 +172,22 @@ const WebView = ({
           </div>
         )}
         <div className="flex flex-row gap-2">
-          {Object.entries(SOCIAL_PROVIDERS).map(
-            ([provider, { icon: Icon }]) => (
-              <button
-                type="button"
-                key={provider}
-                className="p-4 h-16 w-full bg-white text-black rounded-2xl border border-[rgba(15, 14, 13, 0.08)] hover:bg-gray-100 transition-all duration-300 cursor-pointer pointer-events-auto disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 justify-center"
-                onClick={() => onSocialAuth(provider as ProviderEnum)}
-              >
-                {socialProvider === provider ? (
-                  <Loader className="w-4 h-4 border-white border-r-transparent" />
-                ) : (
-                  <Icon />
-                )}
-              </button>
-            ),
-          )}
+          {Object.entries(
+            supportsApple ? SOCIAL_PROVIDERS_NEW : SOCIAL_PROVIDERS,
+          ).map(([provider, { icon: Icon }]) => (
+            <button
+              type="button"
+              key={provider}
+              className="p-4 h-16 w-full bg-white text-black rounded-2xl border border-[rgba(15, 14, 13, 0.08)] hover:bg-gray-100 transition-all duration-300 cursor-pointer pointer-events-auto disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 justify-center"
+              onClick={() => onSocialAuth(provider as ProviderEnum)}
+            >
+              {socialProvider === provider ? (
+                <Loader className="w-4 h-4 border-white border-r-transparent" />
+              ) : (
+                <Icon />
+              )}
+            </button>
+          ))}
         </div>
         <div className="space-y-4">
           <form key="email-form" onSubmit={onSubmitEmailHandler}>
