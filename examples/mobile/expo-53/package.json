@@ -20,7 +20,7 @@
     "@react-navigation/bottom-tabs": "^7.3.10",
     "@react-navigation/elements": "^2.3.8",
     "@react-navigation/native": "^7.1.6",
-    "@sophon-labs/account-react-native": "2.1.6-next.3",
+    "@sophon-labs/account-react-native": "2.1.6-next.4",
     "expo": "~53.0.23",
     "expo-blur": "~14.1.5",
     "expo-constants": "~17.1.6",

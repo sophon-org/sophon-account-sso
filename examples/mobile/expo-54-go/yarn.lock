@@ -2723,7 +2723,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-async-storage/async-storage@npm:2.2.0":
+"@react-native-async-storage/async-storage@npm:2.2.0, @react-native-async-storage/async-storage@npm:^2.2.0":
   version: 2.2.0
   resolution: "@react-native-async-storage/async-storage@npm:2.2.0"
   dependencies:
@@ -3092,11 +3092,74 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-react-native@link:../../packages/account-react-native::locator=%40sophon-labs%2Fexamples-mobile-expo-web%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@sophon-labs/account-react-native@link:../../packages/account-react-native::locator=%40sophon-labs%2Fexamples-mobile-expo-web%40workspace%3A."
+"@sophon-labs/account-communicator@npm:2.1.6-next.4":
+  version: 2.1.6-next.4
+  resolution: "@sophon-labs/account-communicator@npm:2.1.6-next.4"
+  peerDependencies:
+    typescript: ^5.0.0
+  checksum: 10c0/278d852e1e252a4c1976c2d404208cf087b39985f1f0090b0a601815eb3fc32d288d8bc3623360ecb89dd239ed5675fdd7ad4aecf8f4aecde78dbed3b3426654
   languageName: node
-  linkType: soft
+  linkType: hard
+
+"@sophon-labs/account-core@npm:2.1.6-next.4":
+  version: 2.1.6-next.4
+  resolution: "@sophon-labs/account-core@npm:2.1.6-next.4"
+  dependencies:
+    text-encoding-polyfill: "npm:^0.6.7"
+  peerDependencies:
+    viem: ">=2.21.0"
+  checksum: 10c0/7c99ea90933dd9b6152033d733dadab960d55cc75eeba4d49d84075140107200cdd2d6bbdff165639822315bbe2c507c02ab200498e2d003aacff5858c1cbc6e
+  languageName: node
+  linkType: hard
+
+"@sophon-labs/account-message-bridge@npm:2.1.6-next.4":
+  version: 2.1.6-next.4
+  resolution: "@sophon-labs/account-message-bridge@npm:2.1.6-next.4"
+  dependencies:
+    eventemitter3: "npm:5.0.1"
+  peerDependencies:
+    react-native-webview: ">=13.12.5"
+  checksum: 10c0/1b90bb3d340e38ee6bcf7f303e0780bc2c581999808175adfb8a8c6a7600c523adbbde416a12c811715634ffc2c05ab0f45e63e27e0592166ea8d5c4251498ee
+  languageName: node
+  linkType: hard
+
+"@sophon-labs/account-provider@npm:2.1.6-next.4":
+  version: 2.1.6-next.4
+  resolution: "@sophon-labs/account-provider@npm:2.1.6-next.4"
+  dependencies:
+    "@sophon-labs/account-communicator": "npm:2.1.6-next.4"
+    "@sophon-labs/account-core": "npm:2.1.6-next.4"
+    eventemitter3: "npm:^5.0.1"
+    json-rpc-2.0: "npm:^1.7.1"
+  peerDependencies:
+    typescript: ^5.0.0
+  checksum: 10c0/8496fd8be9f0aa99cb62e2df76e64abd68c0d82aba3592d25714b43c873dc2f16c45522b4ed6ba01cf8c9df8ea920f0882ccd301e674371f3785a68dcfd20fbe
+  languageName: node
+  linkType: hard
+
+"@sophon-labs/account-react-native@npm:2.1.6-next.4":
+  version: 2.1.6-next.4
+  resolution: "@sophon-labs/account-react-native@npm:2.1.6-next.4"
+  dependencies:
+    "@react-native-async-storage/async-storage": "npm:^2.2.0"
+    "@sophon-labs/account-communicator": "npm:2.1.6-next.4"
+    "@sophon-labs/account-core": "npm:2.1.6-next.4"
+    "@sophon-labs/account-message-bridge": "npm:2.1.6-next.4"
+    "@sophon-labs/account-provider": "npm:2.1.6-next.4"
+    eventemitter3: "npm:5.0.1"
+    text-encoding-polyfill: "npm:^0.6.7"
+  peerDependencies:
+    expo-linking: "*"
+    expo-network: "*"
+    expo-secure-store: "*"
+    expo-standard-web-crypto: "*"
+    expo-web-browser: "*"
+    react-native: ">=0.76.6"
+    react-native-webview: ">=13.12.5"
+    viem: ">=2.21.0"
+  checksum: 10c0/7509ffaca1df74db0aedc1901e559eccb69157a65c5124b0775d47376070c3e11c56b1a301b11d00b21eab650a08da4d3861c648a87e4c7103abefa71cc2f25d
+  languageName: node
+  linkType: hard
 
 "@sophon-labs/examples-mobile-expo-web@workspace:.":
   version: 0.0.0-use.local
@@ -3112,7 +3175,7 @@ __metadata:
     "@react-navigation/bottom-tabs": "npm:^7.3.10"
     "@react-navigation/elements": "npm:^2.3.8"
     "@react-navigation/native": "npm:^7.1.6"
-    "@sophon-labs/account-react-native": "link:../../packages/account-react-native"
+    "@sophon-labs/account-react-native": "npm:2.1.6-next.4"
     "@types/react": "npm:~19.1.10"
     class-variance-authority: "npm:^0.7.1"
     clsx: "npm:^2.1.1"
