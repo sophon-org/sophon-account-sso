@@ -64,6 +64,7 @@ describe("MeService", () => {
 			userId: USER_ID,
 			scope: "email discord x",
 		};
+
 		const secretsMock: Partial<SecretsService> = {
 			loadJwtSecrets: jest.fn().mockResolvedValue({ dynamicToken: API_TOKEN }),
 		};

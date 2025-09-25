@@ -7,6 +7,7 @@ import type { SophonJWTToken } from '@/types';
 const SophonUIEvents = new EventEmitter();
 
 export type SophonUIActions = {
+  initialized: unknown;
   showModal: unknown;
   hideModal: unknown;
   modalReady: unknown;
@@ -17,6 +18,7 @@ export type SophonUIActions = {
   logout: unknown;
   timeout: UUID;
   refreshMainView: unknown;
+  clearMainViewCache: unknown;
   mainViewError: string;
   // from server:
   sdkStatusResponse: unknown;
