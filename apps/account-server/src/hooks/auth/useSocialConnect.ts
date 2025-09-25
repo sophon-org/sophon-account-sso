@@ -1,5 +1,6 @@
 import { useSocialAccounts } from '@dynamic-labs/sdk-react-core';
 import type { ProviderEnum } from '@dynamic-labs/types';
+import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect } from 'react';
 import { MainStateMachineContext } from '@/context/state-machine-context';
 import { trackAuthFailed, updateUserProperties } from '@/lib/analytics';
@@ -8,6 +9,7 @@ import { setSocialProviderInURL } from '@/lib/social-provider';
 export function useSocialConnect() {
   const actorRef = MainStateMachineContext.useActorRef();
   const { signInWithSocialAccount, error } = useSocialAccounts();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     if (error?.message) {
@@ -38,8 +40,10 @@ export function useSocialConnect() {
       });
 
       actorRef.send({ type: 'AUTHENTICATION_STARTED' });
-      await signInWithSocialAccount(provider);
+      await signInWithSocialAccount(provider, {
+        redirectUrl: searchParams.get('redirectUrl') ?? undefined,
+      });
     },
-    [actorRef, signInWithSocialAccount],
+    [actorRef, signInWithSocialAccount, searchParams],
   );
 }

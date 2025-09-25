@@ -116,5 +116,6 @@ export enum DataScopes {
   google = 'google',
   discord = 'discord',
   telegram = 'telegram',
+  apple = 'apple',
   x = 'x',
 }

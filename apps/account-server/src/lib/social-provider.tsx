@@ -1,4 +1,5 @@
 import {
+  AppleIcon,
   DiscordIcon,
   GoogleIcon,
   TelegramIcon,
@@ -34,7 +35,7 @@ export function clearSocialProviderFromURL(): void {
 // Icon utilities
 export function getSocialProviderIcon(
   provider: ProviderEnum,
-  className = 'w-10 h-10',
+  className = 'w-10 h-10 animate-bounce',
 ) {
   switch (provider) {
     case 'google':
@@ -45,6 +46,8 @@ export function getSocialProviderIcon(
       return <TelegramIcon className={className} />;
     case 'discord':
       return <DiscordIcon className={className} />;
+    case 'apple':
+      return <AppleIcon className={className} />;
     default:
       return null;
   }

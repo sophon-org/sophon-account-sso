@@ -1,5 +1,7 @@
 import type { DataScopes } from '@sophon-labs/account-core';
 import { postMessageToWebApp } from '@sophon-labs/account-message-bridge';
+import { createURL } from 'expo-linking';
+import { openAuthSessionAsync } from 'expo-web-browser';
 import { useCallback, useRef, useState } from 'react';
 import { Linking, Platform, StyleSheet, View } from 'react-native';
 import { WebView } from 'react-native-webview';
@@ -7,6 +9,13 @@ import { VIEW_VERSION } from '../constants';
 import { USER_AGENT } from '../constants/user-agent';
 import { useModalVisibility } from '../hooks/use-modal-visibility';
 import { sendUIMessage, useUIEventHandler } from '../messaging/ui';
+
+const DEFAULT_ALLOWED_SOCIAL_URLS = [
+  'https://accounts.google.com/o/oauth2/v2/auth',
+  'https://x.com/i/oauth2/authorize',
+  'https://discord.com/api/oauth2/authorize',
+  'https://appleid.apple.com/auth/authorize',
+];
 
 export interface SophonMainViewProps {
   debugEnabled?: boolean;
@@ -30,6 +39,7 @@ export const SophonMainView = ({
   const webViewRef = useRef<WebView>(null);
   const { visible } = useModalVisibility();
   const [isReady, setIsReady] = useState(false);
+  const [redirectUrl] = useState(createURL(''));
 
   const containerStyles = {
     ...styles.container,
@@ -105,6 +115,8 @@ export const SophonMainView = ({
     params.set('platformVersion', `${Platform.Version}`);
   }
 
+  params.set('redirectUrl', redirectUrl);
+
   const uri = `${authServerUrl}/embedded/${partnerId}?${params.toString()}`;
 
   return (
@@ -139,6 +151,27 @@ export const SophonMainView = ({
         userAgent={USER_AGENT}
         webviewDebuggingEnabled={debugEnabled}
         onShouldStartLoadWithRequest={(request) => {
+          if (
+            DEFAULT_ALLOWED_SOCIAL_URLS.some((url) =>
+              request.url.startsWith(url),
+            )
+          ) {
+            openAuthSessionAsync(request.url, redirectUrl, {
+              preferEphemeralSession: true,
+            }).then((result) => {
+              if (result.type !== 'success') {
+                postMessageToWebApp(webViewRef, 'authSessionCancel', {});
+              } else {
+                const uri = new URL(result.url);
+                const redirectTo = `${authServerUrl}/embedded/${partnerId}?${new URLSearchParams([...params, ...uri.searchParams]).toString()}`;
+                postMessageToWebApp(webViewRef, 'authSessionRedirect', {
+                  url: redirectTo,
+                });
+              }
+            });
+            return false;
+          }
+
           if (uri === request.url) return true;
 
           if (request.url.startsWith('https://sophon.xyz')) {

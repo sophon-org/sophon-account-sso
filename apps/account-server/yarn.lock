@@ -4573,25 +4573,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-core@npm:2.1.2":
-  version: 2.1.2
-  resolution: "@sophon-labs/account-core@npm:2.1.2"
+"@sophon-labs/account-core@file:../../packages/account-core::locator=%40sophon-labs%2Faccount-server%40workspace%3A.":
+  version: 2.1.5
+  resolution: "@sophon-labs/account-core@file:../../packages/account-core#../../packages/account-core::hash=a1b6e6&locator=%40sophon-labs%2Faccount-server%40workspace%3A."
   dependencies:
     text-encoding-polyfill: "npm:^0.6.7"
   peerDependencies:
     viem: ">=2.21.0"
-  checksum: 10c0/3ef257d8f7693d5de5a5ce8f4940cc627b7e2c127bd1c31f8d0a4be8ddb3d7f390a834a3e00277513f11c978cd390bb99c5a7fc0e344389888f983016f190ea2
+  checksum: 10c0/f6313f0f17aa0e94578ef9849eefc89e4d0c7616ed339e6332ed793a812ee7fa2ccbee48251f4a4d94a8ab3f6da2e4fb39346b95e79899eb324ea7ee7296c28b
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-message-bridge@npm:2.1.2":
-  version: 2.1.2
-  resolution: "@sophon-labs/account-message-bridge@npm:2.1.2"
+"@sophon-labs/account-message-bridge@file:../../packages/account-message-bridge::locator=%40sophon-labs%2Faccount-server%40workspace%3A.":
+  version: 2.1.5
+  resolution: "@sophon-labs/account-message-bridge@file:../../packages/account-message-bridge#../../packages/account-message-bridge::hash=1d3186&locator=%40sophon-labs%2Faccount-server%40workspace%3A."
   dependencies:
     eventemitter3: "npm:5.0.1"
   peerDependencies:
     react-native-webview: ">=13.12.5"
-  checksum: 10c0/68bdc325495898e2830891cd28d04a92a9f4c35e499fd545743b7f9bde7d54a42338ed395800430949188660f48fbd98a0e5612c7d59939ccbeca029390ca742
+  checksum: 10c0/b5352a044d6e2cbe67e113fdd9986aa3cc91a100fcd57ee54e67d38f3340635046c676cba3324b7453129fd04e8518fd31d86d30015410cec4e09d4ff6dae4b5
   languageName: node
   linkType: hard
 
@@ -4612,8 +4612,8 @@ __metadata:
     "@radix-ui/react-tooltip": "npm:^1.2.7"
     "@sentry/nextjs": "npm:^10"
     "@simplewebauthn/server": "npm:^13.1.2"
-    "@sophon-labs/account-core": "npm:2.1.2"
-    "@sophon-labs/account-message-bridge": "npm:2.1.2"
+    "@sophon-labs/account-core": "file:../../packages/account-core"
+    "@sophon-labs/account-message-bridge": "file:../../packages/account-message-bridge"
     "@t3-oss/env-nextjs": "npm:^0.13.8"
     "@tailwindcss/postcss": "npm:^4"
     "@tanstack/react-query": "npm:^5.81.2"

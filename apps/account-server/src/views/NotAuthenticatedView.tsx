@@ -1,8 +1,8 @@
 import { ProviderEnum } from '@dynamic-labs/types';
 import { type FormEventHandler, useState } from 'react';
+import { IconApple } from '@/components/icons/icon-apple';
 import { IconDiscord } from '@/components/icons/icon-discord';
 import { IconGoogle } from '@/components/icons/icon-google';
-import { IconTelegram } from '@/components/icons/icon-telegram';
 import { IconTwitter } from '@/components/icons/icon-twitter';
 import { Loader } from '@/components/loader';
 import { LogoSophon } from '@/components/logos/logo-sophon';
@@ -27,9 +27,9 @@ const SOCIAL_PROVIDERS = {
     icon: IconDiscord,
     label: 'Discord',
   },
-  [ProviderEnum.Telegram]: {
-    icon: IconTelegram,
-    label: 'Telegram',
+  [ProviderEnum.Apple]: {
+    icon: IconApple,
+    label: 'Apple',
   },
 };
 

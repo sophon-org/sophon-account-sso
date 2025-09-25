@@ -83,6 +83,22 @@ export default function EmbeddedRoot({ partnerId, scopes }: EmbeddedRootProps) {
   );
 
   useRNHandler(
+    'authSessionCancel',
+    useCallback(() => {
+      actorRef.send({ type: 'ACCOUNT_ERROR' });
+      logWithUser('From RN > cancelled auth session');
+    }, [actorRef]),
+  );
+
+  useRNHandler(
+    'authSessionRedirect',
+    useCallback((payload: { url: string }) => {
+      logWithUser(`From RN > url redirection to ${payload.url}`);
+      window.location.href = payload.url;
+    }, []),
+  );
+
+  useRNHandler(
     'sdkStatusRequest',
     useCallback(() => {
       const payload = {

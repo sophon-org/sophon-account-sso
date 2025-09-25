@@ -26,6 +26,11 @@ export const AllScopes = {
     key: DataScopes.x,
     description: 'Your X (Twitter) account handle',
   },
+  apple: {
+    label: 'Apple',
+    key: DataScopes.apple,
+    description: 'Your apple email address',
+  },
 };
 
 export type Scopes = keyof typeof AllScopes;
