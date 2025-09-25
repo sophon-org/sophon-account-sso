@@ -467,25 +467,21 @@ export class SwapsProvider implements ISwapProvider {
       'Transforming status response',
       {
         hasResponse: !!swapResponse,
-        hasTx: 'tx' in swapResponse && !!swapResponse.tx,
+        hasTx: (swapResponse as SwapStatusResponse)?.tx !== undefined,
         status:
-          'tx' in swapResponse
-            ? swapResponse.tx?.status
-            : 'status' in swapResponse
-              ? swapResponse.status
-              : undefined,
+          (swapResponse as SwapStatusResponse)?.tx?.status ??
+          (swapResponse as SwapStatusFlatResponse)?.status ??
+          undefined,
         srcTxHash:
-          'tx' in swapResponse
-            ? swapResponse.tx?.srcTxHash
-            : 'srcTxHash' in swapResponse
-              ? swapResponse.srcTxHash
-              : undefined,
+          (swapResponse as SwapStatusResponse)?.tx?.srcTxHash ??
+          (swapResponse as SwapStatusFlatResponse)?.srcTxHash ??
+          undefined,
       },
     );
 
     // Log all possible field variations to understand API structure
-    if ('tx' in swapResponse && swapResponse?.tx) {
-      const tx = swapResponse.tx;
+    if ((swapResponse as SwapStatusResponse)?.tx) {
+      const tx = (swapResponse as SwapStatusResponse).tx;
       this.loggingService.logProviderDebug(
         this.providerId,
         'API FIELD MAPPING CHECK',
@@ -529,15 +525,41 @@ export class SwapsProvider implements ISwapProvider {
       );
     }
 
+    // Check if response indicates not found or has insufficient data
+    if (
+      !swapResponse ||
+      (!(swapResponse as SwapStatusResponse)?.tx &&
+        !(swapResponse as SwapStatusFlatResponse)?.status) ||
+      (!(swapResponse as SwapStatusResponse)?.tx?.status &&
+        !(swapResponse as SwapStatusResponse)?.tx?.srcTxHash &&
+        !(swapResponse as SwapStatusFlatResponse)?.status &&
+        !(swapResponse as SwapStatusFlatResponse)?.srcTxHash)
+    ) {
+      this.logger.warn('Transaction not found in Swaps.xyz response');
+      this.loggingService.logProviderDebug(
+        this.providerId,
+        'Transaction not found, returning not found response',
+      );
+      return {
+        found: false,
+        status: TransactionStatus.PENDING,
+        provider: this.providerId,
+        transaction: null,
+        fees: null,
+        timestamps: null,
+        links: null,
+      };
+    }
+
     // Handle both nested tx format and flat format from Swaps.xyz
     let tx: SwapStatusResponse['tx'];
 
     // Check if response has nested tx structure (expected format)
-    if ('tx' in swapResponse && swapResponse.tx) {
+    if ((swapResponse as SwapStatusResponse)?.tx) {
       tx = (swapResponse as SwapStatusResponse).tx;
     }
     // Handle flat response structure (actual Swaps.xyz format)
-    else if ('status' in swapResponse && swapResponse.status) {
+    else if ((swapResponse as SwapStatusFlatResponse)?.status) {
       // Map the flat response to our expected structure
       const flatResponse = swapResponse as SwapStatusFlatResponse;
 
