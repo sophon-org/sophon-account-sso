@@ -10,13 +10,13 @@ export type SophonNetworkType = 'mainnet' | 'testnet';
  * sophon networks
  */
 export const AccountServerURL: Record<SophonNetworkType, string> = {
-  mainnet: 'https://account.sophonapi.com',
-  testnet: 'https://account-stg.sophonapi.com',
+  mainnet: 'https://my.sophon.xyz',
+  testnet: 'https://account-stg.israelcrisanto.com',
 };
 
 export const AccountAuthAPIURL: Record<SophonNetworkType, string> = {
-  mainnet: 'https://api-prd-auth.sophonapi.com',
-  testnet: 'https://api-stg-auth.sophonapi.com',
+  mainnet: 'https://api.my.sophon.xyz',
+  testnet: 'https://api-stg-auth.israelcrisanto.com',
 };
 
 /**
@@ -25,7 +25,7 @@ export const AccountAuthAPIURL: Record<SophonNetworkType, string> = {
  */
 export const AvailableRPCURL: Record<SophonNetworkType, string> = {
   mainnet: 'https://rpc.sophon.xyz',
-  testnet: 'https://rpc.testnet.sophonapi.com',
+  testnet: 'https://rpc.testnet.sophon.xyz',
 };
 
 /**
