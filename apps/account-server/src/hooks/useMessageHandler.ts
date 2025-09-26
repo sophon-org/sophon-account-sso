@@ -1,8 +1,10 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { hexToString, toHex } from 'viem';
+import { MainStateMachineContext } from '@/context/state-machine-context';
 import { logWithUser } from '@/debug/log';
 import { isValidPaymaster } from '@/lib/paymaster';
+import { serverLog } from '@/lib/server-log';
 import { windowService } from '@/service/window.service';
 import type {
   AuthenticationRequest,
@@ -41,6 +43,10 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
     null,
   );
 
+  const contextIncomming = MainStateMachineContext.useSelector(
+    (state) => state.context.requests.incoming,
+  );
+
   useEffect(() => {
     // biome-ignore lint/suspicious/noExplicitAny: review that in the future TODO
     const messageHandler = (data: any) => {
@@ -52,8 +58,16 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
 
       // Store the incoming request if it's an RPC request
       if (data?.id && data?.content) {
+        // theres a request on the pipe already, but we received a new one
+        if (contextIncomming?.id && contextIncomming.id !== data.id) {
+          serverLog(
+            `************************************************* cancelPendingRequest: ${contextIncomming!.id} - ${data.id}`,
+          );
+          // cancelPendingRequest(contextIncomming!.id);
+        }
+
         const method = data.content?.action?.method;
-        logWithUser(`RPC Method Requested > ${method}`);
+        logWithUser(`RPC Method Requested > ${method} > ${data.id}`);
         if (method === 'eth_requestAccounts') {
           const params = data.content.action?.params as
             | { sessionPreferences?: unknown }
@@ -262,7 +276,7 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
     return () => {
       unregister();
     };
-  }, [incomingRequest]);
+  }, [incomingRequest, contextIncomming]);
 
   return {
     incomingRequest,

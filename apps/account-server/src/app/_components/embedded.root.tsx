@@ -6,12 +6,10 @@ import {
   useRNHandler,
 } from '@sophon-labs/account-message-bridge';
 import { useCallback, useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
 import { Drawer } from '@/components/ui/drawer';
 import { MainStateMachineContext } from '@/context/state-machine-context';
 import { logWithUser } from '@/debug/log';
 import { env } from '@/env';
-import { sendMessage } from '@/events';
 import { useEventHandler } from '@/events/hooks';
 import { useAccountContext } from '@/hooks/useAccountContext';
 import { useRequestDrawer } from '@/hooks/useRequestDrawer';
@@ -79,6 +77,22 @@ export default function EmbeddedRoot({ partnerId, scopes }: EmbeddedRootProps) {
     useCallback(() => {
       setOpen(false);
       logWithUser('From RN > closed auth modal');
+    }, []),
+  );
+
+  useRNHandler(
+    'authSessionCancel',
+    useCallback(() => {
+      actorRef.send({ type: 'ACCOUNT_ERROR' });
+      logWithUser('From RN > cancelled auth session');
+    }, [actorRef]),
+  );
+
+  useRNHandler(
+    'authSessionRedirect',
+    useCallback((payload: { url: string }) => {
+      logWithUser(`From RN > url redirection to ${payload.url}`);
+      window.location.href = payload.url;
     }, []),
   );
 
@@ -287,30 +301,6 @@ export default function EmbeddedRoot({ partnerId, scopes }: EmbeddedRootProps) {
     );
   }
 
-  if (state.matches('profile') && account) {
-    const handleDisconnect = () => {
-      sendMessage('smart-contract.logout', null);
-      actorRef.send({ type: 'CANCEL' });
-    };
-
-    return (
-      <Drawer
-        open={open}
-        onOpenChange={handleCloseModal}
-        actions={<Button onClick={handleDisconnect}>Log out</Button>}
-        showHeader={true}
-        showProfileImage={true}
-        showLegalNotice={false}
-        showLogo={false}
-        title={account.address}
-        drawerType="user_profile"
-        // onSettings={() => {
-        //   // goToSettings();
-        // }}
-      />
-    );
-  }
-
   if (state.matches('completed')) {
     return (
       <Drawer
@@ -325,40 +315,6 @@ export default function EmbeddedRoot({ partnerId, scopes }: EmbeddedRootProps) {
       </Drawer>
     );
   }
-
-  // TODO: settings state
-  // if (authState === AuthState.SETTINGS) {
-  //   return (
-  //     <Drawer
-  //       open={open}
-  //       onOpenChange={(open) => {
-  //         setOpen(open);
-  //         if (!open) {
-  //           windowService.close();
-  //         }
-  //       }}
-  //       showHeader={true}
-  //       showLegalNotice={false}
-  //       showLogo={false}
-  //       title="Settings"
-  //       actions={
-  //         <div className="flex flex-col gap-2 w-full items-center">
-  //           <p className="text-lg">Manage your account at Sophon Home</p>
-  //           <Button
-  //             onClick={() => {
-  //               window.parent.open('https://app.sophon.xyz/', '_blank');
-  //             }}
-  //           >
-  //             Open Sophon
-  //           </Button>
-  //         </div>
-  //       }
-  //       onBack={() => {
-  //         goToAuthenticated();
-  //       }}
-  //     />
-  //   );
-  // }
 
   return (
     <Drawer

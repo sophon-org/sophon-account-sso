@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import type { Address } from 'viem';
 import type { CustomRPCError } from '@/types';
+import { sendUIMessage } from '../messaging';
 import { useSophonContext } from './use-sophon-context';
 
 export const useSophonAccount = () => {
@@ -18,13 +19,15 @@ export const useSophonAccount = () => {
   const [isConnecting, setIsConnecting] = useState(false);
 
   const connect = useCallback(async () => {
+    setIsConnecting(true);
+
     // to make sure that we have no cached account, before connecting we force a local disconnect
     try {
       await disconnect();
+      sendUIMessage('clearMainViewCache', {});
     } catch {}
 
     try {
-      setIsConnecting(true);
       setAccountError(undefined);
       const addresses = await walletClient!.requestAddresses();
       if (addresses.length === 0) {

@@ -1,5 +1,41 @@
 # @sophon-labs/account-core
 
+## 2.1.6-next.5
+
+### Patch Changes
+
+- Changing dns to .com
+
+## 2.1.6-next.4
+
+### Patch Changes
+
+- Reviewing retry logic on communicator
+
+## 2.1.6-next.3
+
+### Patch Changes
+
+- Upgrading view version number for retrocompatibility
+
+## 2.1.6-next.2
+
+### Patch Changes
+
+- Waiting for server isReady before moving on
+
+## 2.1.6-next.1
+
+### Patch Changes
+
+- Adding social network to redirect url
+
+## 2.1.6-next.0
+
+### Patch Changes
+
+- Preview version for better social network auth
+
 ## 2.1.5
 
 ### Patch Changes

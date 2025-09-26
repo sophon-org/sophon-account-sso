@@ -1,6 +1,6 @@
 {
   "name": "@sophon-labs/account-react-native",
-  "version": "2.1.5",
+  "version": "2.1.6-next.5",
   "description": "Library to handle sophon account on react native environments",
   "main": "./dist/module/index.js",
   "types": "./dist/typescript/src/index.d.ts",
@@ -42,10 +42,10 @@
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^2.2.0",
-    "@sophon-labs/account-communicator": "2.1.5",
-    "@sophon-labs/account-core": "2.1.5",
-    "@sophon-labs/account-message-bridge": "2.1.5",
-    "@sophon-labs/account-provider": "2.1.5",
+    "@sophon-labs/account-communicator": "2.1.6-next.5",
+    "@sophon-labs/account-core": "2.1.6-next.5",
+    "@sophon-labs/account-message-bridge": "2.1.6-next.5",
+    "@sophon-labs/account-provider": "2.1.6-next.5",
     "eventemitter3": "5.0.1",
     "text-encoding-polyfill": "^0.6.7"
   },
@@ -57,9 +57,11 @@
     "@types/jest": "^29.5.5",
     "commitlint": "^19.6.1",
     "del-cli": "^5.1.0",
+    "expo-linking": "^8.0.8",
     "expo-network": "^7.1.5",
     "expo-secure-store": "14.2.3",
     "expo-standard-web-crypto": "2.1.4",
+    "expo-web-browser": "^15.0.7",
     "jest": "^29.7.0",
     "prettier": "^3.0.3",
     "react-native": "0.76.6",
@@ -71,9 +73,11 @@
     "viem": "^2.36.0"
   },
   "peerDependencies": {
+    "expo-linking": "*",
     "expo-network": "*",
     "expo-secure-store": "*",
     "expo-standard-web-crypto": "*",
+    "expo-web-browser": "*",
     "react-native": ">=0.76.6",
     "react-native-webview": ">=13.12.5",
     "viem": ">=2.21.0"

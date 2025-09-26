@@ -1,5 +1,59 @@
 # @sophon-labs/account-eip6963
 
+## 2.1.6-next.5
+
+### Patch Changes
+
+- Changing dns to .com
+- Updated dependencies
+  - @sophon-labs/account-provider@2.1.6-next.5
+  - @sophon-labs/account-core@2.1.6-next.5
+
+## 2.1.6-next.4
+
+### Patch Changes
+
+- Reviewing retry logic on communicator
+- Updated dependencies
+  - @sophon-labs/account-provider@2.1.6-next.4
+  - @sophon-labs/account-core@2.1.6-next.4
+
+## 2.1.6-next.3
+
+### Patch Changes
+
+- Upgrading view version number for retrocompatibility
+- Updated dependencies
+  - @sophon-labs/account-provider@2.1.6-next.3
+  - @sophon-labs/account-core@2.1.6-next.3
+
+## 2.1.6-next.2
+
+### Patch Changes
+
+- Waiting for server isReady before moving on
+- Updated dependencies
+  - @sophon-labs/account-provider@2.1.6-next.2
+  - @sophon-labs/account-core@2.1.6-next.2
+
+## 2.1.6-next.1
+
+### Patch Changes
+
+- Adding social network to redirect url
+- Updated dependencies
+  - @sophon-labs/account-provider@2.1.6-next.1
+  - @sophon-labs/account-core@2.1.6-next.1
+
+## 2.1.6-next.0
+
+### Patch Changes
+
+- Preview version for better social network auth
+- Updated dependencies
+  - @sophon-labs/account-provider@2.1.6-next.0
+  - @sophon-labs/account-core@2.1.6-next.0
+
 ## 2.1.5
 
 ### Patch Changes
