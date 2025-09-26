@@ -1,1 +1,1 @@
-export const VIEW_VERSION = '1.0';
+export const VIEW_VERSION = '2.0';

@@ -4,6 +4,7 @@ import {
   registerRNHandler,
   sendMessageToRN,
 } from '@sophon-labs/account-message-bridge';
+import { logWithUser } from '@/debug/log';
 import { env } from '@/env';
 
 /**
@@ -190,14 +191,17 @@ const webViewWindowService: WindowCommunicationService = {
 
   close: () => {
     sendMessageToRN('closeModal', {});
+    logWithUser('closed auth modal');
   },
 
   sendMessage: (message: unknown) => {
     sendMessageToRN('rpc', message as FromWebActions['rpc']);
+    logWithUser(`sent RPC message to webview: ${JSON.stringify(message)}`);
   },
 
   emitAccessToken: (value: string, expiresAt: number) => {
     sendMessageToRN('account.access.token.emitted', { value, expiresAt });
+    logWithUser('emitted an access token');
   },
 
   emitRefreshToken: (value: string, expiresAt: number) => {
@@ -205,10 +209,12 @@ const webViewWindowService: WindowCommunicationService = {
       value,
       expiresAt,
     });
+    logWithUser('emitted a refresh token');
   },
 
   logout: () => {
     sendMessageToRN('logout', null);
+    logWithUser('logged out');
   },
 
   isMobile: () => true,

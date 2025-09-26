@@ -6,7 +6,15 @@ import type { SophonJWTToken } from '@/types';
 
 const SophonUIEvents = new EventEmitter();
 
+interface SDKStatusResponse {
+  isDrawerOpen: boolean;
+  isReady: boolean;
+  isAuthenticated: boolean;
+  connectedAccount: boolean;
+}
+
 export type SophonUIActions = {
+  initialized: unknown;
   showModal: unknown;
   hideModal: unknown;
   modalReady: unknown;
@@ -17,9 +25,10 @@ export type SophonUIActions = {
   logout: unknown;
   timeout: UUID;
   refreshMainView: unknown;
+  clearMainViewCache: unknown;
   mainViewError: string;
   // from server:
-  sdkStatusResponse: unknown;
+  sdkStatusResponse: SDKStatusResponse;
   sdkStatusRequest: unknown;
 };
 

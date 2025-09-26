@@ -49,6 +49,11 @@ export const Web3Provider = ({
                 address: primaryWallet.address as `0x${string}`,
                 wallet: primaryWallet,
               });
+              // on dynamic, the first signature always takes more time
+              // so we trigger a signature on authentication to speedup the process
+              primaryWallet.signMessage(
+                'Hello from sophon, heating up the wallet.',
+              );
             }
             sendMessage('modal.open', null);
           },

@@ -40,7 +40,7 @@ export const useConnectAuthorizationActions = (
         >
           <WarningCircleIcon weight="fill" className="w-5 h-5 text-red-500" />
           <p className="text-xs flex-1">
-            Connection failed. Click to see error.
+            Connection failed. Click for details.
           </p>
         </Card>
       )}

@@ -3,7 +3,7 @@ import {
   useSophonAccount,
   useSophonClient,
 } from '@sophon-labs/account-react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import { erc20Abi, parseEther, parseUnits } from 'viem';
 import { sophonTestnet } from 'viem/chains';
@@ -16,14 +16,20 @@ import { Button } from '@/components/ui/button';
 
 export default function HomeScreen() {
   const {
+    initialized,
     connect,
     isConnected,
     account,
-    disconnect,
     logout,
     accountError,
     isConnecting,
   } = useSophonAccount();
+
+  useEffect(() => {
+    console.log('is connected', isConnected);
+    console.log('is initialized', initialized);
+  }, [isConnected, initialized]);
+
   const { walletClient } = useSophonClient();
   const [signature, setSignature] = useState<string>();
   const [typedDataSignature, setTypedDataSignature] = useState<string>();
@@ -31,10 +37,16 @@ export default function HomeScreen() {
   const [error, setError] = useState<string>('');
 
   const handleAuthenticate = async () => {
-    console.log('handleAuthenticate - before connect');
     await connect();
-    console.log('handleAuthenticate - after connect');
   };
+
+  if (!initialized) {
+    return (
+      <View className="flex-1 items-center justify-center bg-white py-8 h-screen">
+        <Text className="text-xl font-bold text-black">Initializing...</Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView>
@@ -56,12 +68,6 @@ export default function HomeScreen() {
             <Text className="text-xl font-bold text-black">
               {shortenAddress(account?.address)}
             </Text>
-            <Button
-              onPress={disconnect}
-              className="mt-4 bg-red-500/90 w-full max-w-[80%]"
-            >
-              <Text className="text-xl font-bold text-white">Disconnect</Text>
-            </Button>
             <Button
               onPress={logout}
               className="mt-4 bg-red-500/90 w-full max-w-[80%]"

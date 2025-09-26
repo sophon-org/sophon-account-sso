@@ -1,12 +1,37 @@
 import type { DataScopes } from '@sophon-labs/account-core';
 import { postMessageToWebApp } from '@sophon-labs/account-message-bridge';
+import { createURL } from 'expo-linking';
+import { openAuthSessionAsync, openBrowserAsync } from 'expo-web-browser';
 import { useCallback, useRef, useState } from 'react';
-import { Linking, Platform, StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { VIEW_VERSION } from '../constants';
 import { USER_AGENT } from '../constants/user-agent';
 import { useModalVisibility } from '../hooks/use-modal-visibility';
 import { sendUIMessage, useUIEventHandler } from '../messaging/ui';
+
+const DEFAULT_ALLOWED_SOCIAL_URLS = [
+  'https://accounts.google.com/o/oauth2/v2/auth',
+  'https://x.com/i/oauth2/authorize',
+  'https://discord.com/api/oauth2/authorize',
+  'https://appleid.apple.com/auth/authorize',
+];
+
+const mapSocialProviderToKey = (url: string) => {
+  if (url.startsWith('https://accounts.google.com/o/oauth2/v2/auth')) {
+    return 'google';
+  }
+  if (url.startsWith('https://x.com/i/oauth2/authorize')) {
+    return 'twitter';
+  }
+  if (url.startsWith('https://discord.com/api/oauth2/authorize')) {
+    return 'discord';
+  }
+  if (url.startsWith('https://appleid.apple.com/auth/authorize')) {
+    return 'apple';
+  }
+  return 'unknown';
+};
 
 export interface SophonMainViewProps {
   debugEnabled?: boolean;
@@ -30,6 +55,7 @@ export const SophonMainView = ({
   const webViewRef = useRef<WebView>(null);
   const { visible } = useModalVisibility();
   const [isReady, setIsReady] = useState(false);
+  const [redirectUrl] = useState(createURL(''));
 
   const containerStyles = {
     ...styles.container,
@@ -60,6 +86,12 @@ export const SophonMainView = ({
       [isReady],
     ),
   );
+
+  useUIEventHandler('clearMainViewCache', () => {
+    webViewRef.current?.clearCache?.(true);
+    webViewRef.current?.clearHistory?.();
+    webViewRef.current?.clearFormData?.();
+  });
 
   useUIEventHandler('refreshMainView', () => {
     webViewRef.current?.reload();
@@ -99,6 +131,8 @@ export const SophonMainView = ({
     params.set('platformVersion', `${Platform.Version}`);
   }
 
+  params.set('redirectUrl', redirectUrl);
+
   const uri = `${authServerUrl}/embedded/${partnerId}?${params.toString()}`;
 
   return (
@@ -133,10 +167,39 @@ export const SophonMainView = ({
         userAgent={USER_AGENT}
         webviewDebuggingEnabled={debugEnabled}
         onShouldStartLoadWithRequest={(request) => {
+          if (
+            DEFAULT_ALLOWED_SOCIAL_URLS.some((url) =>
+              request.url.startsWith(url),
+            )
+          ) {
+            openAuthSessionAsync(request.url, redirectUrl, {
+              preferEphemeralSession: true,
+            }).then((result) => {
+              if (result.type !== 'success') {
+                postMessageToWebApp(webViewRef, 'authSessionCancel', {});
+              } else {
+                const uri = new URL(result.url);
+                const redirectParams = new URLSearchParams([
+                  ...params,
+                  ...uri.searchParams,
+                ]);
+                redirectParams.set(
+                  'socialProvider',
+                  mapSocialProviderToKey(request.url),
+                );
+                const redirectTo = `${authServerUrl}/embedded/${partnerId}?${redirectParams.toString()}`;
+                postMessageToWebApp(webViewRef, 'authSessionRedirect', {
+                  url: redirectTo,
+                });
+              }
+            });
+            return false;
+          }
+
           if (uri === request.url) return true;
 
           if (request.url.startsWith('https://sophon.xyz')) {
-            Linking.openURL(request.url);
+            openBrowserAsync(request.url);
             return false;
           }
 

@@ -1,5 +1,100 @@
 # @sophon-labs/account-api-sdk
 
+## 2.2.0
+
+### Minor Changes
+
+- Better support for social login
+
+### Patch Changes
+
+- c23ccc7: Preview version for better social network auth
+- c23ccc7: Changing dns to .com
+- c23ccc7: Upgrading view version number for retrocompatibility
+- c23ccc7: Adding social network to redirect url
+- c23ccc7: Reviewing retry logic on communicator
+- c23ccc7: Waiting for server isReady before moving on
+- Updated dependencies [c23ccc7]
+- Updated dependencies [c23ccc7]
+- Updated dependencies [c23ccc7]
+- Updated dependencies [c23ccc7]
+- Updated dependencies
+- Updated dependencies [c23ccc7]
+- Updated dependencies [c23ccc7]
+  - @sophon-labs/account-core@2.2.0
+
+## 2.1.6-next.5
+
+### Patch Changes
+
+- Changing dns to .com
+- Updated dependencies
+  - @sophon-labs/account-core@2.1.6-next.5
+
+## 2.1.6-next.4
+
+### Patch Changes
+
+- Reviewing retry logic on communicator
+- Updated dependencies
+  - @sophon-labs/account-core@2.1.6-next.4
+
+## 2.1.6-next.3
+
+### Patch Changes
+
+- Upgrading view version number for retrocompatibility
+- Updated dependencies
+  - @sophon-labs/account-core@2.1.6-next.3
+
+## 2.1.6-next.2
+
+### Patch Changes
+
+- Waiting for server isReady before moving on
+- Updated dependencies
+  - @sophon-labs/account-core@2.1.6-next.2
+
+## 2.1.6-next.1
+
+### Patch Changes
+
+- Adding social network to redirect url
+- Updated dependencies
+  - @sophon-labs/account-core@2.1.6-next.1
+
+## 2.1.6-next.0
+
+### Patch Changes
+
+- Preview version for better social network auth
+- Updated dependencies
+  - @sophon-labs/account-core@2.1.6-next.0
+
+## 2.1.5
+
+### Patch Changes
+
+- Changing initialization order on rn
+- Updated dependencies
+  - @sophon-labs/account-core@2.1.5
+
+## 2.1.4
+
+### Patch Changes
+
+- Cleanup on authentication on fresh install
+- Updated dependencies
+  - @sophon-labs/account-core@2.1.4
+
+## 2.1.3
+
+### Patch Changes
+
+- Removing disconnect from react native and adding is initialized
+- Updated dependencies
+  - @sophon-labs/account-core@2.1.3
+
 ## 2.1.2
 
 ### Patch Changes

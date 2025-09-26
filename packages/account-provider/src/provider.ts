@@ -78,10 +78,10 @@ export function createSophonEIP1193Provider(
     },
     accounts: () => getAccounts(storage, network),
     async request({ method, params }) {
-      console.log('EIP-1193 request:', method, params);
+      // console.log('EIP-1193 request:', method, params);
       switch (method) {
         case 'eth_requestAccounts': {
-          console.log('EIP-1193 eth_requestAccounts:', method, params);
+          // console.log('EIP-1193 eth_requestAccounts:', method, params);
           return handleRequestAccounts(
             storage,
             network,
@@ -91,37 +91,37 @@ export function createSophonEIP1193Provider(
         }
 
         case 'eth_accounts': {
-          console.log('EIP-1193 eth_accounts:', method, params);
+          // console.log('EIP-1193 eth_accounts:', method, params);
           return handleAccounts(storage, network);
         }
 
         case 'eth_chainId': {
-          console.log('EIP-1193 eth_chainId:', method, params);
+          // console.log('EIP-1193 eth_chainId:', method, params);
           return handleChainId(network);
         }
 
         case 'wallet_switchEthereumChain': {
-          console.log('EIP-1193 wallet_switchEthereumChain:', method, params);
+          // console.log('EIP-1193 wallet_switchEthereumChain:', method, params);
           return handleSwitchEthereumChain(network, params as unknown[]);
         }
 
         case 'personal_sign': {
-          console.log('EIP-1193 personal_sign:', method, params);
+          // console.log('EIP-1193 personal_sign:', method, params);
           return handlePersonalSign(executeRequest, params as unknown[]);
         }
 
         case 'eth_signTypedData_v4': {
-          console.log('EIP-1193 eth_signTypedData_v4:', method, params);
+          // console.log('EIP-1193 eth_signTypedData_v4:', method, params);
           return handleSignTypedDataV4(executeRequest, params as unknown[]);
         }
 
         case 'eth_sendTransaction': {
-          console.log('EIP-1193 eth_sendTransaction:', method, params);
+          // console.log('EIP-1193 eth_sendTransaction:', method, params);
           return handleSendTransaction(executeRequest, params as unknown[]);
         }
 
         case 'wallet_revokePermissions': {
-          console.log('EIP-1193 wallet_revokePermissions:', method, params);
+          // console.log('EIP-1193 wallet_revokePermissions:', method, params);
           return handleRevokePermissions(
             storage,
             network,
@@ -131,7 +131,7 @@ export function createSophonEIP1193Provider(
         }
 
         case 'wallet_requestPermissions': {
-          console.log('EIP-1193 wallet_requestPermissions:', method, params);
+          // console.log('EIP-1193 wallet_requestPermissions:', method, params);
           return handleRequestAccounts(
             storage,
             network,
@@ -143,7 +143,7 @@ export function createSophonEIP1193Provider(
         default: {
           // passthrough methods to the RPC client, no need for sending them to the account server
           // we can do common RPC call here
-          console.log('EIP-1193 passthrough method:', method, params);
+          // console.log('EIP-1193 passthrough method:', method, params);
           return await genericRPCHandler(network).request(method, params);
         }
       }

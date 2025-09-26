@@ -1,4 +1,5 @@
 import {
+  AppleIcon,
   DiscordIcon,
   GoogleIcon,
   TelegramIcon,
@@ -45,6 +46,8 @@ export function getSocialProviderIcon(
       return <TelegramIcon className={className} />;
     case 'discord':
       return <DiscordIcon className={className} />;
+    case 'apple':
+      return <AppleIcon className={className} />;
     default:
       return null;
   }

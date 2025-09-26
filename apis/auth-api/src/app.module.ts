@@ -2,7 +2,7 @@ import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { APP_FILTER } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
-
+import { AppController } from "./app.controller";
 import { AuthModule } from "./auth/auth.module";
 import { AwsModule } from "./aws/aws.module";
 import { JwtKeysService } from "./aws/jwt-keys.service";
@@ -12,7 +12,6 @@ import { awsConfig } from "./config/aws.config";
 import { dbConfig } from "./config/db.config";
 import { validationSchema } from "./config/validation.schema";
 import { JwksModule } from "./jwks/jwks.module";
-import { AppController } from "./app.controller";
 
 @Module({
 	imports: [
