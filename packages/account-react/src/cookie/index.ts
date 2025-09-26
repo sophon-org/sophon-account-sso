@@ -9,3 +9,7 @@ export const getCookieAuthToken = () => {
 export const setCookieAuthToken = (value: string) => {
   return cookies.set(SOPHON_AUTH_COOKIE_NAME, value);
 };
+
+export const clearCookieAuthToken = () => {
+  return cookies.remove(SOPHON_AUTH_COOKIE_NAME);
+};
