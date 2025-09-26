@@ -1,5 +1,11 @@
 # @sophon-labs/account-core
 
+## 2.2.1
+
+### Patch Changes
+
+- Fixing prod dns
+
 ## 2.2.0
 
 ### Minor Changes
