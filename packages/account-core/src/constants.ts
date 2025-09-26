@@ -24,7 +24,7 @@ export const AccountAuthAPIURL: Record<SophonNetworkType, string> = {
  * sophon networks
  */
 export const AvailableRPCURL: Record<SophonNetworkType, string> = {
-  mainnet: 'https://rpc.sophon.xyz',
+  mainnet: 'https://rpc.sophonapi.com',
   testnet: 'https://rpc.testnet.sophonapi.com',
 };
 
