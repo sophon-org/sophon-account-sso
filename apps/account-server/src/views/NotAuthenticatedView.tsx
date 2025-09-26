@@ -1,7 +1,7 @@
+import { AppleIcon } from '@dynamic-labs/iconic';
 import { ProviderEnum } from '@dynamic-labs/types';
 import { useSearchParams } from 'next/navigation';
 import { type FormEventHandler, useState } from 'react';
-import { IconApple } from '@/components/icons/icon-apple';
 import { IconDiscord } from '@/components/icons/icon-discord';
 import { IconGoogle } from '@/components/icons/icon-google';
 import { IconTelegram } from '@/components/icons/icon-telegram';
@@ -49,7 +49,7 @@ const SOCIAL_PROVIDERS_NEW = {
     label: 'Discord',
   },
   [ProviderEnum.Apple]: {
-    icon: IconApple,
+    icon: AppleIcon,
     label: 'Apple',
   },
 };
@@ -101,7 +101,7 @@ const MobileView = ({
                 <Loader className="w-4 h-4 border-white border-r-transparent" />
               ) : (
                 <div className="flex items-center justify-center">
-                  <Icon />
+                  <Icon className="w-6 h-6" />
                 </div>
               )}
             </button>
