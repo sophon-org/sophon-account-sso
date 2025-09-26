@@ -4,9 +4,9 @@ import type {
   SwapApiConfig,
   UnifiedTransactionResponse,
   UseGetSwapTransactionArgs,
-} from '../types/swap';
-import { createApiClient } from '../utils/apiClient';
-import { useSophonContext } from './useSophonContext';
+} from '../types';
+import { createApiClient } from '../utils/api-client';
+import { useSophonContext } from './use-sophon-context';
 
 /**
  * Hook to prepare a swap transaction

@@ -94,6 +94,67 @@ export interface SwapStatusRequest {
   chainId?: ChainId;
 }
 
+// Actual Swaps.xyz API response format (flat structure)
+export interface SwapStatusFlatResponse {
+  txId: string;
+  status: 'success' | 'pending' | 'refunded' | 'failed';
+  sender: Address;
+  srcChainId: ChainId;
+  dstChainId: ChainId;
+  srcTxHash: string;
+  dstTxHash?: string;
+  usdValue?: number;
+  bridgeDetails: {
+    isBridge: boolean;
+    bridgeTime?: number;
+    txPath: Array<{
+      chainId: ChainId;
+      txHash: string;
+      timestamp: number;
+      nextBridge?: string;
+    }>;
+  };
+  org?: {
+    appId: string;
+    affiliateId?: string;
+    appFees?: Array<{
+      recipient: Address;
+      token: Address;
+      amount: string;
+      usdValue?: number;
+    }>;
+  };
+  srcTx?: {
+    toAddress: Address;
+    txHash: string;
+    chainId: ChainId;
+    value: string;
+    timestamp: number;
+    paymentToken?: {
+      name: string;
+      symbol: string;
+      decimals: number;
+      address: Address;
+      amount: string;
+    };
+  };
+  dstTx?: {
+    toAddress: Address;
+    txHash: string;
+    chainId: ChainId;
+    value: string;
+    timestamp: number;
+    paymentToken?: {
+      name: string;
+      symbol: string;
+      decimals: number;
+      address: Address;
+      amount: string;
+    };
+  };
+}
+
+// Expected nested format (legacy/alternative)
 export interface SwapStatusResponse {
   tx: {
     txId: string;
