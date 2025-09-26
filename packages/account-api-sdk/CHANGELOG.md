@@ -1,5 +1,13 @@
 # @sophon-labs/account-api-sdk
 
+## 2.1.6-next.5
+
+### Patch Changes
+
+- Changing dns to .com
+- Updated dependencies
+  - @sophon-labs/account-core@2.1.6-next.5
+
 ## 2.1.6-next.4
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 2.1.6-next.5
+
+### Patch Changes
+
+- Changing dns to .com
+
 ## 2.1.6-next.4
 
 ### Patch Changes
