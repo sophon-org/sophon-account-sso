@@ -1,5 +1,20 @@
 # @sophon-labs/account-core
 
+## 2.2.0
+
+### Minor Changes
+
+- Better support for social login
+
+### Patch Changes
+
+- c23ccc7: Preview version for better social network auth
+- c23ccc7: Changing dns to .com
+- c23ccc7: Upgrading view version number for retrocompatibility
+- c23ccc7: Adding social network to redirect url
+- c23ccc7: Reviewing retry logic on communicator
+- c23ccc7: Waiting for server isReady before moving on
+
 ## 2.1.6-next.5
 
 ### Patch Changes
