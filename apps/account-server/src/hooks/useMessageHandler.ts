@@ -53,7 +53,7 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
       // Store the incoming request if it's an RPC request
       if (data?.id && data?.content) {
         const method = data.content?.action?.method;
-        logWithUser(`RPC Method Requested > ${method}`);
+        logWithUser(`RPC Method Requested > ${method} > ${data.id}`);
         if (method === 'eth_requestAccounts') {
           const params = data.content.action?.params as
             | { sessionPreferences?: unknown }

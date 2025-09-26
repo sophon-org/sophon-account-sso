@@ -135,6 +135,7 @@ export const MainStateMachineContextProvider = ({
                 discord: false,
                 telegram: false,
                 x: false,
+                apple: false,
               },
               partnerId: undefined,
             };

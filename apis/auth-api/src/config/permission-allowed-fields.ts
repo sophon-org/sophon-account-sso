@@ -4,6 +4,7 @@ export const PERMISSION_ALLOWED_FIELDS = [
 	"google",
 	"telegram",
 	"x",
+	"apple",
 ] as const;
 export type PermissionAllowedField = (typeof PERMISSION_ALLOWED_FIELDS)[number];
 export const isPermissionAllowedField = (

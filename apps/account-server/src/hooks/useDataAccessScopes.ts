@@ -37,6 +37,9 @@ export const useDataAccessScopes = (requestedScopes: DataScopes[]) => {
         if (cred.oauthProvider === 'twitter') {
           contextScopes.push('x');
         }
+        if (cred.oauthProvider === 'apple') {
+          contextScopes.push('apple');
+        }
       });
       setUserScopes([
         ...contextScopes.filter((scope) =>

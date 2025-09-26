@@ -47,6 +47,7 @@ Sentry.init({
       'fetch failed',
       'extension://',
       'NetworkError',
+      'has not been authorized yet',
     ];
 
     if (noisyPatterns.some((pattern) => errorMessage.includes(pattern))) {

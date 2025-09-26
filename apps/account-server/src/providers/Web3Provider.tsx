@@ -44,7 +44,6 @@ export const Web3Provider = ({
           },
           // This is called after everything is validated and the user should be considered authenticated
           onAuthSuccess({ primaryWallet }) {
-            console.log('onAuthSuccess', primaryWallet);
             if (primaryWallet) {
               sendMessage('k1.login', {
                 address: primaryWallet.address as `0x${string}`,
