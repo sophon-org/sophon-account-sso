@@ -1,10 +1,10 @@
-// src/auth/auth.service.ts
 import { randomUUID } from "node:crypto";
 import {
 	BadRequestException,
 	ForbiddenException,
 	Inject,
 	Injectable,
+	NotFoundException,
 	UnauthorizedException,
 } from "@nestjs/common";
 import { ConfigType } from "@nestjs/config";
@@ -37,6 +37,8 @@ type NoncePayload = JwtPayload & {
 	sub?: string;
 	userId?: string;
 };
+
+type ClientInfo = { ip?: string | null; userAgent?: string | null };
 
 @Injectable()
 export class AuthService {
@@ -115,7 +117,6 @@ export class AuthService {
 				issuer: expectedIss,
 			}) as NoncePayload;
 		} catch (e) {
-			// eslint-disable-next-line no-console
 			console.error(e);
 			this.mapJwtError(e, "nonce");
 		}
@@ -185,6 +186,7 @@ export class AuthService {
 		typedData: TypedDataDefinition,
 		signature: `0x${string}`,
 		nonceToken: string,
+		client?: ClientInfo,
 	): Promise<{
 		accessToken: string;
 		accessTokenExpiresAt: number;
@@ -204,7 +206,6 @@ export class AuthService {
 				issuer: expectedIss,
 			}) as NoncePayload;
 		} catch (e) {
-			// eslint-disable-next-line no-console
 			console.error(e);
 			this.mapJwtError(e, "nonce");
 		}
@@ -297,6 +298,8 @@ export class AuthService {
 				decoded?.exp != null
 					? new Date(decoded.exp * 1000)
 					: new Date(Date.now() + refreshExp * 1000),
+			createdIp: client?.ip ?? null,
+			createdUserAgent: client?.userAgent ?? null,
 		});
 
 		return {
@@ -381,7 +384,10 @@ export class AuthService {
 		await this.sessions.revokeSid(r.sid);
 	}
 
-	async refresh(refreshToken: string): Promise<{
+	async refresh(
+		refreshToken: string,
+		client?: ClientInfo, // ← now optional and used if present
+	): Promise<{
 		accessToken: string;
 		accessTokenExpiresAt: number;
 		refreshToken: string;
@@ -394,7 +400,6 @@ export class AuthService {
 				issuer: this.auth.refreshIssuer,
 			}) as RefreshTokenPayload;
 		} catch (e) {
-			// eslint-disable-next-line no-console
 			console.error(e);
 			this.mapJwtError(e, "refresh");
 		}
@@ -471,6 +476,13 @@ export class AuthService {
 			sid: r.sid,
 			newJti,
 			newRefreshExpiresAt,
+			...(client
+				? {
+						ip: client.ip ?? null,
+						userAgent: client.userAgent ?? null,
+						ts: new Date(),
+					}
+				: {}),
 		});
 
 		return {
@@ -479,5 +491,17 @@ export class AuthService {
 			refreshToken: newRefresh,
 			refreshTokenExpiresAt: iat + refreshExp,
 		};
+	}
+
+	async listActiveSessionsForUser(userId: string, aud?: string) {
+		const list = await this.sessions.findActiveForUser(userId);
+		return aud ? list.filter((s) => s.aud === aud) : list;
+	}
+
+	async revokeSessionForUser(userId: string, sid: string): Promise<void> {
+		const row = await this.sessions.getBySid(sid);
+		if (!row) throw new NotFoundException("session not found");
+		if (row.userId !== userId) throw new ForbiddenException("forbidden");
+		await this.sessions.revokeSid(sid);
 	}
 }

@@ -2,27 +2,48 @@ import { Column, Entity, PrimaryColumn } from "typeorm";
 
 @Entity("sessions")
 export class Session {
-	@PrimaryColumn()
-	sid: string;
+	@PrimaryColumn("uuid")
+	sid!: string;
 
-	@Column({ name: "user_id" })
-	userId: string;
+	@Column({ name: "user_id", type: "text" })
+	userId!: string;
 
-	@Column()
-	aud: string;
+	@Column({ type: "text" })
+	aud!: string;
 
-	@Column({ name: "current_refresh_jti" })
-	currentRefreshJti: string;
+	@Column({ name: "current_refresh_jti", type: "uuid" })
+	currentRefreshJti!: string;
 
-	@Column({ name: "created_at", type: "timestamp", default: () => "now()" })
-	createdAt: Date;
+	@Column({ name: "created_at", type: "timestamptz", default: () => "now()" })
+	createdAt!: Date;
 
-	@Column({ name: "revoked_at", type: "timestamp", nullable: true })
-	revokedAt: Date | null;
+	@Column({ name: "revoked_at", type: "timestamptz", nullable: true })
+	revokedAt!: Date | null;
 
-	@Column({ name: "invalidate_before", type: "timestamp", nullable: true })
-	invalidateBefore: Date | null;
+	@Column({ name: "invalidate_before", type: "timestamptz", nullable: true })
+	invalidateBefore!: Date | null;
 
-	@Column({ name: "refresh_expires_at", type: "timestamp" })
-	refreshExpiresAt: Date;
+	@Column({ name: "refresh_expires_at", type: "timestamptz" })
+	refreshExpiresAt!: Date;
+
+	// New fields you want:
+	@Column({ name: "created_ip", type: "varchar", length: 64, nullable: true })
+	createdIp!: string | null;
+
+	@Column({ name: "created_user_agent", type: "text", nullable: true })
+	createdUserAgent!: string | null;
+
+	@Column({
+		name: "last_refresh_ip",
+		type: "varchar",
+		length: 64,
+		nullable: true,
+	})
+	lastRefreshIp!: string | null;
+
+	@Column({ name: "last_refresh_user_agent", type: "text", nullable: true })
+	lastRefreshUserAgent!: string | null;
+
+	@Column({ name: "last_refresh_at", type: "timestamptz", nullable: true })
+	lastRefreshAt!: Date | null;
 }

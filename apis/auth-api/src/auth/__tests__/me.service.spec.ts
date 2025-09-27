@@ -1,4 +1,5 @@
 import type { JwtPayload } from "jsonwebtoken";
+import { SecretsService } from "src/aws/secrets.service";
 import { MeService } from "../me.service";
 
 describe("MeService", () => {
@@ -64,7 +65,10 @@ describe("MeService", () => {
 			scope: "email discord x",
 		};
 
-		const svc = new MeService();
+		const secretsMock: Partial<SecretsService> = {
+			loadJwtSecrets: jest.fn().mockResolvedValue({ dynamicToken: API_TOKEN }),
+		};
+		const svc = new MeService(secretsMock as SecretsService);
 
 		// Act
 		const result = await svc.buildMeResponse(payload);

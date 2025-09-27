@@ -1,4 +1,5 @@
 import type { JwtPayload } from "jsonwebtoken";
+import { SecretsService } from "src/aws/secrets.service";
 import { MeService } from "../me.service";
 
 // Gate live integration with an env flag so it won't run in CI accidentally
@@ -33,7 +34,10 @@ describeLive("MeService (integration with DynamicAuth)", () => {
 	});
 
 	itLive("fetches user and returns scoped fields", async () => {
-		const svc = new MeService();
+		const secretsMock: Partial<SecretsService> = {
+			loadJwtSecrets: jest.fn().mockResolvedValue({ dynamicToken: API_TOKEN }),
+		};
+		const svc = new MeService(secretsMock as SecretsService);
 
 		const payload: JwtPayload & { userId: string; scope: string } = {
 			sub: "0xabc",
@@ -66,7 +70,10 @@ describeLive("MeService (integration with DynamicAuth)", () => {
 		const badToken = "dyn_invalid_token_for_test";
 		process.env.DYNAMICAUTH_API_TOKEN = badToken;
 
-		const svc = new MeService();
+		const secretsMock: Partial<SecretsService> = {
+			loadJwtSecrets: jest.fn().mockResolvedValue({ dynamicToken: API_TOKEN }),
+		};
+		const svc = new MeService(secretsMock as SecretsService);
 		const payload: JwtPayload & { userId: string; scope: string } = {
 			sub: "0xabc",
 			aud: "sophon-web",
