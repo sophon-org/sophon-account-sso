@@ -1,5 +1,11 @@
 # @sophon-labs/account-eip6963
 
+## 2.2.1
+
+### Patch Changes
+
+- Fixing prod dns
+
 ## 2.2.0
 
 ### Minor Changes
