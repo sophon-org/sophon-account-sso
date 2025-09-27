@@ -10,7 +10,7 @@ export type SophonNetworkType = 'mainnet' | 'testnet';
  * sophon networks
  */
 export const AccountServerURL: Record<SophonNetworkType, string> = {
-  mainnet: 'https://api-prd-auth.sophonapi.com',
+  mainnet: 'https://account.sophonapi.com',
   testnet: 'https://account-stg.sophonapi.com',
 };
 

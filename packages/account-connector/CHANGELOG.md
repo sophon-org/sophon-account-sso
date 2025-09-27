@@ -1,5 +1,14 @@
 # @sophon-labs/account-connector
 
+## 2.2.1
+
+### Patch Changes
+
+- Fixing prod dns
+- Updated dependencies
+  - @sophon-labs/account-core@2.2.1
+  - @sophon-labs/account-provider@2.2.1
+
 ## 2.2.0
 
 ### Minor Changes
