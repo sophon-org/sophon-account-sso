@@ -1,3 +1,4 @@
+import { PinoLogger } from "nestjs-pino";
 import {
 	type Address,
 	type Chain,
@@ -15,6 +16,7 @@ export const verifyEIP1271Signature = async ({
 	primaryType,
 	message,
 	chain,
+	logger,
 }: {
 	accountAddress: Address;
 	signature: Hash;
@@ -29,21 +31,19 @@ export const verifyEIP1271Signature = async ({
 	primaryType: string;
 	message: Record<string, unknown>;
 	chain: Chain;
-}) => {
+	logger: PinoLogger;
+}): Promise<boolean> => {
 	try {
-		const publicClient = createPublicClient({
-			chain,
-			transport: http(),
+		const publicClient = createPublicClient({ chain, transport: http() });
+		const messageHash = hashTypedData({ domain, types, primaryType, message });
+
+		logger.debug({
+			evt: "eip1271.hash",
+			accountAddress,
+			chainId: chain?.id,
+			messageHash,
 		});
 
-		const messageHash = hashTypedData({
-			domain,
-			types,
-			primaryType,
-			message,
-		});
-
-		// Call isValidSignature on the SsoAccount contract
 		const result = await publicClient.readContract({
 			address: accountAddress,
 			abi: [
@@ -62,15 +62,24 @@ export const verifyEIP1271Signature = async ({
 			args: [messageHash, signature],
 		});
 
-		// EIP-1271 magic value for valid signature
 		const EIP1271_MAGIC_VALUE = "0x1626ba7e";
 		const isValid = result === EIP1271_MAGIC_VALUE;
-		console.log("🔍 EIP-1271 result:", result);
-		console.log("🔍 Is valid signature:", isValid);
 
+		logger.info({
+			evt: "eip1271.result",
+			accountAddress,
+			chainId: chain?.id,
+			result,
+			isValid,
+		});
 		return isValid;
-	} catch (error) {
-		console.error("❌ EIP-1271 verification failed:", error);
+	} catch (err) {
+		logger.error({
+			evt: "eip1271.error",
+			accountAddress,
+			chainId: chain?.id,
+			err,
+		});
 		return false;
 	}
 };

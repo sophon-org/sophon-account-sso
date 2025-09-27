@@ -1,6 +1,7 @@
 import { ConfigModule } from "@nestjs/config";
 import { Test } from "@nestjs/testing";
 import jwt from "jsonwebtoken";
+import { LoggerModule } from "nestjs-pino";
 import type { TypedDataDefinition } from "viem";
 import { JwtKeysService } from "../../aws/jwt-keys.service";
 import { authConfig } from "../../config/auth.config";
@@ -8,6 +9,7 @@ import { PartnerRegistryService } from "../../partners/partner-registry.service"
 import { SessionsRepository } from "../../sessions/sessions.repository";
 import { AuthService } from "../auth.service";
 
+const loggerModule = LoggerModule.forRoot({ pinoHttp: { enabled: false } });
 // --- jsonwebtoken mocks ---
 jest.mock("jsonwebtoken", () => ({
 	sign: jest.fn().mockReturnValue("mocked.token"),
@@ -75,7 +77,7 @@ describe("AuthService", () => {
 
 	beforeEach(async () => {
 		const module = await Test.createTestingModule({
-			imports: [ConfigModule.forFeature(authConfig)],
+			imports: [ConfigModule.forFeature(authConfig), loggerModule],
 			providers: [
 				AuthService,
 				{ provide: PartnerRegistryService, useValue: partnerRegistryMock },
