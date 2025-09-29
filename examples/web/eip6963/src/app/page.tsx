@@ -1,14 +1,13 @@
-"use client";
+'use client';
 
-import { useIsMounted } from "connectkit";
-import { useAccount } from "wagmi";
-import { useSophonAccount } from "@sophon-labs/account-react";
-
-import { Loader } from "../../components/loader";
-import { Logo } from "../../components/logo";
-import { PaymasterProvider } from "../../components/paymaster.provider";
-import { ProfilePanel } from "../../components/profile.panel";
-import Connectors from "../../components/connectors";
+import { useSophonAccount } from '@sophon-labs/account-react';
+import { useIsMounted } from 'connectkit';
+import { useAccount } from 'wagmi';
+import Connectors from '../../components/connectors';
+import { Loader } from '../../components/loader';
+import { Logo } from '../../components/logo';
+import { PaymasterProvider } from '../../components/paymaster.provider';
+import { ProfilePanel } from '../../components/profile.panel';
 
 export default function Home() {
   const isMounted = useIsMounted();
