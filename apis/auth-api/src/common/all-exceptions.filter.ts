@@ -35,7 +35,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
 			);
 		}
 
-
 		const shouldLog = false;
 		if (shouldLog) {
 			const errObj = exception instanceof Error ? exception.stack : exception;
