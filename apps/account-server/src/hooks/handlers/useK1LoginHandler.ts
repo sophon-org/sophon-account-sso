@@ -16,9 +16,6 @@ import { getsSmartAccounts } from '@/service/smart-account.server';
 export const useK1LoginHandler = () => {
   const actorRef = MainStateMachineContext.useActorRef();
   const { login } = useAccountContext();
-  const { incoming, authentication } = MainStateMachineContext.useSelector(
-    (state) => state.context.requests,
-  );
 
   useEventHandler('k1.login', async (payload) => {
     if (!payload.address) {
@@ -48,14 +45,6 @@ export const useK1LoginHandler = () => {
       },
       payload.wallet,
     );
-
-    if (incoming && authentication) {
-      // handleAuthSuccessResponse(
-      //   { address: smartAccountAddress },
-      //   incoming!,
-      //   session,
-      // );
-    }
 
     actorRef.send({ type: 'LOGIN_SUCCESS' });
   });

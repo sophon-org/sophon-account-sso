@@ -66,6 +66,11 @@ export const deployAccount = async (ownerAddress: `0x${string}`) => {
         installNoDataModules: [],
       });
 
+      // for now, await 5 seconds to make sure the account is deployed and ready
+      // we have a problem that the RPC takes some to reflect the latest code, so if we
+      // call signature right after the contract deployment, it will fail
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+
       return deployedAccount;
     } catch (error) {
       console.error(error);
