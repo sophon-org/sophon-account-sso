@@ -184,7 +184,7 @@ const WebView = ({
               {socialProvider === provider ? (
                 <Loader className="w-4 h-4 border-white border-r-transparent" />
               ) : (
-                <Icon />
+                <Icon className="w-6 h-6" />
               )}
             </button>
           ))}
