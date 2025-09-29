@@ -1,25 +1,23 @@
-import { useEffect, useState } from 'react';
-import { erc20Abi, formatUnits, isAddress, parseEther, parseUnits } from 'viem';
-import { useAccount, useBalance, useSendTransaction } from 'wagmi';
-import { useWriteContractWithPaymaster } from '../utils/useWriteContractWithPaymaster';
+import { useEffect, useState } from "react";
+import { erc20Abi, formatUnits, isAddress, parseEther, parseUnits } from "viem";
+import { useAccount, useBalance, useSendTransaction } from "wagmi";
+import { useWriteContractWithPaymaster } from "../utils/useWriteContractWithPaymaster";
 
 export default function TransactionNativePanel() {
   const { address } = useAccount();
-  const [targetAddress, setTargetAddress] = useState<string>('');
+  const [targetAddress, setTargetAddress] = useState<string>("");
   const [txHash, setTxHash] = useState<`0x${string}` | undefined>(undefined);
   const [txError, setTxError] = useState<string | undefined>(undefined);
-  const [txType, setTxType] = useState<
-    'soph' | 'erc20' | 'approve' | undefined
-  >(undefined);
+  const [txType, setTxType] = useState<"soph" | "erc20" | "approve" | undefined>(undefined);
 
   const [valueToSend, setValueToSend] = useState<number>(0.001);
   const { data: balance } = useBalance({
     address,
   });
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState<string>("");
 
   useEffect(() => {
-    if (targetAddress === '') {
+    if (targetAddress === "") {
       setTargetAddress(address!);
     }
   }, [address, targetAddress]);
@@ -46,15 +44,15 @@ export default function TransactionNativePanel() {
   } = useWriteContractWithPaymaster();
 
   const handleSendSoph = () => {
-    setError('');
-    setTxType('soph');
+    setError("");
+    setTxType("soph");
     if (!targetAddress || !valueToSend) {
-      setError('Please fill in all fields');
+      setError("Please fill in all fields");
       return;
     }
 
     if (!isAddress(targetAddress)) {
-      setError('Invalid target address');
+      setError("Invalid target address");
       return;
     }
 
@@ -63,51 +61,45 @@ export default function TransactionNativePanel() {
       : 0;
 
     if (valueToSend > balanceValue) {
-      setError('Insufficient balance to execute transfer.');
+      setError("Insufficient balance to execute transfer.");
       return;
     }
 
     sendTransaction({
       to: targetAddress,
       value: parseEther(valueToSend.toString()),
-      data: '0x',
+      data: "0x",
     });
   };
 
   const handleERC20Approve = () => {
-    setTxType('approve');
+    setTxType("approve");
     approveWriteContract({
-      address: '0xE676a42fEd98d51336f02510bB5d598893AbfE90', // MOCK MintMe token
+      address: "0xE676a42fEd98d51336f02510bB5d598893AbfE90", // MOCK MintMe token
       abi: erc20Abi,
-      functionName: 'approve',
-      args: [
-        targetAddress as `0x${string}`,
-        parseUnits(valueToSend.toString(), 18),
-      ],
+      functionName: "approve",
+      args: [targetAddress as `0x${string}`, parseUnits(valueToSend.toString(), 18)],
     });
   };
 
   const handleERC20Transfer = () => {
-    setTxType('erc20');
+    setTxType("erc20");
     writeContract({
-      address: '0xE676a42fEd98d51336f02510bB5d598893AbfE90', // MOCK MintMe token
+      address: "0xE676a42fEd98d51336f02510bB5d598893AbfE90", // MOCK MintMe token
       abi: erc20Abi,
-      functionName: 'transfer',
-      args: [
-        targetAddress as `0x${string}`,
-        parseUnits(valueToSend.toString(), 18),
-      ],
+      functionName: "transfer",
+      args: [targetAddress as `0x${string}`, parseUnits(valueToSend.toString(), 18)],
     });
   };
 
   useEffect(() => {
     if (transactionData || writeContractData || approveContractData) {
       setTxError(undefined);
-      if (txType === 'soph') {
+      if (txType === "soph") {
         setTxHash(transactionData);
-      } else if (txType === 'erc20') {
+      } else if (txType === "erc20") {
         setTxHash(writeContractData);
-      } else if (txType === 'approve') {
+      } else if (txType === "approve") {
         setTxHash(approveContractData);
       }
     }
@@ -117,20 +109,16 @@ export default function TransactionNativePanel() {
     setTxError(undefined);
     if (txErrorWagmi || writeContractErrorWagmi || approveContractError) {
       setTxHash(undefined);
-      if (txType === 'soph') {
-        setTxError(
-          (txErrorWagmi as { details?: string })?.details ??
-            txErrorWagmi?.message,
-        );
-      } else if (txType === 'erc20') {
+      if (txType === "soph") {
+        setTxError((txErrorWagmi as { details?: string })?.details ?? txErrorWagmi?.message);
+      } else if (txType === "erc20") {
         setTxError(
           (writeContractErrorWagmi as { details?: string })?.details ??
-            writeContractErrorWagmi?.message,
+            writeContractErrorWagmi?.message
         );
-      } else if (txType === 'approve') {
+      } else if (txType === "approve") {
         setTxError(
-          (approveContractError as { details?: string })?.details ??
-            approveContractError?.message,
+          (approveContractError as { details?: string })?.details ?? approveContractError?.message
         );
       }
     }
@@ -158,7 +146,7 @@ export default function TransactionNativePanel() {
             type="text"
             placeholder="Target Address"
             className="p-2 rounded-md border border-gray-300"
-            value={targetAddress}
+            value={targetAddress ?? ""}
             onChange={(e) => setTargetAddress(e.target.value)}
           />
         </div>
@@ -187,21 +175,21 @@ export default function TransactionNativePanel() {
           onClick={handleSendSoph}
           type="button"
         >
-          💸 {isSendingSoph ? 'Sending...' : 'Send SOPH'}
+          💸 {isSendingSoph ? "Sending..." : "Send SOPH"}
         </button>
         <button
           className="bg-purple-400 text-white p-2 rounded-md w-full hover:bg-purple-500 hover:cursor-pointer border-1 border-black/40"
           onClick={handleERC20Transfer}
           type="button"
         >
-          💵 {isSendingERC20 ? 'Sending...' : 'Send DTN'}
+          💵 {isSendingERC20 ? "Sending..." : "Send DTN"}
         </button>
         <button
           className="bg-purple-400 text-white p-2 rounded-md w-full hover:bg-purple-500 hover:cursor-pointer border-1 border-black/40"
           onClick={handleERC20Approve}
           type="button"
         >
-          👍 {isSendingApprove ? 'Approving...' : 'Approve DTN'}
+          👍 {isSendingApprove ? "Approving..." : "Approve DTN"}
         </button>
       </div>
       {txError && (

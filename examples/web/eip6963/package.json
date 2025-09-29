@@ -13,8 +13,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@rainbow-me/rainbowkit": "^2.2.8",
     "@sophon-labs/account-core": "2.1.2",
     "@sophon-labs/account-eip6963": "2.1.2",
+    "@sophon-labs/account-react": "^2.1.3",
     "@tanstack/react-query": "^5.83.0",
     "connectkit": "^1.9.1",
     "next": "15.4.3",
