@@ -27,7 +27,7 @@ import { JwksModule } from "./jwks/jwks.module";
 
 		LoggerModule.forRoot({
 			pinoHttp: {
-				level: process.env.NODE_ENV === "production" ? "info" : "debug",
+				level: authConfig().logLevel,
 				redact: ["req.headers.authorization", "req.headers.cookie"],
 				genReqId: (req, res) => {
 					const id =
