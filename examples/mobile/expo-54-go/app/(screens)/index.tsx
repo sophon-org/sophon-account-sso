@@ -3,7 +3,7 @@ import {
   useSophonAccount,
   useSophonClient,
 } from '@sophon-labs/account-react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import { erc20Abi, parseEther, parseUnits } from 'viem';
 import { sophonTestnet } from 'viem/chains';
@@ -26,8 +26,10 @@ export default function HomeScreen() {
     isConnecting,
   } = useSophonAccount();
 
-  console.log('is connected', isConnected);
-  console.log('is initialized', initialized);
+  useEffect(() => {
+    console.log('is connected', isConnected);
+    console.log('is initialized', initialized);
+  }, [isConnected, initialized]);
 
   const { walletClient } = useSophonClient();
   const [signature, setSignature] = useState<string>();

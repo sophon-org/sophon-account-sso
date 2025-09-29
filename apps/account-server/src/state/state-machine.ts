@@ -37,6 +37,7 @@ const defaultContext = {
     discord: false,
     telegram: false,
     x: false,
+    apple: false,
   } as Record<Scopes, boolean>,
   partnerId: undefined as string | undefined,
   isWalletConnectActive: false as boolean,

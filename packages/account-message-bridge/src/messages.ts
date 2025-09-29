@@ -34,6 +34,10 @@ export type FromNativeActions = {
   echo: {
     message: string;
   };
+  authSessionRedirect: {
+    url: string;
+  };
+  authSessionCancel: unknown;
   sdkStatusRequest: unknown;
   openModal: unknown;
   closeModal: unknown;

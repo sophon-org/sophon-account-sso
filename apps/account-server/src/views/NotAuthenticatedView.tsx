@@ -1,3 +1,4 @@
+import { AppleIcon } from '@dynamic-labs/iconic';
 import { ProviderEnum } from '@dynamic-labs/types';
 import { type FormEventHandler, useState } from 'react';
 import { IconDiscord } from '@/components/icons/icon-discord';
@@ -14,7 +15,7 @@ import { useWalletConnection } from '@/hooks/useWalletConnection';
 import { trackAuthMethodSelected, trackAuthStarted } from '@/lib/analytics';
 import { windowService } from '@/service/window.service';
 
-const SOCIAL_PROVIDERS = {
+const SOCIAL_PROVIDERS_WEB = {
   [ProviderEnum.Google]: {
     icon: IconGoogle,
     label: 'Google',
@@ -30,6 +31,29 @@ const SOCIAL_PROVIDERS = {
   [ProviderEnum.Telegram]: {
     icon: IconTelegram,
     label: 'Telegram',
+  },
+  [ProviderEnum.Apple]: {
+    icon: AppleIcon,
+    label: 'Apple',
+  },
+};
+
+const SOCIAL_PROVIDERS_MOBILE = {
+  [ProviderEnum.Google]: {
+    icon: IconGoogle,
+    label: 'Google',
+  },
+  [ProviderEnum.Twitter]: {
+    icon: IconTwitter,
+    label: 'Twitter',
+  },
+  [ProviderEnum.Discord]: {
+    icon: IconDiscord,
+    label: 'Discord',
+  },
+  [ProviderEnum.Apple]: {
+    icon: AppleIcon,
+    label: 'Apple',
   },
 };
 
@@ -64,7 +88,7 @@ const MobileView = ({
 
       <div className="flex flex-col gap-6 px-6">
         <div className="flex flex-row gap-2">
-          {Object.entries(SOCIAL_PROVIDERS).map(
+          {Object.entries(SOCIAL_PROVIDERS_MOBILE).map(
             ([provider, { icon: Icon }]) => (
               <button
                 type="button"
@@ -76,7 +100,7 @@ const MobileView = ({
                   <Loader className="w-4 h-4 border-white border-r-transparent" />
                 ) : (
                   <div className="flex items-center justify-center">
-                    <Icon />
+                    <Icon className="w-6 h-6" />
                   </div>
                 )}
               </button>
@@ -145,7 +169,7 @@ const WebView = ({
           </div>
         )}
         <div className="flex flex-row gap-2">
-          {Object.entries(SOCIAL_PROVIDERS).map(
+          {Object.entries(SOCIAL_PROVIDERS_WEB).map(
             ([provider, { icon: Icon }]) => (
               <button
                 type="button"
@@ -156,7 +180,7 @@ const WebView = ({
                 {socialProvider === provider ? (
                   <Loader className="w-4 h-4 border-white border-r-transparent" />
                 ) : (
-                  <Icon />
+                  <Icon className="w-6 h-6" />
                 )}
               </button>
             ),

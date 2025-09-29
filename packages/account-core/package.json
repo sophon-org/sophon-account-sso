@@ -1,7 +1,7 @@
 {
   "name": "@sophon-labs/account-core",
   "description": "Core package for the Sophon Account with common utilities",
-  "version": "2.1.5",
+  "version": "2.2.1",
   "license": "MIT",
   "author": "Sophon Team",
   "type": "module",
