@@ -1,7 +1,9 @@
 import { Test } from "@nestjs/testing";
+import { LoggerModule } from "nestjs-pino";
 import { hyperindexConfig } from "src/config/hyperindex.config";
 import { HyperindexService } from "src/hyperindex/hyperindex.service";
 
+const loggerModule = LoggerModule.forRoot({ pinoHttp: { enabled: false } });
 const TEST_OWNER = "0xe749b7469a9911e451600cb31b5ca180743183ce";
 const EXPECTED_ACCOUNT = "0x53baecdbe5e418cf7c55f7421c3a687e617e21b8";
 
@@ -32,6 +34,7 @@ describe("HyperindexService (integration)", () => {
 		});
 
 		const moduleRef = await Test.createTestingModule({
+			imports: [loggerModule],
 			providers: [
 				HyperindexService,
 				{

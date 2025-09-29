@@ -1,7 +1,9 @@
 import { Test, type TestingModule } from "@nestjs/testing";
+import { LoggerModule } from "nestjs-pino";
 import { JwtKeysService } from "../../aws/jwt-keys.service"; // adjust the path if needed
 import { JwksController } from "../jwks.controller";
 
+const loggerModule = LoggerModule.forRoot({ pinoHttp: { enabled: false } });
 describe("JwksController", () => {
 	let controller: JwksController;
 
@@ -16,6 +18,7 @@ describe("JwksController", () => {
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
+			imports: [loggerModule],
 			controllers: [JwksController],
 			providers: [{ provide: JwtKeysService, useValue: jwtKeysServiceMock }],
 		}).compile();

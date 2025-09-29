@@ -1,12 +1,14 @@
 import { UnauthorizedException } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import type { Request, Response } from "express";
+import { LoggerModule } from "nestjs-pino";
 import { AuthController } from "../auth.controller";
 import { AuthService } from "../auth.service";
 import type { VerifySiweDto } from "../dto/verify-siwe.dto";
 import { MeService } from "../me.service";
 import type { AccessTokenPayload } from "../types";
 
+const loggerModule = LoggerModule.forRoot({ pinoHttp: { enabled: false } });
 describe("AuthController (new flows)", () => {
 	let controller: AuthController;
 
@@ -71,6 +73,7 @@ describe("AuthController (new flows)", () => {
 
 	beforeEach(async () => {
 		const module = await Test.createTestingModule({
+			imports: [loggerModule],
 			controllers: [AuthController],
 			providers: [
 				{ provide: AuthService, useValue: authServiceMock },

@@ -18,6 +18,7 @@ import {
 	ApiTags,
 } from "@nestjs/swagger";
 import type { Request, Response } from "express";
+import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
 import { extractRefreshToken } from "../utils/token-extractor";
 import { AuthService } from "./auth.service";
 import { NonceRequestDto } from "./dto/nonce-request.dto";
@@ -47,9 +48,7 @@ function requireUserId(
 	user: AccessTokenPayload & { userId?: string; sub?: string },
 ): string {
 	const id = user.userId ?? user.sub;
-	if (!id) {
-		throw new UnauthorizedException("missing subject/userId in token");
-	}
+	if (!id) throw new UnauthorizedException("missing subject/userId in token");
 	return id;
 }
 
@@ -59,18 +58,33 @@ export class AuthController {
 	constructor(
 		private readonly authService: AuthService,
 		private readonly meService: MeService,
+		@InjectPinoLogger(AuthController.name)
+		private readonly logger: PinoLogger,
 	) {}
 
 	@Post("nonce")
 	@ApiBody({ type: NonceRequestDto, required: true })
 	@ApiOkResponse({ description: "Returns signed nonce JWT" })
 	async getNonce(@Body() body: NonceRequestDto, @Res() res: Response) {
+		this.logger.info(
+			{
+				evt: "auth.nonce.request",
+				address: body.address,
+				partnerId: body.partnerId,
+				fieldsCount: body.fields?.length ?? 0,
+				hasUserId: Boolean(body.userId),
+			},
+			"nonce requested",
+		);
+
 		const token = await this.authService.generateNonceTokenForAddress(
 			body.address,
 			body.partnerId,
 			body.fields,
 			body.userId,
 		);
+
+		this.logger.debug({ evt: "auth.nonce.issued" }, "nonce issued");
 		return res.json({ nonce: token });
 	}
 
@@ -84,18 +98,43 @@ export class AuthController {
 		@Res() res: Response,
 		@Req() req: Request,
 	) {
+		const ci = clientInfo(req);
+		this.logger.info(
+			{
+				evt: "auth.verify.attempt",
+				address: body.address,
+				hasTypedData: Boolean(body.typedData),
+				hasSignature: Boolean(body.signature),
+				hasNonce: Boolean(body.nonceToken),
+				ip: ci.ip,
+			},
+			"verify attempt",
+		);
+
 		try {
 			const {
 				accessToken,
 				accessTokenExpiresAt,
 				refreshToken,
 				refreshTokenExpiresAt,
+				sid,
 			} = await this.authService.verifySignatureWithSiweIssueTokens(
 				body.address,
 				body.typedData,
 				body.signature,
 				body.nonceToken,
-				clientInfo(req),
+				ci,
+			);
+
+			this.logger.info(
+				{
+					evt: "auth.verify.success",
+					address: body.address,
+					sid,
+					accessTokenExp: accessTokenExpiresAt,
+					refreshTokenExp: refreshTokenExpiresAt,
+				},
+				"verify success",
 			);
 
 			res
@@ -112,8 +151,11 @@ export class AuthController {
 				accessTokenExpiresAt,
 				refreshTokenExpiresAt,
 			});
-		} catch (_err: unknown) {
-			console.error(_err);
+		} catch (err) {
+			this.logger.warn(
+				{ evt: "auth.verify.failed", address: body.address, ip: ci.ip, err },
+				"verify failed",
+			);
 			throw new UnauthorizedException({ error: "verification failed" });
 		}
 	}
@@ -122,8 +164,13 @@ export class AuthController {
 	@ApiCookieAuth("refresh_token")
 	@ApiOkResponse({ description: "Rotates access and refresh tokens" })
 	async refresh(@Req() req: Request, @Res() res: Response) {
+		const ci = clientInfo(req);
 		const rt = extractRefreshToken(req);
 		if (!rt) {
+			this.logger.warn(
+				{ evt: "auth.refresh.missing", ip: ci.ip },
+				"missing refresh token",
+			);
 			throw new UnauthorizedException({ error: "missing refresh token" });
 		}
 
@@ -133,7 +180,17 @@ export class AuthController {
 				refreshToken,
 				accessTokenExpiresAt,
 				refreshTokenExpiresAt,
-			} = await this.authService.refresh(rt, clientInfo(req));
+			} = await this.authService.refresh(rt, ci);
+
+			this.logger.info(
+				{
+					evt: "auth.refresh.success",
+					ip: ci.ip,
+					accessTokenExp: accessTokenExpiresAt,
+					refreshTokenExp: refreshTokenExpiresAt,
+				},
+				"refresh success",
+			);
 
 			res
 				.cookie("access_token", accessToken, this.authService.cookieOptions())
@@ -150,7 +207,10 @@ export class AuthController {
 				refreshTokenExpiresAt,
 			});
 		} catch (err) {
-			console.error(err);
+			this.logger.warn(
+				{ evt: "auth.refresh.failed", ip: ci.ip, err },
+				"refresh failed",
+			);
 			throw new UnauthorizedException({ error: "Unable to refresh token" });
 		}
 	}
@@ -158,10 +218,22 @@ export class AuthController {
 	@Post("logout")
 	@ApiOkResponse({ description: "Clears JWT cookies" })
 	async logout(@Req() req: Request, @Res() res: Response) {
+		const ci = clientInfo(req);
 		const rt = extractRefreshToken(req);
+
 		if (rt) {
 			await this.authService.revokeByRefreshToken(rt).catch(() => {});
+			this.logger.info(
+				{ evt: "auth.logout.revoked", ip: ci.ip },
+				"revoked by refresh token",
+			);
+		} else {
+			this.logger.info(
+				{ evt: "auth.logout.no_rt", ip: ci.ip },
+				"logout without refresh token",
+			);
 		}
+
 		res
 			.clearCookie("access_token", {
 				...this.authService.cookieOptions(),
@@ -182,6 +254,10 @@ export class AuthController {
 	@ApiOkResponse({ description: "Returns identity and requested fields" })
 	async me(@Req() req: Request) {
 		const { user } = req as Request & { user: AccessTokenPayload };
+		this.logger.debug(
+			{ evt: "auth.me", sub: user.sub, partnerId: user.aud },
+			"me requested",
+		);
 		return this.meService.buildMeResponse(user);
 	}
 
@@ -204,6 +280,18 @@ export class AuthController {
 			userId,
 			aud,
 		);
+
+		this.logger.info(
+			{
+				evt: "auth.sessions.list",
+				userId,
+				aud,
+				total: sessions.length,
+				currentSid: user.sid ?? null,
+			},
+			"sessions listed",
+		);
+
 		return sessions.map((s) => ({
 			sid: s.sid,
 			aud: s.aud,
@@ -235,7 +323,13 @@ export class AuthController {
 
 		await this.authService.revokeSessionForUser(userId, sid);
 
-		if (user.sid && user.sid === sid) {
+		const isCurrent = Boolean(user.sid && user.sid === sid);
+		this.logger.info(
+			{ evt: "auth.sessions.revoke", userId, sid, isCurrent },
+			"session revoked",
+		);
+
+		if (isCurrent) {
 			res
 				.clearCookie("access_token", {
 					...this.authService.cookieOptions(),
