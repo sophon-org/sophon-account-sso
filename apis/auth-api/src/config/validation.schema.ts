@@ -24,4 +24,10 @@ export const validationSchema = Joi.object({
 	NODE_ENV: Joi.string()
 		.valid("development", "test", "production")
 		.default("development"),
+
+	SWAGGER_ENABLED: Joi.boolean()
+		.truthy("1", "true", "yes", "on")
+		.falsy("0", "false", "no", "off")
+		.default(process.env.NODE_ENV !== "production"),
+	SWAGGER_PATH: Joi.string().default("docs"),
 });
