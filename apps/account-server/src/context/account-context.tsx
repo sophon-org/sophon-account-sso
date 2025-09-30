@@ -8,13 +8,9 @@ import {
   useState,
 } from 'react';
 import { zeroAddress } from 'viem';
-import { env } from '@/env';
 import { LOCAL_STORAGE_KEY } from '@/lib/constants';
 import { sendAuthMessage } from '@/lib/events';
-import {
-  getAccountAddressByUniqueId,
-  getSophonSmartAccountUniqueId,
-} from '@/lib/smart-contract';
+import { getDeployedSmartContractAddress } from '@/lib/smart-contract';
 import type { SmartAccount } from '@/types/smart-account';
 
 interface AccountContextProps {
@@ -58,14 +54,11 @@ const AccountContextProvider: React.FC<{ children: React.ReactNode }> = ({
     (async () => {
       if (!account?.address || !isInitialized) return;
 
-      const sophonAccountAddress = await getAccountAddressByUniqueId(
-        getSophonSmartAccountUniqueId(
-          account!.address,
-          env.NEXT_PUBLIC_DEPLOYER_ADDRESS as `0x${string}`,
-        ),
+      const deployedAddress = await getDeployedSmartContractAddress(
+        account!.address,
       );
       setSmartAccountDeployed(
-        !!sophonAccountAddress && sophonAccountAddress !== zeroAddress,
+        !!deployedAddress && deployedAddress !== zeroAddress,
       );
     })();
   }, [account, isInitialized]);
