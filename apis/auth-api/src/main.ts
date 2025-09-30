@@ -1,6 +1,7 @@
 // main.ts
 import "dotenv/config";
 import { ValidationPipe } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { useContainer } from "class-validator";
@@ -38,21 +39,26 @@ async function bootstrap() {
 		credentials: true,
 	});
 
-	const config = new DocumentBuilder()
-		.setTitle("Sophon Auth API")
-		.setDescription("SIWE + JWT authentication backend for Sophon")
-		.setVersion("1.0")
-		.addBearerAuth()
-		.addCookieAuth("access_token", { type: "apiKey", in: "cookie" })
-		.build();
+	const cfg = app.get(ConfigService);
+	const swaggerEnabled = cfg.getOrThrow<boolean>("SWAGGER_ENABLED");
 
-	const document = SwaggerModule.createDocument(app, config);
-	SwaggerModule.setup("docs", app, document, {
-		swaggerOptions: {
-			withCredentials: true,
-			persistAuthorization: true,
-		},
-	});
+	if (swaggerEnabled) {
+		const config = new DocumentBuilder()
+			.setTitle("Sophon Auth API")
+			.setDescription("SIWE + JWT authentication backend for Sophon")
+			.setVersion("1.0")
+			.addBearerAuth()
+			.addCookieAuth("access_token", { type: "apiKey", in: "cookie" })
+			.build();
+
+		const document = SwaggerModule.createDocument(app, config);
+		SwaggerModule.setup("docs", app, document, {
+			swaggerOptions: {
+				withCredentials: true,
+				persistAuthorization: true,
+			},
+		});
+	}
 
 	await app.listen(process.env.PORT || 3000);
 }
