@@ -7,8 +7,14 @@ import {
   useMemo,
   useState,
 } from 'react';
+import { zeroAddress } from 'viem';
+import { env } from '@/env';
 import { LOCAL_STORAGE_KEY } from '@/lib/constants';
 import { sendAuthMessage } from '@/lib/events';
+import {
+  getAccountAddressByUniqueId,
+  getSophonSmartAccountUniqueId,
+} from '@/lib/smart-contract';
 import type { SmartAccount } from '@/types/smart-account';
 
 interface AccountContextProps {
@@ -18,6 +24,8 @@ interface AccountContextProps {
   logout: () => void;
   dynamicWallet: Wallet | null;
   setDynamicWallet: (wallet: Wallet | null) => void;
+  smartAccountDeployed: boolean;
+  setSmartAccountDeployed: (deployed: boolean) => void;
 }
 
 const AccountContext = createContext<AccountContextProps | null>(null);
@@ -28,6 +36,8 @@ const AccountContextProvider: React.FC<{ children: React.ReactNode }> = ({
   const [account, setAccount] = useState<SmartAccount | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
   const [dynamicWallet, setDynamicWallet] = useState<Wallet | null>(null);
+  const [smartAccountDeployed, setSmartAccountDeployed] =
+    useState<boolean>(false);
 
   // Initialize from localStorage on mount
   useEffect(() => {
@@ -43,6 +53,22 @@ const AccountContextProvider: React.FC<{ children: React.ReactNode }> = ({
       setIsInitialized(true);
     }
   }, []);
+
+  useEffect(() => {
+    (async () => {
+      if (!account?.address || !isInitialized) return;
+
+      const sophonAccountAddress = await getAccountAddressByUniqueId(
+        getSophonSmartAccountUniqueId(
+          account!.address,
+          env.NEXT_PUBLIC_DEPLOYER_ADDRESS as `0x${string}`,
+        ),
+      );
+      setSmartAccountDeployed(
+        !!sophonAccountAddress && sophonAccountAddress !== zeroAddress,
+      );
+    })();
+  }, [account, isInitialized]);
 
   // Save to localStorage whenever accountData changes
   useEffect(() => {
@@ -87,8 +113,10 @@ const AccountContextProvider: React.FC<{ children: React.ReactNode }> = ({
       logout,
       dynamicWallet,
       setDynamicWallet,
+      smartAccountDeployed,
+      setSmartAccountDeployed,
     }),
-    [account, login, logout, dynamicWallet],
+    [account, login, logout, dynamicWallet, smartAccountDeployed],
   );
 
   return (

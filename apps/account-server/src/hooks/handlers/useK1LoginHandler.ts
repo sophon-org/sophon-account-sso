@@ -15,7 +15,7 @@ import { getsSmartAccounts } from '@/service/smart-account.server';
  */
 export const useK1LoginHandler = () => {
   const actorRef = MainStateMachineContext.useActorRef();
-  const { login } = useAccountContext();
+  const { login, setSmartAccountDeployed } = useAccountContext();
 
   useEventHandler('k1.login', async (payload) => {
     if (!payload.address) {
@@ -32,6 +32,8 @@ export const useK1LoginHandler = () => {
     } else {
       smartAccountAddress = accounts[0];
     }
+
+    setSmartAccountDeployed(true);
 
     await login(
       {

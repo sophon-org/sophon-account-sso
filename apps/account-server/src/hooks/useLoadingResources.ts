@@ -25,7 +25,7 @@ export const useLoadingResources = () => {
     handlerInitialized,
   } = useMessageHandler();
 
-  const { account } = useAccountContext();
+  const { account, smartAccountDeployed } = useAccountContext();
   const { isConnected: isConnectedWagmi } = useAccount();
   const socialProvider = getSocialProviderFromURL();
   const isReturningFromOAuth = !!socialProvider;
@@ -54,7 +54,7 @@ export const useLoadingResources = () => {
       // Wait for both primaryWallet AND account to be ready, unless timeout occurred
       if (
         isReturningFromOAuth &&
-        (!primaryWallet || !account) &&
+        (!primaryWallet || !account || !smartAccountDeployed) &&
         !oauthTimeout
       ) {
         return; // Skip this cycle, wait for resources to load
@@ -88,6 +88,7 @@ export const useLoadingResources = () => {
     isConnectedWagmi,
     isReturningFromOAuth,
     oauthTimeout,
+    smartAccountDeployed,
   ]);
 
   return {
