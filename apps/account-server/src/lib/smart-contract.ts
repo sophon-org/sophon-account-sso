@@ -11,8 +11,9 @@ import {
   type SignableMessage,
   toBytes,
   toHex,
+  zeroAddress,
 } from 'viem';
-
+import { env } from '@/env';
 import { CONTRACTS, SOPHON_VIEM_CHAIN } from '@/lib/constants';
 
 export const DYNAMIC_SALT_PREFIX = 'DynamicLabs';
@@ -164,4 +165,28 @@ export const verifySignature = async ({
     console.error('❌ EIP-1271 verification failed:', error);
     return false;
   }
+};
+
+export const getDeployedSmartContractAddress = async (
+  ownerAddress: Address,
+) => {
+  const [dynamicAccountAddress, sophonAccountAddress] = await Promise.all([
+    getAccountAddressByUniqueId(getDynamicSmartAccountUniqueId(ownerAddress)),
+    getAccountAddressByUniqueId(
+      getSophonSmartAccountUniqueId(
+        ownerAddress,
+        env.NEXT_PUBLIC_DEPLOYER_ADDRESS as `0x${string}`,
+      ),
+    ),
+  ]);
+
+  if (dynamicAccountAddress && dynamicAccountAddress !== zeroAddress) {
+    return dynamicAccountAddress;
+  }
+
+  if (sophonAccountAddress && sophonAccountAddress !== zeroAddress) {
+    return sophonAccountAddress;
+  }
+
+  return null;
 };
