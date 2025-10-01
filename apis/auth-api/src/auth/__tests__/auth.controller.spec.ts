@@ -1,12 +1,14 @@
 import { UnauthorizedException } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import type { Request, Response } from "express";
+import { LoggerModule } from "nestjs-pino";
 import { AuthController } from "../auth.controller";
 import { AuthService } from "../auth.service";
 import type { VerifySiweDto } from "../dto/verify-siwe.dto";
 import { MeService } from "../me.service";
 import type { AccessTokenPayload } from "../types";
 
+const loggerModule = LoggerModule.forRoot({ pinoHttp: { enabled: false } });
 describe("AuthController (new flows)", () => {
 	let controller: AuthController;
 
@@ -60,8 +62,18 @@ describe("AuthController (new flows)", () => {
 			status: jest.fn().mockReturnThis(),
 		}) as unknown as Response;
 
+	const mockReq = (overrides: Partial<Request> = {}): Request =>
+		({
+			cookies: {},
+			headers: {},
+			ip: "127.0.0.1",
+			socket: { remoteAddress: "127.0.0.1" },
+			...overrides,
+		}) as unknown as Request;
+
 	beforeEach(async () => {
 		const module = await Test.createTestingModule({
+			imports: [loggerModule],
 			controllers: [AuthController],
 			providers: [
 				{ provide: AuthService, useValue: authServiceMock },
@@ -75,6 +87,7 @@ describe("AuthController (new flows)", () => {
 
 	it("POST /auth/verify sets both cookies and returns access token", async () => {
 		const res = mockRes();
+		const req = mockReq();
 
 		const body = {
 			address: "0xabc0000000000000000000000000000000000001",
@@ -83,7 +96,7 @@ describe("AuthController (new flows)", () => {
 			nonceToken: "nonce.jwt",
 		} as unknown as VerifySiweDto;
 
-		await controller.verifySignature(body, res);
+		await controller.verifySignature(body, res, req);
 
 		expect(
 			authServiceMock.verifySignatureWithSiweIssueTokens,
@@ -113,7 +126,13 @@ describe("AuthController (new flows)", () => {
 
 		await controller.refresh(req, res);
 
-		expect(authServiceMock.refresh).toHaveBeenCalledWith("refresh.jwt");
+		expect(authServiceMock.refresh).toHaveBeenCalledWith(
+			"refresh.jwt",
+			expect.objectContaining({
+				ip: expect.any(String),
+				userAgent: expect.any(String),
+			}),
+		);
 		expect(res.cookie).toHaveBeenCalledWith(
 			"access_token",
 			"new.access.jwt",
@@ -139,7 +158,13 @@ describe("AuthController (new flows)", () => {
 
 		await controller.refresh(req, res);
 
-		expect(authServiceMock.refresh).toHaveBeenCalledWith("hdr.refresh.jwt");
+		expect(authServiceMock.refresh).toHaveBeenCalledWith(
+			"hdr.refresh.jwt",
+			expect.objectContaining({
+				ip: expect.any(String),
+				userAgent: expect.any(String),
+			}),
+		);
 	});
 
 	it("POST /auth/refresh returns 401 if no refresh token provided", async () => {

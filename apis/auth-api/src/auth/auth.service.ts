@@ -1,10 +1,10 @@
-// src/auth/auth.service.ts
 import { randomUUID } from "node:crypto";
 import {
 	BadRequestException,
 	ForbiddenException,
 	Inject,
 	Injectable,
+	NotFoundException,
 	UnauthorizedException,
 } from "@nestjs/common";
 import { ConfigType } from "@nestjs/config";
@@ -14,6 +14,7 @@ import jwt, {
 	NotBeforeError,
 	TokenExpiredError,
 } from "jsonwebtoken";
+import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
 import type { TypedDataDefinition } from "viem";
 import { sophon, sophonTestnet } from "viem/chains";
 import { JwtKeysService } from "../aws/jwt-keys.service";
@@ -38,6 +39,8 @@ type NoncePayload = JwtPayload & {
 	userId?: string;
 };
 
+type ClientInfo = { ip?: string | null; userAgent?: string | null };
+
 @Injectable()
 export class AuthService {
 	constructor(
@@ -46,9 +49,17 @@ export class AuthService {
 		private readonly keys: JwtKeysService,
 		@Inject(authConfig.KEY)
 		private readonly auth: ConfigType<typeof authConfig>,
+		@InjectPinoLogger(AuthService.name)
+		private readonly logger: PinoLogger,
 	) {}
 
 	private mapJwtError(e: unknown, ctx: "nonce" | "access" | "refresh"): never {
+		const name =
+			e instanceof Error ? e.name : typeof e === "string" ? e : "UnknownError";
+		this.logger.info(
+			{ evt: "jwt.verify.failed", ctx, errName: name },
+			"jwt verify failed",
+		);
 		if (e instanceof TokenExpiredError) {
 			throw new UnauthorizedException(`${ctx} token expired`);
 		}
@@ -70,10 +81,9 @@ export class AuthService {
 		userId?: string,
 	): Promise<string> {
 		await this.partnerRegistry.assertExists(audience);
-
 		try {
 			const nonce = randomUUID();
-			return jwt.sign(
+			const token = jwt.sign(
 				{
 					nonce,
 					address,
@@ -90,7 +100,16 @@ export class AuthService {
 					expiresIn: this.auth.nonceTtlS,
 				},
 			);
+			this.logger.info(
+				{ evt: "auth.nonce.issued", address, audience },
+				"nonce issued",
+			);
+			return token;
 		} catch (e) {
+			this.logger.error(
+				{ evt: "auth.nonce.error", address, audience, err: e },
+				"nonce sign failed",
+			);
 			throw new BadRequestException(
 				e instanceof Error ? e.message : "failed to sign nonce token",
 			);
@@ -115,8 +134,6 @@ export class AuthService {
 				issuer: expectedIss,
 			}) as NoncePayload;
 		} catch (e) {
-			// eslint-disable-next-line no-console
-			console.error(e);
 			this.mapJwtError(e, "nonce");
 		}
 
@@ -125,10 +142,18 @@ export class AuthService {
 			payload.address.toLowerCase() !==
 				(typedData.message.from as string).toLowerCase()
 		) {
+			this.logger.info(
+				{ evt: "auth.verify.mismatch", address, aud: expectedAud },
+				"nonce or address mismatch",
+			);
 			throw new UnauthorizedException("Nonce or address mismatch");
 		}
 
 		if (String(typedData.message.audience) !== payload.aud) {
+			this.logger.info(
+				{ evt: "auth.verify.aud_mismatch", expected: payload.aud },
+				"audience mismatch",
+			);
 			throw new ForbiddenException("audience mismatch");
 		}
 
@@ -137,33 +162,29 @@ export class AuthService {
 		const isValid = await verifyEIP1271Signature({
 			accountAddress: address,
 			signature,
-			domain: {
-				name: "Sophon SSO",
-				version: "1",
-				chainId: network.id,
-			},
+			domain: { name: "Sophon SSO", version: "1", chainId: network.id },
 			types: typedData.types,
 			primaryType: typedData.primaryType,
 			message: typedData.message,
 			chain: network,
+			logger: this.logger,
 		});
 
 		if (!isValid) {
+			this.logger.info(
+				{ evt: "auth.verify.invalid_sig", address },
+				"invalid signature",
+			);
 			throw new UnauthorizedException("signature is invalid");
 		}
-		const scope = packScope(unpackScope(payload.scope ?? ""));
 
+		const scope = packScope(unpackScope(payload.scope ?? ""));
 		const iat = Math.floor(Date.now() / 1000);
 		const expiresInSeconds = this.auth.accessTtlS;
 
 		try {
-			return jwt.sign(
-				{
-					sub: address,
-					iat,
-					scope,
-					userId: payload.userId,
-				},
+			const access = jwt.sign(
+				{ sub: address, iat, scope, userId: payload.userId },
 				await this.keys.getAccessPrivateKey(),
 				{
 					algorithm: "RS256",
@@ -173,7 +194,20 @@ export class AuthService {
 					expiresIn: expiresInSeconds,
 				},
 			);
+			this.logger.info(
+				{
+					evt: "auth.access.issued",
+					aud: payload.aud,
+					expInS: expiresInSeconds,
+				},
+				"access token issued",
+			);
+			return access;
 		} catch (e) {
+			this.logger.error(
+				{ evt: "auth.access.error", err: e },
+				"access sign failed",
+			);
 			throw new BadRequestException(
 				e instanceof Error ? e.message : "failed to sign access token",
 			);
@@ -185,6 +219,7 @@ export class AuthService {
 		typedData: TypedDataDefinition,
 		signature: `0x${string}`,
 		nonceToken: string,
+		client?: ClientInfo,
 	): Promise<{
 		accessToken: string;
 		accessTokenExpiresAt: number;
@@ -204,8 +239,6 @@ export class AuthService {
 				issuer: expectedIss,
 			}) as NoncePayload;
 		} catch (e) {
-			// eslint-disable-next-line no-console
-			console.error(e);
 			this.mapJwtError(e, "nonce");
 		}
 
@@ -214,10 +247,18 @@ export class AuthService {
 			payload.address.toLowerCase() !==
 				(typedData.message.from as string).toLowerCase()
 		) {
+			this.logger.info(
+				{ evt: "auth.verify.mismatch", address, aud: expectedAud },
+				"nonce or address mismatch",
+			);
 			throw new UnauthorizedException("Nonce or address mismatch");
 		}
 
 		if (String(typedData.message.audience) !== payload.aud) {
+			this.logger.info(
+				{ evt: "auth.verify.aud_mismatch", expected: payload.aud },
+				"audience mismatch",
+			);
 			throw new ForbiddenException("audience mismatch");
 		}
 
@@ -226,36 +267,30 @@ export class AuthService {
 		const isValid = await verifyEIP1271Signature({
 			accountAddress: address,
 			signature,
-			domain: {
-				name: "Sophon SSO",
-				version: "1",
-				chainId: network.id,
-			},
+			domain: { name: "Sophon SSO", version: "1", chainId: network.id },
 			types: typedData.types,
 			primaryType: typedData.primaryType,
 			message: typedData.message,
 			chain: network,
+			logger: this.logger,
 		});
 
 		if (!isValid) {
+			this.logger.info(
+				{ evt: "auth.verify.invalid_sig", address },
+				"invalid signature",
+			);
 			throw new UnauthorizedException("signature is invalid");
 		}
-		const scope = packScope(unpackScope(payload.scope ?? ""));
 
+		const scope = packScope(unpackScope(payload.scope ?? ""));
 		const sid = randomUUID();
 		const iat = Math.floor(Date.now() / 1000);
 		const accessExp = this.auth.accessTtlS;
 		const refreshExp = this.auth.refreshTtlS;
 
 		const accessToken = jwt.sign(
-			{
-				sub: address,
-				iat,
-				scope,
-				userId: payload.userId,
-				sid,
-				typ: "access",
-			},
+			{ sub: address, iat, scope, userId: payload.userId, sid, typ: "access" },
 			await this.keys.getAccessPrivateKey(),
 			{
 				algorithm: "RS256",
@@ -297,7 +332,20 @@ export class AuthService {
 				decoded?.exp != null
 					? new Date(decoded.exp * 1000)
 					: new Date(Date.now() + refreshExp * 1000),
+			createdIp: client?.ip ?? null,
+			createdUserAgent: client?.userAgent ?? null,
 		});
+
+		this.logger.info(
+			{
+				evt: "auth.tokens.issued",
+				sid,
+				aud: payload.aud,
+				accessExpInS: accessExp,
+				refreshExpInS: refreshExp,
+			},
+			"tokens issued",
+		);
 
 		return {
 			accessToken,
@@ -341,6 +389,10 @@ export class AuthService {
 		}
 
 		if (payload.iss !== this.auth.jwtIssuer) {
+			this.logger.info(
+				{ evt: "auth.access.iss_mismatch", iss: payload.iss },
+				"issuer mismatch",
+			);
 			throw new UnauthorizedException("invalid token issuer");
 		}
 
@@ -349,12 +401,20 @@ export class AuthService {
 		if (rowSid) {
 			const row = await this.sessions.getBySid(rowSid);
 			if (!this.sessions.isActive(row)) {
+				this.logger.info(
+					{ evt: "auth.access.session_inactive", sid: rowSid },
+					"inactive session",
+				);
 				throw new UnauthorizedException("session revoked or expired");
 			}
 			if (row.invalidateBefore) {
 				const iatSec = payload.iat ?? 0;
 				const cut = Math.floor(new Date(row.invalidateBefore).getTime() / 1000);
 				if (iatSec < cut) {
+					this.logger.info(
+						{ evt: "auth.access.token_invalidated", sid: rowSid },
+						"token invalidated by cutoff",
+					);
 					throw new UnauthorizedException(
 						"access token is too old (invalidated)",
 					);
@@ -379,9 +439,16 @@ export class AuthService {
 			return;
 		}
 		await this.sessions.revokeSid(r.sid);
+		this.logger.info(
+			{ evt: "auth.sessions.revoke_by_rt", sid: r.sid },
+			"session revoked by refresh token",
+		);
 	}
 
-	async refresh(refreshToken: string): Promise<{
+	async refresh(
+		refreshToken: string,
+		client?: ClientInfo,
+	): Promise<{
 		accessToken: string;
 		accessTokenExpiresAt: number;
 		refreshToken: string;
@@ -394,13 +461,15 @@ export class AuthService {
 				issuer: this.auth.refreshIssuer,
 			}) as RefreshTokenPayload;
 		} catch (e) {
-			// eslint-disable-next-line no-console
-			console.error(e);
 			this.mapJwtError(e, "refresh");
 		}
 
 		const rTyp = (r as RefreshTokenPayload & { typ?: string }).typ;
 		if (rTyp && rTyp !== "refresh") {
+			this.logger.info(
+				{ evt: "auth.refresh.bad_type", typ: rTyp },
+				"invalid refresh token type",
+			);
 			throw new UnauthorizedException(`Invalid refresh token type: ${rTyp}`);
 		}
 
@@ -408,11 +477,19 @@ export class AuthService {
 
 		const row = await this.sessions.getBySid(r.sid);
 		if (!this.sessions.isActive(row)) {
+			this.logger.info(
+				{ evt: "auth.refresh.session_inactive", sid: r.sid },
+				"inactive session",
+			);
 			throw new UnauthorizedException("session revoked or expired");
 		}
 
 		if (row.currentRefreshJti !== r.jti) {
 			await this.sessions.revokeSid(r.sid);
+			this.logger.warn(
+				{ evt: "auth.refresh.reuse_detected", sid: r.sid },
+				"refresh token reuse detected",
+			);
 			throw new UnauthorizedException("refresh token reuse detected");
 		}
 
@@ -471,7 +548,24 @@ export class AuthService {
 			sid: r.sid,
 			newJti,
 			newRefreshExpiresAt,
+			...(client
+				? {
+						ip: client.ip ?? null,
+						userAgent: client.userAgent ?? null,
+						ts: new Date(),
+					}
+				: {}),
 		});
+
+		this.logger.info(
+			{
+				evt: "auth.refresh.rotated",
+				sid: r.sid,
+				accessExpInS: accessExp,
+				refreshExpInS: refreshExp,
+			},
+			"refresh rotated",
+		);
 
 		return {
 			accessToken: newAccess,
@@ -479,5 +573,21 @@ export class AuthService {
 			refreshToken: newRefresh,
 			refreshTokenExpiresAt: iat + refreshExp,
 		};
+	}
+
+	async listActiveSessionsForUser(userId: string, aud?: string) {
+		const list = await this.sessions.findActiveForUser(userId);
+		return aud ? list.filter((s) => s.aud === aud) : list;
+	}
+
+	async revokeSessionForUser(userId: string, sid: string): Promise<void> {
+		const row = await this.sessions.getBySid(sid);
+		if (!row) throw new NotFoundException("session not found");
+		if (row.userId !== userId) throw new ForbiddenException("forbidden");
+		await this.sessions.revokeSid(sid);
+		this.logger.info(
+			{ evt: "auth.sessions.revoke", sid, userId },
+			"session revoked",
+		);
 	}
 }
