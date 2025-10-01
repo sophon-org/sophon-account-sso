@@ -13,7 +13,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@sophon-labs/account-react": "2.1.0",
+    "@sophon-labs/account-react": "file:../../../packages/account-react",
     "@tanstack/react-query": "^5.83.0",
     "next": "15.4.3",
     "react": "19.1.0",

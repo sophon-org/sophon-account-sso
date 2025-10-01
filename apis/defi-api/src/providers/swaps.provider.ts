@@ -17,6 +17,7 @@ import {
   HTTPResponse,
   SwapActionRequest,
   SwapActionResponse,
+  SwapStatusFlatResponse,
   SwapStatusResponse,
 } from '../types/swaps.types';
 import {
@@ -459,22 +460,28 @@ export class SwapsProvider implements ISwapProvider {
   }
 
   public transformToUnifiedStatusResponse(
-    swapResponse: SwapStatusResponse,
+    swapResponse: SwapStatusResponse | SwapStatusFlatResponse,
   ): UnifiedStatusResponse {
     this.loggingService.logProviderDebug(
       this.providerId,
       'Transforming status response',
       {
         hasResponse: !!swapResponse,
-        hasTx: !!swapResponse?.tx,
-        status: swapResponse?.tx?.status,
-        srcTxHash: swapResponse?.tx?.srcTxHash,
+        hasTx: (swapResponse as SwapStatusResponse)?.tx !== undefined,
+        status:
+          (swapResponse as SwapStatusResponse)?.tx?.status ??
+          (swapResponse as SwapStatusFlatResponse)?.status ??
+          undefined,
+        srcTxHash:
+          (swapResponse as SwapStatusResponse)?.tx?.srcTxHash ??
+          (swapResponse as SwapStatusFlatResponse)?.srcTxHash ??
+          undefined,
       },
     );
 
     // Log all possible field variations to understand API structure
-    if (swapResponse?.tx) {
-      const tx = swapResponse.tx;
+    if ((swapResponse as SwapStatusResponse)?.tx) {
+      const tx = (swapResponse as SwapStatusResponse).tx;
       this.loggingService.logProviderDebug(
         this.providerId,
         'API FIELD MAPPING CHECK',
@@ -518,11 +525,15 @@ export class SwapsProvider implements ISwapProvider {
       );
     }
 
-    // Check if response indicates not found
+    // Check if response indicates not found or has insufficient data
     if (
       !swapResponse ||
-      !swapResponse.tx ||
-      (!swapResponse.tx.status && !swapResponse.tx.srcTxHash)
+      (!(swapResponse as SwapStatusResponse)?.tx &&
+        !(swapResponse as SwapStatusFlatResponse)?.status) ||
+      (!(swapResponse as SwapStatusResponse)?.tx?.status &&
+        !(swapResponse as SwapStatusResponse)?.tx?.srcTxHash &&
+        !(swapResponse as SwapStatusFlatResponse)?.status &&
+        !(swapResponse as SwapStatusFlatResponse)?.srcTxHash)
     ) {
       this.logger.warn('Transaction not found in Swaps.xyz response');
       this.loggingService.logProviderDebug(
@@ -540,8 +551,76 @@ export class SwapsProvider implements ISwapProvider {
       };
     }
 
-    const tx = swapResponse.tx;
-    const status = this.mapSwapStatus(tx.status);
+    // Handle both nested tx format and flat format from Swaps.xyz
+    let tx: SwapStatusResponse['tx'];
+
+    // Check if response has nested tx structure (expected format)
+    if ((swapResponse as SwapStatusResponse)?.tx) {
+      tx = (swapResponse as SwapStatusResponse).tx;
+    }
+    // Handle flat response structure (actual Swaps.xyz format)
+    else if ((swapResponse as SwapStatusFlatResponse)?.status) {
+      // Map the flat response to our expected structure
+      const flatResponse = swapResponse as SwapStatusFlatResponse;
+
+      // Create a tx-like object from the flat response
+      tx = {
+        txId: flatResponse.txId,
+        status: flatResponse.status,
+        sender: flatResponse.sender,
+        srcChainId: flatResponse.srcChainId,
+        dstChainId: flatResponse.dstChainId,
+        srcTxHash: flatResponse.srcTxHash,
+        dstTxHash: flatResponse.dstTxHash,
+        bridgeDetails: {
+          ...flatResponse.bridgeDetails,
+          txPath: flatResponse.bridgeDetails.txPath.map((path) => ({
+            ...path,
+            timestamp: path.timestamp.toString(),
+          })),
+        },
+        usdValue: flatResponse.usdValue,
+        srcTx: flatResponse.srcTx
+          ? {
+              toAddress: flatResponse.srcTx.toAddress,
+              txHash: flatResponse.srcTx.txHash,
+              chainId: flatResponse.srcTx.chainId,
+              blockExplorer: '', // Not provided in flat response
+              value: flatResponse.srcTx.value,
+              timestamp: flatResponse.srcTx.timestamp.toString(),
+              paymentToken: flatResponse.srcTx.paymentToken,
+            }
+          : undefined,
+        dstTx: flatResponse.dstTx
+          ? {
+              toAddress: flatResponse.dstTx.toAddress,
+              txHash: flatResponse.dstTx.txHash,
+              chainId: flatResponse.dstTx.chainId,
+              blockExplorer: '', // Not provided in flat response
+              value: flatResponse.dstTx.value,
+              timestamp: flatResponse.dstTx.timestamp.toString(),
+              paymentToken: flatResponse.dstTx.paymentToken,
+            }
+          : undefined,
+        org: flatResponse.org,
+      };
+    } else {
+      this.logger.warn('Transaction not found in Swaps.xyz response');
+      this.loggingService.logProviderDebug(
+        this.providerId,
+        'Transaction not found, returning not found response',
+      );
+      return {
+        found: false,
+        status: TransactionStatus.PENDING,
+        provider: this.providerId,
+        transaction: null,
+        fees: null,
+        timestamps: null,
+        links: null,
+      };
+    }
+    const mappedStatus = this.mapSwapStatus(tx.status);
 
     this.loggingService.logProviderDebug(
       this.providerId,
@@ -549,7 +628,7 @@ export class SwapsProvider implements ISwapProvider {
       {
         txId: tx.txId,
         status: tx.status,
-        mappedStatus: status,
+        mappedStatus: mappedStatus,
         srcChainId: tx.srcChainId,
         dstChainId: tx.dstChainId,
         hasSrcTx: !!tx.srcTx,
@@ -583,7 +662,7 @@ export class SwapsProvider implements ISwapProvider {
 
     const result = {
       found: true,
-      status,
+      status: mappedStatus,
       provider: this.providerId,
       transaction: {
         hash: tx.srcTxHash,

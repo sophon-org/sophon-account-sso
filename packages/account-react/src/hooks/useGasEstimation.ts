@@ -52,6 +52,7 @@ export function useGasEstimation(
     gasPrice,
     totalFeeEstimate,
     isLoading: isEstimatingGas || isLoadingGasPrice,
+    isError: !!(gasEstimateError || gasPriceError),
     error: gasEstimateError || gasPriceError,
     refetch,
   };
