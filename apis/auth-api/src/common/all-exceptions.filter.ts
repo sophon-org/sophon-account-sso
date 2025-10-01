@@ -1,3 +1,4 @@
+// src/common/all-exceptions.filter.ts
 import {
 	ArgumentsHost,
 	Catch,
@@ -34,13 +35,18 @@ export class AllExceptionsFilter implements ExceptionFilter {
 			);
 		}
 
-		console.error({
-			path: req?.url,
-			method: req?.method,
-			status,
-			error: exception instanceof Error ? exception.stack : exception,
-			body,
-		});
+		const shouldLog = false;
+		if (shouldLog) {
+			const errObj = exception instanceof Error ? exception.stack : exception;
+			const log = status >= 500 ? console.error : console.warn;
+			log({
+				path: req?.url,
+				method: req?.method,
+				status,
+				error: errObj,
+				body,
+			});
+		}
 
 		return res.status(status).json({
 			statusCode: status,

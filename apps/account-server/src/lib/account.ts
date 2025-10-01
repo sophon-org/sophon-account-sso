@@ -5,7 +5,6 @@ import {
   http,
   type Transport,
   type WalletClient,
-  zeroAddress,
 } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { eip712WalletActions } from 'viem/zksync';
@@ -13,9 +12,7 @@ import { deployModularAccount } from 'zksync-sso/client';
 import { env } from '@/env';
 import { CONTRACTS, SOPHON_VIEM_CHAIN } from './constants';
 import {
-  getAccountAddressByUniqueId,
-  getDynamicSmartAccountUniqueId,
-  getSophonSmartAccountUniqueId,
+  getDeployedSmartContractAddress,
   SOPHON_SALT_PREFIX,
 } from './smart-contract';
 
@@ -28,21 +25,9 @@ export const deployAccount = async (ownerAddress: `0x${string}`) => {
     env.DEPLOYER_PRIVATE_KEY as `0x${string}`,
   );
 
-  const [dynamicAccountAddress, sophonAccountAddress] = await Promise.all([
-    getAccountAddressByUniqueId(getDynamicSmartAccountUniqueId(ownerAddress)),
-    getAccountAddressByUniqueId(
-      getSophonSmartAccountUniqueId(ownerAddress, deployerAccount.address),
-    ),
-  ]);
-
-  if (dynamicAccountAddress && dynamicAccountAddress !== zeroAddress) {
-    console.log('account already deployed on sophon v1', dynamicAccountAddress);
-    return { address: dynamicAccountAddress };
-  }
-
-  if (sophonAccountAddress && sophonAccountAddress !== zeroAddress) {
-    console.log('account already deployed on sophon v2', sophonAccountAddress);
-    return { address: sophonAccountAddress };
+  const deployedAddress = await getDeployedSmartContractAddress(ownerAddress);
+  if (deployedAddress) {
+    return { address: deployedAddress };
   }
 
   const deployerClient: WalletClient<Transport, Chain, Account> =
