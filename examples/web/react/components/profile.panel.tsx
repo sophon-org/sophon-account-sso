@@ -1,5 +1,5 @@
 import { shortenAddress } from '@sophon-labs/account-core';
-import { useSophonAccount } from '@sophon-labs/account-react';
+import { useSophonAccount, useSophonConsent } from '@sophon-labs/account-react';
 import { formatUnits } from 'viem';
 import { useBalance } from 'wagmi';
 import MintPanel from './mint.panel';
@@ -10,6 +10,7 @@ import TypedSignaturePanel from './typed-signature.panel';
 
 export const ProfilePanel = () => {
   const { isConnected, account, disconnect } = useSophonAccount();
+  const { requestConsent } = useSophonConsent();
   const { data: balance } = useBalance({
     address: account.address,
   });
@@ -34,6 +35,13 @@ export const ProfilePanel = () => {
       <TransactionNativePanel />
       <TransactionERC20Panel />
       <MintPanel />
+      <button
+        className="bg-blue-500/30 text-black border border-blue-500/50 px-4 py-2 rounded-md hover:bg-blue-500/50 transition-all duration-300 hover:cursor-pointer"
+        type="button"
+        onClick={() => requestConsent({ action: 'mint', params: [] })}
+      >
+        Request Consent
+      </button>
       <button
         className="bg-red-500/30 text-black border border-red-500/50 px-4 py-2 rounded-md hover:bg-red-500/50 transition-all duration-300 hover:cursor-pointer"
         type="button"

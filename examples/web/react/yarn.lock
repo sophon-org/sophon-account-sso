@@ -1127,59 +1127,59 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-communicator@npm:2.1.2":
-  version: 2.1.2
-  resolution: "@sophon-labs/account-communicator@npm:2.1.2"
+"@sophon-labs/account-communicator@npm:2.2.1":
+  version: 2.2.1
+  resolution: "@sophon-labs/account-communicator@npm:2.2.1"
   peerDependencies:
     typescript: ^5.0.0
-  checksum: 10c0/d9ddafb30fc2938a2208541a7b6d5b69dab3f482cd56de9df2e157d3ce831d3edfa2628060eb4697683ebc0dea712a92711a3462fcacd596cc6b001411c91c52
+  checksum: 10c0/928223b811448c7030669bef41f97b81f6a6aa9f890df51254b38045d0bd6ad55939dc2478f9520a8052e9865434e68e614b90281b07f1a3ca39a58cdc99bb7a
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-connector@npm:2.1.2":
-  version: 2.1.2
-  resolution: "@sophon-labs/account-connector@npm:2.1.2"
+"@sophon-labs/account-connector@npm:2.2.1":
+  version: 2.2.1
+  resolution: "@sophon-labs/account-connector@npm:2.2.1"
   dependencies:
-    "@sophon-labs/account-core": "npm:2.1.2"
-    "@sophon-labs/account-provider": "npm:2.1.2"
+    "@sophon-labs/account-core": "npm:2.2.1"
+    "@sophon-labs/account-provider": "npm:2.2.1"
     "@wagmi/core": "npm:^2.17.3"
   peerDependencies:
     viem: ">=2.21.0"
-  checksum: 10c0/4bb7dbd60ca366e1962ee71ace3bf6e7599388231da400c4c8cb16ada07731c350d83ab7caddd6a945541579c029e8583274eb5d99489243ee2e7f3f7a2431f1
+  checksum: 10c0/7c5eb9c6ef4c6a5bc768b01324f698ce80b6725096fe1553eb6c4e0df75b5d46ac03f0000797379ca4040c73b1faa58ab7cf3817d13f4861cd547898ef052fb5
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-core@npm:2.1.2":
-  version: 2.1.2
-  resolution: "@sophon-labs/account-core@npm:2.1.2"
+"@sophon-labs/account-core@npm:2.2.1":
+  version: 2.2.1
+  resolution: "@sophon-labs/account-core@npm:2.2.1"
   dependencies:
     text-encoding-polyfill: "npm:^0.6.7"
   peerDependencies:
     viem: ">=2.21.0"
-  checksum: 10c0/3ef257d8f7693d5de5a5ce8f4940cc627b7e2c127bd1c31f8d0a4be8ddb3d7f390a834a3e00277513f11c978cd390bb99c5a7fc0e344389888f983016f190ea2
+  checksum: 10c0/5421049c3591c8203cb5686a83c280a6ee3d7947eaba97b708025b48edbf78eb1696c50ffc26bd9d8a0eeac6cfa0d21a1b7007947a48e8a253dae9c50b0267ed
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-provider@npm:2.1.2":
-  version: 2.1.2
-  resolution: "@sophon-labs/account-provider@npm:2.1.2"
+"@sophon-labs/account-provider@npm:2.2.1":
+  version: 2.2.1
+  resolution: "@sophon-labs/account-provider@npm:2.2.1"
   dependencies:
-    "@sophon-labs/account-communicator": "npm:2.1.2"
-    "@sophon-labs/account-core": "npm:2.1.2"
+    "@sophon-labs/account-communicator": "npm:2.2.1"
+    "@sophon-labs/account-core": "npm:2.2.1"
     eventemitter3: "npm:^5.0.1"
     json-rpc-2.0: "npm:^1.7.1"
   peerDependencies:
     typescript: ^5.0.0
-  checksum: 10c0/f3f1a0fa68ea42cf58f68ddf379a357025e7f80ff5c2c57d19e34a9513170102d512dfe2f9f8d64e420f6778955d1e3080a341b7a74b5d5a3ca2128463819bbc
+  checksum: 10c0/c478a234e28dd26a82249dc84dfb6a679c4f76356c6d7e1a2825e309ced84af990c47154c013b941a9204ca3a15854028feed0e18708196c68df283fdd2d534c
   languageName: node
   linkType: hard
 
 "@sophon-labs/account-react@file:../../../packages/account-react::locator=%40sophon-labs%2Fexamples-react-sdk%40workspace%3A.":
-  version: 2.1.2
-  resolution: "@sophon-labs/account-react@file:../../../packages/account-react#../../../packages/account-react::hash=8ab91b&locator=%40sophon-labs%2Fexamples-react-sdk%40workspace%3A."
+  version: 2.2.1
+  resolution: "@sophon-labs/account-react@file:../../../packages/account-react#../../../packages/account-react::hash=f5c307&locator=%40sophon-labs%2Fexamples-react-sdk%40workspace%3A."
   dependencies:
-    "@sophon-labs/account-connector": "npm:2.1.2"
-    "@sophon-labs/account-core": "npm:2.1.2"
+    "@sophon-labs/account-connector": "npm:2.2.1"
+    "@sophon-labs/account-core": "npm:2.2.1"
     axios: "npm:^1.11.0"
     clsx: "npm:^2.1.1"
     js-cookie: "npm:^3.0.5"
@@ -1189,7 +1189,7 @@ __metadata:
     react-dom: ">=18"
     viem: ">=2.21.0"
     wagmi: ">=2"
-  checksum: 10c0/462ce4fc431690bae3b055e7b553e92f807373d756d8511907a677bcad9b4559bf0ecd7b66d38263fbfed2e55dac6e54c1825750f119c2410c6939af76c54943
+  checksum: 10c0/f8ee91cfee64411d36f2ba16934b822dfd375920c7a6eb2b3e07cd9b1272b6cf46371e7dae6612d219ec03e007cf7c4210681668365783f9285edd1efaf254a8
   languageName: node
   linkType: hard
 
