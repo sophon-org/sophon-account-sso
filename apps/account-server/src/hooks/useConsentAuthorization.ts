@@ -33,13 +33,14 @@ export function useConsentAuthorization() {
     consentAds: boolean;
     consentData: boolean;
   }) => {
+    // TODO: placeholder for now, will be implemented once we have backend ready
     if (!incoming) return;
 
     setIsLoading(true);
     setError(null);
 
     try {
-      // Handle consent approval logic here
+      // TODO: Handle consent approval logic here
       const response = {
         id: crypto.randomUUID(),
         requestId: incoming.id,

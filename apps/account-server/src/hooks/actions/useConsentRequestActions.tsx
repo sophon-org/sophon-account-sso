@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Loader } from '@/components/loader';
 import { Button } from '@/components/ui/button';
-import { useConsentAuthorization } from '@/hooks/auth/useConsentAuthorization';
+import { useConsentAuthorization } from '@/hooks/useConsentAuthorization';
 
 export const useConsentRequestActions = () => {
   const { onRefuseConsent, onAcceptConsent, isLoading, error } =

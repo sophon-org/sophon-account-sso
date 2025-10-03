@@ -19,7 +19,7 @@ export interface ConsentResponse {
 export const useSophonConsent = () => {
   const { communicator, accessToken } = useSophonContext();
   const requestConsent = useCallback(
-    //first I need to check if user has already consented to this action if so I dont need to request consent
+    //TODO: first I need to check if user has already consented to this action if so I dont need to request consent
     async (consentData: ConsentRequest) => {
       const request = {
         id: crypto.randomUUID(),
