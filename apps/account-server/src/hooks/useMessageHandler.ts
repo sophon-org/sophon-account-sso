@@ -6,6 +6,7 @@ import { isValidPaymaster } from '@/lib/paymaster';
 import { windowService } from '@/service/window.service';
 import type {
   AuthenticationRequest,
+  ConsentRequest,
   IncomingRequest,
   LogoutRequest,
   MessageSigningRequest,
@@ -21,6 +22,7 @@ interface UseMessageHandlerReturn {
   transactionRequest: TransactionRequest | null;
   authenticationRequest: AuthenticationRequest | null;
   logoutRequest: LogoutRequest | null;
+  consentRequest: ConsentRequest | null;
   handlerInitialized: boolean;
 }
 
@@ -40,7 +42,9 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
   const [logoutRequest, setLogoutRequest] = useState<LogoutRequest | null>(
     null,
   );
-
+  const [consentRequest, setConsentRequest] = useState<ConsentRequest | null>(
+    null,
+  );
   useEffect(() => {
     // biome-ignore lint/suspicious/noExplicitAny: review that in the future TODO
     const messageHandler = (data: any) => {
@@ -213,6 +217,13 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
             setSessionPreferences(null);
             setAuthenticationRequest(null);
           }
+        } else if (method === 'sophon_requestConsent') {
+          const params = data.content.action?.params;
+          setConsentRequest(params);
+          setTypedDataSigningRequest(null);
+          setMessageSigningRequest(null);
+          setSessionPreferences(null);
+          setAuthenticationRequest(null);
         }
 
         setIncomingRequest(data);
@@ -273,5 +284,6 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
     transactionRequest,
     handlerInitialized,
     logoutRequest,
+    consentRequest,
   };
 };

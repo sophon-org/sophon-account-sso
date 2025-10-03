@@ -15,6 +15,7 @@ export const useConnectEventsWithStateMachine = () => {
     transactionRequest,
     authenticationRequest,
     logoutRequest,
+    consentRequest,
   } = useLoadingResources();
 
   useEffect(() => {
@@ -28,6 +29,7 @@ export const useConnectEventsWithStateMachine = () => {
         transaction: transactionRequest,
         authentication: authenticationRequest,
         logout: logoutRequest,
+        consent: consentRequest,
       },
     });
   }, [
@@ -39,5 +41,6 @@ export const useConnectEventsWithStateMachine = () => {
     authenticationRequest,
     logoutRequest,
     actorRef,
+    consentRequest,
   ]);
 };

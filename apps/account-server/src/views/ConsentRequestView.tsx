@@ -1,0 +1,113 @@
+import { CaretRightIcon, DnaIcon } from '@phosphor-icons/react';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
+import { Switch } from '@/components/ui/switch';
+import VerificationImage from '@/components/ui/verification-image';
+import { useConsentRequestActions } from '@/hooks/actions/useConsentRequestActions';
+import { windowService } from '@/service/window.service';
+
+export default function ConsentRequestView({
+  consentAds,
+  consentData,
+  setConsentAds,
+  setConsentData,
+}: {
+  consentAds: boolean;
+  consentData: boolean;
+  setConsentAds: (consentAds: boolean) => void;
+  setConsentData: (consentData: boolean) => void;
+}) {
+  const isMobile = windowService.isMobile();
+  return (
+    <div className="text-center flex flex-col items-center justify-center gap-8 mt-3 h-[calc(100vh-220px)]">
+      {!isMobile && (
+        <VerificationImage
+          icon={<DnaIcon className="w-10 h-10 text-white" />}
+        />
+      )}
+      <div className="flex flex-col items-center justify-center">
+        <h5 className="text-2xl font-bold">Data permissions</h5>
+        <p>
+          We would like your permission to use your data for the following
+          purposes.
+        </p>
+      </div>
+      <div className="flex flex-col gap-4 w-full h-full justify-between relative">
+        <div className="h-full">
+          <Accordion type="single" collapsible>
+            <div className="w-full bg-white p-3 rounded-xl mb-3">
+              <AccordionItem value="item-1">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <AccordionTrigger>
+                      <CaretRightIcon
+                        weight="bold"
+                        className="w-4 h-4 text-[#A3A2A0]"
+                      />
+                    </AccordionTrigger>
+                    <p className="text-sm font-bold">Personalization & Ads:</p>
+                  </div>
+
+                  <Switch
+                    checked={consentAds}
+                    onCheckedChange={setConsentAds}
+                  />
+                </div>
+
+                <AccordionContent className="text-left px-3 text-xs text-[#757575]">
+                  Use the data you provide and import to build a profile linked
+                  to your Sophon Account, customize your experience, provide
+                  relevant ads and provide potential rewards without sharing
+                  your data with third parties.
+                </AccordionContent>
+              </AccordionItem>
+            </div>
+            <div className="w-full bg-white p-3 rounded-xl">
+              <AccordionItem value="item-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <AccordionTrigger>
+                      <CaretRightIcon
+                        weight="bold"
+                        className="w-4 h-4 text-[#A3A2A0]"
+                      />
+                    </AccordionTrigger>
+                    <p className="text-sm font-bold">Sharing your data:</p>
+                  </div>
+
+                  <Switch
+                    checked={consentData}
+                    onCheckedChange={setConsentData}
+                  />
+                </div>
+
+                <AccordionContent className="text-left px-3 text-xs text-[#757575]">
+                  Use the data you provide and import to build a profile linked
+                  to your Sophon Account, customize your experience, provide
+                  relevant ads and provide potential rewards without sharing
+                  your data with third parties.
+                </AccordionContent>
+              </AccordionItem>
+            </div>
+          </Accordion>
+        </div>
+        <div className="absolute bottom-0 left-0 right-0">
+          <p className="text-xs text-[#757575]">
+            You can withdraw your consent at any time by sending us an email at
+            data@sophon.xyz. Withdrawal will stop any future use of your data
+            for these purposes, but it will not affect processing already
+            carried out while your consent was active. Please refer to our
+            Privacy Policy to find out how we process and protect your data and
+            how you can exercise your rights.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ConsentRequestView.useActions = useConsentRequestActions;

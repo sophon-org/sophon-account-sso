@@ -36,6 +36,11 @@ export interface LogoutRequest {
   reason?: string;
 }
 
+export interface ConsentRequest {
+  action: string;
+  params: unknown[];
+}
+
 export interface Token {
   contractAddress: string;
   tokenName: string;
