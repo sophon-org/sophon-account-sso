@@ -11,4 +11,5 @@ export * from './useSophonAccount';
 export * from './useSophonActions';
 export * from './useSophonClient';
 export * from './useSophonConnector';
+export * from './useSophonConsent';
 export * from './useSophonToken';
