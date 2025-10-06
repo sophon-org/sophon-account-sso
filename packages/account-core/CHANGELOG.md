@@ -1,5 +1,11 @@
 # @sophon-labs/account-core
 
+## 2.3.0
+
+### Minor Changes
+
+- Exposing error codes on every action
+
 ## 2.2.1
 
 ### Patch Changes

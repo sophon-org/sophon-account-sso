@@ -5,7 +5,12 @@ import {
 } from '@sophon-labs/account-react-native';
 import { useEffect, useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
-import { erc20Abi, parseEther, parseUnits } from 'viem';
+import {
+  erc20Abi,
+  parseEther,
+  parseUnits,
+  UserRejectedRequestError,
+} from 'viem';
 import { sophonTestnet } from 'viem/chains';
 import { nftAbi } from '@/abis/nft';
 import { unverifiedAbi } from '@/abis/unverified';
@@ -16,15 +21,8 @@ import { TestDashboard } from '@/components/test-dashboard';
 import { Button } from '@/components/ui/button';
 
 export default function HomeScreen() {
-  const {
-    initialized,
-    connect,
-    isConnected,
-    account,
-    logout,
-    accountError,
-    isConnecting,
-  } = useSophonAccount();
+  const { initialized, connect, isConnected, account, logout, isConnecting } =
+    useSophonAccount();
 
   useEffect(() => {
     console.log('is connected', isConnected);
@@ -38,8 +36,19 @@ export default function HomeScreen() {
   const [error, setError] = useState<string>('');
   const [showTestDashboard, setShowTestDashboard] = useState(false);
 
+  useEffect(() => {
+    console.log('accountError', error);
+  }, [error]);
+
   const handleAuthenticate = async () => {
-    await connect();
+    setError('');
+    await connect().catch((e) => {
+      console.log(e);
+      if (e.code !== UserRejectedRequestError.code) {
+        // non user rejected errors
+        setError(e.details ?? e.message);
+      }
+    });
   };
 
   if (!initialized) {
@@ -80,9 +89,9 @@ export default function HomeScreen() {
             </Text>
           </Button>
         )}
-        {(accountError || error) && (
+        {error && (
           <Text className="text-xl mt-2 font-bold text-red-500 p-2 mb-4 w-2/3 text-center">
-            {accountError ?? error}
+            {error}
           </Text>
         )}
         {isConnected && (

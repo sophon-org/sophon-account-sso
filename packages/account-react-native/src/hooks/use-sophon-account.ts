@@ -1,6 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
 import type { Address } from 'viem';
-import type { CustomRPCError } from '@/types';
 import { sendUIMessage } from '../messaging';
 import { useSophonContext } from './use-sophon-context';
 
@@ -15,7 +14,10 @@ export const useSophonAccount = () => {
     logout,
     disconnect,
   } = useSophonContext();
-  const [accountError, setAccountError] = useState<string>();
+  const [accountError, setAccountError] = useState<{
+    description: string;
+    code: number;
+  }>();
   const [isConnecting, setIsConnecting] = useState(false);
 
   const connect = useCallback(async () => {
@@ -36,11 +38,14 @@ export const useSophonAccount = () => {
       setAccount({
         address: addresses[0] as Address,
       });
-    } catch (error: unknown) {
+      // biome-ignore lint/suspicious/noExplicitAny: Better typing is not possible at the moment
+    } catch (error: any) {
       setAccount(undefined);
-      setAccountError(
-        (error as CustomRPCError).details ?? (error as CustomRPCError).message,
-      );
+      setAccountError({
+        description: error.details ?? error.message,
+        code: error.code,
+      });
+      throw error;
     } finally {
       setIsConnecting(false);
     }

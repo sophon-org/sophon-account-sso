@@ -179,7 +179,7 @@ export const userWalletRequestStateMachine = createMachine({
           on: {
             CANCEL: {
               target: '#userWalletRequestStateMachine.completed',
-              actions: 'clearRequests',
+              actions: 'cancelRequests',
             },
             OTP_VERIFIED: {
               target: 'started',

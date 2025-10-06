@@ -48,6 +48,7 @@ Sentry.init({
       'extension://',
       'NetworkError',
       'has not been authorized yet',
+      'Maximum call stack size exceeded',
     ];
 
     if (noisyPatterns.some((pattern) => errorMessage.includes(pattern))) {
