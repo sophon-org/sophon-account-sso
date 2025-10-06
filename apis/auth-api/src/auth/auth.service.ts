@@ -15,6 +15,8 @@ import jwt, {
 	TokenExpiredError,
 } from "jsonwebtoken";
 import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
+import { toConsentClaims } from "src/consents/consent-claims.util";
+import { ConsentsService } from "src/consents/consents.service";
 import type { TypedDataDefinition } from "viem";
 import { sophon, sophonTestnet } from "viem/chains";
 import { JwtKeysService } from "../aws/jwt-keys.service";
@@ -36,7 +38,7 @@ type NoncePayload = JwtPayload & {
 	iss: string;
 	scope?: string;
 	sub?: string;
-	userId?: string;
+	userId: string;
 };
 
 type ClientInfo = { ip?: string | null; userAgent?: string | null };
@@ -51,6 +53,7 @@ export class AuthService {
 		private readonly auth: ConfigType<typeof authConfig>,
 		@InjectPinoLogger(AuthService.name)
 		private readonly logger: PinoLogger,
+		private readonly consents: ConsentsService,
 	) {}
 
 	private mapJwtError(e: unknown, ctx: "nonce" | "access" | "refresh"): never {
@@ -112,104 +115,6 @@ export class AuthService {
 			);
 			throw new BadRequestException(
 				e instanceof Error ? e.message : "failed to sign nonce token",
-			);
-		}
-	}
-
-	async verifySignatureWithSiwe(
-		address: `0x${string}`,
-		typedData: TypedDataDefinition,
-		signature: `0x${string}`,
-		nonceToken: string,
-	): Promise<string> {
-		const expectedAud = String(typedData.message.audience);
-		await this.partnerRegistry.assertExists(expectedAud);
-		const expectedIss = this.auth.nonceIssuer;
-
-		let payload!: NoncePayload;
-		try {
-			payload = jwt.verify(nonceToken, await this.keys.getAccessPublicKey(), {
-				algorithms: ["RS256"],
-				audience: expectedAud,
-				issuer: expectedIss,
-			}) as NoncePayload;
-		} catch (e) {
-			this.mapJwtError(e, "nonce");
-		}
-
-		if (
-			nonceToken !== typedData.message.nonce ||
-			payload.address.toLowerCase() !==
-				(typedData.message.from as string).toLowerCase()
-		) {
-			this.logger.info(
-				{ evt: "auth.verify.mismatch", address, aud: expectedAud },
-				"nonce or address mismatch",
-			);
-			throw new UnauthorizedException("Nonce or address mismatch");
-		}
-
-		if (String(typedData.message.audience) !== payload.aud) {
-			this.logger.info(
-				{ evt: "auth.verify.aud_mismatch", expected: payload.aud },
-				"audience mismatch",
-			);
-			throw new ForbiddenException("audience mismatch");
-		}
-
-		const network = process.env.CHAIN_ID === "50104" ? sophon : sophonTestnet;
-
-		const isValid = await verifyEIP1271Signature({
-			accountAddress: address,
-			signature,
-			domain: { name: "Sophon SSO", version: "1", chainId: network.id },
-			types: typedData.types,
-			primaryType: typedData.primaryType,
-			message: typedData.message,
-			chain: network,
-			logger: this.logger,
-		});
-
-		if (!isValid) {
-			this.logger.info(
-				{ evt: "auth.verify.invalid_sig", address },
-				"invalid signature",
-			);
-			throw new UnauthorizedException("signature is invalid");
-		}
-
-		const scope = packScope(unpackScope(payload.scope ?? ""));
-		const iat = Math.floor(Date.now() / 1000);
-		const expiresInSeconds = this.auth.accessTtlS;
-
-		try {
-			const access = jwt.sign(
-				{ sub: address, iat, scope, userId: payload.userId },
-				await this.keys.getAccessPrivateKey(),
-				{
-					algorithm: "RS256",
-					keyid: await this.keys.getAccessKid(),
-					issuer: this.auth.jwtIssuer,
-					audience: payload.aud,
-					expiresIn: expiresInSeconds,
-				},
-			);
-			this.logger.info(
-				{
-					evt: "auth.access.issued",
-					aud: payload.aud,
-					expInS: expiresInSeconds,
-				},
-				"access token issued",
-			);
-			return access;
-		} catch (e) {
-			this.logger.error(
-				{ evt: "auth.access.error", err: e },
-				"access sign failed",
-			);
-			throw new BadRequestException(
-				e instanceof Error ? e.message : "failed to sign access token",
 			);
 		}
 	}
@@ -289,8 +194,19 @@ export class AuthService {
 		const accessExp = this.auth.accessTtlS;
 		const refreshExp = this.auth.refreshTtlS;
 
+		const active = await this.consents.getActiveConsents(payload.userId);
+		const c = toConsentClaims(active);
+
 		const accessToken = jwt.sign(
-			{ sub: address, iat, scope, userId: payload.userId, sid, typ: "access" },
+			{
+				sub: address,
+				iat,
+				scope,
+				userId: payload.userId,
+				sid,
+				typ: "access",
+				c,
+			},
 			await this.keys.getAccessPrivateKey(),
 			{
 				algorithm: "RS256",
