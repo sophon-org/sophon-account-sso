@@ -12,9 +12,10 @@ import { authConfig } from "./config/auth.config";
 import { awsConfig } from "./config/aws.config";
 import { dbConfig } from "./config/db.config";
 import { validationSchema } from "./config/validation.schema";
+import { ConsentsModule } from "./consents/consents.module";
 import { HyperindexModule } from "./hyperindex/hyperindex.module";
 import { JwksModule } from "./jwks/jwks.module";
-
+import { MeModule } from "./me/me.module";
 @Module({
 	imports: [
 		ConfigModule.forRoot({
@@ -78,6 +79,8 @@ import { JwksModule } from "./jwks/jwks.module";
 		AuthModule,
 		JwksModule,
 		HyperindexModule,
+		ConsentsModule,
+		MeModule,
 	],
 	controllers: [AppController],
 	providers: [],

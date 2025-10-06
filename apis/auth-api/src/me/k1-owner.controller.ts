@@ -13,8 +13,8 @@ import {
 } from "@nestjs/swagger";
 import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
 import { AccessTokenGuard } from "../auth/guards/access-token.guard";
-import { K1OwnerStateDto } from "./dto/k1-owner-state.dto";
-import { HyperindexService } from "./hyperindex.service";
+import { K1OwnerStateDto } from "../hyperindex/dto/k1-owner-state.dto";
+import { HyperindexService } from "../hyperindex/hyperindex.service";
 
 function normalizeAddress(s: string | undefined | null): `0x${string}` {
 	const v = (s ?? "").trim().toLowerCase();
@@ -28,10 +28,10 @@ function normalizeAddress(s: string | undefined | null): `0x${string}` {
 @ApiBearerAuth()
 @UseGuards(AccessTokenGuard)
 @Controller("me")
-export class MeController {
+export class K1OwnerController {
 	constructor(
 		private readonly hyperindex: HyperindexService,
-		@InjectPinoLogger(MeController.name)
+		@InjectPinoLogger(K1OwnerController.name)
 		private readonly logger: PinoLogger,
 	) {}
 

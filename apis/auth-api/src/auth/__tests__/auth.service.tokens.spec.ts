@@ -2,6 +2,7 @@ import { ConfigModule } from "@nestjs/config";
 import { Test } from "@nestjs/testing";
 import jwt from "jsonwebtoken";
 import { LoggerModule } from "nestjs-pino";
+import { ConsentsService } from "src/consents/consents.service";
 import type { TypedDataDefinition } from "viem";
 import { JwtKeysService } from "../../aws/jwt-keys.service";
 import { authConfig } from "../../config/auth.config";
@@ -81,6 +82,19 @@ describe("AuthService (new token features)", () => {
 			.fn<Promise<string>, []>()
 			.mockResolvedValue("test-refresh-kid"),
 	};
+
+	const consentsServiceMock = {
+		assertPartnerScopeAllowed: jest.fn(), // no throw = allowed
+		areFieldsAllowedByConsent: jest.fn().mockReturnValue(true),
+		upsertGeneralConsent: jest.fn().mockResolvedValue(undefined),
+		getGeneralConsent: jest.fn().mockResolvedValue({
+			personalizationAds: true,
+			sharingData: true,
+			updatedAt: new Date().toISOString(),
+		}),
+		getActiveConsents: jest.fn().mockResolvedValue([]),
+	};
+
 	beforeEach(async () => {
 		const module = await Test.createTestingModule({
 			imports: [
@@ -92,6 +106,7 @@ describe("AuthService (new token features)", () => {
 				{ provide: PartnerRegistryService, useValue: partnerRegistryMock },
 				{ provide: SessionsRepository, useValue: sessionsRepositoryMock },
 				{ provide: JwtKeysService, useValue: jwtKeysServiceMock },
+				{ provide: ConsentsService, useValue: consentsServiceMock },
 			],
 		})
 			.overrideProvider(authConfig.KEY)

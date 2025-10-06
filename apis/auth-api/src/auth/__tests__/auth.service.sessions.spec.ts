@@ -9,6 +9,7 @@ import { LoggerModule } from "nestjs-pino";
 import type { TypedDataDefinition } from "viem";
 import { JwtKeysService } from "../../aws/jwt-keys.service";
 import { authConfig } from "../../config/auth.config";
+import { ConsentsService } from "../../consents/consents.service";
 import { PartnerRegistryService } from "../../partners/partner-registry.service";
 import { SessionsRepository } from "../../sessions/sessions.repository";
 import { AuthService } from "../auth.service";
@@ -94,6 +95,18 @@ describe("AuthService (sessions + refresh)", () => {
 	const FIXED_NOW_MS = 1_700_000_000_000; // fixed now for deterministic tests
 	let dateNowSpy: jest.SpyInstance<number, []>;
 
+	const consentsServiceMock = {
+		assertPartnerScopeAllowed: jest.fn(), // no throw = allowed
+		areFieldsAllowedByConsent: jest.fn().mockReturnValue(true),
+		upsertGeneralConsent: jest.fn().mockResolvedValue(undefined),
+		getGeneralConsent: jest.fn().mockResolvedValue({
+			personalizationAds: true,
+			sharingData: true,
+			updatedAt: new Date().toISOString(),
+		}),
+		getActiveConsents: jest.fn().mockResolvedValue([]),
+	};
+
 	beforeEach(async () => {
 		const module = await Test.createTestingModule({
 			imports: [loggerModule],
@@ -103,6 +116,7 @@ describe("AuthService (sessions + refresh)", () => {
 				{ provide: SessionsRepository, useValue: sessionsMock },
 				{ provide: authConfig.KEY, useValue: MOCK_AUTH },
 				{ provide: JwtKeysService, useValue: jwtKeysServiceMock },
+				{ provide: ConsentsService, useValue: consentsServiceMock },
 			],
 		}).compile();
 
