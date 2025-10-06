@@ -413,6 +413,10 @@ export class AuthService {
 		const accessExp = this.auth.accessTtlS;
 		const refreshExp = this.auth.refreshTtlS;
 
+		const active = await this.consents.getActiveConsents(r.userId);
+		const c = toConsentClaims(active);
+		console.log("c", c);
+
 		const newAccess = jwt.sign(
 			{
 				sub: r.sub,
@@ -421,6 +425,7 @@ export class AuthService {
 				userId: r.userId,
 				sid: r.sid,
 				typ: "access",
+				c,
 			},
 			await this.keys.getAccessPrivateKey(),
 			{

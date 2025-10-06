@@ -51,35 +51,15 @@ export class ConsentsRepository {
 				where: { userId: params.userId, kind: params.kind, endTime: IsNull() },
 				order: { startTime: "DESC" },
 			});
-			if (active) {
-				active.endTime = start;
-				await em.save(active);
-			}
-
-			const res = await em
-				.createQueryBuilder()
-				.insert()
-				.into(UserConsent)
-				.values({
-					userId: params.userId,
-					kind: params.kind,
-					startTime: start,
-					endTime: null,
-				})
-				.orIgnore()
-				.returning("*")
-				.execute();
-
-			if (res.raw?.length) return toDomain(res.raw[0] as UserConsent);
-
-			// If conflicted, read the active one and return
-			const current = await em.findOne(UserConsent, {
-				where: { userId: params.userId, kind: params.kind, endTime: IsNull() },
-				order: { startTime: "DESC" },
+			if (active) return toDomain(active);
+			const entity = em.create(UserConsent, {
+				userId: params.userId,
+				kind: params.kind,
+				startTime: start,
+				endTime: null,
 			});
-			if (!current)
-				throw new Error("unexpected: consent not inserted nor found active");
-			return toDomain(current);
+			const saved = await em.save(entity);
+			return toDomain(saved);
 		});
 	}
 
