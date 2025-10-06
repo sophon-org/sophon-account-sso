@@ -147,6 +147,44 @@ async function giveConsents(kinds: ConsentKind[], bearer: string) {
 	}
 }
 
+const REVOKE_CSV = process.env.REVOKE_CONSENTS ?? process.env.REVOKE ?? "";
+
+// If you don't already have this:
+const delJSON = <T>(path: string, opts?: HttpOpts) =>
+	httpJSON<T>("DELETE", path, undefined, opts);
+
+// Revoke + refresh helper
+async function revokeConsentsAndRefresh(
+	kinds: ConsentKind[],
+	tokens: VerifyResp,
+): Promise<VerifyResp> {
+	if (kinds.length === 0) return tokens;
+	const bearer = tokens.accessToken;
+
+	if (kinds.length === 1) {
+		const kind = kinds[0];
+		await delJSON<{ ok: boolean; changed: number }>(`/me/consent/${kind}`, {
+			bearer,
+			timeoutMs: 10_000,
+		});
+		console.log(`Revoked consent: ${kind}`);
+	} else {
+		const resp = await postJSON<{ ok: boolean; changed: number }>(
+			`/me/consent/revokeMany`,
+			{ kinds },
+			{ bearer, timeoutMs: 10_000 },
+		);
+		console.log(`Revoked ${resp.changed}/${kinds.length} consents`);
+	}
+
+	const refreshed = await refreshTokens(tokens);
+	if (!refreshed) {
+		console.warn("Refresh failed; returning original tokens.");
+		return tokens;
+	}
+	return refreshed;
+}
+
 // ---------- Refresh + JWT decode ----------
 async function refreshTokens(prev: VerifyResp): Promise<VerifyResp | null> {
 	// Try Bearer refreshToken
@@ -382,6 +420,17 @@ function printTokenSummary(label: string, token: string) {
 			console.log("Tokens (after consent/refresh):");
 			console.log(JSON.stringify(after, null, 2));
 			printTokenSummary("Access token (after)", after.accessToken);
+
+			// 4.1) Revoke consent(s) if requested, then refresh and print
+			const revokeKinds = parseConsents("PERSONALIZATION_ADS");
+			if (revokeKinds.length > 0) {
+				console.log("Revoking consents:", revokeKinds.join(", "));
+				after = await revokeConsentsAndRefresh(revokeKinds, after);
+
+				console.log("Tokens (after revoke/refresh):");
+				console.log(JSON.stringify(after, null, 2));
+				printTokenSummary("Access token (after revoke)", after.accessToken);
+			}
 
 			// 5) OPTIONAL: Call protected endpoint as the SMART ACCOUNT: GET /me/k1-owner-state
 			try {
