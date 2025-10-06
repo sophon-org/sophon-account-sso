@@ -43,6 +43,7 @@ export default function HomeScreen() {
   const handleAuthenticate = async () => {
     setError('');
     await connect().catch((e) => {
+      console.log(e);
       if (e.code !== UserRejectedRequestError.code) {
         // non user rejected errors
         setError(e.details ?? e.message);

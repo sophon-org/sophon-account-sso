@@ -25,8 +25,7 @@
     "@react-navigation/bottom-tabs": "^7.3.10",
     "@react-navigation/elements": "^2.3.8",
     "@react-navigation/native": "^7.1.6",
-    "@sophon-labs/account-provider": "link:../../../packages/account-provider",
-    "@sophon-labs/account-react-native": "link:../../../packages/account-react-native",
+    "@sophon-labs/account-react-native": "2.3.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "expo": "54.0.12",
@@ -81,9 +80,5 @@
   "packageManager": "yarn@4.9.0",
   "engines": {
     "node": ">=22"
-  },
-  "resolutions": {
-    "@sophon-labs/account-react-native": "link:../../../packages/account-react-native",
-    "@sophon-labs/account-provider": "link:../../../packages/account-provider"
   }
 }
