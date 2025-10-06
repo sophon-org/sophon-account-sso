@@ -1,5 +1,17 @@
 # @sophon-labs/account-react
 
+## 2.3.0
+
+### Minor Changes
+
+- Exposing error codes on every action
+
+### Patch Changes
+
+- Updated dependencies
+  - @sophon-labs/account-connector@2.3.0
+  - @sophon-labs/account-core@2.3.0
+
 ## 2.2.1
 
 ### Patch Changes
