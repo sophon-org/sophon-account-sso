@@ -27,13 +27,13 @@ export class ConsentsService {
 	}
 
 	revoke(userId: string, kind: ConsentKind): Promise<boolean> {
-		return this.repo.revoke(userId, kind);  
+		return this.repo.revoke(userId, kind);
 	}
 
 	history(userId: string, kind?: ConsentKind): Promise<ConsentRecord[]> {
 		return this.repo.history(userId, kind);
 	}
- 
+
 	getActiveConsents(userId: string): Promise<ConsentRecord[]> {
 		return this.findActiveForUser(userId);
 	}

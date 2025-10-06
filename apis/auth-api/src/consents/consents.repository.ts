@@ -47,7 +47,6 @@ export class ConsentsRepository {
 		const start = params.startTime ?? new Date();
 
 		return this.repo.manager.transaction(async (em) => {
-
 			const active = await em.findOne(UserConsent, {
 				where: { userId: params.userId, kind: params.kind, endTime: IsNull() },
 				order: { startTime: "DESC" },
@@ -56,7 +55,6 @@ export class ConsentsRepository {
 				active.endTime = start;
 				await em.save(active);
 			}
-
 
 			const res = await em
 				.createQueryBuilder()
