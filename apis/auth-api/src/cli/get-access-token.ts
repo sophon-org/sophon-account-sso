@@ -15,6 +15,10 @@ const SIGN_CHAIN_ID_ENV = process.env.SIGN_CHAIN_ID
 	? Number(process.env.SIGN_CHAIN_ID)
 	: undefined;
 
+// NEW: which consents to give (comma-separated). Default: PERSONALIZATION_ADS
+const CONSENTS_CSV =
+	process.env.CONSENTS ?? process.env.CONSENT ?? "PERSONALIZATION_ADS";
+
 // ---------- Types ----------
 const AUTH_FIELDS_ALLOWED = [
 	"discord",
@@ -39,6 +43,8 @@ type K1OwnerState = {
 	accounts: string[];
 };
 
+type ConsentKind = "PERSONALIZATION_ADS" | "SHARING_DATA";
+
 // ---------- Helpers ----------
 function normalizePkTo0x32Bytes(pk: string): `0x${string}` {
 	let hex = (pk || "").trim().toLowerCase();
@@ -62,33 +68,46 @@ function parseFields(csv: string | undefined): AuthField[] {
 	return arr.length === 0 ? ["email"] : arr.slice(0, 16);
 }
 
-// Abort/timeout helper without ts-ignore
+function parseConsents(csv: string | undefined): ConsentKind[] {
+	const allowed: ConsentKind[] = ["PERSONALIZATION_ADS", "SHARING_DATA"];
+	return (csv ?? "")
+		.split(",")
+		.map((s) => s.trim().toUpperCase())
+		.filter((s): s is ConsentKind => (allowed as string[]).includes(s));
+}
+
+// Abort/timeout helper
 function makeTimeoutSignal(ms = 15_000): AbortSignal {
 	const ctrl = new AbortController();
 	const t = setTimeout(() => ctrl.abort(), ms);
-	// In Node, avoid keeping the process alive
-	// Cast to access optional unref without suppressing lints
 	(t as unknown as { unref?: () => void }).unref?.();
 	return ctrl.signal;
 }
 
+type HttpOpts = {
+	bearer?: string;
+	timeoutMs?: number;
+	headers?: Record<string, string>;
+};
+
 async function httpJSON<T>(
-	method: "GET" | "POST",
+	method: "GET" | "POST" | "DELETE",
 	path: string,
 	body?: unknown,
-	opts?: { bearer?: string; timeoutMs?: number },
+	opts?: HttpOpts,
 ): Promise<T> {
 	const url = new URL(path, BASE);
 	const headers: Record<string, string> = {
 		accept: "application/json",
+		...(opts?.headers ?? {}),
 	};
-	if (method === "POST") headers["content-type"] = "application/json"; // hyphen requires bracket notation
+	if (method !== "GET") headers["content-type"] = "application/json";
 	if (opts?.bearer) headers.authorization = `Bearer ${opts.bearer}`;
 
 	const res = await fetch(url, {
 		method,
 		headers,
-		body: method === "POST" ? JSON.stringify(body ?? {}) : undefined,
+		body: method === "GET" ? undefined : JSON.stringify(body ?? {}),
 		signal: makeTimeoutSignal(opts?.timeoutMs ?? 15_000),
 	});
 
@@ -101,16 +120,209 @@ async function httpJSON<T>(
 	return (await res.json()) as T;
 }
 
-const postJSON = <T>(
-	path: string,
-	body: unknown,
-	opts?: { bearer?: string; timeoutMs?: number },
-) => httpJSON<T>("POST", path, body, opts);
+const postJSON = <T>(path: string, body: unknown, opts?: HttpOpts) =>
+	httpJSON<T>("POST", path, body, opts);
+const getJSON = <T>(path: string, opts?: HttpOpts) =>
+	httpJSON<T>("GET", path, undefined, opts);
 
-const getJSON = <T>(
-	path: string,
-	opts?: { bearer?: string; timeoutMs?: number },
-) => httpJSON<T>("GET", path, undefined, opts);
+// ---------- Consent helpers ----------
+const CONSENT_BASE = "/me/consent";
+
+async function giveConsents(kinds: ConsentKind[], bearer: string) {
+	if (kinds.length === 0) return;
+
+	if (kinds.length === 1) {
+		const kind = kinds[0];
+		await postJSON<{ kind: ConsentKind; startTime: string }>(
+			`${CONSENT_BASE}`,
+			{ kind },
+			{ bearer, timeoutMs: 10_000 },
+		);
+		console.log(`Gave consent: ${kind}`);
+	} else {
+		const rows = await postJSON<
+			Array<{ kind: ConsentKind; startTime: string }>
+		>(`${CONSENT_BASE}/giveMany`, { kinds }, { bearer, timeoutMs: 10_000 });
+		console.log(`Gave consents: ${rows.map((r) => r.kind).join(", ")}`);
+	}
+}
+
+const REVOKE_CSV = process.env.REVOKE_CONSENTS ?? process.env.REVOKE ?? "";
+
+// If you don't already have this:
+const delJSON = <T>(path: string, opts?: HttpOpts) =>
+	httpJSON<T>("DELETE", path, undefined, opts);
+
+// Revoke + refresh helper
+async function revokeConsentsAndRefresh(
+	kinds: ConsentKind[],
+	tokens: VerifyResp,
+): Promise<VerifyResp> {
+	if (kinds.length === 0) return tokens;
+	const bearer = tokens.accessToken;
+
+	if (kinds.length === 1) {
+		const kind = kinds[0];
+		await delJSON<{ ok: boolean; changed: number }>(`/me/consent/${kind}`, {
+			bearer,
+			timeoutMs: 10_000,
+		});
+		console.log(`Revoked consent: ${kind}`);
+	} else {
+		const resp = await postJSON<{ ok: boolean; changed: number }>(
+			`/me/consent/revokeMany`,
+			{ kinds },
+			{ bearer, timeoutMs: 10_000 },
+		);
+		console.log(`Revoked ${resp.changed}/${kinds.length} consents`);
+	}
+
+	const refreshed = await refreshTokens(tokens);
+	if (!refreshed) {
+		console.warn("Refresh failed; returning original tokens.");
+		return tokens;
+	}
+	return refreshed;
+}
+
+// ---------- Refresh + JWT decode ----------
+async function refreshTokens(prev: VerifyResp): Promise<VerifyResp | null> {
+	// Try Bearer refreshToken
+	if (prev.refreshToken) {
+		try {
+			return await postJSON<VerifyResp>(
+				"/auth/refresh",
+				{},
+				{
+					bearer: prev.refreshToken,
+					timeoutMs: 10_000,
+				},
+			);
+		} catch {}
+		// Try body refreshToken
+		try {
+			return await postJSON<VerifyResp>(
+				"/auth/refresh",
+				{ refreshToken: prev.refreshToken },
+				{
+					timeoutMs: 10_000,
+				},
+			);
+		} catch {}
+	}
+	// Try cookie-based session id
+	if (prev.sid) {
+		try {
+			return await postJSON<VerifyResp>(
+				"/auth/refresh",
+				{},
+				{
+					timeoutMs: 10_000,
+					headers: { cookie: `sid=${prev.sid}` },
+				},
+			);
+		} catch {}
+	}
+	return null;
+}
+
+function decodeBase64Url<T = unknown>(segment: string): T {
+	const pad =
+		segment.length % 4 === 2 ? "==" : segment.length % 4 === 3 ? "=" : "";
+	const s = segment.replace(/-/g, "+").replace(/_/g, "/") + pad;
+	return JSON.parse(Buffer.from(s, "base64").toString("utf8")) as T;
+}
+
+// ---------- JSON & JWT types ----------
+type JsonPrimitive = string | number | boolean | null;
+type JsonObject = { [key: string]: JsonValue };
+type JsonValue = JsonPrimitive | JsonObject | JsonValue[];
+
+type JwtHeader = {
+	alg?: string;
+	kid?: string;
+	typ?: string;
+} & JsonObject;
+
+// What your access/refresh tokens actually carry
+type JwtPayloadBase = {
+	sub?: string;
+	aud?: string;
+	iss?: string;
+	exp?: number; // seconds
+	iat?: number; // seconds
+	typ?: string;
+	scope?: string;
+	userId?: string;
+	sid?: string;
+	// consent claims live here (epoch seconds or stringified)
+	c?: Record<string, number | string>;
+} & JsonObject;
+
+// ---------- Refresh + JWT decode ----------
+
+function decodeJwt(token: string): {
+	header: JwtHeader;
+	payload: JwtPayloadBase;
+} {
+	const [h, p] = token.split(".");
+	if (!h || !p) throw new Error("Invalid JWT format");
+	return {
+		header: decodeBase64Url<JwtHeader>(h),
+		payload: decodeBase64Url<JwtPayloadBase>(p),
+	};
+}
+
+// Map short claim keys -> consent kinds (adjust if you add more)
+const CONSENT_CLAIM_KEYS: Record<string, ConsentKind> = {
+	pa: "PERSONALIZATION_ADS",
+	sd: "SHARING_DATA",
+};
+
+function extractConsentClaims(payload: JwtPayloadBase) {
+	// Consent claims live under `c` (server side: toConsentClaims) — fall back to top level if absent
+	const src: Record<string, unknown> =
+		payload && typeof payload.c === "object" && payload.c !== null
+			? (payload.c as Record<string, unknown>)
+			: (payload as Record<string, unknown>);
+
+	const out: Array<{ kind: ConsentKind; since: string; raw: number }> = [];
+	for (const [key, kind] of Object.entries(CONSENT_CLAIM_KEYS)) {
+		const v = src[key];
+		if (typeof v === "number") {
+			out.push({ kind, raw: v, since: new Date(v * 1000).toISOString() });
+		} else if (typeof v === "string" && /^\d+$/.test(v)) {
+			const n = Number(v);
+			out.push({ kind, raw: n, since: new Date(n * 1000).toISOString() });
+		}
+	}
+	return out.sort((a, b) => a.raw - b.raw);
+}
+
+function printTokenSummary(label: string, token: string) {
+	const { payload } = decodeJwt(token);
+	const expISO = payload?.exp
+		? new Date(payload.exp * 1000).toISOString()
+		: "n/a";
+	const consents = extractConsentClaims(payload);
+	console.log(`${label} (exp: ${expISO}) claims:`);
+	console.log(
+		JSON.stringify(
+			{
+				sub: payload.sub,
+				userId: payload.userId,
+				scope: payload.scope,
+				aud: payload.aud,
+				iss: payload.iss,
+				sid: payload.sid,
+				consents,
+				rawConsentClaims: payload.c ?? null,
+			},
+			null,
+			2,
+		),
+	);
+}
 
 // ---------- Main ----------
 (async () => {
@@ -139,8 +351,6 @@ const getJSON = <T>(
 	const nonceToken = nonceResp.nonce;
 	if (!nonceToken)
 		throw new Error(`Unexpected /auth/nonce: ${JSON.stringify(nonceResp)}`);
-
-	// 👇 print the nonce JWT (sensitive)
 	console.log("Nonce JWT (sensitive):", nonceToken);
 
 	// 2) Sign EIP-712 over candidate chainIds, then /auth/verify
@@ -185,26 +395,48 @@ const getJSON = <T>(
 			});
 
 			console.log(`Verified with chainId=${chainId}`);
-			console.log("Tokens:");
+			console.log("Tokens (initial):");
 			console.log(JSON.stringify(verifyResp, null, 2));
+			printTokenSummary("Access token (initial)", verifyResp.accessToken);
 
-			// 3) OPTIONAL sanity: check who we are
-			// try {
-			// 	const me = await getJSON<{
-			// 		sub: string;
-			// 		partnerId: string;
-			// 		address: string;
-			// 	}>("/auth/me", { bearer: verifyResp.accessToken, timeoutMs: 10_000 });
-			// 	console.log("ME:", JSON.stringify(me, null, 2));
-			// } catch (e) {
-			// 	console.warn("ME failed:", (e as Error)?.message);
-			// }
+			// 3) Give consent(s) via /me/consent
+			const consents = parseConsents(CONSENTS_CSV);
+			if (consents.length > 0) {
+				console.log("Giving consents:", consents.join(", "));
+				await giveConsents(consents, verifyResp.accessToken);
+			} else {
+				console.log("No consents requested via CONSENTS env; skipping give.");
+			}
 
-			// 4) Call protected endpoint as the SMART ACCOUNT: GET /me/k1-owner-state
+			// 4) Refresh tokens so new consent claims are embedded, then print + decode
+			let after = await refreshTokens(verifyResp);
+			if (!after) {
+				console.warn(
+					"Refresh failed or not supported; using initial tokens (claims may not reflect new consent yet).",
+				);
+				after = verifyResp;
+			}
+
+			console.log("Tokens (after consent/refresh):");
+			console.log(JSON.stringify(after, null, 2));
+			printTokenSummary("Access token (after)", after.accessToken);
+
+			// 4.1) Revoke consent(s) if requested, then refresh and print
+			const revokeKinds = parseConsents("PERSONALIZATION_ADS");
+			if (revokeKinds.length > 0) {
+				console.log("Revoking consents:", revokeKinds.join(", "));
+				after = await revokeConsentsAndRefresh(revokeKinds, after);
+
+				console.log("Tokens (after revoke/refresh):");
+				console.log(JSON.stringify(after, null, 2));
+				printTokenSummary("Access token (after revoke)", after.accessToken);
+			}
+
+			// 5) OPTIONAL: Call protected endpoint as the SMART ACCOUNT: GET /me/k1-owner-state
 			try {
 				const url = `/me/k1-owner-state/${owner.address}`;
 				const k1OwnerState = await getJSON<K1OwnerState[]>(url, {
-					bearer: verifyResp.accessToken,
+					bearer: after.accessToken,
 					timeoutMs: 12_000,
 				});
 				console.log(
@@ -222,13 +454,11 @@ const getJSON = <T>(
 				} else {
 					console.error("GET /me/k1-owner-state/:owner failed:", msg);
 				}
-				// throw e; // uncomment to fail hard
 			}
 
 			return; // done
 		} catch (e) {
-			lastErr = e;
-			// try next chainId
+			lastErr = e; // try next chainId
 		}
 	}
 	throw lastErr;
