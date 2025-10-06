@@ -17,6 +17,8 @@ import {
 } from "@nestjs/swagger";
 import type { Request } from "express";
 import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
+import { GiveManyConsentsDto } from "src/consents/dto/give-many-consents.dto";
+import { RevokeManyConsentsDto } from "src/consents/dto/revoke-many-consents.dto";
 import { AccessTokenGuard } from "../auth/guards/access-token.guard";
 import type { AccessTokenPayload } from "../auth/types";
 import { ConsentsService } from "../consents/consents.service";
@@ -77,6 +79,29 @@ export class ConsentController {
 		return { kind: row.kind, startTime: row.startTime.toISOString() };
 	}
 
+	@Post("giveMany")
+	@ApiOkResponse({ description: "Give multiple consents in one call" })
+	async giveMany(
+		@Body() dto: GiveManyConsentsDto,
+		@Req() req: Request & { user: AccessTokenPayload },
+	) {
+		const userId = requireUserIdFromReq(req);
+		const rows = await this.consents.giveMany(userId, dto.kinds);
+		this.logger.info(
+			{
+				evt: "me.consents.giveMany",
+				userId,
+				kinds: dto.kinds,
+				total: rows.length,
+			},
+			"consents granted",
+		);
+		return rows.map((r) => ({
+			kind: r.kind,
+			startTime: r.startTime.toISOString(),
+		}));
+	}
+
 	@Delete(":kind")
 	@ApiParam({ name: "kind", enum: ConsentKind })
 	@ApiOkResponse({ description: "Revoke consent of a kind" })
@@ -89,6 +114,21 @@ export class ConsentController {
 		this.logger.info(
 			{ evt: "me.consents.revoke", userId, kind, changed },
 			"consent revoked",
+		);
+		return { ok: true, changed };
+	}
+
+	@Post("revokeMany")
+	@ApiOkResponse({ description: "Revoke multiple consents in one call" })
+	async revokeMany(
+		@Body() dto: RevokeManyConsentsDto,
+		@Req() req: Request & { user: AccessTokenPayload },
+	) {
+		const userId = requireUserIdFromReq(req);
+		const { changed } = await this.consents.revokeMany(userId, dto.kinds);
+		this.logger.info(
+			{ evt: "me.consents.revokeMany", userId, kinds: dto.kinds, changed },
+			"consents revoked",
 		);
 		return { ok: true, changed };
 	}
