@@ -8,8 +8,10 @@ import { authConfig } from "../../config/auth.config";
 import { PartnerRegistryService } from "../../partners/partner-registry.service";
 import { SessionsRepository } from "../../sessions/sessions.repository";
 import { AuthService } from "../auth.service";
+import { ConsentsService } from "../../consents/consents.service";
 
 const loggerModule = LoggerModule.forRoot({ pinoHttp: { enabled: false } });
+
 // --- jsonwebtoken mocks ---
 jest.mock("jsonwebtoken", () => ({
 	sign: jest.fn().mockReturnValue("mocked.token"),
@@ -29,7 +31,7 @@ const MOCK_AUTH = {
 
 	jwtKid: "test-kid",
 	jwtIssuer: "https://auth.example.com",
-	nonceIssuer: "https://auth.example.com", // your test expects this
+	nonceIssuer: "https://auth.example.com",
 	refreshIssuer: "https://auth.example.com",
 	refreshJwtKid: "test-refresh-kid",
 
@@ -74,6 +76,17 @@ describe("AuthService", () => {
 		getAccessKid: jest.fn().mockResolvedValue("test-kid"),
 		getRefreshKid: jest.fn().mockResolvedValue("test-refresh-kid"),
 	};
+	const consentsServiceMock = {
+		assertPartnerScopeAllowed: jest.fn(), // no throw = allowed
+		areFieldsAllowedByConsent: jest.fn().mockReturnValue(true),
+		upsertGeneralConsent: jest.fn().mockResolvedValue(undefined),
+		getGeneralConsent: jest.fn().mockResolvedValue({
+			personalizationAds: true,
+			sharingData: true,
+			updatedAt: new Date().toISOString(),
+		}),
+		getActiveConsents: jest.fn().mockResolvedValue([]),
+	};
 
 	beforeEach(async () => {
 		const module = await Test.createTestingModule({
@@ -83,6 +96,7 @@ describe("AuthService", () => {
 				{ provide: PartnerRegistryService, useValue: partnerRegistryMock },
 				{ provide: SessionsRepository, useValue: sessionsRepositoryMock },
 				{ provide: JwtKeysService, useValue: jwtKeysServiceMock },
+				{ provide: ConsentsService, useValue: consentsServiceMock },
 			],
 		})
 			.overrideProvider(authConfig.KEY)
@@ -123,7 +137,7 @@ describe("AuthService", () => {
 		);
 	});
 
-	it("should verify signature and return JWT", async () => {
+	it("should verify signature and issue tokens", async () => {
 		(jwt.verify as jest.Mock).mockReturnValueOnce({
 			nonce: "expected-nonce",
 			address: "0x1234567890abcdef1234567890abcdef12345678",
@@ -143,14 +157,21 @@ describe("AuthService", () => {
 			},
 		};
 
-		const token = await service.verifySignatureWithSiwe(
+		const tokens = await service.verifySignatureWithSiweIssueTokens(
 			"0x1234567890abcdef1234567890abcdef12345678",
 			typedData,
 			"0xsignature",
 			"expected-nonce",
 		);
 
-		expect(token).toBe("mocked.token");
+		expect(tokens).toMatchObject({
+			accessToken: "mocked.token",
+			refreshToken: "mocked.token",
+		});
+		expect(tokens).toHaveProperty("sid");
+
+		expect(tokens).toHaveProperty("accessTokenExpiresAt");
+		expect(tokens).toHaveProperty("refreshTokenExpiresAt");
 	});
 
 	it("should throw on nonce mismatch", async () => {
@@ -174,7 +195,7 @@ describe("AuthService", () => {
 		};
 
 		await expect(() =>
-			service.verifySignatureWithSiwe(
+			service.verifySignatureWithSiweIssueTokens(
 				"0x1234567890abcdef1234567890abcdef12345678",
 				typedData,
 				"0xsignature",
