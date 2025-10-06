@@ -5,10 +5,10 @@ import { LoggerModule } from "nestjs-pino";
 import type { TypedDataDefinition } from "viem";
 import { JwtKeysService } from "../../aws/jwt-keys.service";
 import { authConfig } from "../../config/auth.config";
+import { ConsentsService } from "../../consents/consents.service";
 import { PartnerRegistryService } from "../../partners/partner-registry.service";
 import { SessionsRepository } from "../../sessions/sessions.repository";
 import { AuthService } from "../auth.service";
-import { ConsentsService } from "../../consents/consents.service";
 
 const loggerModule = LoggerModule.forRoot({ pinoHttp: { enabled: false } });
 

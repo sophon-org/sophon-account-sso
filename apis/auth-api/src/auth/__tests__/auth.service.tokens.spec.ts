@@ -2,13 +2,13 @@ import { ConfigModule } from "@nestjs/config";
 import { Test } from "@nestjs/testing";
 import jwt from "jsonwebtoken";
 import { LoggerModule } from "nestjs-pino";
+import { ConsentsService } from "src/consents/consents.service";
 import type { TypedDataDefinition } from "viem";
 import { JwtKeysService } from "../../aws/jwt-keys.service";
 import { authConfig } from "../../config/auth.config";
 import { PartnerRegistryService } from "../../partners/partner-registry.service";
 import { SessionsRepository } from "../../sessions/sessions.repository";
 import { AuthService } from "../auth.service";
-import { ConsentsService } from "src/consents/consents.service";
 
 const loggerModule = LoggerModule.forRoot({ pinoHttp: { enabled: false } });
 // --- jsonwebtoken mocks ---
