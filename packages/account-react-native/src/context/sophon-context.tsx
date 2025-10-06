@@ -49,8 +49,8 @@ export interface SophonContextConfig {
   updateRefreshToken: (data: SophonJWTToken) => void;
   logout: () => Promise<void>;
   disconnect: () => Promise<void>;
-  error?: string;
-  setError: (error: string) => void;
+  error?: { description: string; code: number };
+  setError: (error: { description: string; code: number }) => void;
 }
 
 export const SophonContext = createContext<SophonContextConfig>({
@@ -64,7 +64,7 @@ export const SophonContext = createContext<SophonContextConfig>({
   logout: async () => {},
   disconnect: async () => {},
   error: undefined,
-  setError: (_: string) => {},
+  setError: (_: { description: string; code: number }) => {},
 });
 
 export interface SophonAccount {
@@ -86,7 +86,7 @@ export const SophonContextProvider = ({
   insets?: SophonMainViewProps['insets'];
   dataScopes: DataScopes[];
 }) => {
-  const [error, setError] = useState<string>();
+  const [error, setError] = useState<{ description: string; code: number }>();
   const serverUrl = useMemo(
     () => authServerUrl ?? AccountServerURL[network],
     [authServerUrl, network],
@@ -156,7 +156,7 @@ export const SophonContextProvider = ({
     );
   }, []);
 
-  useUIEventHandler('mainViewError', setError);
+  useUIEventHandler('handleError', setError);
 
   const setAccountWithEffect = useCallback((account?: SophonAccount) => {
     setAccount(account);

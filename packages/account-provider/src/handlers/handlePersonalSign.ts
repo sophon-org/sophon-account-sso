@@ -1,3 +1,4 @@
+import { RpcError } from 'viem';
 import type { RequestSender } from '../types';
 
 /**
@@ -13,7 +14,10 @@ export const handlePersonalSign = async (
 ) => {
   const response = await sender('personal_sign', params);
   if (response?.content?.error) {
-    throw new Error(response?.content?.error?.message);
+    throw new RpcError(new Error(response?.content?.error?.message), {
+      code: response?.content?.error?.code,
+      shortMessage: response?.content?.error?.message,
+    });
   }
   return response?.content?.result;
 };
