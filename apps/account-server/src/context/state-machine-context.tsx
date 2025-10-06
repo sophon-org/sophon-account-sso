@@ -52,8 +52,8 @@ export const MainStateMachineContextProvider = ({
                 content: {
                   result: null,
                   error: {
-                    message: 'User refused the request.',
-                    code: -32002,
+                    message: 'User refused the request',
+                    code: 4001,
                   },
                 },
               };

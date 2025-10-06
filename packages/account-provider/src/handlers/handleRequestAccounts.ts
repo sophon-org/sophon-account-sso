@@ -1,5 +1,6 @@
 import type { SophonNetworkType, StorageLike } from '@sophon-labs/account-core';
 import type EventEmitter from 'eventemitter3';
+import { RpcError } from 'viem';
 import { getAccounts, setAccounts } from '../lib/accounts';
 import type { RequestSender } from '../types';
 
@@ -33,7 +34,10 @@ export const handleRequestAccounts = async (
   const response = await sender('eth_requestAccounts');
 
   if (response?.content?.error) {
-    throw new Error(response?.content?.error?.message);
+    throw new RpcError(new Error(response?.content?.error?.message), {
+      code: response?.content?.error?.code,
+      shortMessage: response?.content?.error?.message,
+    });
   }
   const address = response?.content?.result?.account?.address;
   const currentAccounts = address ? [address] : [];

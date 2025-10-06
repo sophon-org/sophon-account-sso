@@ -1,5 +1,6 @@
 export interface CustomRPCError extends Error {
   details?: string;
+  code: number;
 }
 
 export interface SophonJWTToken {
