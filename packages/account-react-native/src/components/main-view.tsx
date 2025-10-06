@@ -72,6 +72,7 @@ export const SophonMainView = ({
   useUIEventHandler(
     'sdkStatusRequest',
     useCallback(() => {
+      // @ts-ignore
       postMessageToWebApp(webViewRef, 'sdkStatusRequest', {});
     }, []),
   );

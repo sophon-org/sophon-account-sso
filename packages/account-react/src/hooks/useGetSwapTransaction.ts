@@ -67,7 +67,7 @@ export function useGetSwapTransaction(
     }
   }, [enabled, config.sender, fetchData]);
 
-  return { data, isLoading, error, refetch: fetchData };
+  return { data, isLoading, isError: !!error, error, refetch: fetchData };
 }
 
 /**

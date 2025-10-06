@@ -18,5 +18,6 @@ export const authConfig = registerAs("auth", () => ({
 
 	jwtAudience: process.env.JWT_AUDIENCE || undefined,
 	partnerCdn: process.env.PARTNER_CDN || "https://cdn.sophon.xyz/partners/sdk",
+	logLevel: process.env.LOG_LEVEL || "info",
 }));
 export type AuthConfig = ReturnType<typeof authConfig>;
