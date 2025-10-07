@@ -1176,7 +1176,7 @@ __metadata:
 
 "@sophon-labs/account-react@file:../../../packages/account-react::locator=%40sophon-labs%2Fexamples-react-sdk%40workspace%3A.":
   version: 2.2.1
-  resolution: "@sophon-labs/account-react@file:../../../packages/account-react#../../../packages/account-react::hash=f5c307&locator=%40sophon-labs%2Fexamples-react-sdk%40workspace%3A."
+  resolution: "@sophon-labs/account-react@file:../../../packages/account-react#../../../packages/account-react::hash=dd2a97&locator=%40sophon-labs%2Fexamples-react-sdk%40workspace%3A."
   dependencies:
     "@sophon-labs/account-connector": "npm:2.2.1"
     "@sophon-labs/account-core": "npm:2.2.1"
@@ -1189,7 +1189,7 @@ __metadata:
     react-dom: ">=18"
     viem: ">=2.21.0"
     wagmi: ">=2"
-  checksum: 10c0/f8ee91cfee64411d36f2ba16934b822dfd375920c7a6eb2b3e07cd9b1272b6cf46371e7dae6612d219ec03e007cf7c4210681668365783f9285edd1efaf254a8
+  checksum: 10c0/4108aa592bda187bb72a273e813eebec3ee976cc7aee924cb60286c2f9cd1b7db3eb87876d2b214693a816761f73f7845a16c3722121a2f7032f6e5bf46563ec
   languageName: node
   linkType: hard
 

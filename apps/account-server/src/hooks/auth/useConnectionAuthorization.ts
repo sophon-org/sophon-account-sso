@@ -135,7 +135,11 @@ export function useConnectionAuthorization() {
         return;
       }
 
-      // we don't store the token, we just send it during the account authorization
+      // Store tokens in localStorage for later use (e.g., consent flow)
+      localStorage.setItem('SOPHON_ACCESS_TOKEN', accessToken);
+      localStorage.setItem('SOPHON_REFRESH_TOKEN', refreshToken);
+
+      // Send tokens to parent window
       windowService.emitAccessToken(accessToken, accessTokenExpiresAt);
       windowService.emitRefreshToken(refreshToken, refreshTokenExpiresAt);
     }

@@ -13,6 +13,10 @@ export const useConsentRequestActions = () => {
     onAcceptConsent({ consentAds, consentData });
   };
 
+  const handleRefuse = () => {
+    onRefuseConsent({ consentAds, consentData });
+  };
+
   // Disable confirm button if both switches are not activated
   const isConfirmDisabled = !consentAds || !consentData;
 
@@ -22,7 +26,7 @@ export const useConsentRequestActions = () => {
         <Button
           variant="transparent"
           disabled={isLoading}
-          onClick={onRefuseConsent}
+          onClick={handleRefuse}
           data-testid="consent-cancel-button"
         >
           Cancel
@@ -46,7 +50,7 @@ export const useConsentRequestActions = () => {
   return {
     renderActions,
     isLoading,
-    onRefuseConsent,
+    onRefuseConsent: handleRefuse,
     onAcceptConsent,
     error,
     consentAds,

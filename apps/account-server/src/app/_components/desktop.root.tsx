@@ -123,6 +123,9 @@ export default function DesktopRoot({ partnerId, scopes }: DesktopRootProps) {
           dialogType="consent"
           actions={consentActions.renderActions()}
           showLegalNotice={false}
+          onClose={() => {
+            consentActions.onRefuseConsent();
+          }}
         >
           <ConsentRequestView
             consentAds={consentActions.consentAds}

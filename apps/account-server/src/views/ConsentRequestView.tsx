@@ -1,4 +1,5 @@
 import { CaretRightIcon, DnaIcon } from '@phosphor-icons/react';
+import { useEffect } from 'react';
 import {
   Accordion,
   AccordionContent,
@@ -8,6 +9,10 @@ import {
 import { Switch } from '@/components/ui/switch';
 import VerificationImage from '@/components/ui/verification-image';
 import { useConsentRequestActions } from '@/hooks/actions/useConsentRequestActions';
+import {
+  trackConsentOptionSelected,
+  trackConsentScreenViewed,
+} from '@/lib/analytics';
 import { windowService } from '@/service/window.service';
 
 export default function ConsentRequestView({
@@ -22,6 +27,26 @@ export default function ConsentRequestView({
   setConsentData: (consentData: boolean) => void;
 }) {
   const isMobile = windowService.isMobile();
+
+  // Track when consent screen is viewed
+  useEffect(() => {
+    trackConsentScreenViewed('first_data_source_connect', 'modal');
+  }, []);
+
+  // Handle consent ads toggle with tracking
+  const handleConsentAdsChange = (checked: boolean) => {
+    setConsentAds(checked);
+    trackConsentOptionSelected('ads', checked ? 'accept' : 'reject');
+  };
+
+  // Handle consent data toggle with tracking
+  const handleConsentDataChange = (checked: boolean) => {
+    setConsentData(checked);
+    trackConsentOptionSelected(
+      'personalization',
+      checked ? 'accept' : 'reject',
+    );
+  };
   return (
     <div className="text-center flex flex-col items-center justify-center gap-8 mt-3 h-[calc(100vh-220px)]">
       {!isMobile && (
@@ -54,7 +79,7 @@ export default function ConsentRequestView({
 
                   <Switch
                     checked={consentAds}
-                    onCheckedChange={setConsentAds}
+                    onCheckedChange={handleConsentAdsChange}
                   />
                 </div>
 
@@ -81,7 +106,7 @@ export default function ConsentRequestView({
 
                   <Switch
                     checked={consentData}
-                    onCheckedChange={setConsentData}
+                    onCheckedChange={handleConsentDataChange}
                   />
                 </div>
 
