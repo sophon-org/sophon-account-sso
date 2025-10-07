@@ -1,5 +1,13 @@
 # @sophon-labs/account-api-sdk
 
+## 2.3.2
+
+### Patch Changes
+
+- Better sync on react sdk between account and wagmi
+- Updated dependencies
+  - @sophon-labs/account-core@2.3.2
+
 ## 2.3.1
 
 ### Patch Changes

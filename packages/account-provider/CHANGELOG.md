@@ -1,5 +1,14 @@
 # @sophon-labs/account-eip6963
 
+## 2.3.2
+
+### Patch Changes
+
+- Better sync on react sdk between account and wagmi
+- Updated dependencies
+  - @sophon-labs/account-communicator@2.3.2
+  - @sophon-labs/account-core@2.3.2
+
 ## 2.3.1
 
 ### Patch Changes
