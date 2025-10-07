@@ -1,5 +1,14 @@
 # @sophon-labs/account-eip6963
 
+## 2.3.1
+
+### Patch Changes
+
+- Not refreshing page on retry so we don't get 429 errors
+- Updated dependencies
+  - @sophon-labs/account-communicator@2.3.1
+  - @sophon-labs/account-core@2.3.1
+
 ## 2.3.0
 
 ### Minor Changes
