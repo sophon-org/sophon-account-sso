@@ -37,7 +37,7 @@ type NoncePayload = JwtPayload & {
 	aud: string;
 	iss: string;
 	scope?: string;
-	sub?: string;
+	sub: string;
 	userId: string;
 };
 
@@ -194,7 +194,7 @@ export class AuthService {
 		const accessExp = this.auth.accessTtlS;
 		const refreshExp = this.auth.refreshTtlS;
 
-		const active = await this.consents.getActiveConsents(payload.userId);
+		const active = await this.consents.getActiveConsents(payload.sub);
 		const c = toConsentClaims(active);
 
 		const accessToken = jwt.sign(
@@ -413,7 +413,7 @@ export class AuthService {
 		const accessExp = this.auth.accessTtlS;
 		const refreshExp = this.auth.refreshTtlS;
 
-		const active = await this.consents.getActiveConsents(r.userId);
+		const active = await this.consents.getActiveConsents(r.sub);
 		const c = toConsentClaims(active);
 		console.log("c", c);
 

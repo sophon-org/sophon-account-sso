@@ -10,6 +10,7 @@ export type AccessTokenPayload = JwtPayload & {
 };
 
 export type RefreshTokenPayload = JwtPayload & {
+	sub: string;
 	aud: string;
 	userId: string;
 	scope: string;

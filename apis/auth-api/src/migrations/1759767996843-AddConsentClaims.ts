@@ -41,4 +41,3 @@ export class AddConsentClaims1759767996843 implements MigrationInterface {
 		await queryRunner.query(`DROP TYPE "public"."consent_kind"`);
 	}
 }
-
