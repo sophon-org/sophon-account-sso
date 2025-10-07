@@ -2776,7 +2776,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-async-storage/async-storage@npm:2.2.0":
+"@react-native-async-storage/async-storage@npm:2.2.0, @react-native-async-storage/async-storage@npm:^2.2.0":
   version: 2.2.0
   resolution: "@react-native-async-storage/async-storage@npm:2.2.0"
   dependencies:
@@ -3145,11 +3145,76 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-react-native@link:../../../packages/account-react-native::locator=%40sophon-labs%2Fexamples-mobile-expo-web%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@sophon-labs/account-react-native@link:../../../packages/account-react-native::locator=%40sophon-labs%2Fexamples-mobile-expo-web%40workspace%3A."
+"@sophon-labs/account-communicator@npm:2.3.1":
+  version: 2.3.1
+  resolution: "@sophon-labs/account-communicator@npm:2.3.1"
+  peerDependencies:
+    typescript: ^5.0.0
+  checksum: 10c0/d84a83b88c53394e59bf0a650a0678b4d931039ed4c03e6b41c8968e0ca597bd5399b9aedc813ac4070393e6f63ef4ead02f42ae4f2f5a791cac8d27ef257da3
   languageName: node
-  linkType: soft
+  linkType: hard
+
+"@sophon-labs/account-core@npm:2.3.1":
+  version: 2.3.1
+  resolution: "@sophon-labs/account-core@npm:2.3.1"
+  dependencies:
+    text-encoding-polyfill: "npm:^0.6.7"
+  peerDependencies:
+    viem: ">=2.21.0"
+  checksum: 10c0/a3bdee446d885cf1d8782b5bce443d0e3a7535e5595ee99037da138f01195bdef545892152a375285347eb95989623c80c8aad6c31694ef19df3d3c69b61020d
+  languageName: node
+  linkType: hard
+
+"@sophon-labs/account-message-bridge@npm:2.3.1":
+  version: 2.3.1
+  resolution: "@sophon-labs/account-message-bridge@npm:2.3.1"
+  dependencies:
+    eventemitter3: "npm:5.0.1"
+  peerDependencies:
+    react-native-webview: ">=13.12.5"
+  checksum: 10c0/833abe431ce2498a83aa61ce2e3551b2f96358eddccfe40174edc0ea9a03103932f4c70f1270443449108b169d22a581aa3739aaa25d0f1a0e16bd101bf5eea3
+  languageName: node
+  linkType: hard
+
+"@sophon-labs/account-provider@npm:2.3.1":
+  version: 2.3.1
+  resolution: "@sophon-labs/account-provider@npm:2.3.1"
+  dependencies:
+    "@sophon-labs/account-communicator": "npm:2.3.1"
+    "@sophon-labs/account-core": "npm:2.3.1"
+    eventemitter3: "npm:^5.0.1"
+    json-rpc-2.0: "npm:^1.7.1"
+  peerDependencies:
+    typescript: ^5.0.0
+    viem: ">=2.21.0"
+  checksum: 10c0/b489486e3d8fc60650c44cd0dc2429c544621b4c65678bef062c199df4267895420dfce4812f55a8beb36ecc75adec3327324879d40fe8aea7a3d8003bbb9c6e
+  languageName: node
+  linkType: hard
+
+"@sophon-labs/account-react-native@npm:2.3.1":
+  version: 2.3.1
+  resolution: "@sophon-labs/account-react-native@npm:2.3.1"
+  dependencies:
+    "@react-native-async-storage/async-storage": "npm:^2.2.0"
+    "@sophon-labs/account-communicator": "npm:2.3.1"
+    "@sophon-labs/account-core": "npm:2.3.1"
+    "@sophon-labs/account-message-bridge": "npm:2.3.1"
+    "@sophon-labs/account-provider": "npm:2.3.1"
+    axios: "npm:^1.11.0"
+    eventemitter3: "npm:5.0.1"
+    text-encoding-polyfill: "npm:^0.6.7"
+  peerDependencies:
+    expo-linking: "*"
+    expo-network: "*"
+    expo-secure-store: "*"
+    expo-standard-web-crypto: "*"
+    expo-web-browser: "*"
+    react-native: ">=0.76.6"
+    react-native-webview: ">=13.12.5"
+    viem: ">=2.21.0"
+  checksum: 10c0/dfe8ff73772406ca6dad584bf48b6bc2ca609b7312060e5f1ab8818bfe22f676289c255a142819c1ef740d2de6e5394f875c5f07a0320cf18641036524a54573
+  languageName: node
+  linkType: hard
 
 "@sophon-labs/examples-mobile-expo-web@workspace:.":
   version: 0.0.0-use.local
@@ -3165,7 +3230,7 @@ __metadata:
     "@react-navigation/bottom-tabs": "npm:^7.3.10"
     "@react-navigation/elements": "npm:^2.3.8"
     "@react-navigation/native": "npm:^7.1.6"
-    "@sophon-labs/account-react-native": "link:../../../packages/account-react-native"
+    "@sophon-labs/account-react-native": "npm:2.3.1"
     "@types/react": "npm:~19.1.10"
     class-variance-authority: "npm:^0.7.1"
     clsx: "npm:^2.1.1"
@@ -4244,6 +4309,17 @@ __metadata:
     form-data: "npm:^4.0.0"
     proxy-from-env: "npm:^1.1.0"
   checksum: 10c0/9371a56886c2e43e4ff5647b5c2c3c046ed0a3d13482ef1d0135b994a628c41fbad459796f101c655e62f0c161d03883454474d2e435b2e021b1924d9f24994c
+  languageName: node
+  linkType: hard
+
+"axios@npm:^1.11.0":
+  version: 1.12.2
+  resolution: "axios@npm:1.12.2"
+  dependencies:
+    follow-redirects: "npm:^1.15.6"
+    form-data: "npm:^4.0.4"
+    proxy-from-env: "npm:^1.1.0"
+  checksum: 10c0/80b063e318cf05cd33a4d991cea0162f3573481946f9129efb7766f38fde4c061c34f41a93a9f9521f02b7c9565ccbc197c099b0186543ac84a24580017adfed
   languageName: node
   linkType: hard
 
@@ -6631,7 +6707,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"form-data@npm:^4.0.0":
+"form-data@npm:^4.0.0, form-data@npm:^4.0.4":
   version: 4.0.4
   resolution: "form-data@npm:4.0.4"
   dependencies:
