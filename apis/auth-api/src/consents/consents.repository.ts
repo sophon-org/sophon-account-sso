@@ -24,7 +24,7 @@ export class ConsentsRepository {
 		@InjectRepository(UserConsent) private repo: Repository<UserConsent>,
 	) {}
 
-	async findActiveForUser(sub: string): Promise<ConsentRecord[]> {
+	async findActiveForSub(sub: string): Promise<ConsentRecord[]> {
 		const rows = await this.repo.find({
 			where: { sub: sub, endTime: IsNull() },
 			order: { kind: "ASC", startTime: "DESC" },

@@ -194,12 +194,14 @@ export class AuthService {
 		const accessExp = this.auth.accessTtlS;
 		const refreshExp = this.auth.refreshTtlS;
 
-		const active = await this.consents.getActiveConsents(payload.sub);
+		const active = await this.consents.getActiveConsents(
+			payload.address.toLowerCase(),
+		);
 		const c = toConsentClaims(active);
 
 		const accessToken = jwt.sign(
 			{
-				sub: address,
+				sub: address.toLowerCase(),
 				iat,
 				scope,
 				userId: payload.userId,
@@ -242,6 +244,7 @@ export class AuthService {
 		await this.sessions.create({
 			sid,
 			userId: payload.userId ?? address,
+			sub: address.toLowerCase(),
 			aud: payload.aud,
 			currentRefreshJti: refreshJti,
 			refreshExpiresAt:
@@ -415,7 +418,6 @@ export class AuthService {
 
 		const active = await this.consents.getActiveConsents(r.sub);
 		const c = toConsentClaims(active);
-		console.log("c", c);
 
 		const newAccess = jwt.sign(
 			{
@@ -496,18 +498,19 @@ export class AuthService {
 		};
 	}
 
-	async listActiveSessionsForUser(userId: string, aud?: string) {
-		const list = await this.sessions.findActiveForUser(userId);
+	async listActiveSessionsForSub(sub: string, aud?: string) {
+		const list = await this.sessions.findActiveForSub(sub);
 		return aud ? list.filter((s) => s.aud === aud) : list;
 	}
 
-	async revokeSessionForUser(userId: string, sid: string): Promise<void> {
+	async revokeSessionForSub(sub: string, sid: string): Promise<void> {
 		const row = await this.sessions.getBySid(sid);
 		if (!row) throw new NotFoundException("session not found");
-		if (row.userId !== userId) throw new ForbiddenException("forbidden");
+		if (row.sub !== sub.toLowerCase())
+			throw new ForbiddenException("forbidden");
 		await this.sessions.revokeSid(sid);
 		this.logger.info(
-			{ evt: "auth.sessions.revoke", sid, userId },
+			{ evt: "auth.sessions.revoke", sid, sub },
 			"session revoked",
 		);
 	}

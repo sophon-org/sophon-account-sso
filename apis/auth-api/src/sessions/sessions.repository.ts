@@ -6,13 +6,14 @@ import { Session } from "./session.entity";
 
 export type CreateSessionParams = Pick<
 	SessionRecord,
-	"sid" | "userId" | "aud" | "currentRefreshJti" | "refreshExpiresAt"
+	"sid" | "userId" | "sub" | "aud" | "currentRefreshJti" | "refreshExpiresAt"
 > &
 	Partial<Pick<SessionRecord, "createdIp" | "createdUserAgent">>;
 
 const toDomain = (e: Session): SessionRecord => ({
 	sid: e.sid,
 	userId: e.userId,
+	sub: e.sub,
 	aud: e.aud,
 	currentRefreshJti: e.currentRefreshJti,
 	createdAt: e.createdAt,
@@ -28,12 +29,15 @@ const toDomain = (e: Session): SessionRecord => ({
 	createdUserAgent: e.createdUserAgent ?? null,
 });
 
+const norm = (s: string) => s.toLowerCase();
+
 @Injectable()
 export class SessionsRepository {
 	constructor(@InjectRepository(Session) private repo: Repository<Session>) {}
 
 	async create(params: CreateSessionParams): Promise<void> {
-		await this.repo.save(this.repo.create(params));
+		const row = this.repo.create({ ...params, sub: norm(params.sub) });
+		await this.repo.save(row);
 	}
 
 	async getBySid(sid: SessionRecord["sid"]): Promise<SessionRecord | null> {
@@ -41,29 +45,62 @@ export class SessionsRepository {
 		return row ? toDomain(row) : null;
 	}
 
-	async findActiveForUser(userId: string): Promise<SessionRecord[]> {
-		const now = new Date();
-		const rows = await this.repo.find({
-			where: { userId, revokedAt: IsNull(), refreshExpiresAt: MoreThan(now) },
-			order: { createdAt: "DESC" },
-		});
-		return rows.map(toDomain);
-	}
+	// async findActiveForUser(userId: string): Promise<SessionRecord[]> {
+	// 	const now = new Date();
+	// 	const rows = await this.repo.find({
+	// 		where: { userId, revokedAt: IsNull(), refreshExpiresAt: MoreThan(now) },
+	// 		order: { createdAt: "DESC" },
+	// 	});
+	// 	return rows.map(toDomain);
+	// }
 
-	async getActiveForUser(
-		userId: SessionRecord["userId"],
-	): Promise<SessionRecord[]> {
-		const now = new Date();
-		const rows = await this.repo.find({
-			where: { userId, revokedAt: IsNull(), refreshExpiresAt: MoreThan(now) },
-			order: { createdAt: "DESC" },
-		});
-		return rows.map(toDomain);
-	}
+	// async getActiveForUser(
+	// 	userId: SessionRecord["userId"],
+	// ): Promise<SessionRecord[]> {
+	// 	const now = new Date();
+	// 	const rows = await this.repo.find({
+	// 		where: { userId, revokedAt: IsNull(), refreshExpiresAt: MoreThan(now) },
+	// 		order: { createdAt: "DESC" },
+	// 	});
+	// 	return rows.map(toDomain);
+	// }
 
 	async ensureOwnedByUser(sid: string, userId: string): Promise<void> {
 		const row = await this.repo.findOne({ where: { sid } });
 		if (!row || row.userId !== userId) {
+			throw new Error("not_found_or_forbidden");
+		}
+	}
+
+	async findActiveForSub(sub: string): Promise<SessionRecord[]> {
+		const now = new Date();
+		const rows = await this.repo.find({
+			where: {
+				sub: norm(sub),
+				revokedAt: IsNull(),
+				refreshExpiresAt: MoreThan(now),
+			},
+			order: { createdAt: "DESC" },
+		});
+		return rows.map(toDomain);
+	}
+
+	async getActiveForSub(sub: string): Promise<SessionRecord[]> {
+		const now = new Date();
+		const rows = await this.repo.find({
+			where: {
+				sub: norm(sub),
+				revokedAt: IsNull(),
+				refreshExpiresAt: MoreThan(now),
+			},
+			order: { createdAt: "DESC" },
+		});
+		return rows.map(toDomain);
+	}
+
+	async ensureOwnedBySub(sid: string, sub: string): Promise<void> {
+		const row = await this.repo.findOne({ where: { sid } });
+		if (!row || row.sub !== norm(sub)) {
 			throw new Error("not_found_or_forbidden");
 		}
 	}
@@ -104,6 +141,13 @@ export class SessionsRepository {
 	async revokeAllForUser(userId: SessionRecord["userId"]): Promise<void> {
 		await this.repo.update(
 			{ userId, revokedAt: IsNull() },
+			{ revokedAt: new Date() },
+		);
+	}
+
+	async revokeAllForSub(sub: string): Promise<void> {
+		await this.repo.update(
+			{ sub: norm(sub), revokedAt: IsNull() },
 			{ revokedAt: new Date() },
 		);
 	}

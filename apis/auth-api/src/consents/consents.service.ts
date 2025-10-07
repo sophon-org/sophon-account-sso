@@ -6,8 +6,8 @@ import { ConsentKind } from "./dto/consent-kind.enum";
 export class ConsentsService {
 	constructor(private readonly repo: ConsentsRepository) {}
 
-	findActiveForUser(sub: string) {
-		return this.repo.findActiveForUser(sub);
+	findActiveForSub(sub: string) {
+		return this.repo.findActiveForSub(sub);
 	}
 
 	getActiveForUserKind(sub: string, kind: ConsentKind) {
@@ -27,7 +27,7 @@ export class ConsentsService {
 	}
 
 	getActiveConsents(sub: string) {
-		return this.findActiveForUser(sub);
+		return this.findActiveForSub(sub);
 	}
 
 	async giveMany(sub: string, kinds: ConsentKind[]) {
