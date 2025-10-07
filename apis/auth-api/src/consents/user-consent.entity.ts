@@ -9,10 +9,10 @@ import {
 import { ConsentKind } from "./dto/consent-kind.enum";
 
 @Entity({ name: "user_consent" })
-@Index("ix_user_consent_user", ["userId"])
+@Index("ix_user_consent_sub", ["sub"])
 @Index("ix_user_consent_endtime", ["endTime"])
-@Index("ix_user_consent_user_kind_start", ["userId", "kind", "startTime"])
-@Index("ux_user_consent_one_active_per_kind", ["userId", "kind"], {
+@Index("ix_user_consent_sub_kind_start", ["sub", "kind", "startTime"])
+@Index("ux_user_consent_one_active_per_kind_sub", ["sub", "kind"], {
 	unique: true,
 	where: '"end_time" IS NULL',
 })
@@ -20,8 +20,8 @@ export class UserConsent {
 	@PrimaryGeneratedColumn("uuid", { name: "id" })
 	id!: string;
 
-	@Column({ name: "user_id", type: "varchar", length: 64 })
-	userId!: string;
+	@Column({ name: "sub", type: "varchar", length: 42 })
+	sub!: string;
 
 	@Column({
 		name: "kind",

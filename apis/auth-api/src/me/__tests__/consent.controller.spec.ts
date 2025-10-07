@@ -25,9 +25,9 @@ describe("ConsentController", () => {
 		revokeMany: jest.fn(),
 	};
 
-	const reqWithUser = (userId?: string) =>
+	const reqWithUser = (sub?: string) =>
 		({
-			user: (userId ? { userId } : {}) as AccessTokenPayload,
+			user: (sub ? { sub } : {}) as AccessTokenPayload,
 		}) as unknown as Request & { user: AccessTokenPayload };
 
 	beforeEach(async () => {

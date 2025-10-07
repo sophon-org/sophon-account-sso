@@ -9,12 +9,7 @@ import {
 	Req,
 	UseGuards,
 } from "@nestjs/common";
-import {
-	ApiBearerAuth,
-	ApiOkResponse,
-	ApiParam,
-	ApiTags,
-} from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOkResponse, ApiTags } from "@nestjs/swagger";
 import type { Request } from "express";
 import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
 import { GiveManyConsentsDto } from "src/consents/dto/give-many-consents.dto";
@@ -25,17 +20,17 @@ import { ConsentsService } from "../consents/consents.service";
 import { ConsentKind } from "../consents/dto/consent-kind.enum";
 import { GiveConsentDto } from "../consents/dto/give-consent.dto";
 
-function requireUserIdFromReq(
+function requireSubFromReq(
 	req: Request & { user?: AccessTokenPayload },
 ): string {
-	const u = req.user as AccessTokenPayload & { userId?: string; sub?: string };
-	const userId = u?.userId;
-	if (!userId) {
+	const u = req.user as AccessTokenPayload & { sub?: string };
+	const sub = u?.sub;
+	if (!sub) {
 		throw new BadRequestException(
-			"userId is required in JWT for consent operations",
+			"sub is required in JWT for consent operations",
 		);
 	}
-	return userId;
+	return sub.toLowerCase();
 }
 
 @ApiTags("Me")
@@ -48,14 +43,13 @@ export class ConsentController {
 		@InjectPinoLogger(ConsentController.name)
 		private readonly logger: PinoLogger,
 	) {}
-
 	@Get()
 	@ApiOkResponse({ description: "List active consents for current user" })
 	async list(@Req() req: Request & { user: AccessTokenPayload }) {
-		const userId = requireUserIdFromReq(req);
-		const rows = await this.consents.getActiveConsents(userId);
+		const sub = requireSubFromReq(req);
+		const rows = await this.consents.getActiveConsents(sub);
 		this.logger.info(
-			{ evt: "me.consents.list", userId, total: rows.length },
+			{ evt: "me.consents.list", sub, total: rows.length },
 			"active consents",
 		);
 		return rows.map((r) => ({
@@ -70,10 +64,10 @@ export class ConsentController {
 		@Body() dto: GiveConsentDto,
 		@Req() req: Request & { user: AccessTokenPayload },
 	) {
-		const userId = requireUserIdFromReq(req);
-		const row = await this.consents.give(userId, dto.kind);
+		const sub = requireSubFromReq(req);
+		const row = await this.consents.give(sub, dto.kind);
 		this.logger.info(
-			{ evt: "me.consents.give", userId, kind: dto.kind },
+			{ evt: "me.consents.give", sub, kind: dto.kind },
 			"consent granted",
 		);
 		return { kind: row.kind, startTime: row.startTime.toISOString() };
@@ -85,12 +79,12 @@ export class ConsentController {
 		@Body() dto: GiveManyConsentsDto,
 		@Req() req: Request & { user: AccessTokenPayload },
 	) {
-		const userId = requireUserIdFromReq(req);
-		const rows = await this.consents.giveMany(userId, dto.kinds);
+		const sub = requireSubFromReq(req);
+		const rows = await this.consents.giveMany(sub, dto.kinds);
 		this.logger.info(
 			{
 				evt: "me.consents.giveMany",
-				userId,
+				sub,
 				kinds: dto.kinds,
 				total: rows.length,
 			},
@@ -103,16 +97,15 @@ export class ConsentController {
 	}
 
 	@Delete(":kind")
-	@ApiParam({ name: "kind", enum: ConsentKind })
 	@ApiOkResponse({ description: "Revoke consent of a kind" })
 	async revoke(
 		@Param("kind") kind: ConsentKind,
 		@Req() req: Request & { user: AccessTokenPayload },
 	) {
-		const userId = requireUserIdFromReq(req);
-		const changed = await this.consents.revoke(userId, kind);
+		const sub = requireSubFromReq(req);
+		const changed = await this.consents.revoke(sub, kind);
 		this.logger.info(
-			{ evt: "me.consents.revoke", userId, kind, changed },
+			{ evt: "me.consents.revoke", sub, kind, changed },
 			"consent revoked",
 		);
 		return { ok: true, changed };
@@ -124,10 +117,10 @@ export class ConsentController {
 		@Body() dto: RevokeManyConsentsDto,
 		@Req() req: Request & { user: AccessTokenPayload },
 	) {
-		const userId = requireUserIdFromReq(req);
-		const { changed } = await this.consents.revokeMany(userId, dto.kinds);
+		const sub = requireSubFromReq(req);
+		const { changed } = await this.consents.revokeMany(sub, dto.kinds);
 		this.logger.info(
-			{ evt: "me.consents.revokeMany", userId, kinds: dto.kinds, changed },
+			{ evt: "me.consents.revokeMany", sub, kinds: dto.kinds, changed },
 			"consents revoked",
 		);
 		return { ok: true, changed };

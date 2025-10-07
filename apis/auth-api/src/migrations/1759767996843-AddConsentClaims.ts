@@ -7,20 +7,32 @@ export class AddConsentClaims1759767996843 implements MigrationInterface {
 		await queryRunner.query(
 			`CREATE TYPE "public"."consent_kind" AS ENUM('PERSONALIZATION_ADS', 'SHARING_DATA')`,
 		);
+
+		await queryRunner.query(`
+      CREATE TABLE "user_consent" (
+        "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
+        "sub" character varying(42) NOT NULL,
+        "kind" "public"."consent_kind" NOT NULL,
+        "start_time" TIMESTAMP WITH TIME ZONE NOT NULL,
+        "end_time" TIMESTAMP WITH TIME ZONE,
+        "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+        "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+        CONSTRAINT "PK_b22925348311c2e41cc80b05171" PRIMARY KEY ("id"),
+        CONSTRAINT "chk_user_consent_sub_eth" CHECK ("sub" ~ '^0x[0-9a-f]{40}$')
+      )
+    `);
+
 		await queryRunner.query(
-			`CREATE TABLE "user_consent" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "user_id" character varying(64) NOT NULL, "kind" "public"."consent_kind" NOT NULL, "start_time" TIMESTAMP WITH TIME ZONE NOT NULL, "end_time" TIMESTAMP WITH TIME ZONE, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "PK_b22925348311c2e41cc80b05171" PRIMARY KEY ("id"))`,
+			`CREATE UNIQUE INDEX "ux_user_consent_one_active_per_kind_sub" ON "user_consent" ("sub", "kind") WHERE "end_time" IS NULL`,
 		);
 		await queryRunner.query(
-			`CREATE UNIQUE INDEX "ux_user_consent_one_active_per_kind" ON "user_consent" ("user_id", "kind") WHERE "end_time" IS NULL`,
+			`CREATE INDEX "ix_user_consent_sub_kind_start" ON "user_consent" ("sub", "kind", "start_time")`,
 		);
 		await queryRunner.query(
-			`CREATE INDEX "ix_user_consent_user_kind_start" ON "user_consent" ("user_id", "kind", "start_time") `,
+			`CREATE INDEX "ix_user_consent_endtime" ON "user_consent" ("end_time")`,
 		);
 		await queryRunner.query(
-			`CREATE INDEX "ix_user_consent_endtime" ON "user_consent" ("end_time") `,
-		);
-		await queryRunner.query(
-			`CREATE INDEX "ix_user_consent_user" ON "user_consent" ("user_id") `,
+			`CREATE INDEX "ix_user_consent_sub" ON "user_consent" ("sub")`,
 		);
 	}
 

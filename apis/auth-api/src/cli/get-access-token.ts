@@ -147,7 +147,7 @@ async function giveConsents(kinds: ConsentKind[], bearer: string) {
 	}
 }
 
-const REVOKE_CSV = process.env.REVOKE_CONSENTS ?? process.env.REVOKE ?? "";
+const _REVOKE_CSV = process.env.REVOKE_CONSENTS ?? process.env.REVOKE ?? "";
 
 // If you don't already have this:
 const delJSON = <T>(path: string, opts?: HttpOpts) =>
@@ -170,7 +170,7 @@ async function revokeConsentsAndRefresh(
 		console.log(`Revoked consent: ${kind}`);
 	} else {
 		const resp = await postJSON<{ ok: boolean; changed: number }>(
-			`/me/consent/revokeMany`,
+			"/me/consent/revokeMany",
 			{ kinds },
 			{ bearer, timeoutMs: 10_000 },
 		);
