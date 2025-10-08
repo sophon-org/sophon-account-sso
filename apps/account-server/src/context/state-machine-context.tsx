@@ -41,6 +41,7 @@ export const MainStateMachineContextProvider = ({
                 session: null,
                 authentication: null,
                 logout: null,
+                consent: null,
               },
             };
           }),
@@ -70,6 +71,7 @@ export const MainStateMachineContextProvider = ({
                 session: null,
                 authentication: null,
                 logout: null,
+                consent: null,
               },
             };
           }),
@@ -97,6 +99,7 @@ export const MainStateMachineContextProvider = ({
                 session: null,
                 authentication: null,
                 logout: null,
+                consent: null,
               },
             };
           }),
@@ -122,6 +125,7 @@ export const MainStateMachineContextProvider = ({
                 session: null,
                 authentication: null,
                 logout: null,
+                consent: null,
               },
             };
           }),
