@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 2.3.3
+
+### Patch Changes
+
+- Consent management on data usage
+
 ## 2.3.2
 
 ### Patch Changes
