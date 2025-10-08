@@ -12,6 +12,7 @@ import { useWalletConnection } from '@/hooks/useWalletConnection';
 import { windowService } from '@/service/window.service';
 import { CompletedView } from '@/views/CompletedView';
 import ConnectAuthorizationView from '@/views/ConnectAuthorizationView';
+import ConsentRequestView from '@/views/ConsentRequestView';
 import { LoadingView } from '@/views/LoadingView';
 import LoginSuccessView from '@/views/LoginSuccessView';
 import { LogoutView } from '@/views/LogoutView';
@@ -41,6 +42,7 @@ export default function DesktopRoot({ partnerId, scopes }: DesktopRootProps) {
   const transactionActions = TransactionRequestView.useActions({
     openDrawer,
   });
+  const consentActions = ConsentRequestView.useActions();
 
   /***************************
    * LOADING RESOURCES STATE *
@@ -106,6 +108,31 @@ export default function DesktopRoot({ partnerId, scopes }: DesktopRootProps) {
           showLegalNotice={false}
         >
           <ConnectAuthorizationView partnerId={partnerId} scopes={scopes} />
+        </Dialog>
+        <DrawerComponent />
+      </>
+    );
+  }
+
+  if (state.matches('incoming-consent')) {
+    return (
+      <>
+        <Dialog
+          className="relative"
+          title={account?.address}
+          dialogType="consent"
+          actions={consentActions.renderActions()}
+          showLegalNotice={false}
+          onClose={() => {
+            consentActions.onRefuseConsent();
+          }}
+        >
+          <ConsentRequestView
+            consentAds={consentActions.consentAds}
+            consentData={consentActions.consentData}
+            setConsentAds={consentActions.setConsentAds}
+            setConsentData={consentActions.setConsentData}
+          />
         </Dialog>
         <DrawerComponent />
       </>

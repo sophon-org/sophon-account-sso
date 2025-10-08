@@ -1,5 +1,5 @@
 import { shortenAddress } from '@sophon-labs/account-core';
-import { useSophonAccount } from '@sophon-labs/account-react';
+import { useSophonAccount, useSophonConsent } from '@sophon-labs/account-react';
 import { formatUnits } from 'viem';
 import { useBalance } from 'wagmi';
 import MintPanel from './mint.panel';
@@ -10,12 +10,29 @@ import TypedSignaturePanel from './typed-signature.panel';
 
 export const ProfilePanel = () => {
   const { isConnected, account, disconnect } = useSophonAccount();
+  const { requestConsent } = useSophonConsent();
   const { data: balance } = useBalance({
     address: account.address,
   });
+
   const handleDisconnect = async () => {
     await disconnect();
   };
+
+  const handleRequestConsent = async () => {
+    try {
+      const response = await requestConsent();
+      const content = response.content;
+      if (content.result) {
+        console.log('✅ Consent granted:', content.result);
+      } else if (content.error) {
+        console.log('❌ Consent refused:', content.error.message);
+      }
+    } catch (error) {
+      console.error('Consent request failed:', error);
+    }
+  };
+
   if (!isConnected) return null;
   return (
     <div className="flex flex-col gap-1 mt-2  w-full">
@@ -34,6 +51,13 @@ export const ProfilePanel = () => {
       <TransactionNativePanel />
       <TransactionERC20Panel />
       <MintPanel />
+      <button
+        className="bg-blue-500/30 text-black border border-blue-500/50 px-4 py-2 rounded-md hover:bg-blue-500/50 transition-all duration-300 hover:cursor-pointer"
+        type="button"
+        onClick={handleRequestConsent}
+      >
+        Request Consent
+      </button>
       <button
         className="bg-red-500/30 text-black border border-red-500/50 px-4 py-2 rounded-md hover:bg-red-500/50 transition-all duration-300 hover:cursor-pointer"
         type="button"

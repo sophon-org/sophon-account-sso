@@ -21,6 +21,7 @@ export const useLoadingResources = () => {
     messageSigningRequest,
     transactionRequest,
     authenticationRequest,
+    consentRequest,
     logoutRequest,
     handlerInitialized,
   } = useMessageHandler();
@@ -99,5 +100,6 @@ export const useLoadingResources = () => {
     transactionRequest,
     authenticationRequest,
     logoutRequest,
+    consentRequest,
   };
 };
