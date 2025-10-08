@@ -9,6 +9,7 @@ import { LoggerModule } from "nestjs-pino";
 import type { TypedDataDefinition } from "viem";
 import { JwtKeysService } from "../../aws/jwt-keys.service";
 import { authConfig } from "../../config/auth.config";
+import { ConsentsService } from "../../consents/consents.service";
 import { PartnerRegistryService } from "../../partners/partner-registry.service";
 import { SessionsRepository } from "../../sessions/sessions.repository";
 import { AuthService } from "../auth.service";
@@ -57,6 +58,7 @@ describe("AuthService (sessions + refresh)", () => {
 		sid?: string | null;
 		userId?: string | null;
 		aud?: string | null;
+		sub: string | null;
 		currentRefreshJti: string | null;
 		refreshExpiresAt: Date | null;
 		revokedAt: Date | null;
@@ -72,14 +74,14 @@ describe("AuthService (sessions + refresh)", () => {
 		isActive: jest.Mock<boolean, [SessionRow | null]>;
 		rotateRefreshJti: jest.Mock<Promise<void>, [unknown]>;
 		revokeSid: jest.Mock<Promise<void>, [string]>;
-		findActiveForUser: jest.Mock<Promise<SessionRow[]>, [string]>;
+		findActiveForSub: jest.Mock<Promise<SessionRow[]>, [string]>;
 	} = {
 		create: jest.fn(),
 		getBySid: jest.fn(),
 		isActive: jest.fn(),
 		rotateRefreshJti: jest.fn(),
 		revokeSid: jest.fn(),
-		findActiveForUser: jest.fn(),
+		findActiveForSub: jest.fn(),
 	};
 
 	const jwtKeysServiceMock: jest.Mocked<JwtKeysService> = {
@@ -94,6 +96,18 @@ describe("AuthService (sessions + refresh)", () => {
 	const FIXED_NOW_MS = 1_700_000_000_000; // fixed now for deterministic tests
 	let dateNowSpy: jest.SpyInstance<number, []>;
 
+	const consentsServiceMock = {
+		assertPartnerScopeAllowed: jest.fn(), // no throw = allowed
+		areFieldsAllowedByConsent: jest.fn().mockReturnValue(true),
+		upsertGeneralConsent: jest.fn().mockResolvedValue(undefined),
+		getGeneralConsent: jest.fn().mockResolvedValue({
+			personalizationAds: true,
+			sharingData: true,
+			updatedAt: new Date().toISOString(),
+		}),
+		getActiveConsents: jest.fn().mockResolvedValue([]),
+	};
+
 	beforeEach(async () => {
 		const module = await Test.createTestingModule({
 			imports: [loggerModule],
@@ -103,6 +117,7 @@ describe("AuthService (sessions + refresh)", () => {
 				{ provide: SessionsRepository, useValue: sessionsMock },
 				{ provide: authConfig.KEY, useValue: MOCK_AUTH },
 				{ provide: JwtKeysService, useValue: jwtKeysServiceMock },
+				{ provide: ConsentsService, useValue: consentsServiceMock },
 			],
 		}).compile();
 
@@ -227,6 +242,7 @@ describe("AuthService (sessions + refresh)", () => {
 			refreshExpiresAt: new Date(FIXED_NOW_MS + 10_000),
 			revokedAt: new Date(FIXED_NOW_MS), // inactive
 			invalidateBefore: null,
+			sub: null,
 		};
 		sessionsMock.getBySid.mockResolvedValueOnce(row);
 		sessionsMock.isActive.mockReturnValueOnce(false);
@@ -252,6 +268,7 @@ describe("AuthService (sessions + refresh)", () => {
 			refreshExpiresAt: new Date(FIXED_NOW_MS + 10_000),
 			revokedAt: null,
 			invalidateBefore: new Date(FIXED_NOW_MS - 10_000), // 10s earlier than now, but 90s after iat
+			sub: null,
 		};
 		sessionsMock.getBySid.mockResolvedValueOnce(row);
 		sessionsMock.isActive.mockReturnValueOnce(true);
@@ -281,6 +298,7 @@ describe("AuthService (sessions + refresh)", () => {
 			refreshExpiresAt: new Date(FIXED_NOW_MS + 10_000),
 			revokedAt: null,
 			invalidateBefore: null,
+			sub: null,
 		};
 		sessionsMock.getBySid.mockResolvedValueOnce(row);
 		sessionsMock.isActive.mockReturnValueOnce(true);
@@ -331,6 +349,7 @@ describe("AuthService (sessions + refresh)", () => {
 			refreshExpiresAt: new Date(FIXED_NOW_MS + 10_000),
 			revokedAt: null,
 			invalidateBefore: null,
+			sub: null,
 		};
 		sessionsMock.getBySid.mockResolvedValueOnce(row);
 		sessionsMock.isActive.mockReturnValueOnce(true);
@@ -450,10 +469,11 @@ describe("AuthService (sessions + refresh)", () => {
 		);
 	});
 
-	it("listActiveSessionsForUser: returns all, and filters by aud when provided", async () => {
+	it("listActiveSessionsForSub: returns all, and filters by aud when provided", async () => {
 		const make = (over: Partial<SessionRow>) =>
 			({
 				sid: `S-${Math.random().toString(16).slice(2)}`,
+				sub: "0xabc0000000000000000000000000000000000000",
 				userId: "u1",
 				aud: "a1",
 				currentRefreshJti: "j",
@@ -466,24 +486,32 @@ describe("AuthService (sessions + refresh)", () => {
 				...over,
 			}) as SessionRow;
 
-		sessionsMock.findActiveForUser.mockResolvedValue([
+		sessionsMock.findActiveForSub.mockResolvedValue([
 			make({ sid: "S1", aud: "a1" }),
 			make({ sid: "S2", aud: "a2" }),
 			make({ sid: "S3", aud: "a1" }),
 		]);
 
-		const all = await service.listActiveSessionsForUser("u1");
+		const all = await service.listActiveSessionsForSub(
+			"0xabc0000000000000000000000000000000000000",
+		);
 		expect(all.map((s) => s.sid)).toEqual(["S1", "S2", "S3"]);
-		expect(sessionsMock.findActiveForUser).toHaveBeenCalledWith("u1");
+		expect(sessionsMock.findActiveForSub).toHaveBeenCalledWith(
+			"0xabc0000000000000000000000000000000000000",
+		);
 
-		const onlyA1 = await service.listActiveSessionsForUser("u1", "a1");
+		const onlyA1 = await service.listActiveSessionsForSub(
+			"0xabc0000000000000000000000000000000000000",
+			"a1",
+		);
 		expect(onlyA1.map((s) => s.sid)).toEqual(["S1", "S3"]);
 	});
 
-	it("revokeSessionForUser: happy path", async () => {
+	it("revokeSessionForSub: happy path", async () => {
 		sessionsMock.getBySid.mockResolvedValue({
 			sid: "S1",
 			userId: "u1",
+			sub: "0xabc0000000000000000000000000000000000000",
 			aud: "a1",
 			currentRefreshJti: "j1",
 			refreshExpiresAt: new Date(FIXED_NOW_MS + 10_000),
@@ -493,20 +521,24 @@ describe("AuthService (sessions + refresh)", () => {
 			createdUserAgent: "UA",
 		});
 
-		await service.revokeSessionForUser("u1", "S1");
+		await service.revokeSessionForSub(
+			"0xabc0000000000000000000000000000000000000",
+			"S1",
+		);
 		expect(sessionsMock.revokeSid).toHaveBeenCalledWith("S1");
 	});
 
-	it("revokeSessionForUser: not found", async () => {
+	it("revokeSessionForSub: not found", async () => {
 		sessionsMock.getBySid.mockResolvedValue(null);
 		await expect(
-			service.revokeSessionForUser("u1", "missing"),
+			service.revokeSessionForSub("u1", "missing"),
 		).rejects.toBeInstanceOf(NotFoundException);
 		expect(sessionsMock.revokeSid).not.toHaveBeenCalled();
 	});
 
-	it("revokeSessionForUser: forbidden (belongs to another user)", async () => {
+	it("revokeSessionForSub: forbidden (belongs to another user)", async () => {
 		sessionsMock.getBySid.mockResolvedValue({
+			sub: "0xabc0000000000000000000000000000000000000",
 			sid: "S2",
 			userId: "someone-else",
 			aud: "a1",
@@ -519,7 +551,7 @@ describe("AuthService (sessions + refresh)", () => {
 		});
 
 		await expect(
-			service.revokeSessionForUser("u1", "S2"),
+			service.revokeSessionForSub("u1", "S2"),
 		).rejects.toBeInstanceOf(ForbiddenException);
 		expect(sessionsMock.revokeSid).not.toHaveBeenCalled();
 	});

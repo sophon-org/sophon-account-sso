@@ -1,6 +1,7 @@
 export type SessionRecord = {
 	sid: string;
 	userId: string;
+	sub: string;
 	aud: string;
 	currentRefreshJti: string;
 	createdAt: Date;

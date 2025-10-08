@@ -25,7 +25,7 @@ import { NonceRequestDto } from "./dto/nonce-request.dto";
 import { VerifySiweDto } from "./dto/verify-siwe.dto";
 import { AccessTokenGuard } from "./guards/access-token.guard";
 import { MeService } from "./me.service";
-import { AccessTokenPayload } from "./types";
+import { AuthenticatedRequest } from "./types";
 
 const clientInfo = (req: Request) => {
 	const h = req.headers;
@@ -43,14 +43,6 @@ const clientInfo = (req: Request) => {
 	const userAgent = ua.length > 1024 ? ua.slice(0, 1024) : ua;
 	return { ip, userAgent };
 };
-
-function requireUserId(
-	user: AccessTokenPayload & { userId?: string; sub?: string },
-): string {
-	const id = user.userId ?? user.sub;
-	if (!id) throw new UnauthorizedException("missing subject/userId in token");
-	return id;
-}
 
 @ApiTags("Auth")
 @Controller("auth")
@@ -252,8 +244,8 @@ export class AuthController {
 	@ApiCookieAuth("access_token")
 	@ApiBearerAuth()
 	@ApiOkResponse({ description: "Returns identity and requested fields" })
-	async me(@Req() req: Request) {
-		const { user } = req as Request & { user: AccessTokenPayload };
+	async me(@Req() req: AuthenticatedRequest) {
+		const { user } = req;
 		this.logger.debug(
 			{ evt: "auth.me", sub: user.sub, partnerId: user.aud },
 			"me requested",
@@ -265,26 +257,18 @@ export class AuthController {
 	@UseGuards(AccessTokenGuard)
 	@ApiBearerAuth()
 	@ApiOkResponse({ description: "Lists active sessions for the current user" })
-	async listSessions(@Req() req: Request) {
-		const { user } = req as Request & {
-			user: AccessTokenPayload & {
-				sid?: string;
-				userId?: string;
-				sub?: string;
-			};
-		};
-		const userId = requireUserId(user);
+	async listSessions(@Req() req: AuthenticatedRequest) {
+		const { user } = req;
 		const aud = user.aud;
 
-		const sessions = await this.authService.listActiveSessionsForUser(
-			userId,
+		const sessions = await this.authService.listActiveSessionsForSub(
+			user.sub,
 			aud,
 		);
 
 		this.logger.info(
 			{
 				evt: "auth.sessions.list",
-				userId,
 				aud,
 				total: sessions.length,
 				currentSid: user.sid ?? null,
@@ -302,30 +286,22 @@ export class AuthController {
 			current: user.sid ? user.sid === s.sid : false,
 		}));
 	}
-
 	@Delete("sessions/:sid")
 	@UseGuards(AccessTokenGuard)
 	@ApiBearerAuth()
 	@ApiOkResponse({ description: "Revokes the specified session" })
 	async revokeOne(
 		@Param("sid") sid: string,
-		@Req() req: Request,
+		@Req() req: AuthenticatedRequest,
 		@Res() res: Response,
 	) {
-		const { user } = req as Request & {
-			user: AccessTokenPayload & {
-				sid?: string;
-				userId?: string;
-				sub?: string;
-			};
-		};
-		const userId = requireUserId(user);
+		const { user } = req;
 
-		await this.authService.revokeSessionForUser(userId, sid);
+		await this.authService.revokeSessionForSub(user.sub, sid);
 
 		const isCurrent = Boolean(user.sid && user.sid === sid);
 		this.logger.info(
-			{ evt: "auth.sessions.revoke", userId, sid, isCurrent },
+			{ evt: "auth.sessions.revoke", sub: user.sub, sid, isCurrent },
 			"session revoked",
 		);
 
