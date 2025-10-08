@@ -25,7 +25,7 @@ import { NonceRequestDto } from "./dto/nonce-request.dto";
 import { VerifySiweDto } from "./dto/verify-siwe.dto";
 import { AccessTokenGuard } from "./guards/access-token.guard";
 import { MeService } from "./me.service";
-import { AccessTokenPayload, AuthenticatedRequest } from "./types";
+import { AuthenticatedRequest } from "./types";
 
 const clientInfo = (req: Request) => {
 	const h = req.headers;
@@ -43,14 +43,6 @@ const clientInfo = (req: Request) => {
 	const userAgent = ua.length > 1024 ? ua.slice(0, 1024) : ua;
 	return { ip, userAgent };
 };
-
-function requireUserId(
-	user: AccessTokenPayload & { userId?: string; sub?: string },
-): string {
-	const id = user.userId ?? user.sub;
-	if (!id) throw new UnauthorizedException("missing subject/userId in token");
-	return id;
-}
 
 @ApiTags("Auth")
 @Controller("auth")
@@ -267,7 +259,6 @@ export class AuthController {
 	@ApiOkResponse({ description: "Lists active sessions for the current user" })
 	async listSessions(@Req() req: AuthenticatedRequest) {
 		const { user } = req;
-		const userId = requireUserId(user);
 		const aud = user.aud;
 
 		const sessions = await this.authService.listActiveSessionsForSub(
@@ -278,7 +269,6 @@ export class AuthController {
 		this.logger.info(
 			{
 				evt: "auth.sessions.list",
-				userId,
 				aud,
 				total: sessions.length,
 				currentSid: user.sid ?? null,

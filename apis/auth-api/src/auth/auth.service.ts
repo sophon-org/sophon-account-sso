@@ -38,7 +38,7 @@ type NoncePayload = JwtPayload & {
 	iss: string;
 	scope?: string;
 	sub: string;
-	userId: string;
+	userId?: string;
 };
 
 type ClientInfo = { ip?: string | null; userAgent?: string | null };

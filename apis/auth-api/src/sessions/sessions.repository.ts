@@ -45,26 +45,6 @@ export class SessionsRepository {
 		return row ? toDomain(row) : null;
 	}
 
-	// async findActiveForUser(userId: string): Promise<SessionRecord[]> {
-	// 	const now = new Date();
-	// 	const rows = await this.repo.find({
-	// 		where: { userId, revokedAt: IsNull(), refreshExpiresAt: MoreThan(now) },
-	// 		order: { createdAt: "DESC" },
-	// 	});
-	// 	return rows.map(toDomain);
-	// }
-
-	// async getActiveForUser(
-	// 	userId: SessionRecord["userId"],
-	// ): Promise<SessionRecord[]> {
-	// 	const now = new Date();
-	// 	const rows = await this.repo.find({
-	// 		where: { userId, revokedAt: IsNull(), refreshExpiresAt: MoreThan(now) },
-	// 		order: { createdAt: "DESC" },
-	// 	});
-	// 	return rows.map(toDomain);
-	// }
-
 	async ensureOwnedByUser(sid: string, userId: string): Promise<void> {
 		const row = await this.repo.findOne({ where: { sid } });
 		if (!row || row.userId !== userId) {
