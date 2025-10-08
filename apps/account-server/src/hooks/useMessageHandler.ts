@@ -72,6 +72,7 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
           setTypedDataSigningRequest(null);
           setMessageSigningRequest(null);
           setTransactionRequest(null);
+          setConsentRequest(null);
           setAuthenticationRequest({
             domain: 'https://sophon.xyz', // placeholder
           });
@@ -81,6 +82,7 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
           setMessageSigningRequest(null);
           setTransactionRequest(null);
           setSessionPreferences(null);
+          setConsentRequest(null);
           setAuthenticationRequest({
             domain: 'profile',
             type: 'profile_view',
@@ -97,6 +99,7 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
             setAuthenticationRequest(null);
             setTypedDataSigningRequest(null);
             setTransactionRequest(null);
+            setConsentRequest(null);
           }
         } else if (
           method === 'wallet_revokePermissions' ||
@@ -111,6 +114,7 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
           setTypedDataSigningRequest(null);
           setMessageSigningRequest(null);
           setTransactionRequest(null);
+          setConsentRequest(null);
         } else if (method === 'eth_signTypedData_v4') {
           const params = data.content.action?.params;
 
@@ -175,12 +179,14 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
                 setSessionPreferences(null);
                 setAuthenticationRequest(null);
                 setMessageSigningRequest(null);
+                setConsentRequest(null);
                 setTransactionRequest(transactionData);
               } else {
                 setTypedDataSigningRequest(signingRequestData);
                 setSessionPreferences(null);
                 setAuthenticationRequest(null);
                 setMessageSigningRequest(null);
+                setConsentRequest(null);
                 setTransactionRequest(null);
               }
             } catch (parseError) {
@@ -216,10 +222,12 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
             setMessageSigningRequest(null);
             setSessionPreferences(null);
             setAuthenticationRequest(null);
+            setConsentRequest(null);
           }
         } else if (method === 'sophon_requestConsent') {
           const params = data.content.action?.params;
           setConsentRequest(params);
+          setTransactionRequest(null);
           setTypedDataSigningRequest(null);
           setMessageSigningRequest(null);
           setSessionPreferences(null);
