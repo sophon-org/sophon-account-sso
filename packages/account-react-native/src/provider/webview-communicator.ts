@@ -97,12 +97,6 @@ export class WebViewCommunicator implements Communicator {
         return true;
       }
 
-      // try to refresh the main view in case of retry, just to make sure that the page is loaded
-      // and sort out user connection issues, but only do that after the first try, the happy path is
-      // that the user is connected and the response is received immediately
-      sendUIMessage('refreshMainView', {});
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
       return false;
     };
 
@@ -112,10 +106,23 @@ export class WebViewCommunicator implements Communicator {
       isReady = await checkIfReady();
     } while (!isReady && retries-- > 0);
 
+    // before giving up, try to refresh the main view and try again to get the response
     if (!isReady) {
-      this.currentRequestId = undefined;
+      console.log('refreshing main view');
+      // try to refresh the main view in case of retry, just to make sure that the page is loaded
+      // and sort out user connection issues, but only do that after the first try, the happy path is
+      // that the user is connected and the response is received immediately
+      sendUIMessage('refreshMainView', {});
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      isReady = await checkIfReady();
+    }
+
+    // just give up and ask the user to try again
+    if (!isReady) {
       sendUIMessage('incomingRpc', getTimeoutRPC(requestId));
     }
+
+    this.currentRequestId = undefined;
   };
   ready = async () => {
     await this.waitWebViewToBeReady();

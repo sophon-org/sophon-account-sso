@@ -1,5 +1,23 @@
 # @sophon-labs/account-core
 
+## 2.3.2
+
+### Patch Changes
+
+- Better sync on react sdk between account and wagmi
+
+## 2.3.1
+
+### Patch Changes
+
+- Not refreshing page on retry so we don't get 429 errors
+
+## 2.3.0
+
+### Minor Changes
+
+- Exposing error codes on every action
+
 ## 2.2.1
 
 ### Patch Changes

@@ -45,7 +45,7 @@ export interface SophonContextConfig {
   updateAccessToken: (data: SophonJWTToken) => void;
   refreshToken?: SophonJWTToken | null;
   updateRefreshToken: (data: SophonJWTToken) => void;
-  connect: () => Promise<void>;
+  connect: () => Promise<readonly Address[]>;
   disconnect: () => Promise<void>;
   network: SophonNetworkType;
   connector: Connector;
@@ -59,7 +59,9 @@ export const SophonContext = createContext<SophonContextConfig>({
   setAccount: () => {},
   updateAccessToken: () => {},
   updateRefreshToken: () => {},
-  connect: async () => {},
+  connect: async () => {
+    return [];
+  },
   disconnect: async () => {},
   network: 'testnet',
   connector: null,
@@ -169,6 +171,7 @@ export const SophonContextProvider = ({
   const connect = useCallback(async () => {
     const accounts = await connector.connect();
     setAccountWithEffect({ address: accounts.accounts[0] });
+    return accounts.accounts;
   }, [connector, setAccountWithEffect]);
 
   const walletClient = useMemo(
