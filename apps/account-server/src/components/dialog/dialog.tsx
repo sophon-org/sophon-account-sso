@@ -274,7 +274,7 @@ export function Dialog({
         />
         <div
           className={cn(
-            'flex-1 px-6',
+            'flex-1 px-4',
             // Add bottom padding when footer is fixed to ensure content is visible
             isScrollable ? 'pb-40' : '',
           )}
