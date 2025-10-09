@@ -1,6 +1,7 @@
 import { assign, createMachine } from 'xstate';
 import type {
   AuthenticationRequest,
+  ConsentRequest,
   IncomingRequest,
   LogoutRequest,
   MessageSigningRequest,
@@ -28,6 +29,7 @@ const defaultContext = {
     transaction: null as TransactionRequest | null | undefined,
     authentication: null as AuthenticationRequest | null | undefined,
     logout: null as LogoutRequest | null | undefined,
+    consent: null as ConsentRequest | null | undefined,
   },
   response: null as RPCResponse | null,
   scopes: {
@@ -179,7 +181,7 @@ export const userWalletRequestStateMachine = createMachine({
           on: {
             CANCEL: {
               target: '#userWalletRequestStateMachine.completed',
-              actions: 'clearRequests',
+              actions: 'cancelRequests',
             },
             OTP_VERIFIED: {
               target: 'started',
@@ -309,6 +311,12 @@ export const userWalletRequestStateMachine = createMachine({
           },
           target: 'incoming-logout',
         },
+        {
+          guard: ({ context }) => {
+            return context.isAuthenticated && !!context.requests.consent;
+          },
+          target: 'incoming-consent',
+        },
       ],
     },
     'incoming-authentication': {
@@ -372,6 +380,18 @@ export const userWalletRequestStateMachine = createMachine({
         LOGOUT: {
           target: 'login-required',
           actions: 'logout',
+        },
+      },
+    },
+    'incoming-consent': {
+      on: {
+        ACCEPT: {
+          target: 'completed',
+          actions: 'clearRequests',
+        },
+        CANCEL: {
+          target: 'completed',
+          actions: 'cancelRequests',
         },
       },
     },

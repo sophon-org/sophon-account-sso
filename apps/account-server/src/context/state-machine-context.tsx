@@ -41,6 +41,7 @@ export const MainStateMachineContextProvider = ({
                 session: null,
                 authentication: null,
                 logout: null,
+                consent: null,
               },
             };
           }),
@@ -52,8 +53,8 @@ export const MainStateMachineContextProvider = ({
                 content: {
                   result: null,
                   error: {
-                    message: 'User refused the request.',
-                    code: -32002,
+                    message: 'User refused the request',
+                    code: 4001,
                   },
                 },
               };
@@ -70,6 +71,7 @@ export const MainStateMachineContextProvider = ({
                 session: null,
                 authentication: null,
                 logout: null,
+                consent: null,
               },
             };
           }),
@@ -97,6 +99,7 @@ export const MainStateMachineContextProvider = ({
                 session: null,
                 authentication: null,
                 logout: null,
+                consent: null,
               },
             };
           }),
@@ -122,6 +125,7 @@ export const MainStateMachineContextProvider = ({
                 session: null,
                 authentication: null,
                 logout: null,
+                consent: null,
               },
             };
           }),

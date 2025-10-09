@@ -7,8 +7,10 @@ import {
   useMemo,
   useState,
 } from 'react';
+import { zeroAddress } from 'viem';
 import { LOCAL_STORAGE_KEY } from '@/lib/constants';
 import { sendAuthMessage } from '@/lib/events';
+import { getDeployedSmartContractAddress } from '@/lib/smart-contract';
 import type { SmartAccount } from '@/types/smart-account';
 
 interface AccountContextProps {
@@ -18,6 +20,8 @@ interface AccountContextProps {
   logout: () => void;
   dynamicWallet: Wallet | null;
   setDynamicWallet: (wallet: Wallet | null) => void;
+  smartAccountDeployed: boolean;
+  setSmartAccountDeployed: (deployed: boolean) => void;
 }
 
 const AccountContext = createContext<AccountContextProps | null>(null);
@@ -28,6 +32,8 @@ const AccountContextProvider: React.FC<{ children: React.ReactNode }> = ({
   const [account, setAccount] = useState<SmartAccount | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
   const [dynamicWallet, setDynamicWallet] = useState<Wallet | null>(null);
+  const [smartAccountDeployed, setSmartAccountDeployed] =
+    useState<boolean>(false);
 
   // Initialize from localStorage on mount
   useEffect(() => {
@@ -43,6 +49,19 @@ const AccountContextProvider: React.FC<{ children: React.ReactNode }> = ({
       setIsInitialized(true);
     }
   }, []);
+
+  useEffect(() => {
+    (async () => {
+      if (!account?.address || !isInitialized) return;
+
+      const deployedAddress = await getDeployedSmartContractAddress(
+        account!.address,
+      );
+      setSmartAccountDeployed(
+        !!deployedAddress && deployedAddress !== zeroAddress,
+      );
+    })();
+  }, [account, isInitialized]);
 
   // Save to localStorage whenever accountData changes
   useEffect(() => {
@@ -76,6 +95,11 @@ const AccountContextProvider: React.FC<{ children: React.ReactNode }> = ({
     sendAuthMessage('logout', {
       address: account?.address ?? '0x0000000000000000000000000000000000000000',
     });
+
+    // remove tokens from localStorage
+    localStorage.removeItem('SOPHON_ACCESS_TOKEN');
+    localStorage.removeItem('SOPHON_REFRESH_TOKEN');
+
     setAccount(null);
   }, [account?.address]);
 
@@ -87,8 +111,10 @@ const AccountContextProvider: React.FC<{ children: React.ReactNode }> = ({
       logout,
       dynamicWallet,
       setDynamicWallet,
+      smartAccountDeployed,
+      setSmartAccountDeployed,
     }),
-    [account, login, logout, dynamicWallet],
+    [account, login, logout, dynamicWallet, smartAccountDeployed],
   );
 
   return (

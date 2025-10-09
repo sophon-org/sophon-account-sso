@@ -1127,59 +1127,59 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-communicator@npm:2.1.0":
-  version: 2.1.0
-  resolution: "@sophon-labs/account-communicator@npm:2.1.0"
+"@sophon-labs/account-communicator@npm:2.2.1":
+  version: 2.2.1
+  resolution: "@sophon-labs/account-communicator@npm:2.2.1"
   peerDependencies:
     typescript: ^5.0.0
-  checksum: 10c0/6c3961327bfdbe395eb51c1b62b9b1e184912864361dac644491463b8ec8b3f9eb3df4ebc04c4d89e6b0537f0c971819e6b77c6a01dbe52e3112885c785f614c
+  checksum: 10c0/928223b811448c7030669bef41f97b81f6a6aa9f890df51254b38045d0bd6ad55939dc2478f9520a8052e9865434e68e614b90281b07f1a3ca39a58cdc99bb7a
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-connector@npm:2.1.0":
-  version: 2.1.0
-  resolution: "@sophon-labs/account-connector@npm:2.1.0"
+"@sophon-labs/account-connector@npm:2.2.1":
+  version: 2.2.1
+  resolution: "@sophon-labs/account-connector@npm:2.2.1"
   dependencies:
-    "@sophon-labs/account-core": "npm:2.1.0"
-    "@sophon-labs/account-provider": "npm:2.1.0"
+    "@sophon-labs/account-core": "npm:2.2.1"
+    "@sophon-labs/account-provider": "npm:2.2.1"
     "@wagmi/core": "npm:^2.17.3"
   peerDependencies:
     viem: ">=2.21.0"
-  checksum: 10c0/f35b025c6f1ebf8032c5de70c7e0f0f7c1990ab92b7df422ff3bdbfc07be3b897e75d8099a982c2324b0fbf45fc8275a8a49a0335352f6abe8adb574a4017205
+  checksum: 10c0/7c5eb9c6ef4c6a5bc768b01324f698ce80b6725096fe1553eb6c4e0df75b5d46ac03f0000797379ca4040c73b1faa58ab7cf3817d13f4861cd547898ef052fb5
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-core@npm:2.1.0":
-  version: 2.1.0
-  resolution: "@sophon-labs/account-core@npm:2.1.0"
+"@sophon-labs/account-core@npm:2.2.1":
+  version: 2.2.1
+  resolution: "@sophon-labs/account-core@npm:2.2.1"
   dependencies:
     text-encoding-polyfill: "npm:^0.6.7"
   peerDependencies:
     viem: ">=2.21.0"
-  checksum: 10c0/cafbbb0bf9aac3a6b1561f6b3a6af935ff124aeaeb0283adc91e708c54fcbe0711e726f5ba7fc78bbd5481b5c271ea925a8271ff75dec89bc19f84e86fab7c59
+  checksum: 10c0/5421049c3591c8203cb5686a83c280a6ee3d7947eaba97b708025b48edbf78eb1696c50ffc26bd9d8a0eeac6cfa0d21a1b7007947a48e8a253dae9c50b0267ed
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-provider@npm:2.1.0":
-  version: 2.1.0
-  resolution: "@sophon-labs/account-provider@npm:2.1.0"
+"@sophon-labs/account-provider@npm:2.2.1":
+  version: 2.2.1
+  resolution: "@sophon-labs/account-provider@npm:2.2.1"
   dependencies:
-    "@sophon-labs/account-communicator": "npm:2.1.0"
-    "@sophon-labs/account-core": "npm:2.1.0"
+    "@sophon-labs/account-communicator": "npm:2.2.1"
+    "@sophon-labs/account-core": "npm:2.2.1"
     eventemitter3: "npm:^5.0.1"
     json-rpc-2.0: "npm:^1.7.1"
   peerDependencies:
     typescript: ^5.0.0
-  checksum: 10c0/576759a28275e7fc0c65ac0ecac2c629acd422889763f03a05043b3259f0a9fbdb37c830d60ca811e561b532f5fc303274ab8d86b1bbf38f29e3c7128465a1ab
+  checksum: 10c0/c478a234e28dd26a82249dc84dfb6a679c4f76356c6d7e1a2825e309ced84af990c47154c013b941a9204ca3a15854028feed0e18708196c68df283fdd2d534c
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-react@npm:2.1.0":
-  version: 2.1.0
-  resolution: "@sophon-labs/account-react@npm:2.1.0"
+"@sophon-labs/account-react@file:../../../packages/account-react::locator=%40sophon-labs%2Fexamples-react-sdk%40workspace%3A.":
+  version: 2.2.1
+  resolution: "@sophon-labs/account-react@file:../../../packages/account-react#../../../packages/account-react::hash=dd2a97&locator=%40sophon-labs%2Fexamples-react-sdk%40workspace%3A."
   dependencies:
-    "@sophon-labs/account-connector": "npm:2.1.0"
-    "@sophon-labs/account-core": "npm:2.1.0"
+    "@sophon-labs/account-connector": "npm:2.2.1"
+    "@sophon-labs/account-core": "npm:2.2.1"
     axios: "npm:^1.11.0"
     clsx: "npm:^2.1.1"
     js-cookie: "npm:^3.0.5"
@@ -1189,7 +1189,7 @@ __metadata:
     react-dom: ">=18"
     viem: ">=2.21.0"
     wagmi: ">=2"
-  checksum: 10c0/40dec654316897eba3cff8523d9e59a39cd4dc4902e6b1fd38fbb5e8a2c097e56d784aa483a1271f129f9b5c98f94ca8080eb6706aa9e01e395f7d67cc95cc87
+  checksum: 10c0/4108aa592bda187bb72a273e813eebec3ee976cc7aee924cb60286c2f9cd1b7db3eb87876d2b214693a816761f73f7845a16c3722121a2f7032f6e5bf46563ec
   languageName: node
   linkType: hard
 
@@ -1197,7 +1197,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@sophon-labs/examples-react-sdk@workspace:."
   dependencies:
-    "@sophon-labs/account-react": "npm:2.1.0"
+    "@sophon-labs/account-react": "file:../../../packages/account-react"
     "@tailwindcss/postcss": "npm:^4"
     "@tanstack/react-query": "npm:^5.83.0"
     "@types/node": "npm:^20"

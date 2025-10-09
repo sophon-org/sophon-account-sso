@@ -9,5 +9,5 @@ export const deployAccount = async (ownerAddress: Address) => {
     throw new Error('Failed to deploy account');
   }
 
-  return response.json() as Promise<{ accounts: Address[] }>;
+  return (await response.json()) as Promise<{ accounts: Address[] }>;
 };

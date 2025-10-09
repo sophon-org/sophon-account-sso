@@ -5,7 +5,7 @@ import { openAuthSessionAsync, openBrowserAsync } from 'expo-web-browser';
 import { useCallback, useRef, useState } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 import { WebView } from 'react-native-webview';
-import { VIEW_VERSION } from '../constants';
+import { PACKAGE_VERSION, VIEW_VERSION } from '../constants';
 import { USER_AGENT } from '../constants/user-agent';
 import { useModalVisibility } from '../hooks/use-modal-visibility';
 import { sendUIMessage, useUIEventHandler } from '../messaging/ui';
@@ -72,6 +72,7 @@ export const SophonMainView = ({
   useUIEventHandler(
     'sdkStatusRequest',
     useCallback(() => {
+      // @ts-ignore
       postMessageToWebApp(webViewRef, 'sdkStatusRequest', {});
     }, []),
   );
@@ -127,6 +128,7 @@ export const SophonMainView = ({
 
   if (partnerId) {
     params.set('version', VIEW_VERSION);
+    params.set('packageVersion', PACKAGE_VERSION);
     params.set('platformOS', Platform.OS);
     params.set('platformVersion', `${Platform.Version}`);
   }
@@ -226,6 +228,10 @@ export const SophonMainView = ({
         }}
         onError={(event) => {
           sendUIMessage('mainViewError', event.nativeEvent.description);
+          sendUIMessage('handleError', {
+            description: event.nativeEvent.description,
+            code: event.nativeEvent.code,
+          });
           sendUIMessage('hideModal', null);
         }}
         onContentProcessDidTerminate={() => {}}

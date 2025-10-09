@@ -1,3 +1,4 @@
+import { RpcError } from 'viem';
 import type { RequestSender } from '../types';
 
 /**
@@ -13,7 +14,10 @@ export const handleSendTransaction = async (
 ) => {
   const result = await sender('eth_sendTransaction', params);
   if (result?.content?.error) {
-    throw new Error(result?.content?.error?.message);
+    throw new RpcError(new Error(result?.content?.error?.message), {
+      code: result?.content?.error?.code,
+      shortMessage: result?.content?.error?.message,
+    });
   }
   return result?.content?.result;
 };

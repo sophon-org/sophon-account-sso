@@ -121,11 +121,12 @@ export function useERC20Approval(args: UseERC20ApprovalArgs) {
     isApproved,
     approve,
     isLoading: isLoading || isWritePending || isConfirming,
+    isError: !!(error || writeError || confirmError),
     error: error || writeError || confirmError,
     currentAllowance: currentAllowance || 0n,
     approvalTxHash,
     isConfirmed,
-    refetchAllowance,
+    refetch: refetchAllowance,
   };
 }
 

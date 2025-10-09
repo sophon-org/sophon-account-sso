@@ -5,25 +5,24 @@ import {
 } from '@sophon-labs/account-react-native';
 import { useEffect, useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
-import { erc20Abi, parseEther, parseUnits } from 'viem';
+import {
+  erc20Abi,
+  parseEther,
+  parseUnits,
+  UserRejectedRequestError,
+} from 'viem';
 import { sophonTestnet } from 'viem/chains';
 import { nftAbi } from '@/abis/nft';
 import { unverifiedAbi } from '@/abis/unverified';
 import { verifiedAbi } from '@/abis/verified';
 import JWTPanel from '@/components/me.panel';
 import { SendContractButton } from '@/components/send-contract-button';
+import { TestDashboard } from '@/components/test-dashboard';
 import { Button } from '@/components/ui/button';
 
 export default function HomeScreen() {
-  const {
-    initialized,
-    connect,
-    isConnected,
-    account,
-    logout,
-    accountError,
-    isConnecting,
-  } = useSophonAccount();
+  const { initialized, connect, isConnected, account, logout, isConnecting } =
+    useSophonAccount();
 
   useEffect(() => {
     console.log('is connected', isConnected);
@@ -35,15 +34,47 @@ export default function HomeScreen() {
   const [typedDataSignature, setTypedDataSignature] = useState<string>();
   const [transaction, setTransaction] = useState<string>();
   const [error, setError] = useState<string>('');
+  const [showTestDashboard, setShowTestDashboard] = useState(false);
+
+  useEffect(() => {
+    console.log('accountError', error);
+  }, [error]);
 
   const handleAuthenticate = async () => {
-    await connect();
+    setError('');
+    await connect().catch((e) => {
+      console.log(e);
+      if (e.code !== UserRejectedRequestError.code) {
+        // non user rejected errors
+        setError(e.details ?? e.message);
+      }
+    });
   };
 
   if (!initialized) {
     return (
       <View className="flex-1 items-center justify-center bg-white py-8 h-screen">
         <Text className="text-xl font-bold text-black">Initializing...</Text>
+      </View>
+    );
+  }
+
+  // If showing test dashboard, render it instead of the main screen
+  if (showTestDashboard) {
+    return (
+      <View className="flex-1 bg-white">
+        {/* Header with back button */}
+        <View className="bg-gray-800 px-4 py-3 flex-row items-center justify-between">
+          <Button
+            onPress={() => setShowTestDashboard(false)}
+            className="bg-violet-500/30 border border-violet-500/50"
+          >
+            <Text className="text-white">← Back</Text>
+          </Button>
+          <Text className="text-white text-lg font-semibold">Hook Testing</Text>
+          <View className="w-16" />
+        </View>
+        <TestDashboard />
       </View>
     );
   }
@@ -58,9 +89,9 @@ export default function HomeScreen() {
             </Text>
           </Button>
         )}
-        {(accountError || error) && (
+        {error && (
           <Text className="text-xl mt-2 font-bold text-red-500 p-2 mb-4 w-2/3 text-center">
-            {accountError ?? error}
+            {error}
           </Text>
         )}
         {isConnected && (
@@ -72,9 +103,17 @@ export default function HomeScreen() {
               onPress={logout}
               className="mt-4 bg-red-500/90 w-full max-w-[80%]"
             >
-              <Text className="text-xl font-bold text-white">Logout</Text>
+              <Text className="text-white font-bold">Logout</Text>
             </Button>
           </>
+        )}
+        {isConnected && (
+          <Button
+            onPress={() => setShowTestDashboard(true)}
+            className="mt-4 bg-violet-500/30 border border-violet-500/50 w-full max-w-[80%]"
+          >
+            <Text className="text-white font-bold">🧪 Test React Hooks</Text>
+          </Button>
         )}
         {isConnected && (
           <View className="mt-4 w-full max-w-[80%]">

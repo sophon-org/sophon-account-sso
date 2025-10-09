@@ -129,7 +129,7 @@ export const useAccountCreate = () => {
           );
           const smartAccountAddress = accounts[0] as `0x${string}`;
           setAccountAddress(smartAccountAddress);
-          login({
+          await login({
             username: `EOA Account ${connectedAddress!.slice(0, 8)}...`,
             address: smartAccountAddress,
             owner: {

@@ -2,6 +2,7 @@ import { createSophonConnector } from '@sophon-labs/account-connector';
 import { useEffect, useMemo } from 'react';
 import { useConfig } from 'wagmi';
 import { useSophonContext } from '../hooks/useSophonContext';
+import { WagmiSophonSync } from './wagmi-sync-sophon';
 
 export const SophonWagmiConnector = ({
   children,
@@ -31,5 +32,7 @@ export const SophonWagmiConnector = ({
     );
   }, [config, internalConnector, updateConnector]);
 
-  return <>{children}</>;
+  return (
+    <WagmiSophonSync connector={internalConnector}>{children}</WagmiSophonSync>
+  );
 };

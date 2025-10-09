@@ -14,6 +14,7 @@ import { useEventHandler } from '@/events/hooks';
 import { useAccountContext } from '@/hooks/useAccountContext';
 import { useRequestDrawer } from '@/hooks/useRequestDrawer';
 import { useUserIdentification } from '@/hooks/useUserIdentification';
+import { getSocialProviderFromURL } from '@/lib/social-provider';
 import { CompletedView } from '@/views/CompletedView';
 import ConnectAuthorizationView from '@/views/ConnectAuthorizationView';
 import { LoadingView } from '@/views/LoadingView';
@@ -31,7 +32,7 @@ interface EmbeddedRootProps {
 }
 
 export default function EmbeddedRoot({ partnerId, scopes }: EmbeddedRootProps) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(!!getSocialProviderFromURL());
   const state = MainStateMachineContext.useSelector((state) => state);
   const actorRef = MainStateMachineContext.useActorRef();
   const { openDrawer, DrawerComponent } = useRequestDrawer();

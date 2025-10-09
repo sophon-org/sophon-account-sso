@@ -191,3 +191,64 @@ export const trackTransactionResult = (
     ...getGlobalProperties(),
   });
 };
+
+// Consent tracking functions
+export const trackConsentScreenViewed = (
+  source: string = 'first_data_source_connect',
+  screenType: string = 'modal',
+) => {
+  posthog.capture('consent_screen_viewed', {
+    source,
+    screen_type: screenType,
+    ...getGlobalProperties(),
+  });
+};
+
+export const trackConsentOptionSelected = (
+  option: 'personalization' | 'ads',
+  action: 'accept' | 'reject',
+) => {
+  posthog.capture('consent_option_selected', {
+    option,
+    action,
+    ...getGlobalProperties(),
+  });
+};
+
+export const trackConsentAcceptAll = (
+  options: Array<'personalization' | 'ads'> = ['personalization', 'ads'],
+) => {
+  posthog.capture('consent_accept_all', {
+    options,
+    action: 'accept_all',
+    ...getGlobalProperties(),
+  });
+};
+
+export const trackConsentContinue = (
+  optionsSelected: {
+    personalization: 'accept' | 'reject';
+    ads: 'accept' | 'reject';
+  },
+  method: 'accept_all' | 'individual' = 'individual',
+) => {
+  posthog.capture('consent_continue', {
+    options_selected: optionsSelected,
+    method,
+    ...getGlobalProperties(),
+  });
+};
+
+export const trackConsentDismissed = (
+  optionsSelected: {
+    personalization: 'accept' | 'reject' | 'pending';
+    ads: 'accept' | 'reject' | 'pending';
+  },
+  dismissReason: 'modal_closed' | 'navigated_away' | 'session_timeout',
+) => {
+  posthog.capture('consent_dismissed', {
+    options_selected: optionsSelected,
+    dismiss_reason: dismissReason,
+    ...getGlobalProperties(),
+  });
+};

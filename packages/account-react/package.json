@@ -1,6 +1,6 @@
 {
   "name": "@sophon-labs/account-react",
-  "version": "2.2.1",
+  "version": "2.3.3",
   "description": "React components for Sophon Account",
   "type": "module",
   "keywords": [],
@@ -21,8 +21,8 @@
     "test:ci": "vitest run --coverage"
   },
   "dependencies": {
-    "@sophon-labs/account-connector": "2.2.1",
-    "@sophon-labs/account-core": "2.2.1",
+    "@sophon-labs/account-connector": "2.3.3",
+    "@sophon-labs/account-core": "2.3.3",
     "axios": "^1.11.0",
     "clsx": "^2.1.1",
     "js-cookie": "^3.0.5"

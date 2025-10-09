@@ -7,7 +7,7 @@ export const getTimeoutRPC = (requestId?: UUID) => {
     content: {
       result: null,
       error: {
-        message: 'Request timeout.',
+        message: 'Connection timeout.',
         code: -32002,
       },
     },

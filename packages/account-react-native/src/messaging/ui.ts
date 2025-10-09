@@ -27,6 +27,10 @@ export type SophonUIActions = {
   refreshMainView: unknown;
   clearMainViewCache: unknown;
   mainViewError: string;
+  handleError: {
+    description: string;
+    code: number;
+  };
   // from server:
   sdkStatusResponse: SDKStatusResponse;
   sdkStatusRequest: unknown;

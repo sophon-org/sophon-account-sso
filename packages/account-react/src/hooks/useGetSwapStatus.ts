@@ -108,7 +108,7 @@ export function useGetSwapStatus(
     }
   }, [txHash, chainId, apiClient]);
 
-  return { data, isLoading, error, refetch };
+  return { data, isLoading, isError: !!error, error, refetch };
 }
 
 /**

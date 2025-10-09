@@ -6,7 +6,6 @@ import { useAccountContext } from '@/hooks/useAccountContext';
 import { useAuthResponse } from '@/hooks/useAuthResponse';
 import { useSignature } from '@/hooks/useSignature';
 import { SOPHON_VIEM_CHAIN } from '@/lib/constants';
-import { serverLog } from '@/lib/server-log';
 import { withTimeout } from '@/lib/timeout';
 import { requestNonce, verifyAuthorization } from '@/service/token.service';
 import { windowService } from '@/service/window.service';
@@ -65,14 +64,10 @@ export function useConnectionAuthorization() {
   // promise to keep working after the user has cancelled the authorization or the time limit has been reached
   const onAcceptConnectionCall = async (isCanceled: () => boolean) => {
     if (!account) return;
-    const now = new Date();
 
     setAuthorizing(true);
     setAuthorizationError(null); // Clear any previous errors
 
-    serverLog(
-      `${account.address} - Accepting connection at ${now.toISOString()}`,
-    );
     // We just generate tokens if the partnerId is available,
     // otherwise the partner is using EIP-6963 and don't need that
     if (partnerId) {
@@ -83,10 +78,6 @@ export function useConnectionAuthorization() {
           .filter((it) => scopes[it as keyof typeof scopes])
           .map((it) => it.toString()),
         user?.userId,
-      );
-
-      serverLog(
-        `${account.address} - Requested nonce completed at ${new Date().toISOString()}`,
       );
 
       const messageFields = [
@@ -124,9 +115,6 @@ export function useConnectionAuthorization() {
       }
 
       const authSignature = await signTypeData(signAuth);
-      serverLog(
-        `${account.address} - Signature completed at ${new Date().toISOString()}`,
-      );
       if (isCanceled()) {
         return;
       }
@@ -143,23 +131,18 @@ export function useConnectionAuthorization() {
         true,
       );
 
-      serverLog(
-        `${account.address} - Verify authorization completed at ${new Date().toISOString()}`,
-      );
-
       if (isCanceled()) {
         return;
       }
 
-      // we don't store the token, we just send it during the account authorization
+      // Store tokens in localStorage for later use (e.g., consent flow)
+      localStorage.setItem('SOPHON_ACCESS_TOKEN', accessToken);
+      localStorage.setItem('SOPHON_REFRESH_TOKEN', refreshToken);
+
+      // Send tokens to parent window
       windowService.emitAccessToken(accessToken, accessTokenExpiresAt);
       windowService.emitRefreshToken(refreshToken, refreshTokenExpiresAt);
     }
-
-    const completedAt = new Date();
-    serverLog(
-      `${account.address} - Completed connection at ${completedAt.toISOString()} - Took ${completedAt.getTime() - now.getTime()}ms`,
-    );
 
     if (windowService.isManaged() && incoming) {
       handleAuthSuccessResponse(

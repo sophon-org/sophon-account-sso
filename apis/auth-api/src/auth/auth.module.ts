@@ -1,8 +1,8 @@
-// src/auth/auth.module.ts
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { SecretsModule } from "src/aws/secrets.module";
+import { ConsentsModule } from "src/consents/consents.module";
 import { JwtKeysModule } from "../aws/jwt-keys.module"; // your keys module
 import { authConfig } from "../config/auth.config";
 import { PartnerRegistryService } from "../partners/partner-registry.service";
@@ -18,6 +18,7 @@ import { MeService } from "./me.service";
 		TypeOrmModule.forFeature([Session]),
 		JwtKeysModule,
 		SecretsModule,
+		ConsentsModule,
 	],
 	controllers: [AuthController],
 	providers: [
