@@ -1402,52 +1402,119 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-communicator@npm:2.3.0":
-  version: 2.3.0
-  resolution: "@sophon-labs/account-communicator@npm:2.3.0"
+"@sophon-labs/account-communicator@npm:2.3.1":
+  version: 2.3.1
+  resolution: "@sophon-labs/account-communicator@npm:2.3.1"
   peerDependencies:
     typescript: ^5.0.0
-  checksum: 10c0/ad53588b8e8c2519154c746ffb29c4ddd211e0eddc41d54d5efbc5c4bcb90708d55e10ec8b9b186afc1e21a4a6d05820418d0793002b3f9ef4fceafb8e28bfb7
+  checksum: 10c0/d84a83b88c53394e59bf0a650a0678b4d931039ed4c03e6b41c8968e0ca597bd5399b9aedc813ac4070393e6f63ef4ead02f42ae4f2f5a791cac8d27ef257da3
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-core@npm:2.3.0":
-  version: 2.3.0
-  resolution: "@sophon-labs/account-core@npm:2.3.0"
+"@sophon-labs/account-communicator@npm:2.3.3":
+  version: 2.3.3
+  resolution: "@sophon-labs/account-communicator@npm:2.3.3"
+  peerDependencies:
+    typescript: ^5.0.0
+  checksum: 10c0/de7ee387cc1567d6cf892496cc7a36a2fbd6ce0f58c41309b27423facdabea0aa57ab09ff6bf06e305d6d47ceab656e71050df6b01e2ae48ae032f3aab8f01ff
+  languageName: node
+  linkType: hard
+
+"@sophon-labs/account-connector@npm:2.3.3":
+  version: 2.3.3
+  resolution: "@sophon-labs/account-connector@npm:2.3.3"
+  dependencies:
+    "@sophon-labs/account-core": "npm:2.3.3"
+    "@sophon-labs/account-provider": "npm:2.3.3"
+    "@wagmi/core": "npm:^2.17.3"
+  peerDependencies:
+    viem: ">=2.21.0"
+  checksum: 10c0/4221a86bf3e2ac9f7b3a477fe7f7ff60eeb6e12a2c9359e67887432dd8b31179021b741c7275459823079d9f517f4d291ca2ccada9348ef9c3bb4a4fc1f48c90
+  languageName: node
+  linkType: hard
+
+"@sophon-labs/account-core@npm:2.3.1":
+  version: 2.3.1
+  resolution: "@sophon-labs/account-core@npm:2.3.1"
   dependencies:
     text-encoding-polyfill: "npm:^0.6.7"
   peerDependencies:
     viem: ">=2.21.0"
-  checksum: 10c0/ca02e4c451778557da54f78ab7bc969e7734befdc4245f65bd4fb6b2cba019e71740165ef7012fcab43d9ec248cecdb6d7d0058667fe0b7a43ee7f0fd595529b
+  checksum: 10c0/a3bdee446d885cf1d8782b5bce443d0e3a7535e5595ee99037da138f01195bdef545892152a375285347eb95989623c80c8aad6c31694ef19df3d3c69b61020d
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-eip6963@npm:2.3.0":
-  version: 2.3.0
-  resolution: "@sophon-labs/account-eip6963@npm:2.3.0"
+"@sophon-labs/account-core@npm:2.3.3":
+  version: 2.3.3
+  resolution: "@sophon-labs/account-core@npm:2.3.3"
   dependencies:
-    "@sophon-labs/account-core": "npm:2.3.0"
-    "@sophon-labs/account-provider": "npm:2.3.0"
+    text-encoding-polyfill: "npm:^0.6.7"
+  peerDependencies:
+    viem: ">=2.21.0"
+  checksum: 10c0/64f4a40592f313c2eecebe99ac96c7a5e89dc2ef7cf04628cfdaa0ad4deccecb7532224428a35c7fef167402c84dc26f46ff0a459565c35b0bf7725338d5be9b
+  languageName: node
+  linkType: hard
+
+"@sophon-labs/account-eip6963@npm:2.3.1":
+  version: 2.3.1
+  resolution: "@sophon-labs/account-eip6963@npm:2.3.1"
+  dependencies:
+    "@sophon-labs/account-core": "npm:2.3.1"
+    "@sophon-labs/account-provider": "npm:2.3.1"
     eventemitter3: "npm:^5.0.1"
     json-rpc-2.0: "npm:^1.7.1"
   peerDependencies:
     typescript: ^5.0.0
-  checksum: 10c0/1e058c01dfa40aabe8b4c5188724317a5a1aeaaf0453b1303f3a92b32a60cd5f7c626ec0c25416be19de28723165b51fffa5db8d67a0b08d863ef42e2c11519e
+  checksum: 10c0/f9ce191cb74c77699d38b754d37595e8025241639424d1bac7cbdcba91c3198207d6882b2408755790a4c1a93b8853be0c77db527bceff25cdb71beb6eb98668
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-provider@npm:2.3.0":
-  version: 2.3.0
-  resolution: "@sophon-labs/account-provider@npm:2.3.0"
+"@sophon-labs/account-provider@npm:2.3.1":
+  version: 2.3.1
+  resolution: "@sophon-labs/account-provider@npm:2.3.1"
   dependencies:
-    "@sophon-labs/account-communicator": "npm:2.3.0"
-    "@sophon-labs/account-core": "npm:2.3.0"
+    "@sophon-labs/account-communicator": "npm:2.3.1"
+    "@sophon-labs/account-core": "npm:2.3.1"
     eventemitter3: "npm:^5.0.1"
     json-rpc-2.0: "npm:^1.7.1"
   peerDependencies:
     typescript: ^5.0.0
     viem: ">=2.21.0"
-  checksum: 10c0/88045c53703ef875f4bcb79ad03a6e4283b3f7a31a8ec2aa5a6075920a08e359f7b01d9e4c750c95af94cb7a80e682731084e198bd4734b076552339f0a414aa
+  checksum: 10c0/b489486e3d8fc60650c44cd0dc2429c544621b4c65678bef062c199df4267895420dfce4812f55a8beb36ecc75adec3327324879d40fe8aea7a3d8003bbb9c6e
+  languageName: node
+  linkType: hard
+
+"@sophon-labs/account-provider@npm:2.3.3":
+  version: 2.3.3
+  resolution: "@sophon-labs/account-provider@npm:2.3.3"
+  dependencies:
+    "@sophon-labs/account-communicator": "npm:2.3.3"
+    "@sophon-labs/account-core": "npm:2.3.3"
+    eventemitter3: "npm:^5.0.1"
+    json-rpc-2.0: "npm:^1.7.1"
+  peerDependencies:
+    typescript: ^5.0.0
+    viem: ">=2.21.0"
+  checksum: 10c0/ea1d0143819140364d500575cf39a82d57b229e7920cc2f4fd7166ff03f8b83fc108429b0b6f493f19e8cfe50688c2675c6ebddb61af74a08ba85631d8318c81
+  languageName: node
+  linkType: hard
+
+"@sophon-labs/account-react@npm:^2.3.1":
+  version: 2.3.3
+  resolution: "@sophon-labs/account-react@npm:2.3.3"
+  dependencies:
+    "@sophon-labs/account-connector": "npm:2.3.3"
+    "@sophon-labs/account-core": "npm:2.3.3"
+    axios: "npm:^1.11.0"
+    clsx: "npm:^2.1.1"
+    js-cookie: "npm:^3.0.5"
+  peerDependencies:
+    "@tanstack/react-query": ">=5"
+    react: ">=18"
+    react-dom: ">=18"
+    viem: ">=2.21.0"
+    wagmi: ">=2"
+  checksum: 10c0/d8c5fa4e47e83205c9717c5772e652bfd72bed673f6b971165771e629d47c0df0e7e9a10cb7d54ad9a14c9fc0fab0a564de6e0fadc58055b4ef1b18dad9a4b0d
   languageName: node
   linkType: hard
 
@@ -1455,8 +1522,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@sophon-labs/examples-sandbox-eip6963@workspace:."
   dependencies:
-    "@sophon-labs/account-core": "npm:2.3.0"
-    "@sophon-labs/account-eip6963": "npm:2.3.0"
+    "@rainbow-me/rainbowkit": "npm:^2.2.8"
+    "@sophon-labs/account-core": "npm:2.3.1"
+    "@sophon-labs/account-eip6963": "npm:2.3.1"
+    "@sophon-labs/account-react": "npm:^2.3.1"
     "@tailwindcss/postcss": "npm:^4"
     "@tanstack/react-query": "npm:^5.83.0"
     "@types/node": "npm:^20"
