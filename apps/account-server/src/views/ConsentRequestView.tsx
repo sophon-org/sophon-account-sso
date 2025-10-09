@@ -111,10 +111,9 @@ export default function ConsentRequestView({
                 </div>
 
                 <AccordionContent className="text-left px-3 text-xs text-[#757575]">
-                  Use the data you provide and import to build a profile linked
-                  to your Sophon Account, customize your experience, provide
-                  relevant ads and provide potential rewards without sharing
-                  your data with third parties.
+                  Sharing your data or zkTLS proofs related to such data with
+                  our data partners so they can deliver personalized ads,
+                  experiences and recommendations.
                 </AccordionContent>
               </AccordionItem>
             </div>
@@ -122,12 +121,23 @@ export default function ConsentRequestView({
         </div>
         <div className="absolute bottom-0 left-0 right-0">
           <p className="text-xs text-[#757575]">
-            You can withdraw your consent at any time by sending us an email at
-            data@sophon.xyz. Withdrawal will stop any future use of your data
-            for these purposes, but it will not affect processing already
-            carried out while your consent was active. Please refer to our
-            Privacy Policy to find out how we process and protect your data and
-            how you can exercise your rights.
+            You can withdraw your consent at any time by sending us an email at{' '}
+            <a href="mailto:data@sophon.xyz" target="_blank" rel="noreferrer">
+              data@sophon.xyz
+            </a>
+            . Withdrawal will stop any future use of your data for these
+            purposes, but it will not affect processing already carried out
+            while your consent was active. Please refer to our{' '}
+            <a
+              href="https://sophon.xyz/privacypolicy"
+              className="underline"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Privacy Policy
+            </a>{' '}
+            to find out how we process and protect your data and how you can
+            exercise your rights.
           </p>
         </div>
       </div>
