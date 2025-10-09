@@ -2,14 +2,13 @@ import {
   AppleIcon,
   DiscordIcon,
   GoogleIcon,
-  TelegramIcon,
   TwitterIcon,
 } from '@dynamic-labs/iconic';
-import type { ProviderEnum } from '@dynamic-labs/types';
+import type { OAuthProvider } from '@openfort/react';
 
 const SOCIAL_PROVIDER_KEY = 'socialProvider';
 
-export function setSocialProviderInURL(provider: ProviderEnum): void {
+export function setSocialProviderInURL(provider: OAuthProvider): void {
   if (typeof window === 'undefined') return;
 
   const url = new URL(window.location.href);
@@ -17,11 +16,11 @@ export function setSocialProviderInURL(provider: ProviderEnum): void {
   window.history.replaceState({}, '', url.toString());
 }
 
-export function getSocialProviderFromURL(): ProviderEnum | null {
+export function getSocialProviderFromURL(): OAuthProvider | null {
   if (typeof window === 'undefined') return null;
 
   const url = new URL(window.location.href);
-  return url.searchParams.get(SOCIAL_PROVIDER_KEY) as ProviderEnum;
+  return url.searchParams.get(SOCIAL_PROVIDER_KEY) as OAuthProvider;
 }
 
 export function clearSocialProviderFromURL(): void {
@@ -34,7 +33,7 @@ export function clearSocialProviderFromURL(): void {
 
 // Icon utilities
 export function getSocialProviderIcon(
-  provider: ProviderEnum,
+  provider: OAuthProvider,
   className = 'w-10 h-10',
 ) {
   switch (provider) {
@@ -42,8 +41,9 @@ export function getSocialProviderIcon(
       return <GoogleIcon className={className} />;
     case 'twitter':
       return <TwitterIcon className={className} />;
-    case 'telegram':
-      return <TelegramIcon className={className} />;
+    // TODO: open fort doesnt support telegram
+    // case 'telegram':
+    //   return <TelegramIcon className={className} />;
     case 'discord':
       return <DiscordIcon className={className} />;
     case 'apple':

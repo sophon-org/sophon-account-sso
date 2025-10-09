@@ -1,4 +1,3 @@
-import type { Wallet } from '@dynamic-labs/sdk-react-core';
 import type { Address } from 'viem';
 
 /*
@@ -7,7 +6,6 @@ import type { Address } from 'viem';
 export type EventActions = {
   'k1.login': {
     address: Address;
-    wallet?: Wallet;
   };
   'k1.login.init': null;
   'k1.logout': null;

@@ -3,7 +3,7 @@
 import { useEventHandler } from '@/events/hooks';
 
 /**
- * Handle the logout when the user got disconnected from dynamic side,
+ * Handle the logout when the user got disconnected from openfort side,
  * for now we do nothing, ideally we should not disconnect the user and re-login
  */
 export const useK1LogoutHandler = () => {

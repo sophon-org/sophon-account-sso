@@ -1,5 +1,4 @@
 'use client';
-import type { Wallet } from '@dynamic-labs/sdk-react-core';
 import {
   createContext,
   useCallback,
@@ -16,10 +15,8 @@ import type { SmartAccount } from '@/types/smart-account';
 interface AccountContextProps {
   account: SmartAccount | null;
   setAccount: (account: SmartAccount | null) => void;
-  login: (account: SmartAccount, dynamicWallet?: Wallet) => Promise<void>;
+  login: (account: SmartAccount) => Promise<void>;
   logout: () => void;
-  dynamicWallet: Wallet | null;
-  setDynamicWallet: (wallet: Wallet | null) => void;
   smartAccountDeployed: boolean;
   setSmartAccountDeployed: (deployed: boolean) => void;
 }
@@ -31,7 +28,6 @@ const AccountContextProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [account, setAccount] = useState<SmartAccount | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
-  const [dynamicWallet, setDynamicWallet] = useState<Wallet | null>(null);
   const [smartAccountDeployed, setSmartAccountDeployed] =
     useState<boolean>(false);
 
@@ -79,13 +75,8 @@ const AccountContextProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [account, isInitialized]);
 
   const login = useCallback(
-    async (
-      data: SmartAccount,
-      wallet?: Wallet,
-      externalLogout?: () => void,
-    ) => {
+    async (data: SmartAccount, externalLogout?: () => void) => {
       setAccount(data);
-      setDynamicWallet(wallet ?? null);
       externalLogout?.();
     },
     [],
@@ -109,12 +100,10 @@ const AccountContextProvider: React.FC<{ children: React.ReactNode }> = ({
       setAccount,
       login,
       logout,
-      dynamicWallet,
-      setDynamicWallet,
       smartAccountDeployed,
       setSmartAccountDeployed,
     }),
-    [account, login, logout, dynamicWallet, smartAccountDeployed],
+    [account, login, logout, smartAccountDeployed],
   );
 
   return (

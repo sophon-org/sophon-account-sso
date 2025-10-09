@@ -3,7 +3,7 @@ import type { TypedDataSigningRequest } from '@/types/auth';
 
 /**
  * Safe parse the typed data domain chainId.This is required because of different payloads
- * used by different RPC providers, like ethers and dynamic SDK.
+ * used by different RPC providers, like ethers and openfort SDK.
  *
  * @param typedData - The typed data to parse.
  * @returns The correct expected typed data.
@@ -18,7 +18,7 @@ export const safeParseTypedData = (
   }
 
   // ethers sends the chainId encoded as a string, so we need to convert it to a number.
-  // Dynamic SDK supports only numeric chainId.
+  // Openfort SDK supports only numeric chainId.
   let chainId = typedData.domain.chainId;
   if (typeof chainId === 'string') {
     const typedChainId = chainId as string;

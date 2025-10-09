@@ -1,11 +1,12 @@
-import { useDynamicContext } from '@dynamic-labs/sdk-react-core';
 import type { DataScopes } from '@sophon-labs/account-core';
 import { useEffect, useState } from 'react';
 import { AllScopes, type Scopes } from '@/types/data-scopes';
+import { useUser, useWallet } from '@openfort/react';
 
-export const useDataAccessScopes = (requestedScopes: DataScopes[]) => {
-  const { user } = useDynamicContext();
+export const useDataAccessScopes = (requestedScopes: DataScopes[]) => {;
   const [userScopes, setUserScopes] = useState<Scopes[]>([]);
+  const activeWallet = useWallet();
+  const user = useUser();
 
   useEffect(() => {
     if (user) {

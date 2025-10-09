@@ -1,4 +1,3 @@
-import { useConnectWithOtp } from '@dynamic-labs/sdk-react-core';
 import { useCallback, useState } from 'react';
 import { MainStateMachineContext } from '@/context/state-machine-context';
 import {
@@ -11,13 +10,13 @@ export function useOTPConnect() {
   const actorRef = MainStateMachineContext.useActorRef();
   const [error, setError] = useState<string | null>(null);
 
-  const { connectWithEmail, verifyOneTimePassword, retryOneTimePassword } =
-    useConnectWithOtp();
+  // const { connectWithEmail, verifyOneTimePassword, retryOneTimePassword } =
+  //   useEmailAuth();
 
   const requestOTP = useCallback(
     async (email: string) => {
       try {
-        await connectWithEmail(email);
+        // await connectWithEmail(email);
 
         // Update user properties with email info
         updateUserProperties({
@@ -41,13 +40,13 @@ export function useOTPConnect() {
         });
       }
     },
-    [actorRef, connectWithEmail],
+    [actorRef],
   );
 
   const verifyOTP = useCallback(
     async (otp: string) => {
       try {
-        await verifyOneTimePassword(otp);
+        // await verifyOneTimePassword(otp);
         trackAuthCompleted('email');
 
         // Update user properties on successful verification
@@ -66,20 +65,20 @@ export function useOTPConnect() {
         actorRef.send({ type: 'SET_ERROR', error: 'OTP verification failed' });
       }
     },
-    [actorRef, verifyOneTimePassword],
+    [actorRef],
   );
 
   const resendOTP = useCallback(async () => {
-    try {
-      await retryOneTimePassword();
-    } catch (error) {
-      console.error('❌ OTP resend failed:', error);
-      const errorMessage =
-        error instanceof Error ? error.message : 'OTP resend failed';
-      setError(errorMessage);
-      actorRef.send({ type: 'SET_ERROR', error: 'OTP resend failed' });
-    }
-  }, [retryOneTimePassword, actorRef]);
+    // try {
+    //   // await retryOneTimePassword();
+    // } catch (error) {
+    //   console.error('❌ OTP resend failed:', error);
+    //   const errorMessage =
+    //     error instanceof Error ? error.message : 'OTP resend failed';
+    //   setError(errorMessage);
+    //   actorRef.send({ type: 'SET_ERROR', error: 'OTP resend failed' });
+    // }
+  }, []);
 
   return {
     requestOTP,

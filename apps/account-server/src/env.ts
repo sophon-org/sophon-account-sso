@@ -20,7 +20,6 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
-    NEXT_PUBLIC_DYNAMIC_PROVIDER_ID: z.string(),
     NEXT_PUBLIC_DEPLOYER_ADDRESS: z.string(),
     NEXT_PUBLIC_CHAIN_ID: z
       .enum(VALID_CHAIN_IDS)
@@ -39,6 +38,9 @@ export const env = createEnv({
       .optional()
       .transform((it) => it === 'true'),
     NEXT_PUBLIC_EMBEDDED_FLOW_ORIGIN: z.string().url().optional(),
+    NEXT_PUBLIC_OPENFORT_PUBLISHABLE_KEY: z.string(),
+    NEXT_PUBLIC_SHIELD_PUBLISHABLE_KEY: z.string(),
+    NEXT_PUBLIC_OPENFORT_API_ENDPOINT: z.string().url(),
   },
 
   /**
@@ -48,8 +50,6 @@ export const env = createEnv({
   runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
     DEPLOYER_PRIVATE_KEY: process.env.DEPLOYER_PRIVATE_KEY,
-    NEXT_PUBLIC_DYNAMIC_PROVIDER_ID:
-      process.env.NEXT_PUBLIC_DYNAMIC_PROVIDER_ID,
     NEXT_PUBLIC_DEPLOYER_ADDRESS: process.env.NEXT_PUBLIC_DEPLOYER_ADDRESS,
     NEXT_PUBLIC_CHAIN_ID: process.env.NEXT_PUBLIC_CHAIN_ID,
     HYPERINDEX_ENDPOINT: process.env.HYPERINDEX_ENDPOINT,
@@ -62,6 +62,12 @@ export const env = createEnv({
       process.env.NEXT_PUBLIC_EMBEDDED_FLOW_ENABLED,
     NEXT_PUBLIC_EMBEDDED_FLOW_ORIGIN:
       process.env.NEXT_PUBLIC_EMBEDDED_FLOW_ORIGIN,
+    NEXT_PUBLIC_OPENFORT_PUBLISHABLE_KEY:
+      process.env.NEXT_PUBLIC_OPENFORT_PUBLISHABLE_KEY,
+    NEXT_PUBLIC_SHIELD_PUBLISHABLE_KEY:
+      process.env.NEXT_PUBLIC_SHIELD_PUBLISHABLE_KEY,
+    NEXT_PUBLIC_OPENFORT_API_ENDPOINT:
+      process.env.NEXT_PUBLIC_OPENFORT_API_ENDPOINT,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

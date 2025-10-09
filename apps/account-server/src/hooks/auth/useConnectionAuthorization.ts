@@ -1,4 +1,3 @@
-import { useDynamicContext } from '@dynamic-labs/sdk-react-core';
 import { useState } from 'react';
 import { MainStateMachineContext } from '@/context/state-machine-context';
 import { sendMessage } from '@/events';
@@ -9,6 +8,7 @@ import { SOPHON_VIEM_CHAIN } from '@/lib/constants';
 import { withTimeout } from '@/lib/timeout';
 import { requestNonce, verifyAuthorization } from '@/service/token.service';
 import { windowService } from '@/service/window.service';
+import { useUser } from '@openfort/react';
 
 const AUTHORIZATION_TIMEOUT = 20000;
 
@@ -30,7 +30,7 @@ export function useConnectionAuthorization() {
   const [authorizationError, setAuthorizationError] = useState<string | null>(
     null,
   );
-  const { user } = useDynamicContext();
+  const { user } = useUser();
 
   const onRefuseConnection = async () => {
     setAuthorizationError(null); // Clear any errors when refusing connection
@@ -77,7 +77,7 @@ export function useConnectionAuthorization() {
         Object.keys(scopes)
           .filter((it) => scopes[it as keyof typeof scopes])
           .map((it) => it.toString()),
-        user?.userId,
+        user?.id,
       );
 
       const messageFields = [
@@ -101,13 +101,13 @@ export function useConnectionAuthorization() {
           chainId: SOPHON_VIEM_CHAIN.id,
         },
         types: {
-          Message: user?.userId
+          Message: user?.id
             ? [...messageFields, { name: 'userId', type: 'string' }]
             : messageFields,
         },
         primaryType: 'Message',
         address: account.address,
-        message: user?.userId ? { ...message, userId: user.userId } : message,
+        message: user?.id ? { ...message, userId: user.id } : message,
       };
 
       if (isCanceled()) {

@@ -1,5 +1,3 @@
-import { isEthereumWallet } from '@dynamic-labs/ethereum';
-import { useDynamicContext } from '@dynamic-labs/sdk-react-core';
 import { useState } from 'react';
 import { http } from 'viem';
 import { toAccount } from 'viem/accounts';
@@ -10,7 +8,6 @@ import { MainStateMachineContext } from '@/context/state-machine-context';
 import { useAccountContext } from '@/hooks/useAccountContext';
 import { trackTransactionResult } from '@/lib/analytics';
 import { CONTRACTS, SOPHON_VIEM_CHAIN } from '@/lib/constants';
-import { safeParseTypedData } from '@/lib/helpers';
 import { isValidPaymaster, safeHexString } from '@/lib/utils';
 import { windowService } from '@/service/window.service';
 import type { IncomingRequest, TransactionRequest } from '@/types/auth';
@@ -19,7 +16,6 @@ export function useTransaction() {
   const { account } = useAccountContext();
   const { address: connectedAddress } = useAccount();
   const { data: walletClient } = useWalletClient();
-  const { primaryWallet } = useDynamicContext();
   const [isSending, setIsSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const actorRef = MainStateMachineContext.useActorRef();
@@ -29,72 +25,15 @@ export function useTransaction() {
     incomingRequest?: IncomingRequest,
   ) => {
     setIsSending(true);
-    const availableAddress = account?.address || primaryWallet?.address;
+    const availableAddress = account?.address;
     if (!availableAddress) {
       throw new Error('No account address available');
     }
     try {
       const isEOAAccount = !account?.owner.passkey;
       let txHash: string = '';
-      if (primaryWallet && isEthereumWallet(primaryWallet)) {
-        try {
-          const client = await primaryWallet.getWalletClient();
 
-          const localAccount = toAccount({
-            address: primaryWallet.address as `0x${string}`,
-            async signMessage({ message }) {
-              const signature = await client?.signMessage({
-                message,
-              });
-              if (!signature) throw new Error('Failed to sign message');
-              return signature; // Now guaranteed to be Hex
-            },
-            async signTransaction(transaction) {
-              const signature = await client?.signTransaction(
-                // @ts-expect-error - Type mismatch between viem account interface and wallet client
-                transaction,
-              );
-              if (!signature) throw new Error('Failed to sign transaction');
-              return signature;
-            },
-            async signTypedData(typedData) {
-              const signature = await client?.signTypedData(
-                // @ts-expect-error - Type mismatch between viem account interface and wallet client
-                safeParseTypedData(typedData),
-              );
-              if (!signature) throw new Error('Failed to sign typed data');
-              return signature;
-            },
-          });
-
-          const ecdsaClient = await createZksyncEcdsaClient({
-            address: account?.address as `0x${string}`,
-            owner: localAccount,
-            chain: SOPHON_VIEM_CHAIN,
-            transport: http(),
-            contracts: {
-              session: CONTRACTS.session,
-            },
-          });
-
-          const usePaymaster = isValidPaymaster(transactionRequest.paymaster);
-
-          txHash = await ecdsaClient.sendTransaction({
-            to: transactionRequest.to as `0x${string}`,
-            value: BigInt(transactionRequest.value || '0'),
-            data: (transactionRequest.data as `0x${string}`) || '0x',
-            paymaster: usePaymaster
-              ? (transactionRequest.paymaster as `0x${string}`)
-              : undefined,
-            paymasterInput: usePaymaster
-              ? safeHexString(transactionRequest.paymasterInput)
-              : undefined,
-          });
-        } catch (error) {
-          console.error('Transaction error:', error);
-          throw error;
-        }
-      } else if (isEOAAccount) {
+     if (isEOAAccount) {
         console.log('Sending transaction with EOA...');
         const localAccount = toAccount({
           address: connectedAddress as `0x${string}`,

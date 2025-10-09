@@ -1,15 +1,16 @@
-import { useSocialAccounts } from '@dynamic-labs/sdk-react-core';
-import type { ProviderEnum } from '@dynamic-labs/types';
 import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect } from 'react';
 import { MainStateMachineContext } from '@/context/state-machine-context';
 import { trackAuthFailed, updateUserProperties } from '@/lib/analytics';
 import { setSocialProviderInURL } from '@/lib/social-provider';
+import { type OAuthProvider, useOAuth } from '@openfort/react';
 
 export function useSocialConnect() {
   const actorRef = MainStateMachineContext.useActorRef();
-  const { signInWithSocialAccount, error } = useSocialAccounts();
   const searchParams = useSearchParams();
+  const { initOAuth, error } = useOAuth({
+    redirectTo: searchParams.get('redirectUrl') ?? undefined,
+  });
 
   useEffect(() => {
     if (error?.message) {
@@ -28,7 +29,7 @@ export function useSocialConnect() {
   }, [error, actorRef]);
 
   return useCallback(
-    async (provider: ProviderEnum) => {
+    async (provider: OAuthProvider) => {
       // Store provider in URL for OAuth redirect preservation
       setSocialProviderInURL(provider);
 
@@ -40,10 +41,8 @@ export function useSocialConnect() {
       });
 
       actorRef.send({ type: 'AUTHENTICATION_STARTED' });
-      await signInWithSocialAccount(provider, {
-        redirectUrl: searchParams.get('redirectUrl') ?? undefined,
-      });
+      await initOAuth({ provider });
     },
-    [actorRef, signInWithSocialAccount, searchParams],
+    [actorRef, initOAuth],
   );
 }

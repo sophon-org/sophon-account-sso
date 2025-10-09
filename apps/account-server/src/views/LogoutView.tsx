@@ -1,4 +1,3 @@
-import { useDynamicContext } from '@dynamic-labs/sdk-react-core';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDisconnect } from 'wagmi';
 import { IconGreenCheck } from '@/components/icons/icons-green-check';
@@ -13,7 +12,6 @@ type LogoutState = 'logging-out' | 'success';
 export const LogoutView = () => {
   const { disconnect } = useDisconnect();
   const { logout } = useAccountContext();
-  const { handleLogOut, user } = useDynamicContext();
   const hasLoggedOut = useRef(false);
   const [logoutState, setLogoutState] = useState<LogoutState>('logging-out');
   const actorRef = MainStateMachineContext.useActorRef();
@@ -27,17 +25,10 @@ export const LogoutView = () => {
     setLogoutState('logging-out');
 
     try {
-      if (user) {
-        // handle Dynamic logout on 6963 event
-        // set the flag to true to prevent multiple logouts
-        hasLoggedOut.current = true;
-        await handleLogOut();
-      } else {
-        // manually remove the local storage key and disconnect wagmi/walletconnect
-        localStorage.removeItem(LOCAL_STORAGE_KEY);
-        disconnect();
-        logout();
-      }
+      // manually remove the local storage key and disconnect wagmi/walletconnect
+      localStorage.removeItem(LOCAL_STORAGE_KEY);
+      disconnect();
+      logout();
 
       setLogoutState('success');
 
@@ -59,7 +50,7 @@ export const LogoutView = () => {
         }, 1000);
       }
     }
-  }, [handleLogOut, user, disconnect, logout, actorRef, isMobile]);
+  }, [disconnect, logout, actorRef, isMobile]);
 
   useEffect(() => {
     if (isMobile) {

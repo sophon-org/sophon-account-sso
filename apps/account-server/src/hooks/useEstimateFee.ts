@@ -1,4 +1,3 @@
-import { useDynamicContext } from '@dynamic-labs/sdk-react-core';
 import { useCallback, useState } from 'react';
 import { createPublicClient, http } from 'viem';
 import { useAccountContext } from '@/hooks/useAccountContext';
@@ -12,13 +11,12 @@ interface EstimateFeeParams {
 
 export function useEstimateFee() {
   const { account } = useAccountContext();
-  const { primaryWallet } = useDynamicContext();
   const [isEstimating, setIsEstimating] = useState(false);
 
   const estimateFee = useCallback(
     async (transactionParams?: EstimateFeeParams) => {
       setIsEstimating(true);
-      const availableAddress = account?.address || primaryWallet?.address;
+      const availableAddress = account?.address;
       if (!availableAddress) {
         throw new Error('No account address available');
       }
@@ -52,7 +50,7 @@ export function useEstimateFee() {
         setIsEstimating(false);
       }
     },
-    [account, primaryWallet],
+    [account],
   );
 
   return {
