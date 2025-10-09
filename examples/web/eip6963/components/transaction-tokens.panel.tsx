@@ -158,7 +158,7 @@ export default function TransactionNativePanel() {
             type="text"
             placeholder="Target Address"
             className="p-2 rounded-md border border-gray-300"
-            value={targetAddress}
+            value={targetAddress ?? ''}
             onChange={(e) => setTargetAddress(e.target.value)}
           />
         </div>
