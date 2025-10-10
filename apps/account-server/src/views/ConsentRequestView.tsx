@@ -64,26 +64,28 @@ export default function ConsentRequestView({
       <div className="flex flex-col gap-4 w-full h-full justify-between relative">
         <div className="h-full">
           <Accordion type="single" collapsible>
-            <div className="w-full bg-white p-3 rounded-xl mb-3">
+            <div className="w-full bg-white rounded-lg mb-3 p-4">
               <AccordionItem value="item-1">
-                <div className="flex items-center justify-between">
+                <AccordionTrigger className="group flex w-full items-center justify-between p-0">
                   <div className="flex items-center">
-                    <AccordionTrigger>
-                      <CaretRightIcon
-                        weight="bold"
-                        className="w-4 h-4 text-[#A3A2A0]"
-                      />
-                    </AccordionTrigger>
-                    <p className="text-sm font-bold">Personalization & Ads:</p>
+                    <CaretRightIcon
+                      weight="bold"
+                      className="w-4 h-4 text-[#A3A2A0] transition-transform duration-200 group-data-[state=open]:-rotate-90"
+                    />
+                    <p className="text-sm font-bold ml-2">
+                      Personalization & Ads:
+                    </p>
                   </div>
 
                   <Switch
                     checked={consentAds}
                     onCheckedChange={handleConsentAdsChange}
+                    onClick={(e) => e.stopPropagation()}
+                    className="cursor-pointer"
                   />
-                </div>
+                </AccordionTrigger>
 
-                <AccordionContent className="text-left px-3 text-xs text-[#757575]">
+                <AccordionContent className="text-left px-3 text-xs text-[#757575] mt-2">
                   Use the data you provide and import to build a profile linked
                   to your Sophon Account, customize your experience, provide
                   relevant ads and provide potential rewards without sharing
@@ -91,26 +93,26 @@ export default function ConsentRequestView({
                 </AccordionContent>
               </AccordionItem>
             </div>
-            <div className="w-full bg-white p-3 rounded-xl">
+            <div className="w-full bg-white rounded-lg p-4">
               <AccordionItem value="item-2">
-                <div className="flex items-center justify-between">
+                <AccordionTrigger className="group flex w-full items-center justify-between p-0">
                   <div className="flex items-center">
-                    <AccordionTrigger>
-                      <CaretRightIcon
-                        weight="bold"
-                        className="w-4 h-4 text-[#A3A2A0]"
-                      />
-                    </AccordionTrigger>
-                    <p className="text-sm font-bold">Sharing your data:</p>
+                    <CaretRightIcon
+                      weight="bold"
+                      className="w-4 h-4 text-[#A3A2A0] transition-transform duration-200 group-data-[state=open]:-rotate-90"
+                    />
+                    <p className="text-sm font-bold ml-2">Sharing your data:</p>
                   </div>
 
                   <Switch
                     checked={consentData}
                     onCheckedChange={handleConsentDataChange}
+                    onClick={(e) => e.stopPropagation()}
+                    className="cursor-pointer"
                   />
-                </div>
+                </AccordionTrigger>
 
-                <AccordionContent className="text-left px-3 text-xs text-[#757575]">
+                <AccordionContent className="text-left px-3 text-xs text-[#757575] mt-2">
                   Sharing your data or zkTLS proofs related to such data with
                   our data partners so they can deliver personalized ads,
                   experiences and recommendations.
