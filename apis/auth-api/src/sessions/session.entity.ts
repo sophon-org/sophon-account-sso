@@ -8,6 +8,9 @@ export class Session {
 	@Column({ name: "user_id", type: "text" })
 	userId!: string;
 
+	@Column({ name: "sub", type: "text" })
+	sub!: string;
+
 	@Column({ type: "text" })
 	aud!: string;
 

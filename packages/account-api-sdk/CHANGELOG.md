@@ -1,5 +1,13 @@
 # @sophon-labs/account-api-sdk
 
+## 2.3.3
+
+### Patch Changes
+
+- Consent management on data usage
+- Updated dependencies
+  - @sophon-labs/account-core@2.3.3
+
 ## 2.3.2
 
 ### Patch Changes

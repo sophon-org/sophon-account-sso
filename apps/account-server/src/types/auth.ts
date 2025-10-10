@@ -36,6 +36,8 @@ export interface LogoutRequest {
   reason?: string;
 }
 
+export type ConsentRequest = Record<string, never>;
+
 export interface Token {
   contractAddress: string;
   tokenName: string;

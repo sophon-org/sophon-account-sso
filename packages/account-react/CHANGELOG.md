@@ -1,5 +1,14 @@
 # @sophon-labs/account-react
 
+## 2.3.3
+
+### Patch Changes
+
+- Consent management on data usage
+- Updated dependencies
+  - @sophon-labs/account-connector@2.3.3
+  - @sophon-labs/account-core@2.3.3
+
 ## 2.3.2
 
 ### Patch Changes

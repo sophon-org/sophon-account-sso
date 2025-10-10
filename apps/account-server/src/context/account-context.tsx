@@ -95,6 +95,11 @@ const AccountContextProvider: React.FC<{ children: React.ReactNode }> = ({
     sendAuthMessage('logout', {
       address: account?.address ?? '0x0000000000000000000000000000000000000000',
     });
+
+    // remove tokens from localStorage
+    localStorage.removeItem('SOPHON_ACCESS_TOKEN');
+    localStorage.removeItem('SOPHON_REFRESH_TOKEN');
+
     setAccount(null);
   }, [account?.address]);
 
