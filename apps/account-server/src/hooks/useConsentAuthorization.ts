@@ -32,6 +32,7 @@ export function useConsentAuthorization() {
       const refreshToken = getRefreshToken();
 
       if (!refreshToken) {
+        setError('No refresh token available for refresh');
         console.error('No refresh token available for refresh');
         return false;
       }
@@ -45,6 +46,7 @@ export function useConsentAuthorization() {
       });
 
       if (!response.ok) {
+        setError('Token refresh failed');
         console.error('Token refresh failed:', response.status);
         return false;
       }
@@ -69,6 +71,7 @@ export function useConsentAuthorization() {
 
       return true;
     } catch (err) {
+      setError(`Token refresh error: ${err}`);
       console.error('Token refresh error:', err);
       return false;
     }
@@ -121,7 +124,11 @@ export function useConsentAuthorization() {
     setError(null);
 
     try {
-      if (!incoming) return;
+      if (!incoming) {
+        setError('No incoming request available');
+        console.error('No incoming request available');
+        return;
+      }
 
       const baseUrl = env.NEXT_PUBLIC_AUTH_SERVER_ENDPOINT;
 
@@ -152,6 +159,7 @@ export function useConsentAuthorization() {
 
         if (!consentResponse.ok) {
           const errorText = await consentResponse.text();
+          setError(`Consent save failed: ${consentResponse.status}`);
           console.error(
             'Consent save failed:',
             consentResponse.status,
@@ -163,6 +171,7 @@ export function useConsentAuthorization() {
         // Refresh token to get updated consent claims in JWT
         const refreshed = await refreshAccessToken();
         if (!refreshed) {
+          setError('Failed to refresh token');
           throw new Error('Failed to refresh token');
         }
       }
