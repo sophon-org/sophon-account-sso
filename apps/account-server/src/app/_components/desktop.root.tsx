@@ -42,7 +42,7 @@ export default function DesktopRoot({ partnerId, scopes }: DesktopRootProps) {
   const transactionActions = TransactionRequestView.useActions({
     openDrawer,
   });
-  const consentActions = ConsentRequestView.useActions();
+  const consentActions = ConsentRequestView.useActions({ openDrawer });
 
   /***************************
    * LOADING RESOURCES STATE *
