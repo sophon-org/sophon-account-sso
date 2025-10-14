@@ -1,5 +1,13 @@
 # @sophon-labs/account-api-sdk
 
+## 2.3.4
+
+### Patch Changes
+
+- Changing RPC error to make explicit that the user has internet issues
+- Updated dependencies
+  - @sophon-labs/account-core@2.3.4
+
 ## 2.3.3
 
 ### Patch Changes

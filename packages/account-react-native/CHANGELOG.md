@@ -1,5 +1,16 @@
 # @sophon-labs/account-react-native
 
+## 2.3.4
+
+### Patch Changes
+
+- Changing RPC error to make explicit that the user has internet issues
+- Updated dependencies
+  - @sophon-labs/account-message-bridge@2.3.4
+  - @sophon-labs/account-communicator@2.3.4
+  - @sophon-labs/account-provider@2.3.4
+  - @sophon-labs/account-core@2.3.4
+
 ## 2.3.3
 
 ### Patch Changes
