@@ -112,3 +112,5 @@ export const LogoutView = () => {
     </div>
   );
 };
+
+export default LogoutView;
