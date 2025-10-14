@@ -208,8 +208,8 @@ export const SophonMainView = ({
           return true;
         }}
         // onLoadEnd={() => console.log('load end')}
-        // onLoadStart={() => console.log('load start')}
-        // onLoad={() => console.log('load')}
+        // onLoadStart={(e) => console.log('load start', e.nativeEvent.navigationType, e.nativeEvent.url)}
+        // onLoad={(e) => console.log('load', e.nativeEvent.url)}
         onMessage={(event) => {
           const { action, payload } = JSON.parse(event.nativeEvent.data);
           if (action === 'closeModal') {
@@ -236,6 +236,7 @@ export const SophonMainView = ({
         }}
         onContentProcessDidTerminate={() => {}}
         onRenderProcessGone={() => {}}
+        setSupportMultipleWindows={false}
       />
     </View>
   );

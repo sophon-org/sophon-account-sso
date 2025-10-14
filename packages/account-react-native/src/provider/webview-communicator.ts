@@ -5,7 +5,7 @@ import {
   type SophonUIActions,
   sendUIMessage,
 } from '../messaging';
-import { getTimeoutRPC } from '../messaging/utils';
+import { getOfflineRPC } from '../messaging/utils';
 
 const HEALTH_CHECK_TIMEOUT = 1000;
 
@@ -119,7 +119,7 @@ export class WebViewCommunicator implements Communicator {
 
     // just give up and ask the user to try again
     if (!isReady) {
-      sendUIMessage('incomingRpc', getTimeoutRPC(requestId));
+      sendUIMessage('incomingRpc', getOfflineRPC(requestId));
     }
 
     this.currentRequestId = undefined;

@@ -13,3 +13,17 @@ export const getTimeoutRPC = (requestId?: UUID) => {
     },
   };
 };
+
+export const getOfflineRPC = (requestId?: UUID) => {
+  return {
+    id: crypto.randomUUID(),
+    requestId,
+    content: {
+      result: null,
+      error: {
+        message: 'No internet available.',
+        code: -32011,
+      },
+    },
+  };
+};
