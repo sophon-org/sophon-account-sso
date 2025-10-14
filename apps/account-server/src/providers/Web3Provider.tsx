@@ -72,3 +72,5 @@ export const Web3Provider = ({
     </DynamicContextProvider>
   );
 };
+
+export default Web3Provider;

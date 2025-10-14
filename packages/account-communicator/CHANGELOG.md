@@ -1,5 +1,17 @@
 # @sophon-labs/account-eip6963
 
+## 2.3.5
+
+### Patch Changes
+
+- Version bump
+
+## 2.3.4
+
+### Patch Changes
+
+- Changing RPC error to make explicit that the user has internet issues
+
 ## 2.3.3
 
 ### Patch Changes

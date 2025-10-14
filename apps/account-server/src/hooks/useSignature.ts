@@ -1,6 +1,5 @@
 'use client';
 
-import { isEthereumWallet } from '@dynamic-labs/ethereum';
 import { useDynamicContext } from '@dynamic-labs/sdk-react-core';
 import { useState } from 'react';
 import type { SignableMessage } from 'viem';
@@ -40,6 +39,8 @@ export const useSignature = () => {
       const isEOAAccount = !account?.owner.passkey;
 
       let signature: string;
+
+      const { isEthereumWallet } = await import('@dynamic-labs/ethereum');
 
       if (primaryWallet && isEthereumWallet(primaryWallet)) {
         try {
@@ -190,6 +191,8 @@ export const useSignature = () => {
       const isEOAAccount = !account?.owner.passkey;
 
       let signature: string;
+
+      const { isEthereumWallet } = await import('@dynamic-labs/ethereum');
 
       if (primaryWallet && isEthereumWallet(primaryWallet)) {
         try {

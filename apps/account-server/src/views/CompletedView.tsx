@@ -8,3 +8,5 @@ export const CompletedView = () => {
     </div>
   );
 };
+
+export default CompletedView;

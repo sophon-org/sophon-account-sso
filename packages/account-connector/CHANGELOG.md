@@ -1,5 +1,23 @@
 # @sophon-labs/account-connector
 
+## 2.3.5
+
+### Patch Changes
+
+- Version bump
+- Updated dependencies
+  - @sophon-labs/account-provider@2.3.5
+  - @sophon-labs/account-core@2.3.5
+
+## 2.3.4
+
+### Patch Changes
+
+- Changing RPC error to make explicit that the user has internet issues
+- Updated dependencies
+  - @sophon-labs/account-provider@2.3.4
+  - @sophon-labs/account-core@2.3.4
+
 ## 2.3.3
 
 ### Patch Changes

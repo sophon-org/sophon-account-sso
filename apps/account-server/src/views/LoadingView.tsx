@@ -37,3 +37,5 @@ export const LoadingView = ({ message }: { message?: string }) => {
     </div>
   );
 };
+
+export default LoadingView;

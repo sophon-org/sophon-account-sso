@@ -1,4 +1,3 @@
-import { isEthereumWallet } from '@dynamic-labs/ethereum';
 import { useDynamicContext } from '@dynamic-labs/sdk-react-core';
 import { useState } from 'react';
 import { http } from 'viem';
@@ -36,6 +35,8 @@ export function useTransaction() {
     try {
       const isEOAAccount = !account?.owner.passkey;
       let txHash: string = '';
+      const { isEthereumWallet } = await import('@dynamic-labs/ethereum');
+
       if (primaryWallet && isEthereumWallet(primaryWallet)) {
         try {
           const client = await primaryWallet.getWalletClient();

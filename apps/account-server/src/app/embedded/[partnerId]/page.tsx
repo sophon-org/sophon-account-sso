@@ -1,6 +1,6 @@
 import type { DataScopes } from '@sophon-labs/account-core';
 import type { Viewport } from 'next';
-import EmbeddedRoot from '../../_components/embedded.root';
+import DynamicEmbeddedRoot from '@/app/_components/embedded.client';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -28,5 +28,5 @@ export default async function EmbeddedPageRoot({
     }
   }
 
-  return <EmbeddedRoot partnerId={partnerId} scopes={requestedScopes} />;
+  return <DynamicEmbeddedRoot partnerId={partnerId} scopes={requestedScopes} />;
 }
