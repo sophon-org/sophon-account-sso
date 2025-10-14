@@ -1,5 +1,16 @@
 # @sophon-labs/account-react-native
 
+## 2.3.5
+
+### Patch Changes
+
+- Version bump
+- Updated dependencies
+  - @sophon-labs/account-message-bridge@2.3.5
+  - @sophon-labs/account-communicator@2.3.5
+  - @sophon-labs/account-provider@2.3.5
+  - @sophon-labs/account-core@2.3.5
+
 ## 2.3.4
 
 ### Patch Changes

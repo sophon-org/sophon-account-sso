@@ -1,5 +1,13 @@
 # @sophon-labs/account-api-sdk
 
+## 2.3.5
+
+### Patch Changes
+
+- Version bump
+- Updated dependencies
+  - @sophon-labs/account-core@2.3.5
+
 ## 2.3.4
 
 ### Patch Changes

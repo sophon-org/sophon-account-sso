@@ -1,5 +1,11 @@
 # @sophon-labs/account-eip6963
 
+## 2.3.5
+
+### Patch Changes
+
+- Version bump
+
 ## 2.3.4
 
 ### Patch Changes
