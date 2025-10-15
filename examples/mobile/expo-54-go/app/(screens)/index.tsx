@@ -19,6 +19,7 @@ import JWTPanel from '@/components/me.panel';
 import { SendContractButton } from '@/components/send-contract-button';
 import { TestDashboard } from '@/components/test-dashboard';
 import { Button } from '@/components/ui/button';
+import { ConnectButton } from '@sophon-labs/account-react-native';
 
 export default function HomeScreen() {
   const { initialized, connect, isConnected, account, logout, isConnecting } =
@@ -82,13 +83,7 @@ export default function HomeScreen() {
   return (
     <ScrollView>
       <View className="flex-1 items-center justify-center bg-white py-8 h-screen">
-        {!isConnected && (
-          <Button onPress={handleAuthenticate} disabled={isConnecting}>
-            <Text className="text-xl font-bold text-white">
-              {isConnecting ? 'Connecting...' : 'Authenticate'}
-            </Text>
-          </Button>
-        )}
+        {!isConnected && <ConnectButton />}
         {error && (
           <Text className="text-xl mt-2 font-bold text-red-500 p-2 mb-4 w-2/3 text-center">
             {error}

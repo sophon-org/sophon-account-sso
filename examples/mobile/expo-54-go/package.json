@@ -18,8 +18,10 @@
     "ci": "biome ci ."
   },
   "dependencies": {
-    "@dynamic-labs/client": "^4.32.0",
-    "@dynamic-labs/react-native-extension": "^4.32.0",
+    "@dynamic-labs/client": "^4.38.0",
+    "@dynamic-labs/react-hooks": "^4.38.0",
+    "@dynamic-labs/react-native-extension": "^4.38.0",
+    "@dynamic-labs/viem-extension": "^4.38.0",
     "@expo/metro-runtime": "~6.1.2",
     "@expo/vector-icons": "^15.0.2",
     "@react-navigation/bottom-tabs": "^7.3.10",
