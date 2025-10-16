@@ -1,4 +1,3 @@
-import type { UUID } from 'node:crypto';
 import BottomSheet, {
   BottomSheetBackdrop,
   type BottomSheetBackdropProps,
@@ -14,8 +13,8 @@ import {
   useState,
 } from 'react';
 import { Keyboard, Platform, Text, TouchableOpacity, View } from 'react-native';
-import { sendUIMessage, useUIEventHandler } from '../../messaging/ui';
-import { getRefusedRPC } from '../../messaging/utils';
+import { useFlowManager } from '../../hooks/use-flow-manager';
+import { useUIEventHandler } from '../../messaging/ui';
 import { StepProvider } from '.';
 import type {
   AuthBottomSheetProps,
@@ -29,7 +28,6 @@ export function AuthBottomSheet(props: AuthBottomSheetProps) {
   const [stepHistory, setStepHistory] = useState<AuthBottomSheetStep[]>([
     'signIn',
   ]);
-  const requestIdRef = useRef<UUID>();
 
   const goTo = (step: AuthBottomSheetStep) =>
     setStepHistory((prev) => [...prev, step]);
@@ -48,20 +46,24 @@ export function AuthBottomSheet(props: AuthBottomSheetProps) {
     ),
     [],
   );
+  const { method, currentRequest, setCurrentRequest, cancelCurrentRequest } =
+    useFlowManager();
 
   const showModal = useCallback(() => {
     bottomSheetRef.current?.expand();
   }, []);
+
   const hideModal = useCallback(() => {
     bottomSheetRef.current?.close();
   }, []);
+
   const onClose = useCallback(() => {
     Keyboard.dismiss();
-    if (requestIdRef.current) {
-      sendUIMessage('incomingRpc', getRefusedRPC(requestIdRef.current));
-      requestIdRef.current = undefined;
+    console.log('close modal', currentRequest?.id);
+    if (currentRequest?.id) {
+      cancelCurrentRequest();
     }
-  }, []);
+  }, [currentRequest]);
 
   const renderHandleComponent = useCallback(
     (props: BottomSheetHandleProps) => {
@@ -102,13 +104,31 @@ export function AuthBottomSheet(props: AuthBottomSheetProps) {
     [stepHistory, hideModal, goBack],
   );
 
-  useUIEventHandler('showModal', ({ requestId }) => {
-    requestIdRef.current = requestId as UUID;
+  useUIEventHandler('outgoingRpc', (request) => {
+    setCurrentRequest(request);
     showModal();
   });
+
+  // useUIEventHandler('showModal', ({ requestId }) => {
+  //   requestIdRef.current = requestId as UUID;
+  //   showModal();
+  // });
   useUIEventHandler('hideModal', () => {
     hideModal();
   });
+
+  const onComplete = useCallback((payload: unknown) => {
+    // clearCurrentRequest();
+    console.log('onComplete', payload);
+  }, []);
+  const onCancel = useCallback(() => {
+    // clearCurrentRequest();
+    console.log('onCancel');
+  }, []);
+  const onError = useCallback((error: Error) => {
+    // clearCurrentRequest();
+    console.log('onError', error);
+  }, []);
 
   return (
     <BottomSheetModalProvider>
@@ -137,7 +157,13 @@ export function AuthBottomSheet(props: AuthBottomSheetProps) {
           android_keyboardInputMode="adjustResize"
           handleIndicatorStyle={{ backgroundColor: '#ccc' }}
         >
-          <StepProvider />
+          <StepProvider
+            method={method}
+            payload={currentRequest}
+            onComplete={onComplete}
+            onCancel={onCancel}
+            onError={onError}
+          />
         </BottomSheet>
       </AuthSheetContext.Provider>
     </BottomSheetModalProvider>

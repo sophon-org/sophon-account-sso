@@ -1,15 +1,36 @@
 import { BottomSheetView } from '@gorhom/bottom-sheet';
+import type { Message } from '@sophon-labs/account-communicator';
 import { StyleSheet } from 'react-native';
-import { useAuthSheet } from './auth-bottom-sheet';
+import { useSophonAccount } from '../../hooks';
 import { SignInModal } from './steps/sign-in.step';
+import type { BasicStepProps } from './types';
 
-export function StepProvider() {
-  const { currentStep } = useAuthSheet();
+export interface StepProviderProps extends BasicStepProps {
+  method: string;
+  payload?: Message;
+}
+
+export function StepProvider({
+  method,
+  payload,
+  onComplete,
+  onCancel,
+  onError,
+}: StepProviderProps) {
+  const { isConnected } = useSophonAccount();
+
+  console.log('isConnected', isConnected, method, payload);
 
   const renderPage = () => {
-    switch (currentStep) {
-      case 'signIn':
-        return <SignInModal />;
+    switch (method) {
+      case 'eth_requestAccounts':
+        return (
+          <SignInModal
+            onComplete={onComplete}
+            onCancel={onCancel}
+            onError={onError}
+          />
+        );
       default:
         return null;
     }

@@ -1,5 +1,6 @@
 import '../pollyfills';
 import { useReactiveClient } from '@dynamic-labs/react-hooks';
+import type { Message } from '@sophon-labs/account-communicator';
 // everything else
 import {
   AccountServerURL,
@@ -24,7 +25,6 @@ import {
 import { sophon, sophonTestnet } from 'viem/chains';
 import { erc7846Actions } from 'viem/experimental';
 import { eip712WalletActions } from 'viem/zksync';
-import type { SophonJWTToken } from '@/types';
 import { useEmbeddedAuth } from '../auth/useAuth';
 import type { SophonMainViewProps } from '../components';
 import { AuthBottomSheet } from '../components/auth-bottom-sheet/auth-bottom-sheet';
@@ -36,6 +36,7 @@ import {
   StorageKeys,
 } from '../provider';
 import { freshInstallActions } from '../provider/fresh-install';
+import type { SophonJWTToken } from '../types';
 
 export interface SophonContextConfig {
   initialized: boolean;
@@ -55,6 +56,8 @@ export interface SophonContextConfig {
   error?: { description: string; code: number };
   setError: (error: { description: string; code: number }) => void;
   insets?: SophonMainViewProps['insets'];
+  currentRequest?: Message;
+  setCurrentRequest: (request?: Message) => void;
 }
 
 export const SophonContext = createContext<SophonContextConfig>({
@@ -68,6 +71,8 @@ export const SophonContext = createContext<SophonContextConfig>({
   logout: async () => {},
   error: undefined,
   setError: (_: { description: string; code: number }) => {},
+  currentRequest: undefined,
+  setCurrentRequest: () => {},
 });
 
 export interface SophonAccount {
@@ -94,6 +99,7 @@ export const SophonContextProvider = ({
     () => authServerUrl ?? AccountServerURL[network],
     [authServerUrl, network],
   );
+  const [currentRequest, setCurrentRequest] = useState<Message | undefined>();
 
   const [initialized, setInitialized] = useState(false);
   const [accessToken, setAccessToken] = useState<SophonJWTToken | undefined>();
@@ -232,6 +238,8 @@ export const SophonContextProvider = ({
       updateAccessToken,
       updateRefreshToken,
       logout,
+      currentRequest,
+      setCurrentRequest,
     }),
     [
       initialized,
@@ -249,6 +257,8 @@ export const SophonContextProvider = ({
       updateAccessToken,
       updateRefreshToken,
       logout,
+      currentRequest,
+      setCurrentRequest,
     ],
   );
 

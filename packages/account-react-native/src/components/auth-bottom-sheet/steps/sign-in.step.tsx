@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
   StyleSheet,
   Text,
@@ -6,14 +6,32 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useEmbeddedAuth } from '../../../auth/useAuth';
+import { type AuthProvider, useEmbeddedAuth } from '../../../auth/useAuth';
 // import { useAuthSheet } from '../auth-bottom-sheet';
 import { AVAILABLE_PROVIDERS } from '../../../constants';
+import type { BasicStepProps } from '../types';
 
-export const SignInModal = () => {
+export const SignInModal = ({
+  onComplete,
+  // onCancel,
+  onError,
+}: BasicStepProps) => {
   const emailRef = React.useRef('');
   // const { scopes } = useAuthSheet();
   const { signInWithSocialProvider, signInWithEmail } = useEmbeddedAuth();
+
+  const handleSocialProviderPress = useCallback(
+    async (provider: AuthProvider) => {
+      try {
+        await signInWithSocialProvider(provider);
+        onComplete(provider);
+      } catch (error) {
+        onError(error as Error);
+      }
+    },
+    [signInWithSocialProvider, onComplete, onError],
+  );
+
   return (
     <View style={styles.container}>
       <View style={styles.socialRow}>
@@ -21,7 +39,7 @@ export const SignInModal = () => {
           <TouchableOpacity
             key={scope}
             style={styles.socialButton}
-            onPress={() => signInWithSocialProvider(scope)}
+            onPress={() => handleSocialProviderPress(scope as AuthProvider)}
           >
             <Text style={{ textTransform: 'capitalize' }}>{scope}</Text>
           </TouchableOpacity>

@@ -1,3 +1,5 @@
+import type { UUID } from 'node:crypto';
+
 export interface CustomRPCError extends Error {
   details?: string;
   code: number;
@@ -138,4 +140,10 @@ export interface UseGasEstimationArgs {
 export interface SwapApiConfig {
   baseUrl: string;
   timeout?: number;
+}
+
+export interface RPCRequest {
+  id: string;
+  requestId?: UUID;
+  content: unknown;
 }

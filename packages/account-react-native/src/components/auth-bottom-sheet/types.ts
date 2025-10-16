@@ -26,3 +26,9 @@ export type AuthSheetContextProps = {
 };
 
 export type AuthSheetContextType = AuthSheetContextProps & AuthBottomSheetProps;
+
+export interface BasicStepProps {
+  onComplete: (payload: unknown) => void;
+  onCancel: () => void;
+  onError: (error: Error) => void;
+}
