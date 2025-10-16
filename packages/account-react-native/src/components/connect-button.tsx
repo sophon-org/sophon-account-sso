@@ -1,14 +1,14 @@
-import { AuthProvider, useEmbeddedAuth } from '../auth/useAuth';
-import { Button } from 'react-native';
+import { sendUIMessage } from "../messaging/ui";
+// import { AuthProvider, useEmbeddedAuth } from "../auth/useAuth";
+import { Button } from "react-native";
 
 export const ConnectButton = () => {
-  const { signInWithSocialProvider } = useEmbeddedAuth();
   return (
     <Button
       onPress={() => {
-        signInWithSocialProvider(AuthProvider.APPLE);
+        sendUIMessage("showModal", {});
       }}
-      title="Connect with Apple"
+      title="Connect"
     />
   );
 };
