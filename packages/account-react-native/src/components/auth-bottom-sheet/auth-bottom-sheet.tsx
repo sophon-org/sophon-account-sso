@@ -120,11 +120,13 @@ export function AuthBottomSheet(props: AuthBottomSheetProps) {
   const onComplete = useCallback((payload: unknown) => {
     // clearCurrentRequest();
     console.log('onComplete', payload);
-  }, []);
+    hideModal();
+  }, [hideModal]);
   const onCancel = useCallback(() => {
     // clearCurrentRequest();
     console.log('onCancel');
-  }, []);
+    hideModal();
+  }, [hideModal]);
   const onError = useCallback((error: Error) => {
     // clearCurrentRequest();
     console.log('onError', error);
