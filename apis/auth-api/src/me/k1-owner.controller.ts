@@ -1,18 +1,7 @@
-import {
-	BadRequestException,
-	Controller,
-	Get,
-	Param,
-	UseGuards,
-} from "@nestjs/common";
-import {
-	ApiBearerAuth,
-	ApiOkResponse,
-	ApiParam,
-	ApiTags,
-} from "@nestjs/swagger";
+import { BadRequestException, Controller, Get, Param } from "@nestjs/common";
+import { ApiOkResponse, ApiParam, ApiTags } from "@nestjs/swagger";
 import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
-import { AccessTokenGuard } from "../auth/guards/access-token.guard";
+import { isAddress } from "viem";
 import { K1OwnerStateDto } from "../hyperindex/dto/k1-owner-state.dto";
 import { HyperindexService } from "../hyperindex/hyperindex.service";
 
@@ -24,10 +13,8 @@ function normalizeAddress(s: string | undefined | null): `0x${string}` {
 	return v as `0x${string}`;
 }
 
-@ApiTags("Me")
-@ApiBearerAuth()
-@UseGuards(AccessTokenGuard)
-@Controller("me")
+@ApiTags("Smart Contract")
+@Controller("contract")
 export class K1OwnerController {
 	constructor(
 		private readonly hyperindex: HyperindexService,
@@ -35,7 +22,7 @@ export class K1OwnerController {
 		private readonly logger: PinoLogger,
 	) {}
 
-	@Get("k1-owner-state/:owner")
+	@Get("by-owner/:owner")
 	@ApiParam({
 		name: "owner",
 		description: "EOA address (0x...) to fetch K1 owner state for",
@@ -43,6 +30,10 @@ export class K1OwnerController {
 	})
 	@ApiOkResponse({ type: K1OwnerStateDto, isArray: true })
 	async k1OwnerStateForOwner(@Param("owner") owner: string) {
+		if (!owner || !isAddress(owner.toLowerCase())) {
+			throw new BadRequestException("Invalid address");
+		}
+
 		const address = normalizeAddress(owner);
 		this.logger.info(
 			{ evt: "me.k1_owner_state.request", owner: address },
@@ -53,6 +44,6 @@ export class K1OwnerController {
 			{ evt: "me.k1_owner_state.success", owner: address, total: rows.length },
 			"k1-owner-state",
 		);
-		return rows;
+		return rows.map((row) => row.accounts[0])[0];
 	}
 }

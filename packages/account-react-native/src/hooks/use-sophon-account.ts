@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
+import type { Address } from 'viem';
 // import type { Address } from 'viem';
 // import { sendUIMessage } from '../messaging';
 import { useSophonContext } from './use-sophon-context';
@@ -7,7 +8,7 @@ export const useSophonAccount = () => {
   const {
     initialized,
     walletClient,
-    // setAccount,
+    setAccount,
     provider,
     account,
     error,
@@ -35,12 +36,13 @@ export const useSophonAccount = () => {
         throw new Error('No addresses found');
       }
       console.log('addresses', addresses);
-      // setAccount({
-      //   address: addresses[0] as Address,
-      // });
+      setAccount({
+        address: addresses[0] as Address,
+        owner: addresses[0] as Address,
+      });
       // biome-ignore lint/suspicious/noExplicitAny: Better typing is not possible at the moment
     } catch (error: any) {
-      // setAccount(undefined);
+      setAccount(undefined);
       setAccountError({
         description: error.details ?? error.message,
         code: error.code,

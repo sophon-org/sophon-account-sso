@@ -9,6 +9,7 @@ import {
 import { type AuthProvider, useEmbeddedAuth } from '../../../auth/useAuth';
 // import { useAuthSheet } from '../auth-bottom-sheet';
 import { AVAILABLE_PROVIDERS } from '../../../constants';
+import { useFlowManager } from '../../../hooks/use-flow-manager';
 import type { BasicStepProps } from '../types';
 
 export const SignInModal = ({
@@ -16,21 +17,47 @@ export const SignInModal = ({
   // onCancel,
   onError,
 }: BasicStepProps) => {
-  const emailRef = React.useRef('');
+  const emailRef = React.useRef('israel+dynamic_test@sophon.xyz');
   // const { scopes } = useAuthSheet();
-  const { signInWithSocialProvider, signInWithEmail } = useEmbeddedAuth();
+  const { signInWithSocialProvider, signInWithEmail, verifyEmailOTP } =
+    useEmbeddedAuth();
+  const {
+    actions: { waitForAuthentication, authenticate },
+  } = useFlowManager();
 
   const handleSocialProviderPress = useCallback(
     async (provider: AuthProvider) => {
       try {
+        const waitFor = waitForAuthentication();
         await signInWithSocialProvider(provider);
-        onComplete(provider);
+        const ownerAddress = await waitFor;
+        await authenticate(ownerAddress);
+        console.log('ownerAddress', ownerAddress);
+        await onComplete({ hide: false });
       } catch (error) {
-        onError(error as Error);
+        console.log('USER CANCELED');
+        console.error(error);
+        await onError(error as Error);
       }
     },
     [signInWithSocialProvider, onComplete, onError],
   );
+
+  const handleSignInWithEmail = useCallback(async () => {
+    try {
+      const waitFor = waitForAuthentication();
+      await signInWithEmail(emailRef.current);
+      await verifyEmailOTP('474617'); // this should be separated, but for testing we have static otp for this user
+      const ownerAddress = await waitFor;
+      console.log('ownerAddress', ownerAddress);
+      await authenticate(ownerAddress);
+      await onComplete({ hide: false });
+    } catch (error) {
+      console.log('USER CANCELED');
+      console.error(error);
+      await onError(error as Error);
+    }
+  }, [signInWithEmail, onComplete, onError]);
 
   return (
     <View style={styles.container}>
@@ -51,6 +78,7 @@ export const SignInModal = ({
           onChangeText={(text) => {
             emailRef.current = text;
           }}
+          value={emailRef.current}
           keyboardType="email-address"
           placeholder="Enter email"
           placeholderTextColor="#999"
@@ -58,7 +86,7 @@ export const SignInModal = ({
         />
         <TouchableOpacity
           style={styles.signInButtonDisabled}
-          onPress={() => signInWithEmail(emailRef.current || '')}
+          onPress={handleSignInWithEmail}
         >
           <Text style={styles.signInTextDisabled}>Sign in</Text>
         </TouchableOpacity>

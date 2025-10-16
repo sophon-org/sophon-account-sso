@@ -2,6 +2,7 @@ import { BottomSheetView } from '@gorhom/bottom-sheet';
 import type { Message } from '@sophon-labs/account-communicator';
 import { StyleSheet } from 'react-native';
 import { useSophonAccount } from '../../hooks';
+import { AuthorizationStep } from './steps/authorization-step';
 import { SignInModal } from './steps/sign-in.step';
 import type { BasicStepProps } from './types';
 
@@ -24,7 +25,13 @@ export function StepProvider({
   const renderPage = () => {
     switch (method) {
       case 'eth_requestAccounts':
-        return (
+        return isConnected ? (
+          <AuthorizationStep
+            onCancel={onCancel}
+            onComplete={onComplete}
+            onError={onError}
+          />
+        ) : (
           <SignInModal
             onComplete={onComplete}
             onCancel={onCancel}

@@ -20,6 +20,7 @@ import type {
   AuthBottomSheetProps,
   AuthBottomSheetStep,
   AuthSheetContextType,
+  BasicStepProps,
 } from './types';
 
 const AuthSheetContext = createContext<AuthSheetContextType | null>(null);
@@ -46,8 +47,13 @@ export function AuthBottomSheet(props: AuthBottomSheetProps) {
     ),
     [],
   );
-  const { method, currentRequest, setCurrentRequest, cancelCurrentRequest } =
-    useFlowManager();
+  const {
+    method,
+    currentRequest,
+    setCurrentRequest,
+    cancelCurrentRequest,
+    clearCurrentRequest,
+  } = useFlowManager();
 
   const showModal = useCallback(() => {
     bottomSheetRef.current?.expand();
@@ -117,17 +123,22 @@ export function AuthBottomSheet(props: AuthBottomSheetProps) {
     hideModal();
   });
 
-  const onComplete = useCallback((payload: unknown) => {
-    // clearCurrentRequest();
-    console.log('onComplete', payload);
-    hideModal();
-  }, [hideModal]);
-  const onCancel = useCallback(() => {
+  const onComplete = useCallback<BasicStepProps['onComplete']>(
+    async ({ hide }) => {
+      console.log('onComplete', hide);
+      if (hide) {
+        clearCurrentRequest();
+        hideModal();
+      }
+    },
+    [hideModal],
+  );
+  const onCancel = useCallback(async () => {
     // clearCurrentRequest();
     console.log('onCancel');
     hideModal();
   }, [hideModal]);
-  const onError = useCallback((error: Error) => {
+  const onError = useCallback(async (error: Error) => {
     // clearCurrentRequest();
     console.log('onError', error);
   }, []);

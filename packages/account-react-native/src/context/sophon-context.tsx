@@ -1,5 +1,4 @@
 import '../pollyfills';
-import { useReactiveClient } from '@dynamic-labs/react-hooks';
 import type { Message } from '@sophon-labs/account-communicator';
 // everything else
 import {
@@ -44,7 +43,7 @@ export interface SophonContextConfig {
   authServerUrl?: string;
   walletClient?: WalletClient;
   account?: SophonAccount;
-  // setAccount: (account?: SophonAccount) => void;
+  setAccount: (account?: SophonAccount) => void;
   chain: Chain;
   provider?: EIP1193Provider;
   network: SophonNetworkType;
@@ -64,7 +63,7 @@ export const SophonContext = createContext<SophonContextConfig>({
   initialized: false,
   partnerId: '',
   chain: sophonTestnet,
-  // setAccount: () => {},
+  setAccount: () => {},
   network: 'testnet',
   updateAccessToken: () => {},
   updateRefreshToken: () => {},
@@ -77,6 +76,7 @@ export const SophonContext = createContext<SophonContextConfig>({
 
 export interface SophonAccount {
   address: Address;
+  owner: Address;
 }
 
 export const SophonContextProvider = ({
@@ -99,6 +99,7 @@ export const SophonContextProvider = ({
     () => authServerUrl ?? AccountServerURL[network],
     [authServerUrl, network],
   );
+  const [account, setAccount] = useState<SophonAccount | undefined>();
   const [currentRequest, setCurrentRequest] = useState<Message | undefined>();
 
   const [initialized, setInitialized] = useState(false);
@@ -108,15 +109,15 @@ export const SophonContextProvider = ({
   >();
   const { logout: logoutEmbedded } = useEmbeddedAuth();
   // const [walletClient, setWalletClient] = useState<WalletClient | undefined>();
-  const { wallets } = useReactiveClient(dynamicClient);
+  // const { wallets } = useReactiveClient(dynamicClient);
 
-  const account = useMemo((): SophonAccount | undefined => {
-    if (!wallets.primary) return undefined;
+  // const account = useMemo((): SophonAccount | undefined => {
+  //   if (!wallets.primary) return undefined;
 
-    return {
-      address: wallets.primary.address as Address,
-    };
-  }, [wallets.primary]);
+  //   return {
+  //     address: wallets.primary.address as Address,
+  //   };
+  // }, [wallets.primary]);
 
   const chain = useMemo(
     () => (network === 'mainnet' ? sophon : sophonTestnet),
@@ -218,8 +219,9 @@ export const SophonContextProvider = ({
   const logout = useCallback(async () => {
     await logoutEmbedded();
     await provider?.disconnect();
+    setAccount(undefined);
     SophonAppStorage.clear();
-  }, [logoutEmbedded, provider]);
+  }, [logoutEmbedded, provider, setAccount]);
 
   const contextValue = useMemo<SophonContextConfig>(
     () => ({
@@ -229,6 +231,7 @@ export const SophonContextProvider = ({
       authServerUrl: serverUrl,
       walletClient,
       account,
+      setAccount,
       accessToken,
       refreshToken,
       partnerId,
