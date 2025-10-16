@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 // import type { Address } from 'viem';
-import { sendUIMessage } from '../messaging';
+// import { sendUIMessage } from '../messaging';
 import { useSophonContext } from './use-sophon-context';
 
 export const useSophonAccount = () => {
@@ -12,7 +12,6 @@ export const useSophonAccount = () => {
     account,
     error,
     logout,
-    disconnect,
   } = useSophonContext();
   const [accountError, setAccountError] = useState<{
     description: string;
@@ -24,10 +23,10 @@ export const useSophonAccount = () => {
     setIsConnecting(true);
 
     // to make sure that we have no cached account, before connecting we force a local disconnect
-    try {
-      await disconnect();
-      sendUIMessage('clearMainViewCache', {});
-    } catch {}
+    // try {
+    //   // await disconnect();
+    //   // sendUIMessage('clearMainViewCache', {});
+    // } catch {}
 
     try {
       setAccountError(undefined);
@@ -35,6 +34,7 @@ export const useSophonAccount = () => {
       if (addresses.length === 0) {
         throw new Error('No addresses found');
       }
+      console.log('addresses', addresses);
       // setAccount({
       //   address: addresses[0] as Address,
       // });

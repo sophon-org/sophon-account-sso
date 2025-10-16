@@ -1,14 +1,21 @@
-// import { AuthProvider, useEmbeddedAuth } from "../auth/useAuth";
 import { Button } from 'react-native';
-import { sendUIMessage } from '../messaging/ui';
+import { useSophonAccount } from '../hooks';
 
 export const ConnectButton = () => {
+  const { connect, isConnecting } = useSophonAccount();
+  const handleAuthenticate = async () => {
+    try {
+      await connect();
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
   return (
     <Button
-      onPress={() => {
-        sendUIMessage('showModal', {});
+      onPress={async () => {
+        await handleAuthenticate();
       }}
-      title="Connect"
+      title={isConnecting ? 'Connecting...' : 'Connect'}
     />
   );
 };

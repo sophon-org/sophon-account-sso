@@ -15,7 +15,7 @@ interface SDKStatusResponse {
 
 export type SophonUIActions = {
   initialized: unknown;
-  showModal: unknown;
+  showModal: { requestId: UUID };
   hideModal: unknown;
   modalReady: unknown;
   incomingRpc: Message;

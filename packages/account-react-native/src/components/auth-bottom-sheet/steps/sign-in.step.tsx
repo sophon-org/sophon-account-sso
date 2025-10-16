@@ -6,30 +6,26 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { type AuthProvider, useEmbeddedAuth } from '../../../auth/useAuth';
-import { useAuthSheet } from '../auth-bottom-sheet';
+import { useEmbeddedAuth } from '../../../auth/useAuth';
+// import { useAuthSheet } from '../auth-bottom-sheet';
+import { AVAILABLE_PROVIDERS } from '../../../constants';
 
 export const SignInModal = () => {
   const emailRef = React.useRef('');
-  const { scopes } = useAuthSheet();
+  // const { scopes } = useAuthSheet();
   const { signInWithSocialProvider, signInWithEmail } = useEmbeddedAuth();
   return (
     <View style={styles.container}>
       <View style={styles.socialRow}>
-        {scopes
-          ?.filter((it) => it !== 'email')
-          .map((scope) => (
-            <TouchableOpacity
-              key={scope}
-              style={styles.socialButton}
-              // TODO: Wrong type, need to fix
-              onPress={() =>
-                signInWithSocialProvider(scope as unknown as AuthProvider)
-              }
-            >
-              <Text>{scope}</Text>
-            </TouchableOpacity>
-          ))}
+        {AVAILABLE_PROVIDERS.map((scope) => (
+          <TouchableOpacity
+            key={scope}
+            style={styles.socialButton}
+            onPress={() => signInWithSocialProvider(scope)}
+          >
+            <Text style={{ textTransform: 'capitalize' }}>{scope}</Text>
+          </TouchableOpacity>
+        ))}
       </View>
 
       <View style={styles.emailSection}>

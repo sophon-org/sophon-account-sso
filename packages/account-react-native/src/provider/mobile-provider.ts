@@ -1,16 +1,17 @@
 import { createSophonEIP1193Provider } from '@sophon-labs/account-provider';
 import type { Chain } from 'viem';
 import { sophon } from 'viem/chains';
+import { MobileCommunicator } from './mobile-communicator';
 import { SophonAppStorage } from './storage';
-import { WebViewCommunicator } from './webview-communicator';
 
-export const createWalletProvider = (authServerUrl: string, chain: Chain) => {
+export const createMobileProvider = (authServerUrl: string, chain: Chain) => {
   const provider = createSophonEIP1193Provider(
     chain.id === sophon.id ? 'mainnet' : 'testnet',
     undefined,
     authServerUrl,
-    new WebViewCommunicator(),
+    new MobileCommunicator(),
     SophonAppStorage,
+    true,
   );
 
   provider.on('disconnect', () => {

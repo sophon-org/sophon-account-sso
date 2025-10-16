@@ -29,6 +29,7 @@ export function createSophonEIP1193Provider(
   customAuthServerUrl?: string,
   customCommunicator?: Communicator,
   customStorage?: StorageLike,
+  isNative?: boolean,
 ): EIP1193Provider {
   const eventEmitter = new EventEmitter();
   const authServerUrl = customAuthServerUrl ?? AccountServerURL[network];
@@ -66,7 +67,9 @@ export function createSophonEIP1193Provider(
     };
 
     const response = await communicator.postRequestAndWaitForResponse(request);
-    await awaitForPopupUnload(serverUrl);
+    if (!isNative) {
+      await awaitForPopupUnload(serverUrl);
+    }
     return response as RPCResponse<T>;
   }
 

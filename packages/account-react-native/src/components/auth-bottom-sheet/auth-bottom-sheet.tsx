@@ -1,3 +1,4 @@
+import type { UUID } from 'node:crypto';
 import BottomSheet, {
   BottomSheetBackdrop,
   type BottomSheetBackdropProps,
@@ -13,7 +14,8 @@ import {
   useState,
 } from 'react';
 import { Keyboard, Platform, Text, TouchableOpacity, View } from 'react-native';
-import { useUIEventHandler } from '../../messaging/ui';
+import { sendUIMessage, useUIEventHandler } from '../../messaging/ui';
+import { getRefusedRPC } from '../../messaging/utils';
 import { StepProvider } from '.';
 import type {
   AuthBottomSheetProps,
@@ -27,6 +29,7 @@ export function AuthBottomSheet(props: AuthBottomSheetProps) {
   const [stepHistory, setStepHistory] = useState<AuthBottomSheetStep[]>([
     'signIn',
   ]);
+  const requestIdRef = useRef<UUID>();
 
   const goTo = (step: AuthBottomSheetStep) =>
     setStepHistory((prev) => [...prev, step]);
@@ -54,6 +57,10 @@ export function AuthBottomSheet(props: AuthBottomSheetProps) {
   }, []);
   const onClose = useCallback(() => {
     Keyboard.dismiss();
+    if (requestIdRef.current) {
+      sendUIMessage('incomingRpc', getRefusedRPC(requestIdRef.current));
+      requestIdRef.current = undefined;
+    }
   }, []);
 
   const renderHandleComponent = useCallback(
@@ -95,7 +102,8 @@ export function AuthBottomSheet(props: AuthBottomSheetProps) {
     [stepHistory, hideModal, goBack],
   );
 
-  useUIEventHandler('showModal', () => {
+  useUIEventHandler('showModal', ({ requestId }) => {
+    requestIdRef.current = requestId as UUID;
     showModal();
   });
   useUIEventHandler('hideModal', () => {

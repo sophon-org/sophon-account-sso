@@ -3396,6 +3396,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sophon-labs/account-provider@link:../../packages/account-provider::locator=%40sophon-labs%2Fexamples-mobile-expo-web%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@sophon-labs/account-provider@link:../../packages/account-provider::locator=%40sophon-labs%2Fexamples-mobile-expo-web%40workspace%3A."
+  languageName: node
+  linkType: soft
+
 "@sophon-labs/account-react-native@link:../../packages/account-react-native::locator=%40sophon-labs%2Fexamples-mobile-expo-web%40workspace%3A.":
   version: 0.0.0-use.local
   resolution: "@sophon-labs/account-react-native@link:../../packages/account-react-native::locator=%40sophon-labs%2Fexamples-mobile-expo-web%40workspace%3A."
@@ -3419,6 +3425,7 @@ __metadata:
     "@react-navigation/bottom-tabs": "npm:^7.3.10"
     "@react-navigation/elements": "npm:^2.3.8"
     "@react-navigation/native": "npm:^7.1.6"
+    "@sophon-labs/account-provider": "link:../../packages/account-provider"
     "@sophon-labs/account-react-native": "link:../../packages/account-react-native"
     "@types/react": "npm:~19.1.10"
     class-variance-authority: "npm:^0.7.1"
