@@ -1,6 +1,10 @@
-import type { DataScopes } from "@sophon-labs/account-core";
+import type { DataScopes } from '@sophon-labs/account-core';
 
-export type AuthBottomSheetStep = "signIn" | "authentication" | "code" | "connectWallet";
+export type AuthBottomSheetStep =
+  | 'signIn'
+  | 'authentication'
+  | 'code'
+  | 'connectWallet';
 
 export type AuthBottomSheetProps = {
   debugEnabled?: boolean;

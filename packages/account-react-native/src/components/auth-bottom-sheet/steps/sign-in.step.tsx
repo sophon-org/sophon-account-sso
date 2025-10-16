@@ -1,22 +1,31 @@
-import { useEmbeddedAuth } from "../../../auth/useAuth";
-import { useAuthSheet } from "../auth-bottom-sheet";
-import React, { useRef } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import React from 'react';
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { type AuthProvider, useEmbeddedAuth } from '../../../auth/useAuth';
+import { useAuthSheet } from '../auth-bottom-sheet';
 
 export const SignInModal = () => {
-  const emailRef = React.useRef("");
+  const emailRef = React.useRef('');
   const { scopes } = useAuthSheet();
   const { signInWithSocialProvider, signInWithEmail } = useEmbeddedAuth();
   return (
     <View style={styles.container}>
       <View style={styles.socialRow}>
         {scopes
-          ?.filter((it) => it !== "email")
+          ?.filter((it) => it !== 'email')
           .map((scope) => (
             <TouchableOpacity
               key={scope}
               style={styles.socialButton}
-              onPress={() => signInWithSocialProvider(scope as any)}
+              // TODO: Wrong type, need to fix
+              onPress={() =>
+                signInWithSocialProvider(scope as unknown as AuthProvider)
+              }
             >
               <Text>{scope}</Text>
             </TouchableOpacity>
@@ -25,7 +34,9 @@ export const SignInModal = () => {
 
       <View style={styles.emailSection}>
         <TextInput
-          onChangeText={(text) => (emailRef.current = text)}
+          onChangeText={(text) => {
+            emailRef.current = text;
+          }}
           keyboardType="email-address"
           placeholder="Enter email"
           placeholderTextColor="#999"
@@ -33,7 +44,7 @@ export const SignInModal = () => {
         />
         <TouchableOpacity
           style={styles.signInButtonDisabled}
-          onPress={() => signInWithEmail(emailRef.current || "")}
+          onPress={() => signInWithEmail(emailRef.current || '')}
         >
           <Text style={styles.signInTextDisabled}>Sign in</Text>
         </TouchableOpacity>
@@ -62,32 +73,32 @@ export const SignInModal = () => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
     marginBottom: 16,
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 20,
   },
   title: {
     fontSize: 18,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   socialRow: {
-    flexDirection: "row",
-    justifyContent: "space-evenly",
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
     marginBottom: 16,
   },
   socialButton: {
     width: 56,
     height: 48,
     borderRadius: 16,
-    backgroundColor: "#F6F7F9",
-    justifyContent: "center",
-    alignItems: "center",
-    borderColor: "#EBEBEB",
+    backgroundColor: '#F6F7F9',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: '#EBEBEB',
     borderWidth: 1,
   },
   emailSection: {
@@ -96,57 +107,57 @@ const styles = StyleSheet.create({
   input: {
     height: 44,
     borderWidth: 1,
-    borderColor: "#EEE",
+    borderColor: '#EEE',
     borderRadius: 8,
     paddingHorizontal: 10,
     marginBottom: 10,
   },
   signInButtonDisabled: {
-    backgroundColor: "#F0F0F0",
+    backgroundColor: '#F0F0F0',
     borderRadius: 8,
     height: 44,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   signInTextDisabled: {
-    color: "#AAA",
-    fontWeight: "500",
+    color: '#AAA',
+    fontWeight: '500',
   },
   dividerContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginVertical: 12,
   },
   divider: {
     flex: 1,
     height: 1,
-    backgroundColor: "#EEE",
+    backgroundColor: '#EEE',
   },
   dividerText: {
     marginHorizontal: 10,
-    color: "#999",
+    color: '#999',
   },
   walletButton: {
-    backgroundColor: "#EAF1FF",
+    backgroundColor: '#EAF1FF',
     borderRadius: 8,
     height: 44,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
     gap: 8,
   },
   walletText: {
-    color: "#0066FF",
-    fontWeight: "600",
+    color: '#0066FF',
+    fontWeight: '600',
   },
   footerText: {
-    textAlign: "center",
-    color: "#999",
+    textAlign: 'center',
+    color: '#999',
     fontSize: 12,
     marginTop: 14,
     lineHeight: 24,
   },
   link: {
-    color: "#0066FF",
+    color: '#0066FF',
   },
 });
