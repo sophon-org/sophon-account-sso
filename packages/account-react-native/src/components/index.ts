@@ -1,2 +1,2 @@
-export * from './main-view';
 export * from './connect-button';
+export * from './main-view';

@@ -1,5 +1,6 @@
 import { shortenAddress } from '@sophon-labs/account-core';
 import {
+  ConnectButton,
   useSophonAccount,
   useSophonClient,
 } from '@sophon-labs/account-react-native';
@@ -19,7 +20,6 @@ import JWTPanel from '@/components/me.panel';
 import { SendContractButton } from '@/components/send-contract-button';
 import { TestDashboard } from '@/components/test-dashboard';
 import { Button } from '@/components/ui/button';
-import { ConnectButton } from '@sophon-labs/account-react-native';
 
 export default function HomeScreen() {
   const { initialized, connect, isConnected, account, logout, isConnecting } =

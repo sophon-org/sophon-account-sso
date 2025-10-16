@@ -1,4 +1,5 @@
 import '../pollyfills';
+import { useReactiveClient } from '@dynamic-labs/react-hooks';
 // everything else
 import {
   AccountServerURL,
@@ -13,11 +14,15 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { type Address, type Chain, type WalletClient } from 'viem';
+import type { Address, Chain, WalletClient } from 'viem';
 import { sophon, sophonTestnet } from 'viem/chains';
 // import { erc7846Actions } from 'viem/experimental';
 // import { eip712WalletActions } from 'viem/zksync';
 import type { SophonJWTToken } from '@/types';
+import { useEmbeddedAuth } from '../auth/useAuth';
+import type { SophonMainViewProps } from '../components';
+import { AuthBottomSheet } from '../components/auth-bottom-sheet/auth-bottom-sheet';
+import { dynamicClient } from '../lib/dynamic';
 import { useUIEventHandler } from '../messaging';
 import {
   createWalletProvider,
@@ -25,9 +30,6 @@ import {
   StorageKeys,
 } from '../provider';
 import { freshInstallActions } from '../provider/fresh-install';
-import { dynamicClient } from '../lib/dynamic';
-import { useReactiveClient } from '@dynamic-labs/react-hooks';
-import { useEmbeddedAuth } from '../auth/useAuth';
 
 export interface SophonContextConfig {
   initialized: boolean;
@@ -47,6 +49,7 @@ export interface SophonContextConfig {
   disconnect: () => Promise<void>;
   error?: { description: string; code: number };
   setError: (error: { description: string; code: number }) => void;
+  insets?: SophonMainViewProps['insets'];
 }
 
 export const SophonContext = createContext<SophonContextConfig>({
@@ -72,12 +75,15 @@ export const SophonContextProvider = ({
   network = 'testnet',
   authServerUrl,
   partnerId,
+  dataScopes,
+  insets,
 }: {
   children: React.ReactNode;
   network: SophonNetworkType;
   authServerUrl?: string;
   partnerId: string;
   dataScopes: DataScopes[];
+  insets?: SophonMainViewProps['insets'];
 }) => {
   const [error, setError] = useState<{ description: string; code: number }>();
   const serverUrl = useMemo(
@@ -105,11 +111,10 @@ export const SophonContextProvider = ({
   useEffect(() => {
     (async () => {
       if (wallets.primary) {
-        setWalletClient(
-          await dynamicClient.viem.createWalletClient({
-            wallet: wallets.primary!,
-          }),
-        );
+        const client = await dynamicClient.viem.createWalletClient({
+          wallet: wallets.primary!,
+        });
+        setWalletClient(client);
       } else if (!wallets.primary) {
         setWalletClient(undefined);
       }
@@ -263,14 +268,14 @@ export const SophonContextProvider = ({
 
   return (
     <SophonContext.Provider value={contextValue}>
+      {children}
       <dynamicClient.reactNative.WebView />
-      {/* <SophonMainView
-        scopes={dataScopes}
+      <AuthBottomSheet
         insets={insets}
+        scopes={dataScopes}
         authServerUrl={serverUrl}
         partnerId={partnerId}
-      /> */}
-      {children}
+      />
     </SophonContext.Provider>
   );
 };

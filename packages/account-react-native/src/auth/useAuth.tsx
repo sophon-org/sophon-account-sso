@@ -1,6 +1,6 @@
-import { dynamicClient } from '../lib/dynamic';
-import { useCallback } from 'react';
 import { useReactiveClient } from '@dynamic-labs/react-hooks';
+import { useCallback } from 'react';
+import { dynamicClient } from '../lib/dynamic';
 
 export enum AuthProvider {
   APPLE = 'apple',
