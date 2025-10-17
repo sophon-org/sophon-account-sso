@@ -37,23 +37,8 @@ export function AuthBottomSheet(props: AuthBottomSheetProps) {
 
   const bottomSheetRef = useRef<BottomSheet>(null);
 
-  const renderBackdrop = useCallback(
-    (props: BottomSheetBackdropProps) => (
-      <BottomSheetBackdrop
-        {...props}
-        disappearsOnIndex={-1}
-        appearsOnIndex={0}
-      />
-    ),
-    [],
-  );
-  const {
-    method,
-    currentRequest,
-    setCurrentRequest,
-    cancelCurrentRequest,
-    clearCurrentRequest,
-  } = useFlowManager();
+  const { method, currentRequest, setCurrentRequest, cancelCurrentRequest } =
+    useFlowManager();
 
   const showModal = useCallback(() => {
     bottomSheetRef.current?.expand();
@@ -65,11 +50,28 @@ export function AuthBottomSheet(props: AuthBottomSheetProps) {
 
   const onClose = useCallback(() => {
     Keyboard.dismiss();
+  }, []);
+
+  const onCloseAndCancel = useCallback(() => {
+    hideModal();
+    onClose();
     console.log('close modal', currentRequest?.id);
     if (currentRequest?.id) {
       cancelCurrentRequest();
     }
   }, [currentRequest]);
+
+  const renderBackdrop = useCallback(
+    (props: BottomSheetBackdropProps) => (
+      <BottomSheetBackdrop
+        {...props}
+        disappearsOnIndex={-1}
+        appearsOnIndex={0}
+        onPress={onCloseAndCancel}
+      />
+    ),
+    [onCloseAndCancel],
+  );
 
   const renderHandleComponent = useCallback(
     (props: BottomSheetHandleProps) => {
@@ -97,7 +99,7 @@ export function AuthBottomSheet(props: AuthBottomSheetProps) {
             </Text>
             <TouchableOpacity
               style={{ position: 'absolute', right: 24 }}
-              onPress={hideModal}
+              onPress={onCloseAndCancel}
               hitSlop={{ bottom: 8, left: 8, right: 8, top: 8 }}
             >
               <Text style={{ fontSize: 24, fontWeight: '600' }}>X</Text>
@@ -107,7 +109,7 @@ export function AuthBottomSheet(props: AuthBottomSheetProps) {
         </BottomSheetHandle>
       );
     },
-    [stepHistory, hideModal, goBack],
+    [stepHistory, onCloseAndCancel, goBack],
   );
 
   useUIEventHandler('outgoingRpc', (request) => {
@@ -127,7 +129,6 @@ export function AuthBottomSheet(props: AuthBottomSheetProps) {
     async ({ hide }) => {
       console.log('onComplete', hide);
       if (hide) {
-        clearCurrentRequest();
         hideModal();
       }
     },

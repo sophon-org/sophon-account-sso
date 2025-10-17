@@ -47,13 +47,16 @@ export const SignInModal = ({
     try {
       const waitFor = waitForAuthentication();
       await signInWithEmail(emailRef.current);
+      console.log('otp sent', emailRef.current);
       await verifyEmailOTP('474617'); // this should be separated, but for testing we have static otp for this user
+      console.log('otp verified');
       const ownerAddress = await waitFor;
-      console.log('ownerAddress', ownerAddress);
+      console.log('ui ownerAddress', ownerAddress);
       await authenticate(ownerAddress);
+      console.log('authenticated');
       await onComplete({ hide: false });
     } catch (error) {
-      console.log('USER CANCELED');
+      console.log('USER CANCELED2');
       console.error(error);
       await onError(error as Error);
     }

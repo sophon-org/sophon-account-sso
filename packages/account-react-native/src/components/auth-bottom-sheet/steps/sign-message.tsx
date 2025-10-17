@@ -1,10 +1,10 @@
 import { StyleSheet, Text, View } from 'react-native';
 import type { BasicStepProps } from '../types';
 
-export const LoadingStep: React.FC<BasicStepProps> = () => {
+export const SignMessageStep: React.FC<BasicStepProps> = () => {
   return (
     <View style={styles.container}>
-      <Text>Loading...</Text>
+      <Text>Sign Message Placeholder.</Text>
     </View>
   );
 };

@@ -17,7 +17,7 @@ import jwt, {
 import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
 import { toConsentClaims } from "src/consents/consent-claims.util";
 import { ConsentsService } from "src/consents/consents.service";
-import type { TypedDataDefinition } from "viem";
+import { Address, type TypedDataDefinition, verifyMessage } from "viem";
 import { sophon, sophonTestnet } from "viem/chains";
 import { JwtKeysService } from "../aws/jwt-keys.service";
 import { authConfig } from "../config/auth.config";
@@ -42,6 +42,24 @@ type NoncePayload = JwtPayload & {
 };
 
 type ClientInfo = { ip?: string | null; userAgent?: string | null };
+
+// biome-ignore lint/suspicious/noExplicitAny: to do
+function stableStringify(obj: any): string {
+	if (obj === null || typeof obj !== "object") {
+		return JSON.stringify(obj);
+	}
+
+	if (Array.isArray(obj)) {
+		return `[${obj.map(stableStringify).join(",")}]`;
+	}
+
+	const keys = Object.keys(obj).sort();
+	const entries = keys.map(
+		(key) => `${JSON.stringify(key)}:${stableStringify(obj[key])}`,
+	);
+
+	return `{${entries.join(",")}}`;
+}
 
 @Injectable()
 export class AuthService {
@@ -125,6 +143,7 @@ export class AuthService {
 		signature: `0x${string}`,
 		nonceToken: string,
 		client?: ClientInfo,
+		ownerAddress?: Address,
 	): Promise<{
 		accessToken: string;
 		accessTokenExpiresAt: number;
@@ -169,16 +188,25 @@ export class AuthService {
 
 		const network = process.env.CHAIN_ID === "50104" ? sophon : sophonTestnet;
 
-		const isValid = await verifyEIP1271Signature({
-			accountAddress: address,
-			signature,
-			domain: { name: "Sophon SSO", version: "1", chainId: network.id },
-			types: typedData.types,
-			primaryType: typedData.primaryType,
-			message: typedData.message,
-			chain: network,
-			logger: this.logger,
-		});
+		let isValid = false;
+		if (ownerAddress) {
+			isValid = await verifyMessage({
+				address: ownerAddress,
+				message: stableStringify(typedData.message),
+				signature,
+			});
+		} else {
+			isValid = await verifyEIP1271Signature({
+				accountAddress: address,
+				signature,
+				domain: { name: "Sophon SSO", version: "1", chainId: network.id },
+				types: typedData.types,
+				primaryType: typedData.primaryType,
+				message: typedData.message,
+				chain: network,
+				logger: this.logger,
+			});
+		}
 
 		if (!isValid) {
 			this.logger.info(

@@ -12,6 +12,7 @@ import { handleAccounts } from './handlers/handleAccounts';
 import { handleChainId } from './handlers/handleChainId';
 import { handlePersonalSign } from './handlers/handlePersonalSign';
 import { handleRequestAccounts } from './handlers/handleRequestAccounts';
+import { handleRequestConsent } from './handlers/handleRequestConsent';
 import { handleRevokePermissions } from './handlers/handleRevokePermissions';
 import { handleSendTransaction } from './handlers/handleSendTransaction';
 import { handleSignTypedDataV4 } from './handlers/handleSignTypedDataV4';
@@ -121,6 +122,11 @@ export function createSophonEIP1193Provider(
         case 'eth_sendTransaction': {
           // console.log('EIP-1193 eth_sendTransaction:', method, params);
           return handleSendTransaction(executeRequest, params as unknown[]);
+        }
+
+        case 'sophon_requestConsent': {
+          // console.log('EIP-1193 sophon_requestConsent:', method, params);
+          return handleRequestConsent(executeRequest, params as unknown[]);
         }
 
         case 'wallet_revokePermissions': {
