@@ -1,7 +1,7 @@
-import { useCallback, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { useFlowManager } from '../../../hooks/use-flow-manager';
-import type { BasicStepProps } from '../types';
+import { useCallback, useState } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useFlowManager } from "../../hooks/use-flow-manager";
+import type { BasicStepProps } from "../types";
 
 export const AuthorizationStep = ({ onComplete, onError }: BasicStepProps) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -26,9 +26,7 @@ export const AuthorizationStep = ({ onComplete, onError }: BasicStepProps) => {
     <View style={styles.container}>
       <Text>Authorize?</Text>
       <TouchableOpacity style={styles.button} onPress={handleAuthorize}>
-        <Text style={styles.buttonText}>
-          {isLoading ? 'Authorizing...' : 'Authorize'}
-        </Text>
+        <Text style={styles.buttonText}>{isLoading ? "Authorizing..." : "Authorize"}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -36,20 +34,20 @@ export const AuthorizationStep = ({ onComplete, onError }: BasicStepProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     marginBottom: 16,
   },
   button: {
-    backgroundColor: '#EAF1FF',
+    backgroundColor: "#EAF1FF",
     borderRadius: 8,
     height: 44,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     gap: 8,
   },
   buttonText: {
-    color: '#0066FF',
-    fontWeight: '600',
+    color: "#0066FF",
+    fontWeight: "600",
   },
 });
