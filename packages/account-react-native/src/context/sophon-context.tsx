@@ -26,8 +26,7 @@ import { sophon, sophonTestnet } from 'viem/chains';
 import { erc7846Actions } from 'viem/experimental';
 import { eip712WalletActions } from 'viem/zksync';
 import { useEmbeddedAuth } from '../auth/useAuth';
-import type { SophonMainViewProps } from '../components';
-import { AuthBottomSheet } from '../components/auth-bottom-sheet/auth-bottom-sheet';
+import { AuthPortal, type AuthPortalProps } from '../auth-portal';
 import { dynamicClient } from '../lib/dynamic';
 import { useUIEventHandler } from '../messaging';
 import {
@@ -42,6 +41,7 @@ export const createSophonWalletClient = (
   chain: Chain,
   transport: CustomTransport,
 ) =>
+  // @ts-ignore
   createWalletClient({
     chain,
     transport,
@@ -76,7 +76,7 @@ export interface SophonContextConfig {
   logout: () => Promise<void>;
   error?: { description: string; code: number };
   setError: (error: { description: string; code: number }) => void;
-  insets?: SophonMainViewProps['insets'];
+  insets?: AuthPortalProps['insets'];
   currentRequest?: Message;
   setCurrentRequest: (request?: Message) => void;
 }
@@ -115,7 +115,7 @@ export const SophonContextProvider = ({
   authServerUrl?: string;
   partnerId: string;
   dataScopes: DataScopes[];
-  insets?: SophonMainViewProps['insets'];
+  insets?: AuthPortalProps['insets'];
 }) => {
   const [error, setError] = useState<{ description: string; code: number }>();
   const serverUrl = useMemo(
@@ -298,7 +298,7 @@ export const SophonContextProvider = ({
     <SophonContext.Provider value={contextValue}>
       {children}
       <dynamicClient.reactNative.WebView />
-      <AuthBottomSheet
+      <AuthPortal
         insets={insets}
         scopes={dataScopes}
         authServerUrl={serverUrl}
