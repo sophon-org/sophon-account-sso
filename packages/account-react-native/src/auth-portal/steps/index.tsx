@@ -8,7 +8,8 @@ import { TransactionStep } from './transaction-step';
 import { VerifyEmailStep } from './verify-email-step';
 
 export const StepControllerComponent = (props: BasicStepProps) => {
-  switch (props?.step) {
+  console.log('Rendering step:', props?.currentStep);
+  switch (props?.currentStep) {
     case AuthPortalSteps.SignIn:
       return <SignInStep {...props} />;
     case AuthPortalSteps.VerifyEmail:

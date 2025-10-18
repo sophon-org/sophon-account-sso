@@ -7,17 +7,24 @@ import { Icon } from '../../components/icon';
 import { AVAILABLE_PROVIDERS } from '../../constants';
 import { useBooleanState, useFlowManager } from '../../hooks';
 import { validateEmail } from '../../utils/validations';
-import { useAuthPortal, useNavigationParams } from '../hooks/use-auth-portal';
+import {
+  useNavigationParams,
+  useNavigationPortal,
+} from '../hooks/use-auth-portal';
 import type { BasicStepProps, SignInParams } from '../types';
 
-export const SignInStep = ({ onComplete, onError }: BasicStepProps) => {
+export const SignInStep = ({
+  onComplete,
+  onError,
+  onAuthenticate,
+}: BasicStepProps) => {
   const params = useNavigationParams<SignInParams>();
+  const { navigate } = useNavigationPortal();
   const loadingState = useBooleanState(false);
   const [email, setEmail] = useState(params?.email || '');
-  const { navigate } = useAuthPortal();
   const { signInWithSocialProvider, signInWithEmail } = useEmbeddedAuth();
   const {
-    actions: { waitForAuthentication, authenticate },
+    actions: { waitForAuthentication },
   } = useFlowManager();
 
   const handleSocialProviderPress = useCallback(
@@ -26,9 +33,7 @@ export const SignInStep = ({ onComplete, onError }: BasicStepProps) => {
         const waitFor = waitForAuthentication();
         await signInWithSocialProvider(provider);
         const ownerAddress = await waitFor;
-        await authenticate(ownerAddress);
-        console.log('ownerAddress', ownerAddress);
-        await onComplete({ hide: false });
+        onAuthenticate(ownerAddress);
       } catch (error) {
         console.log('USER CANCELED');
         console.error(error);

@@ -10,7 +10,7 @@ import { useSophonToken } from './use-sophon-token';
 
 const getSmartAccount = async (owner: Address) => {
   const response = await fetch(
-    `http://localhost:4001/contract/by-owner/${owner}`,
+    `http://192.168.10.43:4001/contract/by-owner/${owner}`,
   );
   if (!response.ok) {
     throw new Error(
@@ -21,7 +21,7 @@ const getSmartAccount = async (owner: Address) => {
 };
 
 const deploySmartAccount = async (owner: Address) => {
-  const response = await fetch(`http://localhost:4001/contract/${owner}`, {
+  const response = await fetch(`http://192.168.10.43:4001/contract/${owner}`, {
     method: 'POST',
   });
   return response.json();
@@ -51,7 +51,7 @@ const requestNonce = async (
   fields: string[],
   userId?: string,
 ) => {
-  const response = await fetch(`http://localhost:4001/auth/nonce`, {
+  const response = await fetch(`http://192.168.10.43:4001/auth/nonce`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -68,7 +68,7 @@ export const requestToken = async (
   nonceToken: string,
   ownerAddress?: Address, // for now, when we have the blockchain this is not required
 ) => {
-  const response = await fetch(`http://localhost:4001/auth/verify`, {
+  const response = await fetch(`http://192.168.10.43:4001/auth/verify`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -98,7 +98,7 @@ export const requestToken = async (
 
 const requestConsent = async (accessToken: string, kinds: string[]) => {
   const consentResponse = await fetch(
-    `http://localhost:4001/me/consent/giveMany`,
+    `http://192.168.10.43:4001/me/consent/giveMany`,
     {
       method: 'POST',
       headers: {
@@ -287,7 +287,7 @@ export const useFlowManager = () => {
     });
 
     setAccount({ ...connectingAccount });
-
+    setConnectingAccount(undefined);
     // await 500 ms to allow react to propagate the change, to remove in the future
     // await new Promise((resolve) => setTimeout(resolve, 500));
   }, [connectingAccount, setAccount, updateAccessToken, updateRefreshToken]);

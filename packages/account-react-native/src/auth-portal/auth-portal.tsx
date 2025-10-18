@@ -5,17 +5,16 @@ import BottomSheet, {
   BottomSheetView,
 } from '@gorhom/bottom-sheet';
 import type { DataScopes } from '@sophon-labs/account-core';
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import { Keyboard, Platform } from 'react-native';
-import { useFlowManager } from '../hooks/use-flow-manager';
+import { useBooleanState, useFlowManager } from '../hooks';
 import { useUIEventHandler } from '../messaging/ui';
 import { FooterSheet } from './components/footer-sheet';
 import { AuthPortalBottomSheetHandle } from './components/handle-sheet';
 import { StepTransitionView } from './components/step-transition';
 import { AuthPortalContext } from './context/auth-sheet.context';
-import { useCurrentStep } from './hooks/use-current-step';
 import { useKeyboard } from './hooks/use-keyboard';
-import { useNavigationAuthPortal } from './hooks/use-navigation';
+import { useNavigationController } from './hooks/use-navigation-controller';
 import { StepControllerComponent } from './steps';
 import type { BasicStepProps } from './types';
 
@@ -34,33 +33,26 @@ export type AuthPortalProps = {
 
 export function AuthPortal(props: AuthPortalProps) {
   const bottomSheetRef = useRef<BottomSheet>(null);
+  const disableAnimation = useBooleanState(true);
   const {
     currentRequest,
     setCurrentRequest,
     cancelCurrentRequest,
     clearCurrentRequest,
+    actions,
   } = useFlowManager();
 
   const { addKeyboardListener, removeKeyboardListener } = useKeyboard();
   const {
-    currentState,
+    currentStep,
     showBackButton,
     navigate,
     goBack,
     cleanup,
     setParams,
-    currentParams,
-  } = useNavigationAuthPortal();
-  const currentStep = useCurrentStep(currentState);
-
-  const isLoading = useMemo(() => {
-    return currentStep === 'loading';
-  }, [currentStep]);
-
-  const params = useMemo(() => {
-    if (!currentStep || currentParams) return null;
-    return currentParams?.[currentStep] || null;
-  }, [currentStep, currentParams]);
+    isLoading,
+    params,
+  } = useNavigationController();
 
   const showModal = useCallback(() => {
     bottomSheetRef.current?.expand();
@@ -79,6 +71,7 @@ export function AuthPortal(props: AuthPortalProps) {
     Keyboard.dismiss();
     cleanup();
     removeKeyboardListener();
+    disableAnimation.setOff();
   }, []);
 
   const onCloseAndCancel = useCallback(() => {
@@ -140,6 +133,17 @@ export function AuthPortal(props: AuthPortalProps) {
     },
     [hideModal],
   );
+
+  const onAuthenticate = useCallback<BasicStepProps['onAuthenticate']>(
+    async (ownerAddress) => {
+      navigate('loading', { replace: true });
+      console.log('ui ownerAddress', ownerAddress);
+      await actions.authenticate(ownerAddress);
+      console.log('authenticated');
+    },
+    [actions],
+  );
+
   const onCancel = useCallback(async () => {
     // clearCurrentRequest();
     console.log('onCancel');
@@ -168,6 +172,9 @@ export function AuthPortal(props: AuthPortalProps) {
         handleComponent={renderHandleComponent}
         topInset={props.insets?.top ?? 0}
         index={-1}
+        onChange={(currentIndex) => {
+          disableAnimation.setState(currentIndex < 0);
+        }}
         animateOnMount
         enablePanDownToClose={true}
         enableDynamicSizing={true}
@@ -181,12 +188,14 @@ export function AuthPortal(props: AuthPortalProps) {
           <StepTransitionView
             keyProp={currentStep}
             isBackAvailable={!showBackButton}
+            disableAnimation={disableAnimation.state}
           >
             <StepControllerComponent
-              step={currentStep}
+              currentStep={currentStep}
               onComplete={onComplete}
               onCancel={onCancel}
               onError={onError}
+              onAuthenticate={onAuthenticate}
             />
           </StepTransitionView>
           <FooterSheet hideTerms={isLoading} />

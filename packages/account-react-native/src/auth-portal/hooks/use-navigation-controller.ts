@@ -1,4 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
+import { useSophonAccount } from '../../hooks';
+import { useFlowManager } from '../../hooks/use-flow-manager';
+import { useSophonContext } from '../../hooks/use-sophon-context';
 import type {
   AuthPortalStep,
   NavigateOptions,
@@ -12,7 +15,10 @@ const initialState: NavigationAuthPortalState = {
   currentParams: null,
 };
 
-export function useNavigationAuthPortal() {
+export const useNavigationController = () => {
+  const { method } = useFlowManager();
+  const { isConnected } = useSophonAccount();
+  const { connectingAccount } = useSophonContext();
   const [state, setConfig] = useState<NavigationAuthPortalState | null>(
     initialState,
   );
@@ -21,18 +27,42 @@ export function useNavigationAuthPortal() {
     currentState: null,
     currentParams: null,
   };
+  const currentStep = useMemo<AuthPortalStep>(() => {
+    switch (method) {
+      case 'eth_requestAccounts':
+      case 'wallet_requestPermissions': {
+        if (isConnected || connectingAccount) return 'authorization';
+        return currentState || 'signIn';
+      }
+      case 'personal_sign':
+      case 'eth_signTypedData_v4':
+        return 'signMessage';
+      case 'eth_sendTransaction':
+        return 'transaction';
+      case 'sophon_requestConsent':
+        return 'consent';
+      // case 'wallet_revokePermissions':
+      // case 'wallet_disconnect':
+      default:
+        return null;
+    }
+  }, [method, currentState, isConnected, connectingAccount]);
   const navigate = useCallback(
     (step: AuthPortalStep, options?: NavigateOptions) =>
       setConfig((prev) => {
-        if (options?.replace)
+        if (options?.replace) {
           return {
+            ...(prev || {}),
             currentState: step,
             history: [],
-            currentParams: {
-              ...(prev?.currentParams ?? {}),
-              [step]: options?.params || null,
-            },
+            currentParams: options?.params
+              ? {
+                  ...(prev?.currentParams ?? {}),
+                  [step]: options?.params || null,
+                }
+              : prev?.currentParams,
           };
+        }
 
         const stepExists = prev?.history.some(
           (existingStep) => existingStep === step,
@@ -53,9 +83,10 @@ export function useNavigationAuthPortal() {
           ? prev
           : {
               currentState: step,
-              history: [...(prev?.history || []), prev?.currentState].filter(
-                Boolean,
-              ) as AuthPortalStep[],
+              history: [
+                ...(prev?.history || []),
+                prev?.currentState || currentStep,
+              ].filter(Boolean) as AuthPortalStep[],
               currentParams: {
                 ...prev?.currentParams,
                 [step]: options?.params || null,
@@ -63,7 +94,7 @@ export function useNavigationAuthPortal() {
               },
             };
       }),
-    [],
+    [currentStep],
   );
 
   const goBack = useCallback((options?: NavigateOptions) => {
@@ -71,6 +102,7 @@ export function useNavigationAuthPortal() {
       if (!prev || prev.history.length === 0) return prev;
       const newHistory = prev.history.slice(0, -1);
       const newCurrentState = prev.history[prev.history.length - 1];
+      if (newCurrentState === 'signIn') return initialState;
       if (!newCurrentState) return prev;
       return {
         currentState: newCurrentState,
@@ -118,14 +150,27 @@ export function useNavigationAuthPortal() {
     setConfig(initialState);
   }, []);
 
+  const isLoading = useMemo(() => {
+    return currentStep === 'loading';
+  }, [currentStep]);
+
+  const params = useMemo(() => {
+    if (!currentStep || currentParams) return null;
+    return currentParams?.[currentStep] || null;
+  }, [currentStep, currentParams]);
+
   const showBackButton = useMemo(
-    () => Boolean((state?.history.length ?? 0) > 0),
-    [state?.history.length],
+    () => Boolean((history.length ?? 0) > 0),
+    [history],
   );
+
   return {
+    isLoading,
+    currentStep,
     history,
     currentState,
     currentParams,
+    params,
     navigate,
     goBack,
     cleanup,
@@ -133,8 +178,8 @@ export function useNavigationAuthPortal() {
     showBackButton,
     initializeConfig,
   };
-}
+};
 
 export type NavigationBottomSheetHook = ReturnType<
-  typeof useNavigationAuthPortal
+  typeof useNavigationController
 >;

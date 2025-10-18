@@ -13,14 +13,6 @@ export enum AuthPortalSteps {
 }
 export type AuthPortalStep = `${AuthPortalSteps}`;
 
-export interface BasicStepProps {
-  step?: AuthPortalStep | null;
-  style?: ViewStyle;
-  onComplete: (payload: { hide: boolean }) => Promise<void>;
-  onCancel: () => Promise<void>;
-  onError: (error: Error) => Promise<void>;
-}
-
 export type AuthPortalContextProps = {
   currentStep: AuthPortalStep | null;
   navigate: (step: AuthPortalStep, options?: NavigateOptions) => void;
@@ -28,6 +20,14 @@ export type AuthPortalContextProps = {
   setParams: (params: NavigateParams) => void;
   params: NavigateParams | null;
 };
+export interface BasicStepProps {
+  currentStep: AuthPortalContextProps['currentStep'];
+  style?: ViewStyle;
+  onAuthenticate: (value: `0x${string}`) => Promise<void>;
+  onComplete: (payload: { hide: boolean }) => Promise<void>;
+  onCancel: () => Promise<void>;
+  onError: (error: Error) => Promise<void>;
+}
 
 export type AuthPortalContextType = AuthPortalContextProps;
 

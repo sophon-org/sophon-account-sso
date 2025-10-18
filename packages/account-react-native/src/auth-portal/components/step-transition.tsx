@@ -17,30 +17,33 @@ type StepAnimatedViewProps = {
   isBackAvailable?: boolean;
   children: React.ReactNode;
   keyProp: string | null;
+  disableAnimation?: boolean;
 };
 
-const DURATION = 250;
+const ANIMATED_DURATION = 250;
 const EASE = Easing.bezier(0.75, 0.21, 0.15, 1);
 
 export const StepTransitionView: React.FC<StepAnimatedViewProps> = ({
   isBackAvailable,
   children,
   keyProp,
+  disableAnimation,
 }) => {
+  const duration = disableAnimation ? 1 : ANIMATED_DURATION;
   const slideIn = (isBackAvailable ? SlideInLeft : SlideInRight)
-    .duration(DURATION)
+    .duration(duration)
     .easing(EASE);
 
   const slideOut = (isBackAvailable ? SlideOutRight : SlideOutLeft)
-    .duration(DURATION)
+    .duration(duration)
     .easing(EASE);
 
   const fadeIn = (isBackAvailable ? FadeInLeft : FadeInRight)
-    .duration(DURATION)
+    .duration(duration)
     .easing(EASE);
 
   const fadeOut = (isBackAvailable ? FadeOutRight : FadeOutLeft)
-    .duration(DURATION)
+    .duration(duration)
     .easing(EASE);
 
   return (
@@ -50,7 +53,7 @@ export const StepTransitionView: React.FC<StepAnimatedViewProps> = ({
         style={styles.step}
         entering={slideIn}
         exiting={fadeOut}
-        layout={LinearTransition.duration(120)}
+        layout={LinearTransition.duration(duration / 2)}
       >
         <Animated.View entering={fadeIn} exiting={slideOut} style={styles.fill}>
           {children}

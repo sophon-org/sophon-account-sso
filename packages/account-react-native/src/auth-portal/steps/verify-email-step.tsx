@@ -22,7 +22,7 @@ import { useBooleanState, useFlowManager } from '../../hooks';
 import { useNavigationParams } from '../hooks';
 import type { BasicStepProps, VerifyCodeParams } from '../types';
 
-export function VerifyEmailStep({ onComplete, onError }: BasicStepProps) {
+export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
   const loadingState = useBooleanState(false);
   const params = useNavigationParams<VerifyCodeParams>();
   const [codes, setValues] = useState(Array(OTP_CODE_LENGTH).fill(''));
@@ -32,7 +32,7 @@ export function VerifyEmailStep({ onComplete, onError }: BasicStepProps) {
 
   const { verifyEmailOTP, resendEmailOTP } = useEmbeddedAuth();
   const {
-    actions: { waitForAuthentication, authenticate },
+    actions: { waitForAuthentication },
   } = useFlowManager();
 
   const handleVerifyEmailOTP = useCallback(
@@ -45,19 +45,15 @@ export function VerifyEmailStep({ onComplete, onError }: BasicStepProps) {
         await verifyEmailOTP(codeToVerify);
         console.log('otp verified');
         const ownerAddress = await waitFor;
-        console.log('ui ownerAddress', ownerAddress);
-        await authenticate(ownerAddress);
-        console.log('authenticated');
-        await onComplete({ hide: false });
+        onAuthenticate(ownerAddress);
       } catch (error) {
         console.log('USER CANCELED');
         console.error(error);
         await onError(error as Error);
-      } finally {
         loadingState.setOff();
       }
     },
-    [verifyEmailOTP, onComplete, codes, onError],
+    [verifyEmailOTP, onAuthenticate, codes, onError],
   );
 
   const focusIndex = (index: number) => {
