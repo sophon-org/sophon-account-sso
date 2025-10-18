@@ -1,8 +1,12 @@
-import { shortenAddress } from '@sophon-labs/account-core';
+import {
+  type ConsentResponse,
+  shortenAddress,
+} from '@sophon-labs/account-core';
 import {
   ConnectButton,
   useSophonAccount,
   useSophonClient,
+  useSophonConsent,
 } from '@sophon-labs/account-react-native';
 import { useEffect, useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
@@ -36,6 +40,11 @@ export default function HomeScreen() {
   const [transaction, setTransaction] = useState<string>();
   const [error, setError] = useState<string>('');
   const [showTestDashboard, setShowTestDashboard] = useState(false);
+  const { requestConsent } = useSophonConsent(true);
+  const [consent, setConsent] = useState<ConsentResponse>({
+    consentAds: false,
+    consentData: false,
+  });
 
   useEffect(() => {
     console.log('accountError', error);
@@ -114,6 +123,37 @@ export default function HomeScreen() {
           <View className="mt-4 w-full max-w-[80%]">
             <JWTPanel />
           </View>
+        )}
+        {isConnected && (
+          <Button
+            className="mt-4 bg-purple-500/90 w-full max-w-[80%]"
+            onPress={async () => {
+              try {
+                setError('');
+                const response = await requestConsent();
+                console.log('consent', response);
+                setConsent(response);
+              } catch (e: any) {
+                setError(e.details ?? e.message);
+              }
+            }}
+          >
+            <Text className="text-xl font-bold text-white">📝 Consent</Text>
+          </Button>
+        )}
+        {isConnected && (
+          <>
+            <Text className="text-xs my-4 text-black max-w-[80%]">
+              {consent?.consentAds
+                ? 'Consent granted for ads'
+                : 'Consent denied for ads'}
+            </Text>
+            <Text className="text-xs my-4 text-black max-w-[80%]">
+              {consent?.consentData
+                ? 'Consent granted for data'
+                : 'Consent denied for data'}
+            </Text>
+          </>
         )}
         {isConnected && (
           <>

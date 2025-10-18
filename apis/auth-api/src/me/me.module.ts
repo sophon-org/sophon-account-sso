@@ -3,7 +3,7 @@ import { AuthModule } from "src/auth/auth.module";
 import { ConsentsModule } from "src/consents/consents.module";
 import { HyperindexModule } from "src/hyperindex/hyperindex.module";
 import { ConsentController } from "./consent.controller";
-import { K1OwnerController } from "./k1-owner.controller";
+import { K1OwnerController } from "./contract.controller";
 
 @Module({
 	imports: [ConsentsModule, HyperindexModule, AuthModule],

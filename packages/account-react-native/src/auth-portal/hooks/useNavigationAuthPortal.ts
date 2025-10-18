@@ -1,6 +1,5 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import type { AuthPortalStep, NavigateOptions, NavigationAuthPortalState } from "../types";
-import { Keyboard } from "react-native";
 
 const initialState: NavigationAuthPortalState = {
   currentState: "signIn",
@@ -9,9 +8,12 @@ const initialState: NavigationAuthPortalState = {
 };
 
 export function useNavigationAuthPortal() {
-  const [state = { history: [], currentState: null, currentParams: null }, setConfig] =
-    useState<NavigationAuthPortalState | null>(initialState);
-
+  const [state, setConfig] = useState<NavigationAuthPortalState | null>(initialState);
+  const { history, currentState, currentParams } = state ?? {
+    history: [],
+    currentState: null,
+    currentParams: null,
+  };
   const navigate = useCallback(
     (step: AuthPortalStep, options?: NavigateOptions) =>
       setConfig((prev) => {
@@ -20,25 +22,30 @@ export function useNavigationAuthPortal() {
             currentState: step,
             history: [],
             currentParams: {
-              ...prev.currentParams,
+              ...(prev?.currentParams ?? {}),
               [step]: options?.params || null,
             },
           };
 
-        const stepExists = prev.history.some((existingStep) => existingStep === step);
+        const stepExists = prev?.history.some((existingStep) => existingStep === step);
         const addInheritParams = options?.inheritParamsFrom?.reduce((acc, inheritStep) => {
           return {
             ...acc,
-            [inheritStep]: options?.params || prev.currentParams[inheritStep] || null,
+            [inheritStep]:
+              options?.params ||
+              prev?.currentParams?.[inheritStep as keyof typeof prev.currentParams] ||
+              null,
           };
         }, {});
         return stepExists
           ? prev
           : {
               currentState: step,
-              history: [...prev.history, prev.currentState],
+              history: [...(prev?.history || []), prev?.currentState].filter(
+                Boolean,
+              ) as AuthPortalStep[],
               currentParams: {
-                ...prev.currentParams,
+                ...prev?.currentParams,
                 [step]: options?.params || null,
                 ...addInheritParams,
               },
@@ -49,9 +56,10 @@ export function useNavigationAuthPortal() {
 
   const goBack = useCallback((options?: NavigateOptions) => {
     setConfig((prev) => {
-      if (prev.history.length === 0) return prev;
+      if (!prev || prev.history.length === 0) return prev;
       const newHistory = prev.history.slice(0, -1);
       const newCurrentState = prev.history[prev.history.length - 1];
+      if (!newCurrentState) return prev;
       return {
         currentState: newCurrentState,
         history: newHistory,
@@ -59,7 +67,7 @@ export function useNavigationAuthPortal() {
           ...prev.currentParams,
           [newCurrentState]: Object.assign(
             {},
-            prev.currentParams[newCurrentState] ?? {},
+            prev.currentParams?.[newCurrentState as keyof typeof prev.currentParams] ?? {},
             options?.params ?? {},
           ),
         },
@@ -69,16 +77,21 @@ export function useNavigationAuthPortal() {
 
   const setParams = useCallback(
     (params: Record<string, any>) =>
-      setConfig((prev) => ({
-        ...prev,
-        currentParams: {
-          ...prev.currentParams,
-          [prev.currentState]: {
-            ...prev.currentParams[prev.currentState],
-            ...params,
-          },
-        },
-      })),
+      setConfig((prev) =>
+        !prev || !prev.currentParams
+          ? prev
+          : {
+              ...prev,
+              currentParams: {
+                ...prev.currentParams,
+                [prev.currentState]: {
+                  ...(prev.currentParams?.[prev.currentState as keyof typeof prev.currentParams] ??
+                    {}),
+                  ...params,
+                },
+              },
+            },
+      ),
     [],
   );
 
@@ -90,9 +103,14 @@ export function useNavigationAuthPortal() {
     setConfig(initialState);
   }, []);
 
-  const showBackButton = state?.history.length > 0;
+  const showBackButton = useMemo(
+    () => Boolean((state?.history.length ?? 0) > 0),
+    [state?.history.length],
+  );
   return {
-    ...state,
+    history,
+    currentState,
+    currentParams,
     navigate,
     goBack,
     cleanup,

@@ -1,5 +1,5 @@
 import type { TypedDataDefinition } from 'viem';
-import type { TypedDataSigningRequest } from '@/types/auth';
+import type { TypedDataSigningRequest } from './types';
 
 /**
  * Safe parse the typed data domain chainId.This is required because of different payloads

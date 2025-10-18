@@ -5,4 +5,5 @@ export * from './use-get-swap-transaction';
 export * from './use-modal-visibility';
 export * from './use-sophon-account';
 export * from './use-sophon-client';
+export * from './use-sophon-consent';
 export * from './use-sophon-token';

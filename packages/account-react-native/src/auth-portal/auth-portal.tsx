@@ -29,7 +29,7 @@ export function AuthPortal(props: AuthPortalProps) {
   const { currentRequest, setCurrentRequest, cancelCurrentRequest, clearCurrentRequest } =
     useFlowManager();
 
-  const { addKeyboardListener, removeKeyboardListener, keyboardOffSet } = useKeyboard();
+  const { addKeyboardListener, removeKeyboardListener } = useKeyboard();
 
   const currentStep = useMemo(() => {
     if (isConnecting) return "loading";
@@ -42,6 +42,7 @@ export function AuthPortal(props: AuthPortalProps) {
   }, [currentStep]);
 
   const params = useMemo(() => {
+    if (!currentStep || currentParams) return null;
     return currentParams?.[currentStep] || null;
   }, [currentStep, currentParams]);
 
@@ -61,11 +62,16 @@ export function AuthPortal(props: AuthPortalProps) {
   const onClose = useCallback(() => {
     Keyboard.dismiss();
     cleanup();
+    removeKeyboardListener();
+  }, []);
+
+  const onCloseAndCancel = useCallback(() => {
+    hideModal();
+    onClose();
     console.log("close modal", currentRequest?.id);
     if (currentRequest?.id) {
       cancelCurrentRequest();
     }
-    removeKeyboardListener();
   }, [currentRequest]);
 
   const renderHandleComponent = useCallback(
@@ -75,12 +81,12 @@ export function AuthPortal(props: AuthPortalProps) {
           {...props}
           showBackButton={showBackButton && !isLoading}
           goBack={goBack}
-          close={hideModal}
+          close={onCloseAndCancel}
           hideCloseButton={isLoading}
         />
       );
     },
-    [hideModal, goBack, showBackButton, isLoading],
+    [onCloseAndCancel, goBack, showBackButton, isLoading],
   );
 
   const renderBackdrop = useCallback(
@@ -146,7 +152,6 @@ export function AuthPortal(props: AuthPortalProps) {
         backdropComponent={renderBackdrop}
         handleComponent={renderHandleComponent}
         topInset={props.insets?.top ?? 0}
-        // bottomInset={-keyboardOffSet}
         index={-1}
         animateOnMount
         enablePanDownToClose={true}

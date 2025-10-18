@@ -25,7 +25,7 @@ export type AuthPortalProps = {
 };
 
 export interface BasicStepProps {
-  step?: AuthPortalStep;
+  step?: AuthPortalStep | null;
   style?: ViewStyle;
   onComplete: (payload: { hide: boolean }) => Promise<void>;
   onCancel: () => Promise<void>;
@@ -33,12 +33,12 @@ export interface BasicStepProps {
 }
 
 export type AuthPortalContextProps = {
-  currentStep: AuthPortalStep;
+  currentStep: AuthPortalStep | null;
   navigate: (step: AuthPortalStep, options?: NavigateOptions) => void;
   goBack: () => void;
   setParams: (params: Record<string, any>) => void;
   stepItemWidth: number;
-  params: Record<string, any>;
+  params: Record<string, any> | null;
 };
 
 export type AuthPortalContextType = AuthPortalContextProps & AuthPortalProps;

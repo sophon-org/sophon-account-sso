@@ -5,29 +5,48 @@ import {
   AccountServerURL,
   type DataScopes,
   type SophonNetworkType,
+  sophonActions,
 } from "@sophon-labs/account-core";
 import type { EIP1193Provider } from "@sophon-labs/account-provider";
 import { createContext, useCallback, useEffect, useMemo, useState } from "react";
-import { type Address, type Chain, createWalletClient, custom, type WalletClient } from "viem";
+import { type Address, type Chain, type CustomTransport, createWalletClient, custom } from "viem";
 import { sophon, sophonTestnet } from "viem/chains";
 import { erc7846Actions } from "viem/experimental";
 import { eip712WalletActions } from "viem/zksync";
 import { useEmbeddedAuth } from "../auth/useAuth";
 import type { SophonMainViewProps } from "../components";
-import { AuthPortal } from "../auth-portal";
 import { dynamicClient } from "../lib/dynamic";
 import { useUIEventHandler } from "../messaging";
 import { createMobileProvider, SophonAppStorage, StorageKeys } from "../provider";
 import { freshInstallActions } from "../provider/fresh-install";
 import type { SophonJWTToken } from "../types";
+import { AuthPortal } from "../auth-portal";
+
+export const createSophonWalletClient = (chain: Chain, transport: CustomTransport) =>
+  createWalletClient({
+    chain,
+    transport,
+  })
+    .extend(erc7846Actions())
+    .extend(eip712WalletActions())
+    .extend(sophonActions());
+
+export type SophonWalletClient = ReturnType<typeof createSophonWalletClient>;
+
+export interface Consent {
+  ads: boolean;
+  data: boolean;
+}
 
 export interface SophonContextConfig {
   initialized: boolean;
   partnerId: string;
   authServerUrl?: string;
-  walletClient?: WalletClient;
+  walletClient?: SophonWalletClient;
   account?: SophonAccount;
   setAccount: (account?: SophonAccount) => void;
+  connectingAccount?: SophonAccount;
+  setConnectingAccount: (account?: SophonAccount) => void;
   chain: Chain;
   provider?: EIP1193Provider;
   network: SophonNetworkType;
@@ -48,6 +67,7 @@ export const SophonContext = createContext<SophonContextConfig>({
   partnerId: "",
   chain: sophonTestnet,
   setAccount: () => {},
+  setConnectingAccount: () => {},
   network: "testnet",
   updateAccessToken: () => {},
   updateRefreshToken: () => {},
@@ -89,6 +109,7 @@ export const SophonContextProvider = ({
   const [initialized, setInitialized] = useState(false);
   const [accessToken, setAccessToken] = useState<SophonJWTToken | undefined>();
   const [refreshToken, setRefreshToken] = useState<SophonJWTToken | undefined>();
+  const [connectingAccount, setConnectingAccount] = useState<SophonAccount | undefined>();
   const { logout: logoutEmbedded } = useEmbeddedAuth();
   // const [walletClient, setWalletClient] = useState<WalletClient | undefined>();
   // const { wallets } = useReactiveClient(dynamicClient);
@@ -107,12 +128,7 @@ export const SophonContextProvider = ({
     return provider;
   }, [serverUrl, chain]);
 
-  const walletClient = createWalletClient({
-    chain: chain,
-    transport: custom(provider),
-  })
-    .extend(erc7846Actions())
-    .extend(eip712WalletActions());
+  const walletClient = createSophonWalletClient(chain, custom(provider));
 
   // useEffect(() => {
   //   (async () => {
@@ -132,11 +148,9 @@ export const SophonContextProvider = ({
   }, []);
 
   useUIEventHandler("initialized", () => {
-    // if (SophonAppStorage.getItem(StorageKeys.USER_ACCOUNT)) {
-    //   setAccount(
-    //     JSON.parse(SophonAppStorage.getItem(StorageKeys.USER_ACCOUNT)!),
-    //   );
-    // }
+    if (SophonAppStorage.getItem(StorageKeys.USER_ACCOUNT)) {
+      setAccount(JSON.parse(SophonAppStorage.getItem(StorageKeys.USER_ACCOUNT)!));
+    }
     if (SophonAppStorage.getItem(StorageKeys.USER_ACCESS_TOKEN)) {
       setAccessToken(JSON.parse(SophonAppStorage.getItem(StorageKeys.USER_ACCESS_TOKEN)!));
     }
@@ -167,17 +181,14 @@ export const SophonContextProvider = ({
 
   useUIEventHandler("handleError", setError);
 
-  // const setAccountWithEffect = useCallback((account?: SophonAccount) => {
-  //   setAccount(account);
-  //   if (account) {
-  //     SophonAppStorage.setItem(
-  //       StorageKeys.USER_ACCOUNT,
-  //       JSON.stringify(account),
-  //     );
-  //   } else {
-  //     SophonAppStorage.removeItem(StorageKeys.USER_ACCOUNT);
-  //   }
-  // }, []);
+  const setAccountWithEffect = useCallback((account?: SophonAccount) => {
+    setAccount(account);
+    if (account) {
+      SophonAppStorage.setItem(StorageKeys.USER_ACCOUNT, JSON.stringify(account));
+    } else {
+      SophonAppStorage.removeItem(StorageKeys.USER_ACCOUNT);
+    }
+  }, []);
 
   // const walletClient = useMemo(async () => {
   //   return await dynamicClient.viem.createWalletClient({
@@ -200,7 +211,7 @@ export const SophonContextProvider = ({
       authServerUrl: serverUrl,
       walletClient,
       account,
-      setAccount,
+      setAccount: setAccountWithEffect,
       accessToken,
       refreshToken,
       partnerId,
@@ -212,6 +223,8 @@ export const SophonContextProvider = ({
       logout,
       currentRequest,
       setCurrentRequest,
+      connectingAccount,
+      setConnectingAccount,
     }),
     [
       initialized,
@@ -231,6 +244,8 @@ export const SophonContextProvider = ({
       logout,
       currentRequest,
       setCurrentRequest,
+      connectingAccount,
+      setConnectingAccount,
     ],
   );
 
