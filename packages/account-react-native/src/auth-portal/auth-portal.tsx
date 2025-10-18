@@ -4,6 +4,7 @@ import BottomSheet, {
   type BottomSheetHandleProps,
   BottomSheetView,
 } from '@gorhom/bottom-sheet';
+import type { DataScopes } from '@sophon-labs/account-core';
 import { useCallback, useMemo, useRef } from 'react';
 import { Keyboard, Platform } from 'react-native';
 import { useFlowManager } from '../hooks/use-flow-manager';
@@ -16,7 +17,20 @@ import { useCurrentStep } from './hooks/use-current-step';
 import { useKeyboard } from './hooks/use-keyboard';
 import { useNavigationAuthPortal } from './hooks/use-navigation';
 import { StepControllerComponent } from './steps';
-import type { AuthPortalProps, BasicStepProps } from './types';
+import type { BasicStepProps } from './types';
+
+export type AuthPortalProps = {
+  debugEnabled?: boolean;
+  insets?: {
+    top?: number;
+    bottom?: number;
+    left?: number;
+    right?: number;
+  };
+  authServerUrl?: string;
+  partnerId: string;
+  scopes: DataScopes[];
+};
 
 export function AuthPortal(props: AuthPortalProps) {
   const bottomSheetRef = useRef<BottomSheet>(null);
@@ -131,6 +145,7 @@ export function AuthPortal(props: AuthPortalProps) {
     console.log('onCancel');
     hideModal();
   }, [hideModal]);
+
   const onError = useCallback(async (error: Error) => {
     // clearCurrentRequest();
     console.log('onError', error);
@@ -144,7 +159,6 @@ export function AuthPortal(props: AuthPortalProps) {
         goBack,
         setParams,
         params,
-        ...props,
       }}
     >
       <BottomSheet

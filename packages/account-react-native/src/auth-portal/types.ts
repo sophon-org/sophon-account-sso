@@ -1,4 +1,3 @@
-import type { DataScopes } from '@sophon-labs/account-core';
 import type { ViewStyle } from 'react-native';
 
 export enum AuthPortalSteps {
@@ -13,19 +12,6 @@ export enum AuthPortalSteps {
   Consent = 'consent',
 }
 export type AuthPortalStep = `${AuthPortalSteps}`;
-
-export type AuthPortalProps = {
-  debugEnabled?: boolean;
-  insets?: {
-    top?: number;
-    bottom?: number;
-    left?: number;
-    right?: number;
-  };
-  authServerUrl?: string;
-  partnerId: string;
-  scopes: DataScopes[];
-};
 
 export interface BasicStepProps {
   step?: AuthPortalStep | null;
@@ -43,7 +29,7 @@ export type AuthPortalContextProps = {
   params: NavigateParams | null;
 };
 
-export type AuthPortalContextType = AuthPortalContextProps & AuthPortalProps;
+export type AuthPortalContextType = AuthPortalContextProps;
 
 /// Navigation
 

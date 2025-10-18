@@ -26,8 +26,7 @@ import { sophon, sophonTestnet } from 'viem/chains';
 import { erc7846Actions } from 'viem/experimental';
 import { eip712WalletActions } from 'viem/zksync';
 import { useEmbeddedAuth } from '../auth/useAuth';
-import { AuthPortal } from '../auth-portal';
-import type { SophonMainViewProps } from '../components';
+import { AuthPortal, type AuthPortalProps } from '../auth-portal';
 import { dynamicClient } from '../lib/dynamic';
 import { useUIEventHandler } from '../messaging';
 import {
@@ -77,7 +76,7 @@ export interface SophonContextConfig {
   logout: () => Promise<void>;
   error?: { description: string; code: number };
   setError: (error: { description: string; code: number }) => void;
-  insets?: SophonMainViewProps['insets'];
+  insets?: AuthPortalProps['insets'];
   currentRequest?: Message;
   setCurrentRequest: (request?: Message) => void;
 }
@@ -116,7 +115,7 @@ export const SophonContextProvider = ({
   authServerUrl?: string;
   partnerId: string;
   dataScopes: DataScopes[];
-  insets?: SophonMainViewProps['insets'];
+  insets?: AuthPortalProps['insets'];
 }) => {
   const [error, setError] = useState<{ description: string; code: number }>();
   const serverUrl = useMemo(

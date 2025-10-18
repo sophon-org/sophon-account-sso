@@ -64,17 +64,26 @@ export function VerifyEmailStep({ onComplete, onError }: BasicStepProps) {
     inputsRef.current[index]?.focus();
   };
 
-  const handleChange = useCallback((text: string, index: number) => {
-    const digits = text.replace(/[^0-9]/g, '').split('');
+  const onCompleteCode = useCallback(() => {
+    Keyboard.dismiss();
+    inputsRef.current.forEach((input) => input?.blur());
+  }, []);
 
+  const handleChange = useCallback((text: string, index: number) => {
+    let digits = text.replace(/[^0-9]/g, '').split('');
     if (digits.length === 0) return;
     setValues((values) => {
       const newValues = [...values];
       let nextIndex = index;
+      // copy and paste case or multiple digits input
+      const currentValue = newValues[nextIndex];
+      if (currentValue && text.startsWith(currentValue)) {
+        digits = digits.slice(1);
+      }
 
-      digits.forEach((d) => {
+      digits.forEach((decimal) => {
         if (nextIndex < OTP_CODE_LENGTH) {
-          newValues[nextIndex] = d;
+          newValues[nextIndex] = decimal;
           scales[nextIndex].value = withTiming(1.1, { duration: 100 }, () => {
             scales[nextIndex].value = withTiming(1, { duration: 100 });
           });
@@ -85,24 +94,32 @@ export function VerifyEmailStep({ onComplete, onError }: BasicStepProps) {
 
       if (nextIndex < OTP_CODE_LENGTH) {
         focusIndex(nextIndex);
-      } else {
-        handleVerifyEmailOTP(newValues.join(''));
+      } else if (digits.length === OTP_CODE_LENGTH) {
+        onCompleteCode();
       }
+
       return newValues;
     });
   }, []);
 
   const handleKeyPress = (
-    e: NativeSyntheticEvent<TextInputKeyPressEventData>,
+    event: NativeSyntheticEvent<TextInputKeyPressEventData>,
     index: number,
   ) => {
-    if (e.nativeEvent.key === 'Backspace') {
+    if (event.nativeEvent.key === 'Backspace') {
       setValues((prevCodes) => {
         const newCodes = [...prevCodes];
+        if (index > 0 && !prevCodes[index]) {
+          const indexToFocus = index - 1;
+          newCodes[indexToFocus] = '';
+          opacities[indexToFocus].value = withTiming(0.3, { duration: 120 });
+        }
         newCodes[index] = '';
         return newCodes;
       });
+
       opacities[index].value = withTiming(0.3, { duration: 120 });
+
       if (index > 0) focusIndex(index - 1);
     }
   };
@@ -123,17 +140,18 @@ export function VerifyEmailStep({ onComplete, onError }: BasicStepProps) {
         borderColor,
       };
     });
-
+    const maxLength = OTP_CODE_LENGTH - index + value.length;
     return (
       <Animated.View key={index} style={[styles.box, animatedStyle]}>
         <BottomSheetTextInput
           ref={(el) => {
             inputsRef.current[index] = el;
           }}
-          style={styles.input}
+          selection={{ start: 1, end: 1 }}
+          style={[styles.input, loadingState.state && styles.inputDisabled]}
           keyboardType="number-pad"
           textContentType="oneTimeCode"
-          maxLength={6 - index}
+          maxLength={maxLength}
           value={value}
           onChangeText={(code) => handleChange(code, index)}
           onKeyPress={(event) => handleKeyPress(event, index)}
@@ -216,5 +234,9 @@ const styles = StyleSheet.create({
     height: '100%',
     textAlign: 'center',
     color: '#2A2A2A',
+  },
+  inputDisabled: {
+    backgroundColor: '#F0F0F0',
+    borderRadius: 12,
   },
 });
