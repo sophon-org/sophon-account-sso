@@ -1,4 +1,3 @@
-import { Button } from "../../components/button";
 import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import React, { useRef, useState, useCallback, useEffect } from "react";
 import { View, TextInput, StyleSheet, Text, Keyboard } from "react-native";
@@ -8,21 +7,21 @@ import Animated, {
   withTiming,
   interpolateColor,
 } from "react-native-reanimated";
-import { useAuthPortal, useNavigationParams } from "../hooks";
+import { Button } from "../../components/button";
+import { useNavigationParams } from "../hooks";
 import type { BasicStepProps, VerifyCodeParams } from "../types";
 import { useEmbeddedAuth } from "../../auth/useAuth";
 import { useFlowManager } from "../../hooks/use-flow-manager";
 
 const CODE_LENGTH = 6;
 
-export function VerifyCodeStep({ onComplete, onError }: BasicStepProps) {
+export function VerifyEmailStep({ onComplete, onError }: BasicStepProps) {
   const [loading, setLoading] = useState(false);
   const params = useNavigationParams<VerifyCodeParams>();
   const [codes, setValues] = useState(Array(CODE_LENGTH).fill(""));
   const inputsRef = useRef<TextInput[]>([]);
   const scales = useRef(codes.map(() => useSharedValue(1))).current;
   const opacities = useRef(codes.map(() => useSharedValue(0.3))).current;
-  const { navigate } = useAuthPortal();
 
   const { verifyEmailOTP, resendEmailOTP } = useEmbeddedAuth();
   const {
@@ -37,11 +36,12 @@ export function VerifyCodeStep({ onComplete, onError }: BasicStepProps) {
         const codeToVerify = code || codes.join("");
         const waitFor = waitForAuthentication();
         await verifyEmailOTP(codeToVerify);
+        console.log("otp verified");
         const ownerAddress = await waitFor;
-        console.log("ownerAddress", ownerAddress);
+        console.log("ui ownerAddress", ownerAddress);
         await authenticate(ownerAddress);
+        console.log("authenticated");
         await onComplete({ hide: false });
-        navigate("authorization", { replace: true });
       } catch (error) {
         console.log("USER CANCELED");
         console.error(error);

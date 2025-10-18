@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import type { AuthPortalStep, NavigateOptions, NavigationAuthPortalState } from "../types";
 
 const initialState: NavigationAuthPortalState = {
-  currentState: "signIn",
+  currentState: null,
   history: [],
   currentParams: null,
 };

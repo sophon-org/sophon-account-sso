@@ -7,7 +7,7 @@ import type { BasicStepProps, SignInParams } from "../types";
 import { validateEmail } from "../../utils/validations";
 import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import { Icon, Button } from "../../components";
-import { useAuthPortal, useNavigationParams } from "../hooks/useAuthPortal";
+import { useAuthPortal, useNavigationParams } from "../hooks/use-auth-portal";
 
 export const SignInStep = ({ onComplete, onError }: BasicStepProps) => {
   const params = useNavigationParams<SignInParams>();
@@ -39,23 +39,16 @@ export const SignInStep = ({ onComplete, onError }: BasicStepProps) => {
 
   const handleSignInWithEmail = useCallback(async () => {
     try {
-      setLoading(true);
       const waitFor = waitForAuthentication();
       await signInWithEmail(email);
-      navigate("verifyCode", { params: { email }, inheritParamsFrom: ["signIn"] });
-      // await verifyEmailOTP("474617"); // this should be separated, but for testing we have static otp for this user
-      // const ownerAddress = await waitFor;
-      // console.log("ownerAddress", ownerAddress);
-      // await authenticate(ownerAddress);
-      // await onComplete({ hide: false });
+      console.log("otp sent", email);
+      navigate("verifyEmail", { params: { email }, inheritParamsFrom: ["signIn"] });
     } catch (error) {
-      console.log("USER CANCELED");
+      console.log("USER CANCELED2");
       console.error(error);
       await onError(error as Error);
-    } finally {
-      setLoading(false);
     }
-  }, [signInWithEmail, onComplete, onError, email]);
+  }, [signInWithEmail, onComplete, onError]);
 
   const handleChangeText = useCallback((text: string) => {
     setEmail(text);

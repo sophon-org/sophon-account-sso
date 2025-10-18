@@ -3,11 +3,14 @@ import type { ViewStyle } from "react-native";
 
 export enum AuthPortalSteps {
   SignIn = "signIn",
-  VerifyCode = "verifyCode",
+  VerifyEmail = "verifyEmail",
   ConnectWallet = "connectWallet",
   Authorization = "authorization",
   Loading = "loading",
   Retry = "retry",
+  SignMessage = "signMessage",
+  Transaction = "transaction",
+  Consent = "consent",
 }
 export type AuthPortalStep = `${AuthPortalSteps}`;
 
@@ -37,7 +40,6 @@ export type AuthPortalContextProps = {
   navigate: (step: AuthPortalStep, options?: NavigateOptions) => void;
   goBack: () => void;
   setParams: (params: Record<string, any>) => void;
-  stepItemWidth: number;
   params: Record<string, any> | null;
 };
 

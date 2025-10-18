@@ -1,48 +1,42 @@
-import { safeParseTypedData } from '@sophon-labs/account-core';
-import { useCallback, useMemo } from 'react';
-import type { Address, TypedDataDefinition } from 'viem';
-import { eip712WalletActions } from 'viem/zksync';
-import { dynamicClient } from '../lib/dynamic';
-import { sendUIMessage } from '../messaging';
-import { getRefusedRPC } from '../messaging/utils';
-import { useSophonContext } from './use-sophon-context';
-import { useSophonToken } from './use-sophon-token';
+import { safeParseTypedData } from "@sophon-labs/account-core";
+import { useCallback, useMemo } from "react";
+import type { Address, TypedDataDefinition } from "viem";
+import { eip712WalletActions } from "viem/zksync";
+import { dynamicClient } from "../lib/dynamic";
+import { sendUIMessage } from "../messaging";
+import { getRefusedRPC } from "../messaging/utils";
+import { useSophonContext } from "./use-sophon-context";
+import { useSophonToken } from "./use-sophon-token";
 
 const getSmartAccount = async (owner: Address) => {
-  const response = await fetch(
-    `http://localhost:4001/contract/by-owner/${owner}`,
-  );
+  const response = await fetch(`http://localhost:4001/contract/by-owner/${owner}`);
   if (!response.ok) {
-    throw new Error(
-      `Failed to get indexed smart account by owner: ${response.text()}`,
-    );
+    throw new Error(`Failed to get indexed smart account by owner: ${response.text()}`);
   }
   return (await response.text()) as Address;
 };
 
 const deploySmartAccount = async (owner: Address) => {
   const response = await fetch(`http://localhost:4001/contract/${owner}`, {
-    method: 'POST',
+    method: "POST",
   });
   return response.json();
 };
 
 // biome-ignore lint/suspicious/noExplicitAny: to do
 function stableStringify(obj: any): string {
-  if (obj === null || typeof obj !== 'object') {
+  if (obj === null || typeof obj !== "object") {
     return JSON.stringify(obj);
   }
 
   if (Array.isArray(obj)) {
-    return `[${obj.map(stableStringify).join(',')}]`;
+    return `[${obj.map(stableStringify).join(",")}]`;
   }
 
   const keys = Object.keys(obj).sort();
-  const entries = keys.map(
-    (key) => `${JSON.stringify(key)}:${stableStringify(obj[key])}`,
-  );
+  const entries = keys.map((key) => `${JSON.stringify(key)}:${stableStringify(obj[key])}`);
 
-  return `{${entries.join(',')}}`;
+  return `{${entries.join(",")}}`;
 }
 
 const requestNonce = async (
@@ -52,9 +46,9 @@ const requestNonce = async (
   userId?: string,
 ) => {
   const response = await fetch(`http://localhost:4001/auth/nonce`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({ address, partnerId, fields, userId }),
   });
@@ -69,9 +63,9 @@ export const requestToken = async (
   ownerAddress?: Address, // for now, when we have the blockchain this is not required
 ) => {
   const response = await fetch(`http://localhost:4001/auth/verify`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       typedData,
@@ -84,7 +78,7 @@ export const requestToken = async (
 
   if (!response.ok) {
     console.error(await response.text());
-    throw new Error('Failed to verify authorization');
+    throw new Error("Failed to verify authorization");
   }
 
   const result = (await response.json()) as {
@@ -97,21 +91,18 @@ export const requestToken = async (
 };
 
 const requestConsent = async (accessToken: string, kinds: string[]) => {
-  const consentResponse = await fetch(
-    `http://localhost:4001/me/consent/giveMany`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
-      },
-      body: JSON.stringify({ kinds }),
+  const consentResponse = await fetch(`http://localhost:4001/me/consent/giveMany`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
     },
-  );
+    body: JSON.stringify({ kinds }),
+  });
 
   if (!consentResponse.ok) {
     const errorText = await consentResponse.text();
-    console.error('Consent save failed:', consentResponse.status, errorText);
+    console.error("Consent save failed:", consentResponse.status, errorText);
     throw new Error(`Failed to save consent: ${consentResponse.status}`);
   }
 
@@ -148,17 +139,17 @@ export const useFlowManager = () => {
       //   resolve(data);
       // });
 
-      dynamicClient.wallets.on('primaryChanged', (data) => {
-        console.log('primaryChanged', data);
+      dynamicClient.wallets.on("primaryChanged", (data) => {
+        console.log("primaryChanged", data);
 
         if (data?.address) {
           resolve(data.address as Address);
         } else {
-          reject(new Error('No primary wallet found'));
+          reject(new Error("No primary wallet found"));
         }
       });
 
-      dynamicClient.auth.on('authFailed', (data) => {
+      dynamicClient.auth.on("authFailed", (data) => {
         reject(data);
       });
     });
@@ -176,15 +167,15 @@ export const useFlowManager = () => {
       }
 
       if (!account) {
-        throw new Error('Failed to deploy smart account');
+        throw new Error("Failed to deploy smart account");
       }
 
-      console.log('setting connecting account', {
+      console.log("setting connecting account", {
         address: account,
         owner: owner,
       });
 
-      console.log('setting connecting account');
+      console.log("setting connecting account");
       setConnectingAccount({
         address: account,
         owner: owner,
@@ -196,25 +187,20 @@ export const useFlowManager = () => {
 
   const authorize = useCallback(async () => {
     if (!connectingAccount?.address) {
-      throw new Error('No account address found');
+      throw new Error("No account address found");
     }
 
     const embeddedUserId = dynamicClient.auth.authenticatedUser?.userId;
 
     // request nonce
-    const nonce = await requestNonce(
-      connectingAccount.address,
-      partnerId,
-      [],
-      embeddedUserId,
-    );
+    const nonce = await requestNonce(connectingAccount.address, partnerId, [], embeddedUserId);
 
     // request signature
     const messageFields = [
-      { name: 'content', type: 'string' },
-      { name: 'from', type: 'address' },
-      { name: 'nonce', type: 'string' },
-      { name: 'audience', type: 'string' },
+      { name: "content", type: "string" },
+      { name: "from", type: "address" },
+      { name: "nonce", type: "string" },
+      { name: "audience", type: "string" },
     ];
 
     const message = {
@@ -226,27 +212,25 @@ export const useFlowManager = () => {
 
     const signAuth = {
       domain: {
-        name: 'Sophon SSO',
-        version: '1',
+        name: "Sophon SSO",
+        version: "1",
         chainId: chain.id,
       },
       types: {
         Message: embeddedUserId
-          ? [...messageFields, { name: 'userId', type: 'string' }]
+          ? [...messageFields, { name: "userId", type: "string" }]
           : messageFields,
         EIP712Domain: [
-          { name: 'name', type: 'string' },
-          { name: 'version', type: 'string' },
-          { name: 'chainId', type: 'uint256' },
-          { name: 'salt', type: 'string' },
-          { name: 'verifyingContract', type: 'string' },
+          { name: "name", type: "string" },
+          { name: "version", type: "string" },
+          { name: "chainId", type: "uint256" },
+          { name: "salt", type: "string" },
+          { name: "verifyingContract", type: "string" },
         ],
       },
-      primaryType: 'Message',
+      primaryType: "Message",
       // address: account.address,
-      message: embeddedUserId
-        ? { ...message, userId: embeddedUserId }
-        : message,
+      message: embeddedUserId ? { ...message, userId: embeddedUserId } : message,
     };
 
     const safePayload = safeParseTypedData(signAuth);
@@ -271,7 +255,7 @@ export const useFlowManager = () => {
       nonce,
       connectingAccount.owner,
     );
-    console.log('tokens', tokens);
+    console.log("tokens", tokens);
 
     // save tokens
     setCurrentRequest(undefined);
@@ -294,19 +278,19 @@ export const useFlowManager = () => {
   const consent = useCallback(async () => {
     const accessToken = await getAccessToken();
     if (!accessToken) {
-      throw new Error('No access token found');
+      throw new Error("No access token found");
     }
     const consentResponse = await requestConsent(accessToken.value, [
-      'PERSONALIZATION_ADS',
-      'SHARING_DATA',
+      "PERSONALIZATION_ADS",
+      "SHARING_DATA",
     ]);
 
-    console.log('consentResponse', consentResponse);
+    console.log("consentResponse", consentResponse);
 
     // force refresh the token so we have the updated consent claims
     await getAccessToken(true);
 
-    sendUIMessage('incomingRpc', {
+    sendUIMessage("incomingRpc", {
       id: crypto.randomUUID(),
       requestId: currentRequest!.id,
       content: {
@@ -328,7 +312,7 @@ export const useFlowManager = () => {
     clearCurrentRequest,
     cancelCurrentRequest: () => {
       if (currentRequest?.id) {
-        sendUIMessage('incomingRpc', getRefusedRPC(currentRequest.id));
+        sendUIMessage("incomingRpc", getRefusedRPC(currentRequest.id));
         clearCurrentRequest();
       }
     },

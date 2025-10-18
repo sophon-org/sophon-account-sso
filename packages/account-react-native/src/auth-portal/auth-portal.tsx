@@ -5,7 +5,7 @@ import BottomSheet, {
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import { useCallback, useMemo, useRef } from "react";
-import { Keyboard, Platform, useWindowDimensions } from "react-native";
+import { Keyboard, Platform } from "react-native";
 import { useFlowManager } from "../hooks/use-flow-manager";
 import { useUIEventHandler } from "../messaging/ui";
 import type { AuthPortalProps, BasicStepProps } from "./types";
@@ -13,29 +13,20 @@ import { StepTransitionView } from "./components/step-transition";
 import { StepControllerComponent } from "./steps";
 import { FooterSheet } from "./components/footer-sheet";
 import { AuthPortalContext } from "./context/auth-sheet.context";
-import { useSophonAccount } from "../hooks";
 import { AuthPortalBottomSheetHandle } from "./components/handle-sheet";
-import { useNavigationAuthPortal } from "./hooks/useNavigationAuthPortal";
-import { useKeyboard } from "./hooks/useKeyboard";
+import { useNavigationAuthPortal } from "./hooks/use-navigation";
+import { useKeyboard } from "./hooks/use-keyboard";
+import { useCurrentStep } from "./hooks/use-current-step";
 
 export function AuthPortal(props: AuthPortalProps) {
-  const { isConnected, isConnecting } = useSophonAccount();
-
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const { width } = useWindowDimensions();
-  const stepItemWidth = useMemo(() => width - 48, [width]);
-  const { currentState, showBackButton, navigate, goBack, cleanup, setParams, currentParams } =
-    useNavigationAuthPortal();
   const { currentRequest, setCurrentRequest, cancelCurrentRequest, clearCurrentRequest } =
     useFlowManager();
 
   const { addKeyboardListener, removeKeyboardListener } = useKeyboard();
-
-  const currentStep = useMemo(() => {
-    if (isConnecting) return "loading";
-    if (isConnected) return "authorization";
-    return currentState;
-  }, [currentState, isConnected, isConnecting]);
+  const { currentState, showBackButton, navigate, goBack, cleanup, setParams, currentParams } =
+    useNavigationAuthPortal();
+  const currentStep = useCurrentStep(currentState);
 
   const isLoading = useMemo(() => {
     return currentStep === "loading";
@@ -141,7 +132,6 @@ export function AuthPortal(props: AuthPortalProps) {
         navigate,
         goBack,
         setParams,
-        stepItemWidth,
         params,
         ...props,
       }}
