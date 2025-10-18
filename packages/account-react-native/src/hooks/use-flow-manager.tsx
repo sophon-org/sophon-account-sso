@@ -245,6 +245,7 @@ export const useFlowManager = () => {
     const messageToSign = stableStringify(safePayload.message);
     const signature = await embeddedWalletClient.signMessage({
       message: messageToSign,
+      account: connectingAccount.owner,
     });
 
     // exchange tokens

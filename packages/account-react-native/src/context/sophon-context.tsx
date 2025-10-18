@@ -23,6 +23,7 @@ import type { SophonJWTToken } from "../types";
 import { AuthPortal } from "../auth-portal";
 
 export const createSophonWalletClient = (chain: Chain, transport: CustomTransport) =>
+  // @ts-ignore
   createWalletClient({
     chain,
     transport,

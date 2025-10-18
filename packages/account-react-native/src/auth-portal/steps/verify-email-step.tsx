@@ -11,14 +11,13 @@ import { Button } from "../../components/button";
 import { useNavigationParams } from "../hooks";
 import type { BasicStepProps, VerifyCodeParams } from "../types";
 import { useEmbeddedAuth } from "../../auth/useAuth";
-import { useFlowManager } from "../../hooks/use-flow-manager";
-
-const CODE_LENGTH = 6;
+import { useFlowManager, useBooleanState } from "../../hooks";
+import { OTP_CODE_LENGTH } from "../../constants/verify-otp";
 
 export function VerifyEmailStep({ onComplete, onError }: BasicStepProps) {
-  const [loading, setLoading] = useState(false);
+  const loadingState = useBooleanState(false);
   const params = useNavigationParams<VerifyCodeParams>();
-  const [codes, setValues] = useState(Array(CODE_LENGTH).fill(""));
+  const [codes, setValues] = useState(Array(OTP_CODE_LENGTH).fill(""));
   const inputsRef = useRef<TextInput[]>([]);
   const scales = useRef(codes.map(() => useSharedValue(1))).current;
   const opacities = useRef(codes.map(() => useSharedValue(0.3))).current;
@@ -31,7 +30,7 @@ export function VerifyEmailStep({ onComplete, onError }: BasicStepProps) {
   const handleVerifyEmailOTP = useCallback(
     async (code?: string) => {
       try {
-        setLoading(true);
+        loadingState.setOn();
         Keyboard.dismiss();
         const codeToVerify = code || codes.join("");
         const waitFor = waitForAuthentication();
@@ -47,7 +46,7 @@ export function VerifyEmailStep({ onComplete, onError }: BasicStepProps) {
         console.error(error);
         await onError(error as Error);
       } finally {
-        setLoading(false);
+        loadingState.setOff();
       }
     },
     [verifyEmailOTP, onComplete, codes, onError],
@@ -66,7 +65,7 @@ export function VerifyEmailStep({ onComplete, onError }: BasicStepProps) {
       let nextIndex = index;
 
       digits.forEach((d) => {
-        if (nextIndex < CODE_LENGTH) {
+        if (nextIndex < OTP_CODE_LENGTH) {
           newValues[nextIndex] = d;
           scales[nextIndex].value = withTiming(1.1, { duration: 100 }, () => {
             scales[nextIndex].value = withTiming(1, { duration: 100 });
@@ -76,7 +75,7 @@ export function VerifyEmailStep({ onComplete, onError }: BasicStepProps) {
         nextIndex++;
       });
 
-      if (nextIndex < CODE_LENGTH) {
+      if (nextIndex < OTP_CODE_LENGTH) {
         focusIndex(nextIndex);
       } else {
         handleVerifyEmailOTP(newValues.join(""));
@@ -123,7 +122,7 @@ export function VerifyEmailStep({ onComplete, onError }: BasicStepProps) {
           onKeyPress={(event) => handleKeyPress(event, index)}
           textAlign="center"
           returnKeyType="done"
-          editable={!loading}
+          editable={!loadingState.state}
         />
       </Animated.View>
     );
@@ -146,9 +145,9 @@ export function VerifyEmailStep({ onComplete, onError }: BasicStepProps) {
       <Button
         variant="primary"
         text="Verify"
-        loading={loading}
+        loading={loadingState.state}
         onPress={() => handleVerifyEmailOTP()}
-        disabled={codes.some((code) => code === "") || loading}
+        disabled={codes.some((code) => code === "")}
       />
       <Text style={[styles.text, { color: "#8D8D8D" }]}>Did not receive a code? Check spam or</Text>
       <Button variant="secondary" text="Resend link" onPress={resendEmailOTP} />

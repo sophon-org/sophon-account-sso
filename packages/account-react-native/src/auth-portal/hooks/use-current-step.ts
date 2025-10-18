@@ -6,9 +6,10 @@ import { useSophonContext } from "../../hooks/use-sophon-context";
 
 export function useCurrentStep(currentState: AuthPortalStep): AuthPortalStep {
   const { method } = useFlowManager();
-  const { isConnected } = useSophonAccount();
+  const { isConnected, account } = useSophonAccount();
   const { connectingAccount } = useSophonContext();
   return useMemo<AuthPortalStep>(() => {
+    if (currentState) return currentState;
     switch (method) {
       case "eth_requestAccounts":
       case "wallet_requestPermissions":
@@ -23,7 +24,8 @@ export function useCurrentStep(currentState: AuthPortalStep): AuthPortalStep {
       // case 'wallet_revokePermissions':
       // case 'wallet_disconnect':
       default:
-        return currentState;
+        if (!account) return "signIn";
+        return null;
     }
-  }, [currentState]);
+  }, [method, currentState]);
 }

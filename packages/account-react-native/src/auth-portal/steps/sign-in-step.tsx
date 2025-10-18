@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { type AuthProvider, useEmbeddedAuth } from "../../auth/useAuth";
 import { AVAILABLE_PROVIDERS } from "../../constants";
-import { useFlowManager } from "../../hooks/use-flow-manager";
+import { useFlowManager, useBooleanState } from "../../hooks";
 import type { BasicStepProps, SignInParams } from "../types";
 import { validateEmail } from "../../utils/validations";
 import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
@@ -11,7 +11,7 @@ import { useAuthPortal, useNavigationParams } from "../hooks/use-auth-portal";
 
 export const SignInStep = ({ onComplete, onError }: BasicStepProps) => {
   const params = useNavigationParams<SignInParams>();
-  const [loading, setLoading] = useState(false);
+  const loadingState = useBooleanState(false);
   const [email, setEmail] = useState(params?.email || "");
   const { navigate } = useAuthPortal();
   const { signInWithSocialProvider, signInWithEmail } = useEmbeddedAuth();
@@ -39,6 +39,7 @@ export const SignInStep = ({ onComplete, onError }: BasicStepProps) => {
 
   const handleSignInWithEmail = useCallback(async () => {
     try {
+      loadingState.setOn();
       const waitFor = waitForAuthentication();
       await signInWithEmail(email);
       console.log("otp sent", email);
@@ -47,8 +48,10 @@ export const SignInStep = ({ onComplete, onError }: BasicStepProps) => {
       console.log("USER CANCELED2");
       console.error(error);
       await onError(error as Error);
+    } finally {
+      loadingState.setOff();
     }
-  }, [signInWithEmail, onComplete, onError]);
+  }, [signInWithEmail, onComplete, onError, email]);
 
   const handleChangeText = useCallback((text: string) => {
     setEmail(text);
@@ -84,7 +87,7 @@ export const SignInStep = ({ onComplete, onError }: BasicStepProps) => {
           text="Sign in with Wallet"
           disabled={!isEmailValid}
           onPress={handleSignInWithEmail}
-          loading={loading}
+          loading={loadingState.state}
         />
       </View>
 
@@ -139,28 +142,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginBottom: 10,
   },
-  button: {
-    borderRadius: 12,
-    height: 48,
-    padding: 8,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  signInButton: {
-    backgroundColor: "#0A7CFF",
-  },
-  signInText: {
-    fontSize: 15,
-    lineHeight: 24,
-    color: "#ffffff",
-    fontWeight: "500",
-  },
-  signInButtonDisabled: {
-    backgroundColor: "#F0F0F0",
-  },
-  signInTextDisabled: {
-    color: "#D2D2D2",
-  },
   dividerContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -174,18 +155,5 @@ const styles = StyleSheet.create({
   dividerText: {
     marginHorizontal: 10,
     color: "#999",
-  },
-  walletButton: {
-    backgroundColor: "#EAF1FF",
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    marginVertical: 16,
-  },
-  walletText: {
-    fontSize: 15,
-    lineHeight: 24,
-    color: "#0066FF",
-    fontWeight: "600",
   },
 });
