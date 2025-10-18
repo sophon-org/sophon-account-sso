@@ -1,1 +1,1 @@
-export * from "./auth-portal";
+export * from './auth-portal';

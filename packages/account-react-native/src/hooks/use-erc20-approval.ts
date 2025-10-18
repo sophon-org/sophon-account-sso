@@ -1,29 +1,29 @@
-import { useCallback, useEffect, useState } from "react";
-import { createPublicClient, erc20Abi, http, maxUint256 } from "viem";
-import type { UseERC20ApprovalArgs } from "../types";
-import { useSophonContext } from "./use-sophon-context";
+import { useCallback, useEffect, useState } from 'react';
+import { createPublicClient, erc20Abi, http, maxUint256 } from 'viem';
+import type { UseERC20ApprovalArgs } from '../types';
+import { useSophonContext } from './use-sophon-context';
 
 // Explicit ERC20 approve ABI to avoid MetaMask confusion
 const ERC20_APPROVE_ABI = [
   {
     inputs: [
-      { name: "spender", type: "address" },
-      { name: "amount", type: "uint256" },
+      { name: 'spender', type: 'address' },
+      { name: 'amount', type: 'uint256' },
     ],
-    name: "approve",
-    outputs: [{ name: "", type: "bool" }],
-    stateMutability: "nonpayable",
-    type: "function",
+    name: 'approve',
+    outputs: [{ name: '', type: 'bool' }],
+    stateMutability: 'nonpayable',
+    type: 'function',
   },
   {
     inputs: [
-      { name: "owner", type: "address" },
-      { name: "spender", type: "address" },
+      { name: 'owner', type: 'address' },
+      { name: 'spender', type: 'address' },
     ],
-    name: "allowance",
-    outputs: [{ name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function",
+    name: 'allowance',
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
   },
 ] as const;
 
@@ -37,7 +37,9 @@ export function useERC20Approval(args: UseERC20ApprovalArgs) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [currentAllowance, setCurrentAllowance] = useState<bigint>(0n);
-  const [approvalTxHash, setApprovalTxHash] = useState<`0x${string}` | null>(null);
+  const [approvalTxHash, setApprovalTxHash] = useState<`0x${string}` | null>(
+    null,
+  );
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
 
@@ -60,14 +62,14 @@ export function useERC20Approval(args: UseERC20ApprovalArgs) {
       const allowance = await publicClient.readContract({
         address: tokenAddress as `0x${string}`,
         abi: erc20Abi,
-        functionName: "allowance",
+        functionName: 'allowance',
         args: [account.address, spender as `0x${string}`],
         authorizationList: undefined,
       });
 
       setCurrentAllowance(allowance as bigint);
     } catch (err) {
-      console.error("Failed to read allowance:", err);
+      console.error('Failed to read allowance:', err);
       setCurrentAllowance(0n);
     }
   }, [account?.address, tokenAddress, spender, publicClient]);
@@ -83,11 +85,11 @@ export function useERC20Approval(args: UseERC20ApprovalArgs) {
   // Approve function
   const approve = useCallback(async () => {
     if (!account?.address) {
-      throw new Error("Wallet not connected");
+      throw new Error('Wallet not connected');
     }
 
     if (!walletClient) {
-      throw new Error("Wallet client not available");
+      throw new Error('Wallet client not available');
     }
 
     try {
@@ -100,7 +102,7 @@ export function useERC20Approval(args: UseERC20ApprovalArgs) {
       const hash = await walletClient.writeContract({
         address: tokenAddress as `0x${string}`,
         abi: ERC20_APPROVE_ABI,
-        functionName: "approve",
+        functionName: 'approve',
         args: [spender as `0x${string}`, amount],
         account: account.address,
         chain,
@@ -114,15 +116,15 @@ export function useERC20Approval(args: UseERC20ApprovalArgs) {
         hash,
       });
 
-      if (receipt.status === "success") {
+      if (receipt.status === 'success') {
         setIsConfirmed(true);
         // Refresh allowance after successful approval
         await refetchAllowance();
       } else {
-        throw new Error("Transaction failed");
+        throw new Error('Transaction failed');
       }
     } catch (err) {
-      const error = err instanceof Error ? err : new Error("Approval failed");
+      const error = err instanceof Error ? err : new Error('Approval failed');
       setError(error);
       throw error;
     } finally {
@@ -156,7 +158,9 @@ export function useERC20Approval(args: UseERC20ApprovalArgs) {
 /**
  * Helper hook for infinite approval (max uint256)
  */
-export function useERC20InfiniteApproval(args: Omit<UseERC20ApprovalArgs, "amount">) {
+export function useERC20InfiniteApproval(
+  args: Omit<UseERC20ApprovalArgs, 'amount'>,
+) {
   const maxAmount = maxUint256;
 
   return useERC20Approval({

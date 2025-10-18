@@ -1,23 +1,31 @@
-import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
-import React, { useRef, useState, useCallback, useEffect } from "react";
-import { View, TextInput, StyleSheet, Text, Keyboard } from "react-native";
+import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  Keyboard,
+  type NativeSyntheticEvent,
+  StyleSheet,
+  Text,
+  type TextInput,
+  type TextInputKeyPressEventData,
+  View,
+} from 'react-native';
 import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
   interpolateColor,
-} from "react-native-reanimated";
-import { Button } from "../../components/button";
-import { useNavigationParams } from "../hooks";
-import type { BasicStepProps, VerifyCodeParams } from "../types";
-import { useEmbeddedAuth } from "../../auth/useAuth";
-import { useFlowManager, useBooleanState } from "../../hooks";
-import { OTP_CODE_LENGTH } from "../../constants/verify-otp";
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
+import { useEmbeddedAuth } from '../../auth/useAuth';
+import { Button } from '../../components/button';
+import { OTP_CODE_LENGTH } from '../../constants/verify-otp';
+import { useBooleanState, useFlowManager } from '../../hooks';
+import { useNavigationParams } from '../hooks';
+import type { BasicStepProps, VerifyCodeParams } from '../types';
 
 export function VerifyEmailStep({ onComplete, onError }: BasicStepProps) {
   const loadingState = useBooleanState(false);
   const params = useNavigationParams<VerifyCodeParams>();
-  const [codes, setValues] = useState(Array(OTP_CODE_LENGTH).fill(""));
+  const [codes, setValues] = useState(Array(OTP_CODE_LENGTH).fill(''));
   const inputsRef = useRef<TextInput[]>([]);
   const scales = useRef(codes.map(() => useSharedValue(1))).current;
   const opacities = useRef(codes.map(() => useSharedValue(0.3))).current;
@@ -32,17 +40,17 @@ export function VerifyEmailStep({ onComplete, onError }: BasicStepProps) {
       try {
         loadingState.setOn();
         Keyboard.dismiss();
-        const codeToVerify = code || codes.join("");
+        const codeToVerify = code || codes.join('');
         const waitFor = waitForAuthentication();
         await verifyEmailOTP(codeToVerify);
-        console.log("otp verified");
+        console.log('otp verified');
         const ownerAddress = await waitFor;
-        console.log("ui ownerAddress", ownerAddress);
+        console.log('ui ownerAddress', ownerAddress);
         await authenticate(ownerAddress);
-        console.log("authenticated");
+        console.log('authenticated');
         await onComplete({ hide: false });
       } catch (error) {
-        console.log("USER CANCELED");
+        console.log('USER CANCELED');
         console.error(error);
         await onError(error as Error);
       } finally {
@@ -57,7 +65,7 @@ export function VerifyEmailStep({ onComplete, onError }: BasicStepProps) {
   };
 
   const handleChange = useCallback((text: string, index: number) => {
-    const digits = text.replace(/[^0-9]/g, "").split("");
+    const digits = text.replace(/[^0-9]/g, '').split('');
 
     if (digits.length === 0) return;
     setValues((values) => {
@@ -78,17 +86,20 @@ export function VerifyEmailStep({ onComplete, onError }: BasicStepProps) {
       if (nextIndex < OTP_CODE_LENGTH) {
         focusIndex(nextIndex);
       } else {
-        handleVerifyEmailOTP(newValues.join(""));
+        handleVerifyEmailOTP(newValues.join(''));
       }
       return newValues;
     });
   }, []);
 
-  const handleKeyPress = (e: any, index: number) => {
-    if (e.nativeEvent.key === "Backspace") {
+  const handleKeyPress = (
+    e: NativeSyntheticEvent<TextInputKeyPressEventData>,
+    index: number,
+  ) => {
+    if (e.nativeEvent.key === 'Backspace') {
       setValues((prevCodes) => {
         const newCodes = [...prevCodes];
-        newCodes[index] = "";
+        newCodes[index] = '';
         return newCodes;
       });
       opacities[index].value = withTiming(0.3, { duration: 120 });
@@ -100,7 +111,11 @@ export function VerifyEmailStep({ onComplete, onError }: BasicStepProps) {
     const animatedStyle = useAnimatedStyle(() => {
       const scale = scales[index].value;
       const opacity = opacities[index].value;
-      const borderColor = interpolateColor(opacity, [0.3, 1], ["#D2D2D2", "#8D8D8D"]) as string;
+      const borderColor = interpolateColor(
+        opacity,
+        [0.3, 1],
+        ['#D2D2D2', '#8D8D8D'],
+      ) as string;
 
       return {
         transform: [{ scale }],
@@ -112,7 +127,9 @@ export function VerifyEmailStep({ onComplete, onError }: BasicStepProps) {
     return (
       <Animated.View key={index} style={[styles.box, animatedStyle]}>
         <BottomSheetTextInput
-          ref={(el) => (inputsRef.current[index] = el!)}
+          ref={(el) => {
+            inputsRef.current[index] = el;
+          }}
           style={styles.input}
           keyboardType="number-pad"
           textContentType="oneTimeCode"
@@ -147,9 +164,11 @@ export function VerifyEmailStep({ onComplete, onError }: BasicStepProps) {
         text="Verify"
         loading={loadingState.state}
         onPress={() => handleVerifyEmailOTP()}
-        disabled={codes.some((code) => code === "")}
+        disabled={codes.some((code) => code === '')}
       />
-      <Text style={[styles.text, { color: "#8D8D8D" }]}>Did not receive a code? Check spam or</Text>
+      <Text style={[styles.text, { color: '#8D8D8D' }]}>
+        Did not receive a code? Check spam or
+      </Text>
       <Button variant="secondary" text="Resend link" onPress={resendEmailOTP} />
     </View>
   );
@@ -162,24 +181,24 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     lineHeight: 24,
-    fontWeight: "700",
-    textAlign: "center",
-    color: "#2A2A2A",
+    fontWeight: '700',
+    textAlign: 'center',
+    color: '#2A2A2A',
   },
   text: {
     fontSize: 15,
     lineHeight: 24,
-    color: "#2A2A2A",
-    textAlign: "center",
+    color: '#2A2A2A',
+    textAlign: 'center',
   },
   header: {
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     gap: 8,
   },
   containerInput: {
-    flexDirection: "row",
-    justifyContent: "center",
+    flexDirection: 'row',
+    justifyContent: 'center',
     gap: 12,
   },
   box: {
@@ -187,15 +206,15 @@ const styles = StyleSheet.create({
     height: 48,
     borderWidth: 1,
     borderRadius: 12,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#fff",
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
   },
   input: {
     fontSize: 15,
-    width: "100%",
-    height: "100%",
-    textAlign: "center",
-    color: "#2A2A2A",
+    width: '100%',
+    height: '100%',
+    textAlign: 'center',
+    color: '#2A2A2A',
   },
 });

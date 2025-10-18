@@ -1,9 +1,12 @@
-import { useCallback } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useFlowManager } from "../../hooks/use-flow-manager";
-import type { BasicStepProps } from "../types";
+import { useCallback } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useFlowManager } from '../../hooks/use-flow-manager';
+import type { BasicStepProps } from '../types';
 
-export const ConsentStep: React.FC<BasicStepProps> = ({ onComplete, onError }) => {
+export const ConsentStep: React.FC<BasicStepProps> = ({
+  onComplete,
+  onError,
+}) => {
   const {
     actions: { consent },
   } = useFlowManager();
@@ -30,20 +33,20 @@ export const ConsentStep: React.FC<BasicStepProps> = ({ onComplete, onError }) =
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
     marginBottom: 16,
   },
   walletButton: {
-    backgroundColor: "#EAF1FF",
+    backgroundColor: '#EAF1FF',
     borderRadius: 8,
     height: 44,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
     gap: 8,
   },
   walletText: {
-    color: "#0066FF",
-    fontWeight: "600",
+    color: '#0066FF',
+    fontWeight: '600',
   },
 });

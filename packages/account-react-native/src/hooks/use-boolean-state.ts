@@ -1,4 +1,9 @@
-import { useCallback, useState, type Dispatch, type SetStateAction } from "react";
+import {
+  type Dispatch,
+  type SetStateAction,
+  useCallback,
+  useState,
+} from 'react';
 
 export interface BooleanStateHook {
   state: boolean;

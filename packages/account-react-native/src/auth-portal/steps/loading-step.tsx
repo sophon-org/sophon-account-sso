@@ -1,13 +1,13 @@
-import { useEffect } from "react";
-import { StyleSheet, Text, View, Image } from "react-native";
+import { useEffect } from 'react';
+import { Image, StyleSheet, Text, View } from 'react-native';
 import Animated, {
   Easing,
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
   withTiming,
-} from "react-native-reanimated";
-import Svg, { Circle } from "react-native-svg";
+} from 'react-native-reanimated';
+import Svg, { Circle } from 'react-native-svg';
 
 export const LoadingStep = () => {
   const rotation = useSharedValue(0);
@@ -45,7 +45,10 @@ export const LoadingStep = () => {
           </Svg>
         </Animated.View>
         <View style={styles.iconWrapper}>
-          <Image source={require("../../assets/images/mailbox.png")} style={styles.image} />
+          <Image
+            source={require('../../assets/images/mailbox.png')}
+            style={styles.image}
+          />
         </View>
       </View>
       <Text style={styles.text}>Authenticating...</Text>
@@ -55,29 +58,29 @@ export const LoadingStep = () => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
     minHeight: 200,
   },
   containerAnimated: {
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     marginBottom: 12,
   },
   svgWrapper: {
-    alignSelf: "center",
+    alignSelf: 'center',
   },
   iconWrapper: {
     width: 74,
     height: 71,
-    position: "absolute",
-    justifyContent: "center",
-    alignItems: "center",
-    alignSelf: "center",
+    position: 'absolute',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
   },
   text: {
     fontSize: 15,
     lineHeight: 24,
-    color: "#2A2A2A",
+    color: '#2A2A2A',
   },
   image: { width: 46, height: 46 },
 });

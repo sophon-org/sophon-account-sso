@@ -1,5 +1,10 @@
-import { useCallback, useMemo, useState } from "react";
-import type { AuthPortalStep, NavigateOptions, NavigationAuthPortalState } from "../types";
+import { useCallback, useMemo, useState } from 'react';
+import type {
+  AuthPortalStep,
+  NavigateOptions,
+  NavigateParams,
+  NavigationAuthPortalState,
+} from '../types';
 
 const initialState: NavigationAuthPortalState = {
   currentState: null,
@@ -8,7 +13,9 @@ const initialState: NavigationAuthPortalState = {
 };
 
 export function useNavigationAuthPortal() {
-  const [state, setConfig] = useState<NavigationAuthPortalState | null>(initialState);
+  const [state, setConfig] = useState<NavigationAuthPortalState | null>(
+    initialState,
+  );
   const { history, currentState, currentParams } = state ?? {
     history: [],
     currentState: null,
@@ -27,16 +34,21 @@ export function useNavigationAuthPortal() {
             },
           };
 
-        const stepExists = prev?.history.some((existingStep) => existingStep === step);
-        const addInheritParams = options?.inheritParamsFrom?.reduce((acc, inheritStep) => {
-          return {
-            ...acc,
-            [inheritStep]:
+        const stepExists = prev?.history.some(
+          (existingStep) => existingStep === step,
+        );
+        const addInheritParams = options?.inheritParamsFrom?.reduce(
+          (acc, inheritStep) => {
+            acc[inheritStep] =
               options?.params ||
-              prev?.currentParams?.[inheritStep as keyof typeof prev.currentParams] ||
-              null,
-          };
-        }, {});
+              prev?.currentParams?.[
+                inheritStep as keyof typeof prev.currentParams
+              ] ||
+              null;
+            return acc;
+          },
+          {},
+        );
         return stepExists
           ? prev
           : {
@@ -67,7 +79,9 @@ export function useNavigationAuthPortal() {
           ...prev.currentParams,
           [newCurrentState]: Object.assign(
             {},
-            prev.currentParams?.[newCurrentState as keyof typeof prev.currentParams] ?? {},
+            prev.currentParams?.[
+              newCurrentState as keyof typeof prev.currentParams
+            ] ?? {},
             options?.params ?? {},
           ),
         },
@@ -76,7 +90,7 @@ export function useNavigationAuthPortal() {
   }, []);
 
   const setParams = useCallback(
-    (params: Record<string, any>) =>
+    (params: NavigateParams) =>
       setConfig((prev) =>
         !prev || !prev.currentParams
           ? prev
@@ -85,8 +99,9 @@ export function useNavigationAuthPortal() {
               currentParams: {
                 ...prev.currentParams,
                 [prev.currentState]: {
-                  ...(prev.currentParams?.[prev.currentState as keyof typeof prev.currentParams] ??
-                    {}),
+                  ...(prev.currentParams?.[
+                    prev.currentState as keyof typeof prev.currentParams
+                  ] ?? {}),
                   ...params,
                 },
               },
@@ -120,4 +135,6 @@ export function useNavigationAuthPortal() {
   };
 }
 
-export type NavigationBottomSheetHook = ReturnType<typeof useNavigationAuthPortal>;
+export type NavigationBottomSheetHook = ReturnType<
+  typeof useNavigationAuthPortal
+>;

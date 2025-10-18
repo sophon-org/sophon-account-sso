@@ -1,5 +1,5 @@
-import React from "react";
-import { View, StyleSheet } from "react-native";
+import type React from 'react';
+import { StyleSheet, View } from 'react-native';
 import Animated, {
   Easing,
   FadeInLeft,
@@ -11,7 +11,7 @@ import Animated, {
   SlideInRight,
   SlideOutLeft,
   SlideOutRight,
-} from "react-native-reanimated";
+} from 'react-native-reanimated';
 
 type StepAnimatedViewProps = {
   isBackAvailable?: boolean;
@@ -27,13 +27,21 @@ export const StepTransitionView: React.FC<StepAnimatedViewProps> = ({
   children,
   keyProp,
 }) => {
-  const slideIn = (isBackAvailable ? SlideInLeft : SlideInRight).duration(DURATION).easing(EASE);
+  const slideIn = (isBackAvailable ? SlideInLeft : SlideInRight)
+    .duration(DURATION)
+    .easing(EASE);
 
-  const slideOut = (isBackAvailable ? SlideOutRight : SlideOutLeft).duration(DURATION).easing(EASE);
+  const slideOut = (isBackAvailable ? SlideOutRight : SlideOutLeft)
+    .duration(DURATION)
+    .easing(EASE);
 
-  const fadeIn = (isBackAvailable ? FadeInLeft : FadeInRight).duration(DURATION).easing(EASE);
+  const fadeIn = (isBackAvailable ? FadeInLeft : FadeInRight)
+    .duration(DURATION)
+    .easing(EASE);
 
-  const fadeOut = (isBackAvailable ? FadeOutRight : FadeOutLeft).duration(DURATION).easing(EASE);
+  const fadeOut = (isBackAvailable ? FadeOutRight : FadeOutLeft)
+    .duration(DURATION)
+    .easing(EASE);
 
   return (
     <View style={styles.container}>
@@ -55,7 +63,7 @@ export const StepTransitionView: React.FC<StepAnimatedViewProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   step: {
     flex: 1,

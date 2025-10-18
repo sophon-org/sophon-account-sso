@@ -1,16 +1,16 @@
-import type { DataScopes } from "@sophon-labs/account-core";
-import type { ViewStyle } from "react-native";
+import type { DataScopes } from '@sophon-labs/account-core';
+import type { ViewStyle } from 'react-native';
 
 export enum AuthPortalSteps {
-  SignIn = "signIn",
-  VerifyEmail = "verifyEmail",
-  ConnectWallet = "connectWallet",
-  Authorization = "authorization",
-  Loading = "loading",
-  Retry = "retry",
-  SignMessage = "signMessage",
-  Transaction = "transaction",
-  Consent = "consent",
+  SignIn = 'signIn',
+  VerifyEmail = 'verifyEmail',
+  ConnectWallet = 'connectWallet',
+  Authorization = 'authorization',
+  Loading = 'loading',
+  Retry = 'retry',
+  SignMessage = 'signMessage',
+  Transaction = 'transaction',
+  Consent = 'consent',
 }
 export type AuthPortalStep = `${AuthPortalSteps}`;
 
@@ -39,25 +39,28 @@ export type AuthPortalContextProps = {
   currentStep: AuthPortalStep | null;
   navigate: (step: AuthPortalStep, options?: NavigateOptions) => void;
   goBack: () => void;
-  setParams: (params: Record<string, any>) => void;
-  params: Record<string, any> | null;
+  setParams: (params: NavigateParams) => void;
+  params: NavigateParams | null;
 };
 
 export type AuthPortalContextType = AuthPortalContextProps & AuthPortalProps;
 
 /// Navigation
 
-export type NavigateOptions = {
-  replace?: boolean;
-  params?: Record<string, any>;
-  inheritParamsFrom?: AuthPortalStep[];
-};
 export type SignInParams = {
   email?: string;
 };
 
 export type VerifyCodeParams = {
   email: string;
+};
+
+export type NavigateParams = SignInParams | VerifyCodeParams;
+
+export type NavigateOptions = {
+  replace?: boolean;
+  params?: NavigateParams;
+  inheritParamsFrom?: AuthPortalStep[];
 };
 
 export type CurrentParams = {

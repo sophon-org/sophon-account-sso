@@ -1,11 +1,11 @@
-import { AuthPortalSteps, type BasicStepProps } from "../types";
-import { LoadingStep } from "./loading-step";
-import { SignInStep } from "./sign-in-step";
-import { VerifyEmailStep } from "./verify-email-step";
-import { AuthorizationStep } from "./authorization-step";
-import { TransactionStep } from "./transaction-step";
-import { ConsentStep } from "./consent-step";
-import { SignMessageStep } from "./sign-message";
+import { AuthPortalSteps, type BasicStepProps } from '../types';
+import { AuthorizationStep } from './authorization-step';
+import { ConsentStep } from './consent-step';
+import { LoadingStep } from './loading-step';
+import { SignInStep } from './sign-in-step';
+import { SignMessageStep } from './sign-message';
+import { TransactionStep } from './transaction-step';
+import { VerifyEmailStep } from './verify-email-step';
 
 export const StepControllerComponent = (props: BasicStepProps) => {
   switch (props?.step) {
