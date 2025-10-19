@@ -64,6 +64,7 @@ export function useERC20Approval(args: UseERC20ApprovalArgs) {
         abi: erc20Abi,
         functionName: 'allowance',
         args: [account.address, spender as `0x${string}`],
+        authorizationList: undefined,
       });
 
       setCurrentAllowance(allowance as bigint);

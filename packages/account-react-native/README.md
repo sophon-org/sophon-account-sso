@@ -8,7 +8,7 @@ Before you start, you need these libraries:
 
 ```sh
 # Expo packages
-npx expo install react-native-webview expo-standard-web-crypto expo-crypto expo-network expo-secure-store @react-native-async-storage/async-storage expo-linking expo-web-browser
+npx expo install expo-standard-web-crypto expo-crypto expo-network expo-secure-store expo-linking @react-native-async-storage/async-storage @gorhom/bottom-sheet react-native-gesture-handler react-native-reanimated react-native-svg
 ```
 
 After that, you are ready to install our SDK:
@@ -42,6 +42,29 @@ export default function YourComponent() {
   // ...
 }
 ```
+
+### Gesture Handler Setup
+
+This library relies on **`react-native-gesture-handler`** for handling bottom sheets, swipe gestures, and modal transitions.
+To ensure proper gesture functionality, your app must be wrapped in a [`GestureHandlerRootView`](https://docs.swmansion.com/react-native-gesture-handler/docs/fundamentals/installation#1-start-with-installing-the-package-from-npm).
+
+If your app is **not already wrapped**, update your root component as shown below:
+
+```tsx
+import React from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { SophonContextProvider } from "@sophon-labs/account-react-native";
+
+export default function RootLayout() {
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SophonContextProvider>{/* Your components*/}</SophonContextProvider>
+    </GestureHandlerRootView>
+  );
+}
+```
+
+If your app **already uses `GestureHandlerRootView`** (for example, when using `@gorhom/bottom-sheet` or React Navigation), you **do not need to wrap it again**.
 
 ## Contributing
 

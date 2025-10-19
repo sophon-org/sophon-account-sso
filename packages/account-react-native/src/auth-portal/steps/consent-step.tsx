@@ -1,34 +1,31 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { useFlowManager } from '../../../hooks/use-flow-manager';
+import { useFlowManager } from '../../hooks/use-flow-manager';
 import type { BasicStepProps } from '../types';
 
-export const AuthorizationStep = ({ onComplete, onError }: BasicStepProps) => {
-  const [isLoading, setIsLoading] = useState(false);
+export const ConsentStep: React.FC<BasicStepProps> = ({
+  onComplete,
+  onError,
+}) => {
   const {
-    actions: { authorize },
+    actions: { consent },
   } = useFlowManager();
-
-  const handleAuthorize = useCallback(async () => {
+  const handleConsentAll = useCallback(async () => {
     try {
-      setIsLoading(true);
-      await authorize();
+      await consent();
       await onComplete({ hide: true });
     } catch (error) {
       console.error(error);
       onError(error as Error);
-    } finally {
-      setIsLoading(false);
     }
-  }, [onComplete, onError, authorize]);
+  }, [onComplete, onError]);
 
   return (
     <View style={styles.container}>
-      <Text>Authorize?</Text>
-      <TouchableOpacity style={styles.button} onPress={handleAuthorize}>
-        <Text style={styles.buttonText}>
-          {isLoading ? 'Authorizing...' : 'Authorize'}
-        </Text>
+      <Text>Consent Placeholder.</Text>
+      <TouchableOpacity style={styles.walletButton} onPress={handleConsentAll}>
+        {/* <WalletIcon size={22} color="#000" /> */}
+        <Text style={styles.walletText}>Consent All</Text>
       </TouchableOpacity>
     </View>
   );
@@ -39,7 +36,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     marginBottom: 16,
   },
-  button: {
+  walletButton: {
     backgroundColor: '#EAF1FF',
     borderRadius: 8,
     height: 44,
@@ -48,7 +45,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
   },
-  buttonText: {
+  walletText: {
     color: '#0066FF',
     fontWeight: '600',
   },
