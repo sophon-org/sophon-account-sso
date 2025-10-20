@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { StyleSheet, View, type ViewProps } from 'react-native';
 
 export function Card({ style, ...restProps }: ViewProps) {

@@ -83,14 +83,15 @@ export const Text: React.FC<Props> = ({ size = 'normal', style, ...rest }) => {
   const inlineStyle = useMemo(() => {
     const s: TextStyle = {};
     TEXT_STYLE_KEYS.forEach((k) => {
-      const v = (rest as any)[k];
-      if (v !== undefined) (s as any)[k] = v;
+      const v = rest[k];
+      // biome-ignore lint/suspicious/noExplicitAny: review this type
+      if (v !== undefined) s[k] = v as any;
     });
     return s;
   }, [rest]);
 
   const passThroughProps = useMemo(() => {
-    const clone: Record<string, any> = { ...rest };
+    const clone: Record<string, unknown> = { ...rest };
     TEXT_STYLE_KEYS.forEach((k) => delete clone[k]);
     return clone as RNTextProps;
   }, [rest]);
