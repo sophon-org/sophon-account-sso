@@ -3,6 +3,7 @@ import { Keyboard, type KeyboardEventName } from 'react-native';
 
 export function useKeyboard() {
   const [keyboardOffSet, setKeyboardOffSet] = useState(0);
+
   useEffect(() => {
     const listenerShow = Keyboard.addListener('keyboardWillShow', (event) => {
       setKeyboardOffSet((event?.endCoordinates?.height || 0) * 0.5);
@@ -36,6 +37,7 @@ export function useKeyboard() {
 
   return {
     keyboardOffSet,
+    isKeyboardVisible: keyboardOffSet > 0,
     addKeyboardListener,
     removeKeyboardListener,
   };

@@ -16,9 +16,9 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { useEmbeddedAuth } from '../../auth/useAuth';
-import { Button } from '../../components/button';
 import { OTP_CODE_LENGTH } from '../../constants/verify-otp';
 import { useBooleanState, useFlowManager } from '../../hooks';
+import { Button } from '../../ui/button';
 import { useNavigationParams } from '../hooks';
 import type { BasicStepProps, VerifyCodeParams } from '../types';
 

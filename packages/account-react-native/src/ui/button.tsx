@@ -13,14 +13,18 @@ interface ButtonProps {
   disabled?: boolean;
   text?: string;
   loading?: boolean;
+  fullWidth?: boolean;
+  containerStyle?: TouchableOpacityProps['style'];
 }
 
 export function Button({
   variant = 'primary',
+  fullWidth,
   disabled,
   text,
   style,
   loading,
+  containerStyle,
   ...restProps
 }: ButtonProps & TouchableOpacityProps) {
   const theme = useMemo(() => {
@@ -44,18 +48,25 @@ export function Button({
   }, [disabled, variant]);
 
   return (
-    <TouchableOpacity
-      {...restProps}
-      style={[styles.button, theme.buttonStyle, style]}
-      disabled={disabled || loading}
-    >
-      <Text style={theme.textStyle}>{text}</Text>
-      {loading ? (
-        <View style={styles.loading}>
-          <ActivityIndicator size="small" color={theme.textStyle.color} />
-        </View>
-      ) : null}
-    </TouchableOpacity>
+    <View style={containerStyle}>
+      <TouchableOpacity
+        {...restProps}
+        style={[
+          styles.button,
+          theme.buttonStyle,
+          fullWidth && styles.fullWidth,
+          style,
+        ]}
+        disabled={disabled || loading}
+      >
+        <Text style={theme.textStyle}>{text}</Text>
+        {loading ? (
+          <View style={styles.loading}>
+            <ActivityIndicator size="small" color={theme.textStyle.color} />
+          </View>
+        ) : null}
+      </TouchableOpacity>
+    </View>
   );
 }
 
@@ -65,8 +76,12 @@ const styles = StyleSheet.create({
     top: 12,
     right: 24,
   },
+  fullWidth: {
+    width: '100%',
+  },
   button: {
     borderRadius: 12,
+    minWidth: 150,
     height: 48,
     padding: 8,
     justifyContent: 'center',

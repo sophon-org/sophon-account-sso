@@ -2,10 +2,10 @@ import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { useCallback, useMemo, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { type AuthProvider, useEmbeddedAuth } from '../../auth/useAuth';
-import { Button } from '../../components/button';
-import { Icon } from '../../components/icon';
 import { AVAILABLE_PROVIDERS } from '../../constants';
 import { useBooleanState, useFlowManager } from '../../hooks';
+import { Button } from '../../ui/button';
+import { Icon } from '../../ui/icon';
 import { validateEmail } from '../../utils/validations';
 import {
   useNavigationParams,

@@ -1,3 +1,4 @@
+import type { DataScopes } from '@sophon-labs/account-core';
 import type { ViewStyle } from 'react-native';
 
 export enum AuthPortalSteps {
@@ -27,6 +28,7 @@ export interface BasicStepProps {
   onComplete: (payload: { hide: boolean }) => Promise<void>;
   onCancel: () => Promise<void>;
   onError: (error: Error) => Promise<void>;
+  scopes?: DataScopes[];
 }
 
 export type AuthPortalContextType = AuthPortalContextProps;
