@@ -57,7 +57,7 @@ export type CurrentParams = {
 };
 
 export type NavigationAuthPortalState = {
-  currentState: AuthPortalStep;
+  currentState: AuthPortalStep | null;
   history: AuthPortalStep[];
   currentParams: CurrentParams | null;
 };

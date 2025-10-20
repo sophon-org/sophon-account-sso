@@ -22,50 +22,38 @@ import { eip712WalletActions } from "viem/zksync";
 import { deployModularAccount } from "zksync-sso/client";
 import { K1OwnerStateDto } from "../hyperindex/dto/k1-owner-state.dto";
 import { HyperindexService } from "../hyperindex/hyperindex.service";
-
-function normalizeAddress(s: string | undefined | null): `0x${string}` {
-	const v = (s ?? "").trim().toLowerCase();
-	if (!/^0x[0-9a-f]{40}$/.test(v)) {
-		throw new BadRequestException("Invalid address");
-	}
-	return v as `0x${string}`;
-}
+import { normalizeAndValidateAddress } from "src/utils/address";
 
 @ApiTags("Smart Contract")
 @Controller("contract")
-export class K1OwnerController {
+export class ContractController {
 	constructor(
 		private readonly hyperindex: HyperindexService,
-		@InjectPinoLogger(K1OwnerController.name)
+		@InjectPinoLogger(ContractController.name)
 		private readonly logger: PinoLogger,
 	) {}
 
 	@Get("by-owner/:owner")
 	@ApiParam({
 		name: "owner",
-		description: "EOA address (0x...) to fetch K1 owner state for",
+		description: "EOA address (0x...) signer of the contract",
 		example: "0x19e7e376e7c213b7e7e46cc70a5dd086daff2a",
 	})
 	@ApiOkResponse({ type: K1OwnerStateDto, isArray: true })
 	async byOwner(@Param("owner") owner: string) {
-		if (!owner || !isAddress(owner.toLowerCase())) {
-			throw new BadRequestException("Invalid address");
+		if (!owner?.trim() || !isAddress(owner.toLowerCase())) {
+			throw new BadRequestException(`Invalid address provided: ${owner}`);
 		}
 
-		const address = normalizeAddress(owner);
+		const address = normalizeAndValidateAddress(owner);
 		this.logger.info(
-			{ evt: "me.k1_owner_state.request", owner: address },
-			"k1-owner-state",
+			{ evt: "contract.by-owner.request", owner: address },
+			"contract-by-owner",
 		);
 		const rows = await this.hyperindex.getK1OwnerStateByOwner(address);
 		this.logger.info(
-			{ evt: "me.k1_owner_state.success", owner: address, total: rows.length },
-			"k1-owner-state",
-		);
-
-		console.log(
-			"🔥 🔥 🔥 🔥 🔥 existing accounts",
-			rows.flatMap((row) => row.accounts),
+			{ evt: "contract.by-owner.success", owner: address, total: rows.length },
+			"contract-by-owner",
 		);
 		return rows.map((row) => row.accounts[0])[0];
 	}
@@ -78,11 +66,11 @@ export class K1OwnerController {
 	})
 	@ApiOkResponse({ type: K1OwnerStateDto, isArray: true })
 	async deploy(@Param("owner") owner: string) {
-		if (!owner || !isAddress(owner.toLowerCase())) {
-			throw new BadRequestException("Invalid address");
+		if (!owner?.trim() || !isAddress(owner.toLowerCase())) {
+			throw new BadRequestException(`Invalid address provided: ${owner}`);
 		}
 
-		const ownerAddress = normalizeAddress(owner);
+		const ownerAddress = normalizeAndValidateAddress(owner);
 
 		// sanity check
 		this.logger.info(

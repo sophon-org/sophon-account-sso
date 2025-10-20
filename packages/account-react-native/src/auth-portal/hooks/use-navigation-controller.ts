@@ -28,8 +28,7 @@ export const useNavigationController = () => {
     currentState: null,
     currentParams: null,
   };
-
-  const currentStep = useMemo<AuthPortalStep>(() => {
+  const currentStep = useMemo<AuthPortalStep | null | undefined>(() => {
     switch (method) {
       case 'eth_requestAccounts':
       case 'wallet_requestPermissions': {
@@ -52,7 +51,8 @@ export const useNavigationController = () => {
 
   const navigate = useCallback(
     (step: AuthPortalStep, options?: NavigateOptions) =>
-      setConfig((prev) => {
+      // biome-ignore lint/suspicious/noExplicitAny: reevaluate the any, @cleo
+      setConfig((prev: any) => {
         if (options?.replace) {
           return {
             ...(prev || {}),
@@ -68,10 +68,12 @@ export const useNavigationController = () => {
         }
 
         const stepExists = prev?.history.some(
-          (existingStep) => existingStep === step,
+          // biome-ignore lint/suspicious/noExplicitAny: reevaluate the any, @cleo
+          (existingStep: any) => existingStep === step,
         );
         const addInheritParams = options?.inheritParamsFrom?.reduce(
-          (acc, inheritStep) => {
+          // biome-ignore lint/suspicious/noExplicitAny: reevaluate the any, @cleo
+          (acc: any, inheritStep) => {
             acc[inheritStep] =
               options?.params ||
               prev?.currentParams?.[
@@ -133,7 +135,7 @@ export const useNavigationController = () => {
               ...prev,
               currentParams: {
                 ...prev.currentParams,
-                [prev.currentState]: {
+                [prev.currentState!]: {
                   ...(prev.currentParams?.[
                     prev.currentState as keyof typeof prev.currentParams
                   ] ?? {}),
@@ -174,7 +176,7 @@ export const useNavigationController = () => {
         'consent',
         'loading',
         'authorization',
-      ].includes(currentStep),
+      ].includes(currentStep ?? ''),
     [history, currentStep],
   );
 

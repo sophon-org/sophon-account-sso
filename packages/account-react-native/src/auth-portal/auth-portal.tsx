@@ -156,7 +156,7 @@ export function AuthPortal(props: AuthPortalProps) {
   return (
     <AuthPortalContext.Provider
       value={{
-        currentStep,
+        currentStep: currentStep ?? null,
         params,
         navigate,
         goBack,
@@ -184,12 +184,12 @@ export function AuthPortal(props: AuthPortalProps) {
       >
         <BottomSheetView style={{ padding: 24 }}>
           <StepTransitionView
-            keyProp={currentStep}
+            keyProp={currentStep ?? null}
             isBackAvailable={!showBackButton}
             disableAnimation={disableAnimation.state}
           >
             <StepControllerComponent
-              currentStep={currentStep}
+              currentStep={currentStep ?? null}
               onComplete={onComplete}
               onCancel={onCancel}
               onError={onError}
