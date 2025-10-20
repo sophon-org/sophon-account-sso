@@ -1,5 +1,11 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsBoolean, IsObject, IsOptional, IsString } from "class-validator";
+import {
+	IsBoolean,
+	IsEthereumAddress,
+	IsObject,
+	IsOptional,
+	IsString,
+} from "class-validator";
 import type { Address, Hash, TypedDataDefinition } from "viem";
 
 export class VerifySiweDto {
@@ -10,6 +16,11 @@ export class VerifySiweDto {
 	})
 	@IsObject()
 	typedData: TypedDataDefinition;
+
+	@ApiProperty({ required: false })
+	@IsEthereumAddress()
+	@IsOptional()
+	ownerAddress?: Address;
 
 	@ApiProperty()
 	@IsString()

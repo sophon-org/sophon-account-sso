@@ -10,3 +10,6 @@ export * from './siws';
 export * from './sns/index';
 export * from './types';
 export * from './utils';
+export * from './smart-contract';
+export * from './chain-helpers';
+export * from './viem';

@@ -3,10 +3,10 @@ import { AuthModule } from "src/auth/auth.module";
 import { ConsentsModule } from "src/consents/consents.module";
 import { HyperindexModule } from "src/hyperindex/hyperindex.module";
 import { ConsentController } from "./consent.controller";
-import { K1OwnerController } from "./k1-owner.controller";
+import { ContractController } from "./contract.controller";
 
 @Module({
 	imports: [ConsentsModule, HyperindexModule, AuthModule],
-	controllers: [ConsentController, K1OwnerController],
+	controllers: [ConsentController, ContractController],
 })
 export class MeModule {}
