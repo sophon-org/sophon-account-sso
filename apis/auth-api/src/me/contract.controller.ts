@@ -102,7 +102,8 @@ export class K1OwnerController {
 
 		// there are cases when the index don't have the information yet, so we need to verify contract salt
 		const deployedContract = await getDeployedSmartContractAddress(
-			network,
+			// biome-ignore lint/suspicious/noExplicitAny: remove after generating a new version
+			network as any,
 			ownerAddress,
 			ownerAddress,
 		);
