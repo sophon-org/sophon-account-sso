@@ -23,6 +23,7 @@ import { eip712WalletActions } from "viem/zksync";
 import { deployModularAccount } from "zksync-sso/client";
 import { K1OwnerStateDto } from "../hyperindex/dto/k1-owner-state.dto";
 import { HyperindexService } from "../hyperindex/hyperindex.service";
+import { SecretsService } from "src/aws/secrets.service";
 
 @ApiTags("Smart Contract")
 @Controller("contract")
@@ -31,6 +32,7 @@ export class ContractController {
 		private readonly hyperindex: HyperindexService,
 		@InjectPinoLogger(ContractController.name)
 		private readonly logger: PinoLogger,
+		private readonly secretsService: SecretsService,
 	) {}
 
 	@Get("by-owner/:owner")
@@ -103,9 +105,8 @@ export class ContractController {
 			};
 		}
 
-		const deployerAccount = privateKeyToAccount(
-			process.env.DEPLOYER_PRIVATE_KEY as `0x${string}`,
-		);
+		const secrets = await this.secretsService.loadAWSSecrets();
+		const deployerAccount = privateKeyToAccount(secrets.deployer.privateKey);
 
 		// deploy the contract
 		const deployerClient: WalletClient<Transport, Chain, Account> =

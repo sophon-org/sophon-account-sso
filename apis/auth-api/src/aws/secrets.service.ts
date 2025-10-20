@@ -8,12 +8,14 @@ import {
 	InternalServerErrorException,
 } from "@nestjs/common";
 import { AwsConfig, awsConfig } from "../config/aws.config";
+import { Hex } from "viem";
 
 export type JwtSecrets = {
 	access: { kid: string; privateKeyPem: string; publicKeyPem: string };
 	refresh: { kid: string; privateKeyPem: string; publicKeyPem: string };
 	databaseUrl?: string;
 	dynamicToken?: string;
+	deployer: { privateKey: Hex };
 };
 
 @Injectable()
@@ -31,7 +33,7 @@ export class SecretsService {
 		return v?.includes("\\n") ? v.replace(/\\n/g, "\n") : v;
 	}
 
-	async loadJwtSecrets(): Promise<JwtSecrets> {
+	async loadAWSSecrets(): Promise<JwtSecrets> {
 		if (this.cache && Date.now() - this.cache.ts < this.cfg.secretsCacheTtlMs) {
 			return this.cache.value;
 		}
@@ -66,6 +68,9 @@ export class SecretsService {
 			},
 			databaseUrl: s.DATABASE_URL,
 			dynamicToken: s.DYNAMICAUTH_API_TOKEN,
+			deployer: {
+				privateKey: this.normalize(s.DEPLOYER_PRIVATE_KEY) as Hex,
+			},
 		};
 
 		this.cache = { value: out, ts: Date.now() };
