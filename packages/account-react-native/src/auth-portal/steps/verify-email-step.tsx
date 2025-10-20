@@ -1,5 +1,5 @@
-import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Keyboard,
   type NativeSyntheticEvent,
@@ -8,24 +8,24 @@ import {
   type TextInput,
   type TextInputKeyPressEventData,
   View,
-} from 'react-native';
+} from "react-native";
 import Animated, {
   interpolateColor,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
-} from 'react-native-reanimated';
-import { useEmbeddedAuth } from '../../auth/useAuth';
-import { Button } from '../../components/button';
-import { OTP_CODE_LENGTH } from '../../constants/verify-otp';
-import { useBooleanState, useFlowManager } from '../../hooks';
-import { useNavigationParams } from '../hooks';
-import type { BasicStepProps, VerifyCodeParams } from '../types';
+} from "react-native-reanimated";
+import { useEmbeddedAuth } from "../../auth/useAuth";
+import { Button } from "../../ui/button";
+import { OTP_CODE_LENGTH } from "../../constants/verify-otp";
+import { useBooleanState, useFlowManager } from "../../hooks";
+import { useNavigationParams } from "../hooks";
+import type { BasicStepProps, VerifyCodeParams } from "../types";
 
 export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
   const loadingState = useBooleanState(false);
   const params = useNavigationParams<VerifyCodeParams>();
-  const [codes, setValues] = useState(Array(OTP_CODE_LENGTH).fill(''));
+  const [codes, setValues] = useState(Array(OTP_CODE_LENGTH).fill(""));
   const inputsRef = useRef<TextInput[]>([]);
   const scales = useRef(codes.map(() => useSharedValue(1))).current;
   const opacities = useRef(codes.map(() => useSharedValue(0.3))).current;
@@ -40,14 +40,14 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
       try {
         loadingState.setOn();
         Keyboard.dismiss();
-        const codeToVerify = code || codes.join('');
+        const codeToVerify = code || codes.join("");
         const waitFor = waitForAuthentication();
         await verifyEmailOTP(codeToVerify);
-        console.log('otp verified');
+        console.log("otp verified");
         const ownerAddress = await waitFor;
         onAuthenticate(ownerAddress);
       } catch (error) {
-        console.log('USER CANCELED');
+        console.log("USER CANCELED");
         console.error(error);
         await onError(error as Error);
         loadingState.setOff();
@@ -66,7 +66,7 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
   }, []);
 
   const handleChange = useCallback((text: string, index: number) => {
-    let digits = text.replace(/[^0-9]/g, '').split('');
+    let digits = text.replace(/[^0-9]/g, "").split("");
     if (digits.length === 0) return;
     setValues((values) => {
       const newValues = [...values];
@@ -102,15 +102,15 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
     event: NativeSyntheticEvent<TextInputKeyPressEventData>,
     index: number,
   ) => {
-    if (event.nativeEvent.key === 'Backspace') {
+    if (event.nativeEvent.key === "Backspace") {
       setValues((prevCodes) => {
         const newCodes = [...prevCodes];
         if (index > 0 && !prevCodes[index]) {
           const indexToFocus = index - 1;
-          newCodes[indexToFocus] = '';
+          newCodes[indexToFocus] = "";
           opacities[indexToFocus].value = withTiming(0.3, { duration: 120 });
         }
-        newCodes[index] = '';
+        newCodes[index] = "";
         return newCodes;
       });
 
@@ -124,11 +124,7 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
     const animatedStyle = useAnimatedStyle(() => {
       const scale = scales[index].value;
       const opacity = opacities[index].value;
-      const borderColor = interpolateColor(
-        opacity,
-        [0.3, 1],
-        ['#D2D2D2', '#8D8D8D'],
-      ) as string;
+      const borderColor = interpolateColor(opacity, [0.3, 1], ["#D2D2D2", "#8D8D8D"]) as string;
 
       return {
         transform: [{ scale }],
@@ -178,11 +174,9 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
         text="Verify"
         loading={loadingState.state}
         onPress={() => handleVerifyEmailOTP()}
-        disabled={codes.some((code) => code === '')}
+        disabled={codes.some((code) => code === "")}
       />
-      <Text style={[styles.text, { color: '#8D8D8D' }]}>
-        Did not receive a code? Check spam or
-      </Text>
+      <Text style={[styles.text, { color: "#8D8D8D" }]}>Did not receive a code? Check spam or</Text>
       <Button variant="secondary" text="Resend link" onPress={resendEmailOTP} />
     </View>
   );
@@ -195,24 +189,24 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     lineHeight: 24,
-    fontWeight: '700',
-    textAlign: 'center',
-    color: '#2A2A2A',
+    fontWeight: "700",
+    textAlign: "center",
+    color: "#2A2A2A",
   },
   text: {
     fontSize: 15,
     lineHeight: 24,
-    color: '#2A2A2A',
-    textAlign: 'center',
+    color: "#2A2A2A",
+    textAlign: "center",
   },
   header: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     gap: 8,
   },
   containerInput: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
     gap: 12,
   },
   box: {
@@ -220,19 +214,19 @@ const styles = StyleSheet.create({
     height: 48,
     borderWidth: 1,
     borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff",
   },
   input: {
     fontSize: 15,
-    width: '100%',
-    height: '100%',
-    textAlign: 'center',
-    color: '#2A2A2A',
+    width: "100%",
+    height: "100%",
+    textAlign: "center",
+    color: "#2A2A2A",
   },
   inputDisabled: {
-    backgroundColor: '#F0F0F0',
+    backgroundColor: "#F0F0F0",
     borderRadius: 12,
   },
 });
