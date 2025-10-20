@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo } from 'react';
 import {
   ActivityIndicator,
   StyleSheet,
@@ -6,19 +6,19 @@ import {
   TouchableOpacity,
   type TouchableOpacityProps,
   View,
-} from "react-native";
+} from 'react-native';
 
 interface ButtonProps {
-  variant?: "primary" | "secondary";
+  variant?: 'primary' | 'secondary';
   disabled?: boolean;
   text?: string;
   loading?: boolean;
   fullWidth?: boolean;
-  containerStyle?: TouchableOpacityProps["style"];
+  containerStyle?: TouchableOpacityProps['style'];
 }
 
 export function Button({
-  variant = "primary",
+  variant = 'primary',
   fullWidth,
   disabled,
   text,
@@ -34,7 +34,7 @@ export function Button({
         textStyle: styles.disabledText,
       };
     }
-    if (variant === "secondary") {
+    if (variant === 'secondary') {
       return {
         buttonStyle: styles.secondaryButton,
         textStyle: styles.secondaryText,
@@ -51,7 +51,12 @@ export function Button({
     <View style={containerStyle}>
       <TouchableOpacity
         {...restProps}
-        style={[styles.button, theme.buttonStyle, fullWidth && styles.fullWidth, style]}
+        style={[
+          styles.button,
+          theme.buttonStyle,
+          fullWidth && styles.fullWidth,
+          style,
+        ]}
         disabled={disabled || loading}
       >
         <Text style={theme.textStyle}>{text}</Text>
@@ -67,47 +72,47 @@ export function Button({
 
 const styles = StyleSheet.create({
   loading: {
-    position: "absolute",
+    position: 'absolute',
     top: 12,
     right: 24,
   },
   fullWidth: {
-    width: "100%",
+    width: '100%',
   },
   button: {
     borderRadius: 12,
     minWidth: 150,
     height: 48,
     padding: 8,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   disabledButton: {
-    backgroundColor: "#F0F0F0",
+    backgroundColor: '#F0F0F0',
   },
   disabledText: {
-    color: "#D2D2D2",
+    color: '#D2D2D2',
   },
   primaryButton: {
-    backgroundColor: "#0A7CFF",
+    backgroundColor: '#0A7CFF',
   },
   primaryText: {
     fontSize: 15,
     lineHeight: 24,
-    color: "#ffffff",
-    fontWeight: "500",
+    color: '#ffffff',
+    fontWeight: '500',
   },
   secondaryButton: {
-    backgroundColor: "#EAF1FF",
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: '#EAF1FF',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
     marginVertical: 16,
   },
   secondaryText: {
     fontSize: 15,
     lineHeight: 24,
-    color: "#0066FF",
-    fontWeight: "600",
+    color: '#0066FF',
+    fontWeight: '600',
   },
 });

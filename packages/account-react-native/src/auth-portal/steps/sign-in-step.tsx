@@ -1,20 +1,27 @@
-import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
-import { useCallback, useMemo, useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { type AuthProvider, useEmbeddedAuth } from "../../auth/useAuth";
-import { Button } from "../../ui/button";
-import { Icon } from "../../ui/icon";
-import { AVAILABLE_PROVIDERS } from "../../constants";
-import { useBooleanState, useFlowManager } from "../../hooks";
-import { validateEmail } from "../../utils/validations";
-import { useNavigationParams, useNavigationPortal } from "../hooks/use-auth-portal";
-import type { BasicStepProps, SignInParams } from "../types";
+import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
+import { useCallback, useMemo, useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { type AuthProvider, useEmbeddedAuth } from '../../auth/useAuth';
+import { AVAILABLE_PROVIDERS } from '../../constants';
+import { useBooleanState, useFlowManager } from '../../hooks';
+import { Button } from '../../ui/button';
+import { Icon } from '../../ui/icon';
+import { validateEmail } from '../../utils/validations';
+import {
+  useNavigationParams,
+  useNavigationPortal,
+} from '../hooks/use-auth-portal';
+import type { BasicStepProps, SignInParams } from '../types';
 
-export const SignInStep = ({ onComplete, onError, onAuthenticate }: BasicStepProps) => {
+export const SignInStep = ({
+  onComplete,
+  onError,
+  onAuthenticate,
+}: BasicStepProps) => {
   const params = useNavigationParams<SignInParams>();
   const { navigate } = useNavigationPortal();
   const loadingState = useBooleanState(false);
-  const [email, setEmail] = useState(params?.email || "");
+  const [email, setEmail] = useState(params?.email || '');
   const { signInWithSocialProvider, signInWithEmail } = useEmbeddedAuth();
   const {
     actions: { waitForAuthentication },
@@ -28,7 +35,7 @@ export const SignInStep = ({ onComplete, onError, onAuthenticate }: BasicStepPro
         const ownerAddress = await waitFor;
         onAuthenticate(ownerAddress);
       } catch (error) {
-        console.log("USER CANCELED");
+        console.log('USER CANCELED');
         console.error(error);
         await onError(error as Error);
       }
@@ -40,13 +47,13 @@ export const SignInStep = ({ onComplete, onError, onAuthenticate }: BasicStepPro
     try {
       loadingState.setOn();
       await signInWithEmail(email);
-      console.log("otp sent", email);
-      navigate("verifyEmail", {
+      console.log('otp sent', email);
+      navigate('verifyEmail', {
         params: { email },
-        inheritParamsFrom: ["signIn"],
+        inheritParamsFrom: ['signIn'],
       });
     } catch (error) {
-      console.log("USER CANCELED2");
+      console.log('USER CANCELED2');
       console.error(error);
       await onError(error as Error);
     } finally {
@@ -98,38 +105,42 @@ export const SignInStep = ({ onComplete, onError, onAuthenticate }: BasicStepPro
         <View style={styles.divider} />
       </View>
 
-      <Button variant="secondary" text="Sign in with Wallet" onPress={() => navigate("loading")} />
+      <Button
+        variant="secondary"
+        text="Sign in with Wallet"
+        onPress={() => navigate('loading')}
+      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 20,
   },
   title: {
     fontSize: 18,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   socialRow: {
-    flexDirection: "row",
-    justifyContent: "space-evenly",
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
     marginBottom: 16,
   },
   socialButton: {
     width: 56,
     height: 48,
     borderRadius: 16,
-    backgroundColor: "#F6F7F9",
-    justifyContent: "center",
-    alignItems: "center",
-    borderColor: "#EBEBEB",
+    backgroundColor: '#F6F7F9',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: '#EBEBEB',
     borderWidth: 1,
   },
   emailSection: {
@@ -138,23 +149,23 @@ const styles = StyleSheet.create({
   input: {
     height: 44,
     borderWidth: 1,
-    borderColor: "#EEE",
+    borderColor: '#EEE',
     borderRadius: 8,
     paddingHorizontal: 10,
     marginBottom: 10,
   },
   dividerContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginVertical: 8,
   },
   divider: {
     flex: 1,
     height: 1,
-    backgroundColor: "#EEE",
+    backgroundColor: '#EEE',
   },
   dividerText: {
     marginHorizontal: 10,
-    color: "#999",
+    color: '#999',
   },
 });

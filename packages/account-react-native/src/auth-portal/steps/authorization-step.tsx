@@ -1,35 +1,80 @@
-import { useCallback, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { useFlowManager } from '../../hooks/use-flow-manager';
+import { useCallback } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { useBooleanState, useFlowManager } from '../../hooks';
+import { Button, Card, CheckBox, Container, Text } from '../../ui';
+import { sentenceCase } from '../../utils/string-utils';
 import type { BasicStepProps } from '../types';
 
-export const AuthorizationStep = ({ onComplete, onError }: BasicStepProps) => {
-  const [isLoading, setIsLoading] = useState(false);
+export const AuthorizationStep = ({
+  onComplete,
+  onError,
+  onCancel,
+  scopes,
+}: BasicStepProps) => {
+  const isLoadingState = useBooleanState(false);
   const {
     actions: { authorize },
   } = useFlowManager();
 
   const handleAuthorize = useCallback(async () => {
     try {
-      setIsLoading(true);
+      isLoadingState.setOn();
       await authorize();
       await onComplete({ hide: true });
     } catch (error) {
       console.error(error);
       onError(error as Error);
     } finally {
-      setIsLoading(false);
+      isLoadingState.setOff();
     }
   }, [onComplete, onError, authorize]);
 
   return (
     <View style={styles.container}>
-      <Text>Authorize?</Text>
-      <TouchableOpacity style={styles.button} onPress={handleAuthorize}>
-        <Text style={styles.buttonText}>
-          {isLoading ? 'Authorizing...' : 'Authorize'}
+      <Container style={styles.content}>
+        <Text size="large" textAlign="center">
+          Connect to SyncSwap
         </Text>
-      </TouchableOpacity>
+        <Text textAlign="center">https://syncswap.xyz/</Text>
+      </Container>
+      <Card style={styles.contentCard}>
+        <View style={styles.cardSection}>
+          <Text fontWeight="bold">It can</Text>
+          <CheckBox
+            checked
+            label="See your address / identity, balance and activity"
+          />
+          <CheckBox checked label="Ask for transactions to be approved" />
+          {scopes?.map((scope) => (
+            <CheckBox
+              key={scope}
+              label={`See your ${sentenceCase(scope)} account`}
+            />
+          ))}
+        </View>
+        <View style={styles.cardSection}>
+          <Text fontWeight="bold">It can’t</Text>
+          <CheckBox
+            blocked={true}
+            label="Perform actions or transfer funds on your behalf"
+          />
+        </View>
+      </Card>
+      <View style={styles.buttons}>
+        <Button
+          containerStyle={styles.buttonWrapper}
+          text="Cancel"
+          variant="secondary"
+          onPress={onCancel}
+          disabled={isLoadingState.state}
+        />
+        <Button
+          containerStyle={styles.buttonWrapper}
+          text="Connect"
+          onPress={handleAuthorize}
+          loading={isLoadingState.state}
+        />
+      </View>
     </View>
   );
 };
@@ -37,19 +82,27 @@ export const AuthorizationStep = ({ onComplete, onError }: BasicStepProps) => {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
-    marginBottom: 16,
+    gap: 16,
   },
-  button: {
-    backgroundColor: '#EAF1FF',
-    borderRadius: 8,
-    height: 44,
+  buttonWrapper: {
+    flex: 1,
+  },
+  buttons: {
+    width: '100%',
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
     gap: 8,
+    marginBottom: 16,
   },
-  buttonText: {
-    color: '#0066FF',
-    fontWeight: '600',
+  content: {
+    gap: 8,
+    marginBottom: 16,
+  },
+  contentCard: {
+    gap: 24,
+  },
+  cardSection: {
+    gap: 12,
   },
 });

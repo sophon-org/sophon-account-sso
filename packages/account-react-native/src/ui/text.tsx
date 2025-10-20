@@ -1,43 +1,44 @@
-import React, { useMemo } from "react";
+import type React from 'react';
+import { useMemo } from 'react';
 import {
   Text as RNText,
   type TextProps as RNTextProps,
-  type TextStyle,
   StyleSheet,
-} from "react-native";
+  type TextStyle,
+} from 'react-native';
 
-type TextVariant = "small" | "normal" | "large";
+type TextVariant = 'small' | 'normal' | 'large';
 
 type TextStylePropKeys =
-  | "color"
-  | "fontFamily"
-  | "fontSize"
-  | "fontStyle"
-  | "fontWeight"
-  | "letterSpacing"
-  | "lineHeight"
-  | "textAlign"
-  | "textDecorationLine"
-  | "textDecorationStyle"
-  | "textDecorationColor"
-  | "textTransform"
-  | "includeFontPadding"
-  | "textAlignVertical"
-  | "fontVariant"
-  | "textShadowColor"
-  | "textShadowOffset"
-  | "textShadowRadius"
-  | "writingDirection"
-  | "margin"
-  | "marginTop"
-  | "marginRight"
-  | "marginBottom"
-  | "marginLeft"
-  | "padding"
-  | "paddingTop"
-  | "paddingRight"
-  | "paddingBottom"
-  | "paddingLeft";
+  | 'color'
+  | 'fontFamily'
+  | 'fontSize'
+  | 'fontStyle'
+  | 'fontWeight'
+  | 'letterSpacing'
+  | 'lineHeight'
+  | 'textAlign'
+  | 'textDecorationLine'
+  | 'textDecorationStyle'
+  | 'textDecorationColor'
+  | 'textTransform'
+  | 'includeFontPadding'
+  | 'textAlignVertical'
+  | 'fontVariant'
+  | 'textShadowColor'
+  | 'textShadowOffset'
+  | 'textShadowRadius'
+  | 'writingDirection'
+  | 'margin'
+  | 'marginTop'
+  | 'marginRight'
+  | 'marginBottom'
+  | 'marginLeft'
+  | 'padding'
+  | 'paddingTop'
+  | 'paddingRight'
+  | 'paddingBottom'
+  | 'paddingLeft';
 
 type InlineTextStyleProps = Partial<Pick<TextStyle, TextStylePropKeys>>;
 
@@ -47,38 +48,38 @@ type Props = RNTextProps &
   };
 
 const TEXT_STYLE_KEYS: ReadonlyArray<TextStylePropKeys> = [
-  "color",
-  "fontFamily",
-  "fontSize",
-  "fontStyle",
-  "fontWeight",
-  "letterSpacing",
-  "lineHeight",
-  "textAlign",
-  "textDecorationLine",
-  "textDecorationStyle",
-  "textDecorationColor",
-  "textTransform",
-  "includeFontPadding",
-  "textAlignVertical",
-  "fontVariant",
-  "textShadowColor",
-  "textShadowOffset",
-  "textShadowRadius",
-  "writingDirection",
-  "margin",
-  "marginTop",
-  "marginRight",
-  "marginBottom",
-  "marginLeft",
-  "padding",
-  "paddingTop",
-  "paddingRight",
-  "paddingBottom",
-  "paddingLeft",
+  'color',
+  'fontFamily',
+  'fontSize',
+  'fontStyle',
+  'fontWeight',
+  'letterSpacing',
+  'lineHeight',
+  'textAlign',
+  'textDecorationLine',
+  'textDecorationStyle',
+  'textDecorationColor',
+  'textTransform',
+  'includeFontPadding',
+  'textAlignVertical',
+  'fontVariant',
+  'textShadowColor',
+  'textShadowOffset',
+  'textShadowRadius',
+  'writingDirection',
+  'margin',
+  'marginTop',
+  'marginRight',
+  'marginBottom',
+  'marginLeft',
+  'padding',
+  'paddingTop',
+  'paddingRight',
+  'paddingBottom',
+  'paddingLeft',
 ] as const;
 
-export const Text: React.FC<Props> = ({ size = "normal", style, ...rest }) => {
+export const Text: React.FC<Props> = ({ size = 'normal', style, ...rest }) => {
   const inlineStyle = useMemo(() => {
     const s: TextStyle = {};
     TEXT_STYLE_KEYS.forEach((k) => {
@@ -94,12 +95,17 @@ export const Text: React.FC<Props> = ({ size = "normal", style, ...rest }) => {
     return clone as RNTextProps;
   }, [rest]);
 
-  return <RNText {...passThroughProps} style={[styles.base, styles[size], inlineStyle, style]} />;
+  return (
+    <RNText
+      {...passThroughProps}
+      style={[styles.base, styles[size], inlineStyle, style]}
+    />
+  );
 };
 
 const styles = StyleSheet.create({
   base: {
-    color: "#2A2A2A",
+    color: '#2A2A2A',
   },
   small: {
     fontSize: 10,
@@ -112,6 +118,6 @@ const styles = StyleSheet.create({
   large: {
     fontSize: 18,
     lineHeight: 24,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
 });

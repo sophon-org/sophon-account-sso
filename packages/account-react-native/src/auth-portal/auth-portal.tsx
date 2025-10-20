@@ -34,6 +34,7 @@ export type AuthPortalProps = {
 export function AuthPortal(props: AuthPortalProps) {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const disableAnimation = useBooleanState(true);
+
   const {
     currentRequest,
     setCurrentRequest,
@@ -46,12 +47,14 @@ export function AuthPortal(props: AuthPortalProps) {
   const {
     currentStep,
     showBackButton,
+    isLoading,
+    params,
+    handleProps,
+    isConnectingAccount,
     navigate,
     goBack,
     cleanup,
     setParams,
-    isLoading,
-    params,
   } = useNavigationController();
 
   const showModal = useCallback(() => {
@@ -84,24 +87,23 @@ export function AuthPortal(props: AuthPortalProps) {
   }, [currentRequest]);
 
   const renderHandleComponent = useCallback(
-    (props: BottomSheetHandleProps) => {
+    (renderProps: BottomSheetHandleProps) => {
       return (
         <AuthPortalBottomSheetHandle
-          {...props}
-          showBackButton={showBackButton && !isLoading}
+          {...renderProps}
+          {...handleProps}
           goBack={goBack}
           close={onCloseAndCancel}
-          hideCloseButton={isLoading}
         />
       );
     },
-    [onCloseAndCancel, goBack, showBackButton, isLoading],
+    [onCloseAndCancel, goBack, handleProps],
   );
 
   const renderBackdrop = useCallback(
-    (props: BottomSheetBackdropProps) => (
+    (renderProps: BottomSheetBackdropProps) => (
       <BottomSheetBackdrop
-        {...props}
+        {...renderProps}
         disappearsOnIndex={-1}
         appearsOnIndex={0}
         pressBehavior={isLoading ? 'none' : 'close'}
@@ -115,10 +117,6 @@ export function AuthPortal(props: AuthPortalProps) {
     showModal();
   });
 
-  // useUIEventHandler('showModal', ({ requestId }) => {
-  //   requestIdRef.current = requestId as UUID;
-  //   showModal();
-  // });
   useUIEventHandler('hideModal', () => {
     hideModal();
   });
@@ -159,10 +157,10 @@ export function AuthPortal(props: AuthPortalProps) {
     <AuthPortalContext.Provider
       value={{
         currentStep,
+        params,
         navigate,
         goBack,
         setParams,
-        params,
       }}
     >
       <BottomSheet
@@ -196,9 +194,10 @@ export function AuthPortal(props: AuthPortalProps) {
               onCancel={onCancel}
               onError={onError}
               onAuthenticate={onAuthenticate}
+              scopes={props?.scopes}
             />
           </StepTransitionView>
-          <FooterSheet hideTerms={isLoading} />
+          <FooterSheet hideTerms={isLoading || isConnectingAccount} />
         </BottomSheetView>
       </BottomSheet>
     </AuthPortalContext.Provider>

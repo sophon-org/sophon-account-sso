@@ -22,11 +22,13 @@ export const useNavigationController = () => {
   const [state, setConfig] = useState<NavigationAuthPortalState | null>(
     initialState,
   );
+
   const { history, currentState, currentParams } = state ?? {
     history: [],
     currentState: null,
     currentParams: null,
   };
+
   const currentStep = useMemo<AuthPortalStep>(() => {
     switch (method) {
       case 'eth_requestAccounts':
@@ -47,6 +49,7 @@ export const useNavigationController = () => {
         return null;
     }
   }, [method, currentState, isConnected, connectingAccount]);
+
   const navigate = useCallback(
     (step: AuthPortalStep, options?: NavigateOptions) =>
       setConfig((prev) => {
@@ -150,9 +153,12 @@ export const useNavigationController = () => {
     setConfig(initialState);
   }, []);
 
-  const isLoading = useMemo(() => {
-    return currentStep === 'loading';
-  }, [currentStep]);
+  const { isLoading, isConnectingAccount } = useMemo(() => {
+    return {
+      isLoading: currentStep === 'loading',
+      isConnectingAccount: currentStep === 'authorization' || isConnected,
+    };
+  }, [currentStep, isConnected]);
 
   const params = useMemo(() => {
     if (!currentStep || currentParams) return null;
@@ -160,22 +166,41 @@ export const useNavigationController = () => {
   }, [currentStep, currentParams]);
 
   const showBackButton = useMemo(
-    () => Boolean((history.length ?? 0) > 0),
-    [history],
+    () =>
+      Boolean((history.length ?? 0) > 0) &&
+      ![
+        'signMessage',
+        'transaction',
+        'consent',
+        'loading',
+        'authorization',
+      ].includes(currentStep),
+    [history, currentStep],
+  );
+
+  const handleProps = useMemo(
+    () => ({
+      showBackButton,
+      hideCloseButton: isLoading,
+      title: isConnectingAccount ? 'coolkid123.soph.id' : 'Sign in',
+    }),
+    [history, isLoading, isConnectingAccount],
   );
 
   return {
     isLoading,
+    isConnectingAccount,
     currentStep,
     history,
     currentState,
     currentParams,
+    showBackButton,
+    handleProps,
     params,
     navigate,
     goBack,
     cleanup,
     setParams,
-    showBackButton,
     initializeConfig,
   };
 };
