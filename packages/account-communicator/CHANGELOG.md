@@ -1,5 +1,23 @@
 # @sophon-labs/account-eip6963
 
+## 3.0.0-next.1
+
+### Patch Changes
+
+- Mobile capabilities
+
+## 3.0.0-next.0
+
+### Major Changes
+
+- Initial release of the new sophon account v3 for testing purposes only
+
+## 2.3.6
+
+### Patch Changes
+
+- Allowing auth to use owner as signer for JWT and moving common code to account-core
+
 ## 2.3.5
 
 ### Patch Changes

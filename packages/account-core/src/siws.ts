@@ -1,8 +1,10 @@
+import type { ChainId } from './constants';
+
 export interface SiwsParams {
   domain: string;
   address: string;
   statement: string;
-  chainId: number | string;
+  chainId: ChainId;
   nonce: string;
 }
 

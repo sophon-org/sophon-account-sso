@@ -95,10 +95,10 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
       digits.forEach((decimal) => {
         if (nextIndex < OTP_CODE_LENGTH) {
           newValues[nextIndex] = decimal;
-          scales[nextIndex].value = withTiming(1.1, { duration: 100 }, () => {
-            scales[nextIndex].value = withTiming(1, { duration: 100 });
+          scales[nextIndex]!.value = withTiming(1.1, { duration: 100 }, () => {
+            scales[nextIndex]!.value = withTiming(1, { duration: 100 });
           });
-          opacities[nextIndex].value = withTiming(1, { duration: 150 });
+          opacities[nextIndex]!.value = withTiming(1, { duration: 150 });
         }
         nextIndex++;
       });
@@ -123,13 +123,13 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
         if (index > 0 && !prevCodes[index]) {
           const indexToFocus = index - 1;
           newCodes[indexToFocus] = '';
-          opacities[indexToFocus].value = withTiming(0.3, { duration: 120 });
+          opacities[indexToFocus]!.value = withTiming(0.3, { duration: 120 });
         }
         newCodes[index] = '';
         return newCodes;
       });
 
-      opacities[index].value = withTiming(0.3, { duration: 120 });
+      opacities[index]!.value = withTiming(0.3, { duration: 120 });
 
       if (index > 0) focusIndex(index - 1);
     }
@@ -137,8 +137,8 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
 
   const renderInput = (value: string, index: number) => {
     const animatedStyle = useAnimatedStyle(() => {
-      const scale = scales[index].value;
-      const opacity = opacities[index].value;
+      const scale = scales[index]!.value;
+      const opacity = opacities[index]!.value;
       const borderColor = interpolateColor(
         opacity,
         [0.3, 1],
@@ -156,7 +156,7 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
       <Animated.View key={index} style={[styles.box, animatedStyle]}>
         <BottomSheetTextInput
           ref={(el) => {
-            inputsRef.current[index] = el;
+            inputsRef.current[index] = el as TextInput;
           }}
           selection={{ start: 1, end: 1 }}
           style={[styles.input, loadingState.state && styles.inputDisabled]}

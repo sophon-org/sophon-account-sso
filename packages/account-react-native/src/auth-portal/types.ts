@@ -1,4 +1,5 @@
 import type { DataScopes } from '@sophon-labs/account-core';
+import type { PartnerConfigSchema } from '@sophon-labs/account-partner';
 import type { ViewStyle } from 'react-native';
 
 export enum AuthPortalSteps {
@@ -30,6 +31,7 @@ export interface BasicStepProps {
   onCancel: () => Promise<void>;
   onError: (error: Error, step?: AuthPortalStep) => Promise<void>;
   scopes?: DataScopes[];
+  partner?: PartnerConfigSchema | null;
 }
 
 export type AuthPortalContextType = AuthPortalContextProps;
@@ -62,7 +64,7 @@ export type CurrentParams = {
 };
 
 export type NavigationAuthPortalState = {
-  currentState: AuthPortalStep;
+  currentState: AuthPortalStep | null;
   history: AuthPortalStep[];
   currentParams: CurrentParams | null;
 };

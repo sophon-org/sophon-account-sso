@@ -9,14 +9,14 @@ export const useSophonToken = () => {
   const {
     accessToken,
     refreshToken,
-    network,
+    chainId,
     updateAccessToken,
     updateRefreshToken,
   } = useSophonContext();
 
   const baseAuthAPIURL = useMemo(() => {
-    return AccountAuthAPIURL[network];
-  }, [network]);
+    return AccountAuthAPIURL[chainId];
+  }, [chainId]);
 
   const getAccessToken = useCallback(
     async (

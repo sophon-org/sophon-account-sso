@@ -17,7 +17,7 @@ import jwt, {
 import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
 import { toConsentClaims } from "src/consents/consent-claims.util";
 import { ConsentsService } from "src/consents/consents.service";
-import { Address, type TypedDataDefinition, verifyMessage } from "viem";
+import { Address, type TypedDataDefinition, verifyTypedData } from "viem";
 import { sophon, sophonTestnet } from "viem/chains";
 import { JwtKeysService } from "../aws/jwt-keys.service";
 import { authConfig } from "../config/auth.config";
@@ -42,24 +42,6 @@ type NoncePayload = JwtPayload & {
 };
 
 type ClientInfo = { ip?: string | null; userAgent?: string | null };
-
-// biome-ignore lint/suspicious/noExplicitAny: to do
-function stableStringify(obj: any): string {
-	if (obj === null || typeof obj !== "object") {
-		return JSON.stringify(obj);
-	}
-
-	if (Array.isArray(obj)) {
-		return `[${obj.map(stableStringify).join(",")}]`;
-	}
-
-	const keys = Object.keys(obj).sort();
-	const entries = keys.map(
-		(key) => `${JSON.stringify(key)}:${stableStringify(obj[key])}`,
-	);
-
-	return `{${entries.join(",")}}`;
-}
 
 @Injectable()
 export class AuthService {
@@ -189,10 +171,17 @@ export class AuthService {
 		const network = process.env.CHAIN_ID === "50104" ? sophon : sophonTestnet;
 
 		let isValid = false;
+		// with the new blockchain comming, for now, if we receive an owner address,
+		// it means that we don't have the contract deployed already, so we need to verify
+		// the signature with the owner address
+		// TODO: when we have the new blockchain ready, we need to remove this logic and use the EIP-1271 signature verification
 		if (ownerAddress) {
-			isValid = await verifyMessage({
+			isValid = await verifyTypedData({
 				address: ownerAddress,
-				message: stableStringify(typedData.message),
+				primaryType: typedData.primaryType,
+				types: typedData.types,
+				domain: typedData.domain,
+				message: typedData.message,
 				signature,
 			});
 		} else {

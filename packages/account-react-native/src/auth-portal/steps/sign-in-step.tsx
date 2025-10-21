@@ -3,7 +3,11 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { type AuthProvider, useEmbeddedAuth } from '../../auth/useAuth';
 import { AVAILABLE_PROVIDERS } from '../../constants';
-import { useBooleanState, useFlowManager } from '../../hooks';
+import {
+  useBooleanState,
+  useFlowManager,
+  useSophonCapabilities,
+} from '../../hooks';
 import { Button, Container, Icon } from '../../ui';
 import { validateEmail } from '../../utils/validations';
 import {
@@ -71,6 +75,7 @@ export const SignInStep = ({
   }, []);
 
   const isEmailValid = useMemo(() => validateEmail(email), [email]);
+  const { isWalletConnectEnabled } = useSophonCapabilities();
 
   return (
     <View style={styles.container}>
@@ -91,10 +96,11 @@ export const SignInStep = ({
         <BottomSheetTextInput
           onChangeText={handleChangeText}
           value={email}
+          textContentType="emailAddress"
+          keyboardType="email-address"
           placeholder="Enter email"
           placeholderTextColor="#D2D2D2"
           style={[styles.input, isEmailValid && styles.inputValid]}
-          keyboardType="email-address"
           autoCapitalize="none"
           autoCorrect={false}
           returnKeyType="done"
@@ -107,12 +113,15 @@ export const SignInStep = ({
           loading={loadingState.state}
         />
       </Container>
-      <View style={styles.dividerContainer}>
+      <Container
+        isVisible={isWalletConnectEnabled}
+        style={styles.dividerContainer}
+      >
         <View style={styles.divider} />
         <Text style={styles.dividerText}>Alternatively</Text>
         <View style={styles.divider} />
-      </View>
-      <Container marginVertical={16}>
+      </Container>
+      <Container isVisible={isWalletConnectEnabled} marginVertical={16}>
         <Button
           variant="secondary"
           text="Sign in with Wallet"

@@ -5392,6 +5392,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@simplewebauthn/browser@npm:13.2.2":
+  version: 13.2.2
+  resolution: "@simplewebauthn/browser@npm:13.2.2"
+  checksum: 10c0/07cd7b71fbe975504c2de2d81b5e3d0174ce495e51795af002ff0f38cc55fd58d023abd914c35477d4bb28952de385d9948b7e2d872343ebadcbcdb9ddc05e1c
+  languageName: node
+  linkType: hard
+
 "@simplewebauthn/server@npm:^13.2.2":
   version: 13.2.2
   resolution: "@simplewebauthn/server@npm:13.2.2"
@@ -5922,11 +5929,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-core@link:../../packages/account-core::locator=%40sophon-labs%2Fauth-api%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@sophon-labs/account-core@link:../../packages/account-core::locator=%40sophon-labs%2Fauth-api%40workspace%3A."
+"@sophon-labs/account-core@npm:2.3.6":
+  version: 2.3.6
+  resolution: "@sophon-labs/account-core@npm:2.3.6"
+  dependencies:
+    text-encoding-polyfill: "npm:^0.6.7"
+  peerDependencies:
+    viem: ">=2.21.0"
+  checksum: 10c0/b1a8413ca9c0e519057075302d710b17f702b99b5f4e808907a7d6cddee857b05b6f48783677087c3502bd4506b407c1cc7d5943e3d9f906f7a7009e43bf490f
   languageName: node
-  linkType: soft
+  linkType: hard
 
 "@sophon-labs/auth-api@workspace:.":
   version: 0.0.0-use.local
@@ -5956,8 +5968,9 @@ __metadata:
     "@nestjs/typeorm": "npm:^11.0.0"
     "@sentry/node": "npm:^10.15.0"
     "@sentry/profiling-node": "npm:^10.15.0"
+    "@simplewebauthn/browser": "npm:13.2.2"
     "@simplewebauthn/server": "npm:^13.2.2"
-    "@sophon-labs/account-core": "link:../../packages/account-core"
+    "@sophon-labs/account-core": "npm:2.3.6"
     "@swc/cli": "npm:^0.6.0"
     "@swc/core": "npm:^1.10.7"
     "@types/cookie-parser": "npm:^1.4.9"
@@ -5999,7 +6012,7 @@ __metadata:
     tsconfig-paths: "npm:^4.2.0"
     typeorm: "npm:^0.3.26"
     typescript: "npm:^5.7.3"
-    viem: "npm:^2.36.0"
+    viem: "npm:2.36.0"
     zksync-sso: "github:sophon-org/zksync-sso-preview#20250901_1"
   languageName: unknown
   linkType: soft
@@ -13880,6 +13893,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"text-encoding-polyfill@npm:^0.6.7":
+  version: 0.6.7
+  resolution: "text-encoding-polyfill@npm:0.6.7"
+  checksum: 10c0/5486a2320e2384b0153d2835a8e6e3a643ff28fcd05c2e9fa5d69c7879a2b8fdb7faa44708792a9205f074f10606ee3b6470c8f3f4da1be90a014b79057008d0
+  languageName: node
+  linkType: hard
+
 "thread-stream@npm:^3.0.0":
   version: 3.1.0
   resolution: "thread-stream@npm:3.1.0"
@@ -14623,7 +14643,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"viem@npm:^2.36.0":
+"viem@npm:2.36.0":
   version: 2.36.0
   resolution: "viem@npm:2.36.0"
   dependencies:

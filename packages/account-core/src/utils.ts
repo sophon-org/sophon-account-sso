@@ -1,21 +1,18 @@
-import { AvailableCDNURL, type SophonNetworkType } from './constants';
+import { AvailableCDNURL, type ChainId } from './constants';
 
 /**
  * Check if a partnerId is valid
  *
- * @param network - The network to use
+ * @param chainId - The chainId to use
  * @param partnerId - The partner id to check
  * @returns True if the partner is valid, false otherwise
  */
-export const isValidPartner = async (
-  network: SophonNetworkType,
-  partnerId: string,
-) => {
+export const isValidPartner = async (chainId: ChainId, partnerId: string) => {
   if (!partnerId) {
     return false;
   }
 
-  const baseDns = AvailableCDNURL[network];
+  const baseDns = AvailableCDNURL[chainId];
 
   try {
     const url = `${baseDns}/partners/sdk/${partnerId}.json`;

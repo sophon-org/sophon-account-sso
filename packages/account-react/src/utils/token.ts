@@ -1,14 +1,11 @@
-import {
-  AccountAuthAPIURL,
-  type SophonNetworkType,
-} from '@sophon-labs/account-core';
+import { AccountAuthAPIURL, type ChainId } from '@sophon-labs/account-core';
 import { setCookieAuthToken } from '../cookie';
 import { SophonAppStorage, StorageKeys } from '../storage/storage';
 
 export const ACCESS_TOKEN_EXPIRATION_THRESHOLD = 1000 * 60 * 5; // 5 mins before
 
 export const getAccessToken = async (
-  network: SophonNetworkType,
+  chainId: ChainId,
   forceRefresh?: boolean,
   baseURL?: string,
 ) => {
@@ -33,7 +30,7 @@ export const getAccessToken = async (
     accessToken.expiresAt * 1000 - ACCESS_TOKEN_EXPIRATION_THRESHOLD,
   );
 
-  const baseAuthAPIURL = AccountAuthAPIURL[network];
+  const baseAuthAPIURL = AccountAuthAPIURL[chainId];
 
   // if the token is expired, refresh it
   if (forceRefresh || accessExpiresAt < new Date()) {

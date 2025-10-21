@@ -118,7 +118,7 @@ export function useGetSwapStatusWithDefaults(
   args: UseGetSwapStatusArgs,
   baseUrl?: string,
 ) {
-  const { network } = useSophonContext();
-  const defaultBaseUrl = SwapAPIURL[network];
+  const { chainId } = useSophonContext();
+  const defaultBaseUrl = SwapAPIURL[chainId];
   return useGetSwapStatus(args, { baseUrl: baseUrl ?? defaultBaseUrl });
 }

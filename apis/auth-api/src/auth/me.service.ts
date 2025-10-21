@@ -46,7 +46,7 @@ export class MeService {
 	async buildMeResponse(payload: JwtPayload): Promise<MeResponseDto> {
 		const apiToken =
 			(process.env.DYNAMICAUTH_API_TOKEN as string) ??
-			(await this.secrets.loadJwtSecrets()).dynamicToken;
+			(await this.secrets.loadAWSSecrets()).dynamicToken;
 		this.ensureConfigured(apiToken);
 
 		const userId = this.pickUserId(payload);

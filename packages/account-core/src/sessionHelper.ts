@@ -5,26 +5,28 @@ import {
   encodeFunctionData,
   encodePacked,
   getAbiItem,
+  getAddress,
   type Hex,
   http,
   keccak256,
 } from 'viem';
-import { type Chain, sophon, sophonTestnet } from 'viem/chains';
+import { type Chain, sophonTestnet } from 'viem/chains';
 import { getGeneralPaymasterInput } from 'viem/zksync';
 import { SessionKeyValidatorAbi } from './abis/SessionKeyValidatorAbi';
 import { SophonAccountAbi } from './abis/SophonAccountAbi';
-import { CHAIN_CONTRACTS, type ChainId } from './constants';
-import type {
-  CreateSessionArgs,
-  InstallSessionKeyModuleArgs,
-  RevokeSessionArgs,
-  SessionConfig,
-  SessionState,
-  SessionStatus,
+import { CHAIN_CONTRACTS, type ChainId, SophonChains } from './constants';
+import {
+  type CallPolicy,
+  type CreateSessionArgs,
+  type InstallSessionKeyModuleArgs,
+  type Limit,
+  LimitType,
+  type RevokeSessionArgs,
+  type SessionConfig,
+  type SessionState,
+  type SessionStatus,
+  type TransferPolicy,
 } from './types';
-
-const SESSION_KEY_MODULE_ADDRESS = (chainId: ChainId) =>
-  CHAIN_CONTRACTS[chainId].session;
 
 const getSessionSpec = () => {
   return getAbiItem({
@@ -130,22 +132,24 @@ export const getSessionActionsHash = (sessionSpec: SessionConfig) => {
   );
 };
 
+export interface SessionParams {
+  accountAddress: Address;
+  sessionConfig: SessionConfig;
+  chainId: ChainId;
+}
+
 export async function getSessionState({
   accountAddress,
   sessionConfig,
-  useTestnet = true,
-}: {
-  accountAddress: Address;
-  sessionConfig: SessionConfig;
-  useTestnet: boolean;
-}): Promise<SessionState> {
+  chainId = sophonTestnet.id,
+}: SessionParams): Promise<SessionState> {
   const client = createPublicClient({
-    chain: useTestnet ? sophonTestnet : sophon,
+    chain: SophonChains[chainId],
     transport: http(),
   });
 
   const result = await client.readContract({
-    address: SESSION_KEY_MODULE_ADDRESS(useTestnet ? '531050104' : '50104'),
+    address: CHAIN_CONTRACTS[chainId].session,
     abi: SessionKeyValidatorAbi,
     functionName: 'sessionState',
     args: [accountAddress, sessionConfig],
@@ -157,36 +161,36 @@ export async function getSessionState({
 export async function getSessionStatus({
   accountAddress,
   sessionConfig,
-  useTestnet,
+  chainId,
 }: {
   accountAddress: Address;
   sessionConfig: SessionConfig;
-  useTestnet: boolean;
+  chainId: ChainId;
 }): Promise<SessionStatus>;
 
 export async function getSessionStatus({
   accountAddress,
   sessionHash,
-  useTestnet,
+  chainId,
 }: {
   accountAddress: Address;
   sessionHash: `0x${string}`;
-  useTestnet: boolean;
+  chainId: ChainId;
 }): Promise<SessionStatus>;
 
 export async function getSessionStatus({
   accountAddress,
   sessionConfig,
   sessionHash,
-  useTestnet = true,
+  chainId = sophonTestnet.id,
 }: {
   accountAddress: Address;
   sessionConfig?: SessionConfig;
   sessionHash?: `0x${string}`;
-  useTestnet: boolean;
+  chainId: ChainId;
 }): Promise<SessionStatus> {
   const client = createPublicClient({
-    chain: useTestnet ? sophonTestnet : sophon,
+    chain: SophonChains[chainId],
     transport: http(),
   });
 
@@ -194,7 +198,7 @@ export async function getSessionStatus({
 
   // Call the getState function on the session key module
   const result = await client.readContract({
-    address: SESSION_KEY_MODULE_ADDRESS(useTestnet ? '531050104' : '50104'),
+    address: CHAIN_CONTRACTS[chainId].session,
     abi: SessionKeyValidatorAbi,
     functionName: 'sessionStatus',
     args: [accountAddress, hash],
@@ -208,7 +212,7 @@ export const getZKSyncSessionClientCreationParams = (
   accountAddress: Address,
   signerPrivateKey: Hex,
   chain: Chain,
-  useTestnet: boolean = true,
+  chainId = sophonTestnet.id,
 ) => {
   return {
     chain,
@@ -216,7 +220,7 @@ export const getZKSyncSessionClientCreationParams = (
     sessionKey: signerPrivateKey,
     sessionConfig,
     contracts: {
-      session: SESSION_KEY_MODULE_ADDRESS(useTestnet ? '531050104' : '50104'),
+      session: CHAIN_CONTRACTS[chainId].session,
     },
     transport: http(),
   };
@@ -224,16 +228,16 @@ export const getZKSyncSessionClientCreationParams = (
 
 export const isSessionKeyModuleInstalled = async (
   address: Address,
-  useTestnet: boolean = true,
+  chainId = sophonTestnet.id,
 ): Promise<boolean> => {
   const client = createPublicClient({
-    chain: useTestnet ? sophonTestnet : sophon,
+    chain: SophonChains[chainId],
     transport: http(),
   });
 
   try {
     const isInstalled = await client.readContract({
-      address: SESSION_KEY_MODULE_ADDRESS(useTestnet ? '531050104' : '50104'),
+      address: CHAIN_CONTRACTS[chainId].session,
       abi: SessionKeyValidatorAbi,
       functionName: 'isInitialized',
       args: [address],
@@ -247,15 +251,12 @@ export const isSessionKeyModuleInstalled = async (
 
 export const getInstallSessionKeyModuleTxForViem = (
   args: InstallSessionKeyModuleArgs,
-  useTestnet: boolean = true,
+  chainId = sophonTestnet.id,
 ) => {
   const callData = encodeFunctionData({
     abi: SophonAccountAbi,
     functionName: 'addModuleValidator',
-    args: [
-      SESSION_KEY_MODULE_ADDRESS(useTestnet ? '531050104' : '50104'),
-      '0x',
-    ],
+    args: [CHAIN_CONTRACTS[chainId].session, '0x'],
   });
 
   const sendTransactionArgs = {
@@ -275,12 +276,12 @@ export const getInstallSessionKeyModuleTxForViem = (
 export const getCreateSessionTxForViem = (
   args: Omit<CreateSessionArgs, 'contracts'>,
   accountAddress: Address,
-  useTestnet: boolean = true,
+  chainId = sophonTestnet.id,
 ) => {
   const _args = {
     ...args,
     contracts: {
-      session: SESSION_KEY_MODULE_ADDRESS(useTestnet ? '531050104' : '50104'),
+      session: CHAIN_CONTRACTS[chainId].session,
     },
   };
 
@@ -307,7 +308,7 @@ export const getCreateSessionTxForViem = (
 export const getRevokeSessionTxForViem = (
   args: RevokeSessionArgs,
   accountAddress: Address,
-  useTestnet: boolean = true,
+  chainId = sophonTestnet.id,
 ) => {
   const callData = encodeFunctionData({
     abi: SessionKeyValidatorAbi,
@@ -317,7 +318,7 @@ export const getRevokeSessionTxForViem = (
 
   const revokeKeyArgs = {
     from: accountAddress,
-    to: SESSION_KEY_MODULE_ADDRESS(useTestnet ? '531050104' : '50104'),
+    to: CHAIN_CONTRACTS[chainId].session,
     data: callData,
     paymaster: args.paymaster?.address,
     paymasterInput: args.paymaster?.address
@@ -327,4 +328,49 @@ export const getRevokeSessionTxForViem = (
   };
 
   return revokeKeyArgs;
+};
+
+export const getPeriodIdsForTransaction = (args: {
+  sessionConfig: SessionConfig;
+  target: Address;
+  selector?: Hex;
+  timestamp?: bigint;
+}) => {
+  const timestamp = args.timestamp || BigInt(Math.floor(Date.now() / 1000));
+  const target = getAddress(args.target.toLowerCase());
+
+  const getId = (limit: Limit): bigint => {
+    if (limit.limitType === LimitType.Allowance) {
+      return timestamp / limit.period;
+    }
+    return BigInt(0);
+  };
+
+  const findTransferPolicy = () => {
+    return args.sessionConfig.transferPolicies.find(
+      (policy) => policy.target === target,
+    );
+  };
+  const findCallPolicy = () => {
+    return args.sessionConfig.callPolicies.find(
+      (policy) => policy.target === target && policy.selector === args.selector,
+    );
+  };
+
+  const isContractCall = !!args.selector;
+  const policy: TransferPolicy | CallPolicy | undefined = isContractCall
+    ? findCallPolicy()
+    : findTransferPolicy();
+  if (!policy) throw new Error('Transaction does not fit any policy');
+
+  const periodIds = [
+    getId(args.sessionConfig.feeLimit),
+    getId(policy.valueLimit),
+    ...(isContractCall
+      ? (policy as CallPolicy).constraints.map((constraint) =>
+          getId(constraint.limit),
+        )
+      : []),
+  ];
+  return periodIds;
 };

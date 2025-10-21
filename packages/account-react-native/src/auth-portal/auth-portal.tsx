@@ -5,9 +5,11 @@ import BottomSheet, {
   BottomSheetView,
 } from '@gorhom/bottom-sheet';
 import type { DataScopes } from '@sophon-labs/account-core';
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Keyboard, Platform } from 'react-native';
+import { useEmbeddedAuth } from '../auth/useAuth';
 import { useBooleanState, useFlowManager } from '../hooks';
+import { useSophonPartner } from '../hooks/use-sophon-partner';
 import { useUIEventHandler } from '../messaging/ui';
 import { FooterSheet } from './components/footer-sheet';
 import { AuthPortalBottomSheetHandle } from './components/handle-sheet';
@@ -111,10 +113,11 @@ export function AuthPortal(props: AuthPortalProps) {
         {...renderProps}
         disappearsOnIndex={-1}
         appearsOnIndex={0}
+        onPress={onCloseAndCancel}
         pressBehavior={isLoading ? 'none' : 'close'}
       />
     ),
-    [isLoading],
+    [isLoading, onCloseAndCancel, bottomSheetRef],
   );
 
   useUIEventHandler('outgoingRpc', (request) => {
@@ -168,10 +171,25 @@ export function AuthPortal(props: AuthPortalProps) {
     console.log(`onError ${step ?? '-'}`, error);
   }, []);
 
+  const { getAvailableDataScopes } = useEmbeddedAuth();
+
+  const [dataScopes, setDataScopes] = useState<DataScopes[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      const available = await getAvailableDataScopes();
+      setDataScopes(
+        props.scopes?.filter((scope) => available.includes(scope)) ?? [],
+      );
+    })();
+  }, [getAvailableDataScopes, props.scopes]);
+
+  const { partner } = useSophonPartner();
+
   return (
     <AuthPortalContext.Provider
       value={{
-        currentStep,
+        currentStep: currentStep ?? null,
         params,
         navigate,
         goBack,
@@ -199,18 +217,19 @@ export function AuthPortal(props: AuthPortalProps) {
       >
         <BottomSheetView style={{ padding: 24 }}>
           <StepTransitionView
-            keyProp={currentStep}
+            keyProp={currentStep ?? null}
             isBackAvailable={!showBackButton}
             disableAnimation={disableAnimation.state}
           >
             <StepControllerComponent
-              currentStep={currentStep}
+              currentStep={currentStep ?? null}
               onComplete={onComplete}
               onCancel={onCancel}
               onError={onError}
               onAuthenticate={onAuthenticate}
               onBackToSignIn={onBackToSignIn}
-              scopes={props?.scopes}
+              scopes={dataScopes}
+              partner={partner}
             />
           </StepTransitionView>
           <FooterSheet hideTerms={hideTerms} />

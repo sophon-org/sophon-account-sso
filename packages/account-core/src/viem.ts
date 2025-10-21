@@ -17,10 +17,16 @@ type SophonRequestConsentOverride = {
   ReturnType: ConsentResponse;
 };
 
+/**
+ * Sophon Custom RPC Actions extension for Viem
+ *
+ * @returns eclusive viem actions for sophon
+ */
 export function sophonActions() {
   return (client: WalletClient) => ({
     /**
-     * Exemplo: checa saldo formatado
+     * Data consent request
+     * @returns consent response
      */
     async requestConsent(): Promise<ConsentResponse> {
       const requestArgs: SophonRequestConsentArgs = {
@@ -28,7 +34,6 @@ export function sophonActions() {
         params: [],
       };
 
-      console.log('requestArgs', requestArgs);
       return client.request<
         SophonRequestConsentOverride,
         SophonRequestConsentArgs

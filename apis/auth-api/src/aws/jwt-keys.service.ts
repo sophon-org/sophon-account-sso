@@ -6,33 +6,33 @@ export class JwtKeysService {
 	constructor(private readonly secrets: SecretsService) {}
 
 	async getAccessPrivateKey(): Promise<string> {
-		const s = await this.secrets.loadJwtSecrets();
+		const s = await this.secrets.loadAWSSecrets();
 		return s.access.privateKeyPem;
 	}
 	async getAccessPublicKey(): Promise<string> {
-		const s = await this.secrets.loadJwtSecrets();
+		const s = await this.secrets.loadAWSSecrets();
 		return s.access.publicKeyPem;
 	}
 	async getAccessKid(): Promise<string> {
-		const s = await this.secrets.loadJwtSecrets();
+		const s = await this.secrets.loadAWSSecrets();
 		return s.access.kid;
 	}
 
 	async getRefreshPrivateKey(): Promise<string> {
-		const s = await this.secrets.loadJwtSecrets();
+		const s = await this.secrets.loadAWSSecrets();
 		return s.refresh.privateKeyPem;
 	}
 	async getRefreshPublicKey(): Promise<string> {
-		const s = await this.secrets.loadJwtSecrets();
+		const s = await this.secrets.loadAWSSecrets();
 		return s.refresh.publicKeyPem;
 	}
 	async getRefreshKid(): Promise<string> {
-		const s = await this.secrets.loadJwtSecrets();
+		const s = await this.secrets.loadAWSSecrets();
 		return s.refresh.kid;
 	}
 
 	async getDatabaseUrl(): Promise<string | undefined> {
-		const s = await this.secrets.loadJwtSecrets();
+		const s = await this.secrets.loadAWSSecrets();
 		return s.databaseUrl;
 	}
 }

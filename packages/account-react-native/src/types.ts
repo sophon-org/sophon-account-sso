@@ -1,4 +1,5 @@
 import type { UUID } from 'node:crypto';
+import type { Address, Chain } from 'viem';
 
 export interface CustomRPCError extends Error {
   details?: string;
@@ -9,13 +10,6 @@ export interface SophonJWTToken {
   value: string;
   expiresAt: number;
 }
-
-/**
- * Type definitions for swap functionality
- */
-
-export type Address = string;
-export type ChainId = number;
 
 export enum TransactionType {
   SWAP = 'swap',
@@ -43,8 +37,8 @@ export interface FeeBreakdown {
 
 export interface TransactionDetails {
   hash: string;
-  sourceChain: ChainId;
-  destinationChain: ChainId;
+  sourceChain: Chain['id'];
+  destinationChain: Chain['id'];
   sourceToken: Address;
   destinationToken: Address;
   amount: string;
@@ -71,8 +65,8 @@ export interface ActionConfiguration {
 export interface UnifiedTransactionRequest {
   actionType: TransactionType;
   sender: Address;
-  sourceChain: ChainId;
-  destinationChain: ChainId;
+  sourceChain: Chain['id'];
+  destinationChain: Chain['id'];
   sourceToken: Address;
   destinationToken: Address;
   amount: bigint;
@@ -89,7 +83,7 @@ export interface UnifiedTransactionResponse {
     to: Address;
     data: string;
     value: string;
-    chainId: ChainId;
+    chainId: Chain['id'];
   };
   fees: FeeBreakdown;
   estimatedTime: number;
@@ -117,7 +111,7 @@ export interface UseGetSwapTransactionArgs {
 
 export interface UseGetSwapStatusArgs {
   txHash: string;
-  chainId?: ChainId;
+  chainId?: Chain['id'];
   enabled?: boolean;
   refetchInterval?: number;
 }
@@ -126,7 +120,7 @@ export interface UseERC20ApprovalArgs {
   tokenAddress: Address;
   spender: Address;
   amount: bigint;
-  chainId?: ChainId;
+  chainId?: Chain['id'];
 }
 
 export interface UseGasEstimationArgs {
@@ -134,7 +128,7 @@ export interface UseGasEstimationArgs {
   from?: Address;
   data?: string;
   value?: bigint;
-  chainId: ChainId;
+  chainId: Chain['id'];
 }
 
 export interface SwapApiConfig {

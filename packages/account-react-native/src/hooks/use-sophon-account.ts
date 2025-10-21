@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import type { Address } from 'viem';
-// import type { Address } from 'viem';
-// import { sendUIMessage } from '../messaging';
+import { useEmbeddedAuth } from '../auth/useAuth';
 import { useSophonContext } from './use-sophon-context';
 
 export const useSophonAccount = () => {
@@ -19,17 +18,19 @@ export const useSophonAccount = () => {
     code: number;
   }>();
   const [isConnecting, setIsConnecting] = useState(false);
+  const { logout: logoutEmbedded, isConnected: isConnectedEmbedded } =
+    useEmbeddedAuth();
 
   const connect = useCallback(async () => {
     setIsConnecting(true);
 
-    // to make sure that we have no cached account, before connecting we force a local disconnect
-    // try {
-    //   // await disconnect();
-    //   // sendUIMessage('clearMainViewCache', {});
-    // } catch {}
-
     try {
+      // make sure that if there are any error that prevents the user to finish the flow
+      // we won't block new connections on the embedded provider
+      if (isConnectedEmbedded) {
+        await logoutEmbedded();
+      }
+
       setAccountError(undefined);
       const addresses = await walletClient!.requestAddresses();
       if (addresses.length === 0) {
@@ -51,7 +52,7 @@ export const useSophonAccount = () => {
     } finally {
       setIsConnecting(false);
     }
-  }, [walletClient]);
+  }, [walletClient, isConnectedEmbedded, logoutEmbedded]);
 
   // Make sure to only return that the user is connected after
   // context initialization is complete, that way we make sure that

@@ -1,10 +1,4 @@
-import {
-  type Address,
-  getAddress,
-  type Hash,
-  type Hex,
-  type TypedDataParameter,
-} from 'viem';
+import type { Address, Hash, Hex, TypedDataParameter } from 'viem';
 
 /**
  * Interface for the list of contract addresses used in the app.
@@ -18,6 +12,7 @@ export interface ContractAddresses {
   oidcKeyRegistry: `0x${string}`;
   recoveryOidc: `0x${string}`;
   snsRegistry: `0x${string}`;
+  accountCodeStorage: `0x${string}`;
 }
 
 /**
@@ -154,51 +149,6 @@ export type SessionState = {
   }[];
 };
 
-export const getPeriodIdsForTransaction = (args: {
-  sessionConfig: SessionConfig;
-  target: Address;
-  selector?: Hex;
-  timestamp?: bigint;
-}) => {
-  const timestamp = args.timestamp || BigInt(Math.floor(Date.now() / 1000));
-  const target = getAddress(args.target.toLowerCase());
-
-  const getId = (limit: Limit): bigint => {
-    if (limit.limitType === LimitType.Allowance) {
-      return timestamp / limit.period;
-    }
-    return BigInt(0);
-  };
-
-  const findTransferPolicy = () => {
-    return args.sessionConfig.transferPolicies.find(
-      (policy) => policy.target === target,
-    );
-  };
-  const findCallPolicy = () => {
-    return args.sessionConfig.callPolicies.find(
-      (policy) => policy.target === target && policy.selector === args.selector,
-    );
-  };
-
-  const isContractCall = !!args.selector;
-  const policy: TransferPolicy | CallPolicy | undefined = isContractCall
-    ? findCallPolicy()
-    : findTransferPolicy();
-  if (!policy) throw new Error('Transaction does not fit any policy');
-
-  const periodIds = [
-    getId(args.sessionConfig.feeLimit),
-    getId(policy.valueLimit),
-    ...(isContractCall
-      ? (policy as CallPolicy).constraints.map((constraint) =>
-          getId(constraint.limit),
-        )
-      : []),
-  ];
-  return periodIds;
-};
-
 export type BaseTransactionArgs = {
   paymaster?: {
     address: Address;
@@ -242,4 +192,9 @@ export interface TypedDataSigningRequest {
   primaryType: string;
   message: Record<string, unknown>;
   address: string;
+}
+
+export interface AAFactoryAccount {
+  accountId: `0x${string}`;
+  factoryVersion: Address;
 }

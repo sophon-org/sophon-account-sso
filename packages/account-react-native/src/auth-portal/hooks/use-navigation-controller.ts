@@ -1,5 +1,6 @@
+import { shortenAddress } from '@sophon-labs/account-core';
 import { useCallback, useMemo, useState } from 'react';
-import { useSophonAccount } from '../../hooks';
+import { useSophonAccount, useSophonName } from '../../hooks';
 import { useFlowManager } from '../../hooks/use-flow-manager';
 import { useSophonContext } from '../../hooks/use-sophon-context';
 import type {
@@ -17,7 +18,7 @@ const initialState: NavigationAuthPortalState = {
 
 export const useNavigationController = () => {
   const { method } = useFlowManager();
-  const { isConnected } = useSophonAccount();
+  const { isConnected, account } = useSophonAccount();
   const { connectingAccount } = useSophonContext();
   const [state, setConfig] = useState<NavigationAuthPortalState | null>(
     initialState,
@@ -28,8 +29,7 @@ export const useNavigationController = () => {
     currentState: null,
     currentParams: null,
   };
-
-  const currentStep = useMemo<AuthPortalStep>(() => {
+  const currentStep = useMemo<AuthPortalStep | null | undefined>(() => {
     switch (method) {
       case 'eth_requestAccounts':
       case 'wallet_requestPermissions': {
@@ -52,7 +52,8 @@ export const useNavigationController = () => {
 
   const navigate = useCallback(
     (step: AuthPortalStep, options?: NavigateOptions) =>
-      setConfig((prev) => {
+      // biome-ignore lint/suspicious/noExplicitAny: reevaluate the any, @cleo
+      setConfig((prev: any) => {
         if (options?.replace) {
           return {
             ...(prev || {}),
@@ -68,13 +69,15 @@ export const useNavigationController = () => {
         }
 
         const stepExists = prev?.history.some(
-          (existingStep) => existingStep === step,
+          // biome-ignore lint/suspicious/noExplicitAny: reevaluate the any, @cleo
+          (existingStep: any) => existingStep === step,
         );
 
         if (stepExists) return prev;
 
         const addInheritParams = options?.inheritParamsFrom?.reduce(
-          (acc, inheritStep) => {
+          // biome-ignore lint/suspicious/noExplicitAny: reevaluate the any, @cleo
+          (acc: any, inheritStep) => {
             acc[inheritStep] =
               options?.params ||
               prev?.currentParams?.[
@@ -143,7 +146,7 @@ export const useNavigationController = () => {
               ...prev,
               currentParams: {
                 ...prev.currentParams,
-                [prev.currentState]: {
+                [prev.currentState!]: {
                   ...(prev.currentParams?.[
                     prev.currentState as keyof typeof prev.currentParams
                   ] ?? {}),
@@ -181,13 +184,17 @@ export const useNavigationController = () => {
       'authorization',
     ];
 
-    const hasHistory = history.length > 0;
+    const hasHistory = Boolean((history.length ?? 0) > 0);
     const canNavigateBack = !STEPS_WITHOUT_BACK_BUTTON.includes(currentStep);
 
     return hasHistory && canNavigateBack;
   }, [history.length, currentStep]);
 
-  const handleNavTitle = useMemo(() => {
+  const userName = useSophonName();
+
+  const displayName = useMemo(() => {
+    if (userName) return userName;
+    if (account?.address?.trim()) return shortenAddress(account.address);
     const STEPS_WITH_SIGN_IN: AuthPortalStep[] = [
       'signIn',
       'loading',
@@ -208,15 +215,15 @@ export const useNavigationController = () => {
     if (isConnectingAccount) return 'coolkid123.soph.id';
 
     return 'Sign in';
-  }, [isConnectingAccount, currentStep]);
+  }, [account, userName]);
 
   const handleProps = useMemo(
     () => ({
       showBackButton,
       hideCloseButton: isLoading,
-      title: handleNavTitle,
+      title: displayName ?? 'Sign in',
     }),
-    [history, isLoading, handleNavTitle],
+    [history, isLoading],
   );
 
   return {

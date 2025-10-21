@@ -11,7 +11,10 @@ import {
   toHex,
   zeroAddress,
 } from 'viem';
-import { CHAIN_CONTRACTS } from './constants';
+import { sophonTestnet } from 'viem/chains';
+import { sophonAAFactoryAbi, sophonAccountCodeStorageAbi } from './abis';
+import { CHAIN_CONTRACTS, type ChainId, SophonChains } from './constants';
+import type { AAFactoryAccount } from './types';
 
 export const DYNAMIC_SALT_PREFIX = 'DynamicLabs';
 export const SOPHON_SALT_PREFIX = 'SophonLabs';
@@ -82,11 +85,10 @@ export const getAccountAddressByUniqueId = async (
       args: [uniqueId],
     });
 
-    console.log('Existing account:', existingAccountAddress);
-
     return existingAccountAddress;
-  } catch (checkError) {
-    console.log('Account check failed:', checkError);
+  } catch {
+    // ignore errors
+    return null;
   }
 };
 
@@ -115,4 +117,63 @@ export const getDeployedSmartContractAddress = async (
   }
 
   return null;
+};
+
+/**
+ * Returns true if the address is a Sophon account
+ * @param address - The address of the account to check
+ * @param chainId - The chain ID to use for the client
+ * @param rpcUrl - A custom RPC URL to use for the client
+ * @returns True if the address is a Sophon account, false otherwise
+ */
+export const isSophonAccount = async (
+  address: string,
+  chainId: ChainId = sophonTestnet.id,
+  rpcUrl?: string,
+) => {
+  const client = createPublicClient({
+    chain: SophonChains[chainId],
+    transport: http(rpcUrl),
+  });
+
+  const account = (await client.readContract({
+    address: CHAIN_CONTRACTS[chainId].accountFactory,
+    abi: sophonAAFactoryAbi,
+    functionName: 'getAccount',
+    args: [address],
+  })) as AAFactoryAccount;
+
+  return account.accountId !== zeroAddress;
+};
+
+/**
+ * Returns true if the address is an EraVM contract(An EraVM contract is a contract compiled by zkzsolc and deployed on the zkVM)
+ * @param address - The address of the contract to check
+ * @param testnet - Whether to use the testnet chain
+ * @param customRpc - A custom RPC URL to use for the client
+ * @returns True if the address is an EraVM contract, false otherwise
+ */
+export const isEraVMContract = async (
+  address: `0x${string}`,
+  chainId: ChainId = sophonTestnet.id,
+  customRpc?: string,
+) => {
+  const client = createPublicClient({
+    chain: SophonChains[chainId],
+    transport: http(customRpc),
+  });
+
+  const code = await client.getCode({ address });
+  if (!code || code === '0x') {
+    return false;
+  }
+
+  const isAccountEVM = await client.readContract({
+    address: CHAIN_CONTRACTS[chainId].accountCodeStorage,
+    abi: sophonAccountCodeStorageAbi,
+    functionName: 'isAccountEVM',
+    args: [address],
+  });
+
+  return !isAccountEVM;
 };

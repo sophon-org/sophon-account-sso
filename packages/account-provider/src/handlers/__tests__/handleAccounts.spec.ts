@@ -1,3 +1,4 @@
+import { sophonTestnet } from 'viem/chains';
 import { describe, expect, it } from 'vitest';
 import { clearAccounts, setAccounts } from '../../lib/accounts';
 import { handleAccounts } from '../handleAccounts';
@@ -5,12 +6,12 @@ import { handleAccounts } from '../handleAccounts';
 describe('handleAccounts', () => {
   it('should return the available accounts for the given network', async () => {
     // given
-    const network = 'mainnet';
+    const chainId = sophonTestnet.id;
     const accounts = ['0x1234567890123456789012345678901234567890'];
-    setAccounts(network, accounts);
+    setAccounts(chainId, accounts);
 
     // when
-    const result = await handleAccounts(network);
+    const result = await handleAccounts(chainId);
 
     // then
     expect(result).toEqual(accounts);

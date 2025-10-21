@@ -1,5 +1,35 @@
 # @sophon-labs/account-react
 
+## 3.0.0-next.1
+
+### Patch Changes
+
+- Mobile capabilities
+- Updated dependencies
+  - @sophon-labs/account-connector@3.0.0-next.1
+  - @sophon-labs/account-core@3.0.0-next.1
+
+## 3.0.0-next.0
+
+### Major Changes
+
+- Initial release of the new sophon account v3 for testing purposes only
+
+### Patch Changes
+
+- Updated dependencies
+  - @sophon-labs/account-connector@3.0.0-next.0
+  - @sophon-labs/account-core@3.0.0-next.0
+
+## 2.3.6
+
+### Patch Changes
+
+- Allowing auth to use owner as signer for JWT and moving common code to account-core
+- Updated dependencies
+  - @sophon-labs/account-connector@2.3.6
+  - @sophon-labs/account-core@2.3.6
+
 ## 2.3.5
 
 ### Patch Changes
