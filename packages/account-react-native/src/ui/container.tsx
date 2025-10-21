@@ -1,66 +1,66 @@
-import type React from "react";
-import { useMemo } from "react";
-import { View, type ViewProps, StyleSheet, type ViewStyle } from "react-native";
+import type React from 'react';
+import { useMemo } from 'react';
+import { StyleSheet, View, type ViewProps, type ViewStyle } from 'react-native';
 
 type ViewStylePropKeys =
-  | "flex"
-  | "flexDirection"
-  | "flexWrap"
-  | "flexGrow"
-  | "flexShrink"
-  | "flexBasis"
-  | "alignItems"
-  | "alignContent"
-  | "alignSelf"
-  | "justifyContent"
-  | "width"
-  | "height"
-  | "minWidth"
-  | "minHeight"
-  | "maxWidth"
-  | "maxHeight"
-  | "margin"
-  | "marginTop"
-  | "marginRight"
-  | "marginBottom"
-  | "marginLeft"
-  | "marginHorizontal"
-  | "marginVertical"
-  | "padding"
-  | "paddingTop"
-  | "paddingRight"
-  | "paddingBottom"
-  | "paddingLeft"
-  | "paddingHorizontal"
-  | "paddingVertical"
-  | "backgroundColor"
-  | "borderWidth"
-  | "borderTopWidth"
-  | "borderRightWidth"
-  | "borderBottomWidth"
-  | "borderLeftWidth"
-  | "borderColor"
-  | "borderTopColor"
-  | "borderRightColor"
-  | "borderBottomColor"
-  | "borderLeftColor"
-  | "borderRadius"
-  | "borderTopLeftRadius"
-  | "borderTopRightRadius"
-  | "borderBottomLeftRadius"
-  | "borderBottomRightRadius"
-  | "borderStyle"
-  | "opacity"
-  | "overflow"
-  | "position"
-  | "top"
-  | "right"
-  | "bottom"
-  | "left"
-  | "zIndex"
-  | "gap"
-  | "rowGap"
-  | "columnGap";
+  | 'flex'
+  | 'flexDirection'
+  | 'flexWrap'
+  | 'flexGrow'
+  | 'flexShrink'
+  | 'flexBasis'
+  | 'alignItems'
+  | 'alignContent'
+  | 'alignSelf'
+  | 'justifyContent'
+  | 'width'
+  | 'height'
+  | 'minWidth'
+  | 'minHeight'
+  | 'maxWidth'
+  | 'maxHeight'
+  | 'margin'
+  | 'marginTop'
+  | 'marginRight'
+  | 'marginBottom'
+  | 'marginLeft'
+  | 'marginHorizontal'
+  | 'marginVertical'
+  | 'padding'
+  | 'paddingTop'
+  | 'paddingRight'
+  | 'paddingBottom'
+  | 'paddingLeft'
+  | 'paddingHorizontal'
+  | 'paddingVertical'
+  | 'backgroundColor'
+  | 'borderWidth'
+  | 'borderTopWidth'
+  | 'borderRightWidth'
+  | 'borderBottomWidth'
+  | 'borderLeftWidth'
+  | 'borderColor'
+  | 'borderTopColor'
+  | 'borderRightColor'
+  | 'borderBottomColor'
+  | 'borderLeftColor'
+  | 'borderRadius'
+  | 'borderTopLeftRadius'
+  | 'borderTopRightRadius'
+  | 'borderBottomLeftRadius'
+  | 'borderBottomRightRadius'
+  | 'borderStyle'
+  | 'opacity'
+  | 'overflow'
+  | 'position'
+  | 'top'
+  | 'right'
+  | 'bottom'
+  | 'left'
+  | 'zIndex'
+  | 'gap'
+  | 'rowGap'
+  | 'columnGap';
 
 type InlineViewStyleProps = Partial<Pick<ViewStyle, ViewStylePropKeys>>;
 
@@ -70,67 +70,71 @@ type ContainerProps = ViewProps &
   };
 
 const VIEW_STYLE_KEYS: ReadonlyArray<ViewStylePropKeys> = [
-  "flex",
-  "flexDirection",
-  "flexWrap",
-  "flexGrow",
-  "flexShrink",
-  "flexBasis",
-  "alignItems",
-  "alignContent",
-  "alignSelf",
-  "justifyContent",
-  "width",
-  "height",
-  "minWidth",
-  "minHeight",
-  "maxWidth",
-  "maxHeight",
-  "margin",
-  "marginTop",
-  "marginRight",
-  "marginBottom",
-  "marginLeft",
-  "marginHorizontal",
-  "marginVertical",
-  "padding",
-  "paddingTop",
-  "paddingRight",
-  "paddingBottom",
-  "paddingLeft",
-  "paddingHorizontal",
-  "paddingVertical",
-  "backgroundColor",
-  "borderWidth",
-  "borderTopWidth",
-  "borderRightWidth",
-  "borderBottomWidth",
-  "borderLeftWidth",
-  "borderColor",
-  "borderTopColor",
-  "borderRightColor",
-  "borderBottomColor",
-  "borderLeftColor",
-  "borderRadius",
-  "borderTopLeftRadius",
-  "borderTopRightRadius",
-  "borderBottomLeftRadius",
-  "borderBottomRightRadius",
-  "borderStyle",
-  "opacity",
-  "overflow",
-  "position",
-  "top",
-  "right",
-  "bottom",
-  "left",
-  "zIndex",
-  "gap",
-  "rowGap",
-  "columnGap",
+  'flex',
+  'flexDirection',
+  'flexWrap',
+  'flexGrow',
+  'flexShrink',
+  'flexBasis',
+  'alignItems',
+  'alignContent',
+  'alignSelf',
+  'justifyContent',
+  'width',
+  'height',
+  'minWidth',
+  'minHeight',
+  'maxWidth',
+  'maxHeight',
+  'margin',
+  'marginTop',
+  'marginRight',
+  'marginBottom',
+  'marginLeft',
+  'marginHorizontal',
+  'marginVertical',
+  'padding',
+  'paddingTop',
+  'paddingRight',
+  'paddingBottom',
+  'paddingLeft',
+  'paddingHorizontal',
+  'paddingVertical',
+  'backgroundColor',
+  'borderWidth',
+  'borderTopWidth',
+  'borderRightWidth',
+  'borderBottomWidth',
+  'borderLeftWidth',
+  'borderColor',
+  'borderTopColor',
+  'borderRightColor',
+  'borderBottomColor',
+  'borderLeftColor',
+  'borderRadius',
+  'borderTopLeftRadius',
+  'borderTopRightRadius',
+  'borderBottomLeftRadius',
+  'borderBottomRightRadius',
+  'borderStyle',
+  'opacity',
+  'overflow',
+  'position',
+  'top',
+  'right',
+  'bottom',
+  'left',
+  'zIndex',
+  'gap',
+  'rowGap',
+  'columnGap',
 ] as const;
 
-export const Container: React.FC<ContainerProps> = ({ isVisible = true, style, ...rest }) => {
+export const Container: React.FC<ContainerProps> = ({
+  isVisible = true,
+  style,
+  ...rest
+}) => {
   const inlineStyle = useMemo(() => {
     const viewStyles: ViewStyle = {};
     VIEW_STYLE_KEYS.forEach((key) => {

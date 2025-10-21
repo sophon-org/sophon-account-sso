@@ -1,19 +1,19 @@
-import { useCallback, useEffect } from "react";
-import { Pressable, StyleSheet, View } from "react-native";
+import { useCallback, useEffect } from 'react';
+import { Pressable, StyleSheet, View } from 'react-native';
 import Animated, {
+  Easing,
   Extrapolation,
   interpolate,
   useAnimatedStyle,
   useDerivedValue,
   useSharedValue,
   withTiming,
-  Easing,
-} from "react-native-reanimated";
-import { Container } from "./container";
-import { Icon } from "./icon";
-import { Text } from "./text";
-import { useBooleanState } from "../hooks";
-import { Switch } from "./switch";
+} from 'react-native-reanimated';
+import { useBooleanState } from '../hooks';
+import { Container } from './container';
+import { Icon } from './icon';
+import { Switch } from './switch';
+import { Text } from './text';
 
 interface PermissionCollapseProps {
   name: string;
@@ -24,7 +24,7 @@ interface PermissionCollapseProps {
   onChangePermission?: (allowed: boolean, name: string) => void | Promise<void>;
 }
 export function PermissionCollapse({
-  name = "collapse",
+  name = 'collapse',
   label,
   description,
   onChangePermission,
@@ -90,7 +90,10 @@ function CollapseHeader({
   }));
 
   const handleToggle = useCallback(() => onToggle?.(), [onToggle]);
-  const handleSwitch = useCallback((value: boolean) => onValueChange?.(value), [onValueChange]);
+  const handleSwitch = useCallback(
+    (value: boolean) => onValueChange?.(value),
+    [onValueChange],
+  );
 
   return (
     <Pressable style={styles.header} onPress={handleToggle}>
@@ -101,12 +104,17 @@ function CollapseHeader({
         justifyContent="space-between"
         gap={8}
       >
-        <Container flexDirection="row" alignItems="center" justifyContent="center" gap={8}>
+        <Container
+          flexDirection="row"
+          alignItems="center"
+          justifyContent="center"
+          gap={8}
+        >
           <Animated.View style={iconStyle}>
             <Icon name="chevronRight" size={18} color="#A3A2A0" />
           </Animated.View>
           <Container>
-            <Text fontWeight={"700"}>{label}</Text>
+            <Text fontWeight={'700'}>{label}</Text>
           </Container>
         </Container>
         <Container>
@@ -125,7 +133,13 @@ interface AccordionItemProps {
   children: string;
 }
 
-function Accordion({ isExpanded, viewKey, style, duration = 300, children }: AccordionItemProps) {
+function Accordion({
+  isExpanded,
+  viewKey,
+  style,
+  duration = 300,
+  children,
+}: AccordionItemProps) {
   const height = useSharedValue(0);
 
   const derivedHeight = useDerivedValue(() =>
@@ -138,7 +152,10 @@ function Accordion({ isExpanded, viewKey, style, duration = 300, children }: Acc
   }));
 
   return (
-    <Animated.View key={`accordionItem_${viewKey}`} style={[styles.animatedView, bodyStyle, style]}>
+    <Animated.View
+      key={`accordionItem_${viewKey}`}
+      style={[styles.animatedView, bodyStyle, style]}
+    >
       <View
         onLayout={(e) => {
           height.value = e.nativeEvent.layout.height;
@@ -153,17 +170,17 @@ function Accordion({ isExpanded, viewKey, style, duration = 300, children }: Acc
 
 const styles = StyleSheet.create({
   animatedView: {
-    width: "100%",
-    overflow: "hidden",
+    width: '100%',
+    overflow: 'hidden',
   },
   wrapper: {
-    width: "100%",
-    position: "absolute",
-    display: "flex",
-    alignItems: "center",
+    width: '100%',
+    position: 'absolute',
+    display: 'flex',
+    alignItems: 'center',
   },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });

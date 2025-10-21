@@ -1,13 +1,13 @@
-import { useCallback, useMemo, useState } from "react";
-import { useSophonAccount } from "../../hooks";
-import { useFlowManager } from "../../hooks/use-flow-manager";
-import { useSophonContext } from "../../hooks/use-sophon-context";
+import { useCallback, useMemo, useState } from 'react';
+import { useSophonAccount } from '../../hooks';
+import { useFlowManager } from '../../hooks/use-flow-manager';
+import { useSophonContext } from '../../hooks/use-sophon-context';
 import type {
   AuthPortalStep,
   NavigateOptions,
   NavigateParams,
   NavigationAuthPortalState,
-} from "../types";
+} from '../types';
 
 const initialState: NavigationAuthPortalState = {
   currentState: null,
@@ -19,7 +19,9 @@ export const useNavigationController = () => {
   const { method } = useFlowManager();
   const { isConnected } = useSophonAccount();
   const { connectingAccount } = useSophonContext();
-  const [state, setConfig] = useState<NavigationAuthPortalState | null>(initialState);
+  const [state, setConfig] = useState<NavigationAuthPortalState | null>(
+    initialState,
+  );
 
   const { history, currentState, currentParams } = state ?? {
     history: [],
@@ -29,18 +31,18 @@ export const useNavigationController = () => {
 
   const currentStep = useMemo<AuthPortalStep>(() => {
     switch (method) {
-      case "eth_requestAccounts":
-      case "wallet_requestPermissions": {
-        if (isConnected || connectingAccount) return "authorization";
-        return currentState || "signIn";
+      case 'eth_requestAccounts':
+      case 'wallet_requestPermissions': {
+        if (isConnected || connectingAccount) return 'authorization';
+        return currentState || 'signIn';
       }
-      case "personal_sign":
-      case "eth_signTypedData_v4":
-        return "signMessage";
-      case "eth_sendTransaction":
-        return "transaction";
-      case "sophon_requestConsent":
-        return "consent";
+      case 'personal_sign':
+      case 'eth_signTypedData_v4':
+        return 'signMessage';
+      case 'eth_sendTransaction':
+        return 'transaction';
+      case 'sophon_requestConsent':
+        return 'consent';
       // case 'wallet_revokePermissions':
       // case 'wallet_disconnect':
       default:
@@ -65,27 +67,35 @@ export const useNavigationController = () => {
           };
         }
 
-        const stepExists = prev?.history.some((existingStep) => existingStep === step);
+        const stepExists = prev?.history.some(
+          (existingStep) => existingStep === step,
+        );
 
         if (stepExists) return prev;
 
-        const addInheritParams = options?.inheritParamsFrom?.reduce((acc, inheritStep) => {
-          acc[inheritStep] =
-            options?.params ||
-            prev?.currentParams?.[inheritStep as keyof typeof prev.currentParams] ||
-            null;
-          return acc;
-        }, {});
+        const addInheritParams = options?.inheritParamsFrom?.reduce(
+          (acc, inheritStep) => {
+            acc[inheritStep] =
+              options?.params ||
+              prev?.currentParams?.[
+                inheritStep as keyof typeof prev.currentParams
+              ] ||
+              null;
+            return acc;
+          },
+          {},
+        );
 
         const _currentParams = {
           ...(prev?.currentParams ?? {}),
           [step]: options?.params || null,
           ...addInheritParams,
         };
-        const _history = [...(prev?.history || []), prev?.currentState || currentStep].filter(
-          Boolean,
-        ) as AuthPortalStep[];
-        console.log("currentParams", _currentParams, _history);
+        const _history = [
+          ...(prev?.history || []),
+          prev?.currentState || currentStep,
+        ].filter(Boolean) as AuthPortalStep[];
+        console.log('currentParams', _currentParams, _history);
         return {
           currentState: step,
           history: _history,
@@ -101,11 +111,11 @@ export const useNavigationController = () => {
 
   const goBack = useCallback((options?: NavigateOptions) => {
     setConfig((prev) => {
-      if (prev.currentState === "retry") return initialState;
+      if (prev.currentState === 'retry') return initialState;
       if (!prev || prev.history.length === 0) return prev;
       const newHistory = prev.history.slice(0, -1);
       const newCurrentState = prev.history[prev.history.length - 1];
-      if (newCurrentState === "signIn") return initialState;
+      if (newCurrentState === 'signIn') return initialState;
       if (!newCurrentState) return prev;
       return {
         currentState: newCurrentState,
@@ -114,7 +124,9 @@ export const useNavigationController = () => {
           ...prev.currentParams,
           [newCurrentState]: Object.assign(
             {},
-            prev.currentParams?.[newCurrentState as keyof typeof prev.currentParams] ?? {},
+            prev.currentParams?.[
+              newCurrentState as keyof typeof prev.currentParams
+            ] ?? {},
             options?.params ?? {},
           ),
         },
@@ -132,8 +144,9 @@ export const useNavigationController = () => {
               currentParams: {
                 ...prev.currentParams,
                 [prev.currentState]: {
-                  ...(prev.currentParams?.[prev.currentState as keyof typeof prev.currentParams] ??
-                    {}),
+                  ...(prev.currentParams?.[
+                    prev.currentState as keyof typeof prev.currentParams
+                  ] ?? {}),
                   ...params,
                 },
               },
@@ -148,24 +161,24 @@ export const useNavigationController = () => {
 
   const { isLoading, isConnectingAccount } = useMemo(() => {
     return {
-      isLoading: currentStep === "loading",
-      isConnectingAccount: currentStep === "authorization" || isConnected,
+      isLoading: currentStep === 'loading',
+      isConnectingAccount: currentStep === 'authorization' || isConnected,
     };
   }, [currentStep, isConnected]);
 
   const params = useMemo(() => {
-    return currentParams?.[currentStep || ""] || null;
+    return currentParams?.[currentStep || ''] || null;
   }, [currentStep, currentParams]);
 
   const showBackButton = useMemo(() => {
-    if (currentStep === "retry") return true;
+    if (currentStep === 'retry') return true;
 
     const STEPS_WITHOUT_BACK_BUTTON: AuthPortalStep[] = [
-      "signMessage",
-      "transaction",
-      "consent",
-      "loading",
-      "authorization",
+      'signMessage',
+      'transaction',
+      'consent',
+      'loading',
+      'authorization',
     ];
 
     const hasHistory = history.length > 0;
@@ -176,25 +189,25 @@ export const useNavigationController = () => {
 
   const handleNavTitle = useMemo(() => {
     const STEPS_WITH_SIGN_IN: AuthPortalStep[] = [
-      "signIn",
-      "loading",
-      "authorization",
-      "retry",
-      "verifyEmail",
+      'signIn',
+      'loading',
+      'authorization',
+      'retry',
+      'verifyEmail',
     ];
 
     if (STEPS_WITH_SIGN_IN.includes(currentStep)) {
-      return "Sign in";
+      return 'Sign in';
     }
 
     switch (currentStep) {
-      case "consent":
-        return "Data Permissions";
+      case 'consent':
+        return 'Data Permissions';
     }
 
-    if (isConnectingAccount) return "coolkid123.soph.id";
+    if (isConnectingAccount) return 'coolkid123.soph.id';
 
-    return "Sign in";
+    return 'Sign in';
   }, [isConnectingAccount, currentStep]);
 
   const handleProps = useMemo(
@@ -224,4 +237,6 @@ export const useNavigationController = () => {
   };
 };
 
-export type NavigationBottomSheetHook = ReturnType<typeof useNavigationController>;
+export type NavigationBottomSheetHook = ReturnType<
+  typeof useNavigationController
+>;

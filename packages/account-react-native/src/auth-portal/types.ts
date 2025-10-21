@@ -1,16 +1,16 @@
-import type { DataScopes } from "@sophon-labs/account-core";
-import type { ViewStyle } from "react-native";
+import type { DataScopes } from '@sophon-labs/account-core';
+import type { ViewStyle } from 'react-native';
 
 export enum AuthPortalSteps {
-  SignIn = "signIn",
-  VerifyEmail = "verifyEmail",
-  ConnectWallet = "connectWallet",
-  Authorization = "authorization",
-  Loading = "loading",
-  Retry = "retry",
-  SignMessage = "signMessage",
-  Transaction = "transaction",
-  Consent = "consent",
+  SignIn = 'signIn',
+  VerifyEmail = 'verifyEmail',
+  ConnectWallet = 'connectWallet',
+  Authorization = 'authorization',
+  Loading = 'loading',
+  Retry = 'retry',
+  SignMessage = 'signMessage',
+  Transaction = 'transaction',
+  Consent = 'consent',
 }
 export type AuthPortalStep = `${AuthPortalSteps}`;
 
@@ -22,7 +22,7 @@ export type AuthPortalContextProps = {
   params: NavigateParams | null;
 };
 export interface BasicStepProps {
-  currentStep: AuthPortalContextProps["currentStep"];
+  currentStep: AuthPortalContextProps['currentStep'];
   style?: ViewStyle;
   onAuthenticate: (value: `0x${string}`) => Promise<void>;
   onComplete: (payload: { hide: boolean }) => Promise<void>;

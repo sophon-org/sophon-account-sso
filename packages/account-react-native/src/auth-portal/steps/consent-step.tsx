@@ -1,25 +1,28 @@
-import { useCallback, useMemo, useRef, useState } from "react";
-import { StyleSheet } from "react-native";
-import { useFlowManager, useBooleanState } from "../../hooks";
-import type { BasicStepProps } from "../types";
-import { Button, Container, Text, PermissionCollapse, Switch } from "../../ui";
+import { useCallback, useMemo, useRef, useState } from 'react';
+import { StyleSheet } from 'react-native';
+import { useBooleanState, useFlowManager } from '../../hooks';
+import { Button, Container, PermissionCollapse, Switch, Text } from '../../ui';
+import type { BasicStepProps } from '../types';
 
 const MOCK_CONSENTS = [
   {
-    name: "purpose1",
-    label: "Personalization & Ads:",
+    name: 'purpose1',
+    label: 'Personalization & Ads:',
     description:
-      "Use the data you provide and import to build a profile linked to your Sophon Account, customize your experience, provide relevant ads and provide potential rewards without sharing your data with third parties.",
+      'Use the data you provide and import to build a profile linked to your Sophon Account, customize your experience, provide relevant ads and provide potential rewards without sharing your data with third parties.',
   },
   {
-    name: "purpose2",
-    label: "Analytics & Improvements:",
+    name: 'purpose2',
+    label: 'Analytics & Improvements:',
     description:
-      "Use the data you provide and import to analyze user behavior, improve our services, and develop new features without sharing your data with third parties.",
+      'Use the data you provide and import to analyze user behavior, improve our services, and develop new features without sharing your data with third parties.',
   },
 ];
 
-export const ConsentStep: React.FC<BasicStepProps> = ({ onComplete, onError }) => {
+export const ConsentStep: React.FC<BasicStepProps> = ({
+  onComplete,
+  onError,
+}) => {
   const isLoadingState = useBooleanState(false);
   const {
     actions: { consent },
@@ -40,12 +43,15 @@ export const ConsentStep: React.FC<BasicStepProps> = ({ onComplete, onError }) =
     [consents],
   );
 
-  const handleOnChangePermission = useCallback((allowed: boolean, name: string) => {
-    setConsents((prev) => ({
-      ...prev,
-      [name]: allowed,
-    }));
-  }, []);
+  const handleOnChangePermission = useCallback(
+    (allowed: boolean, name: string) => {
+      setConsents((prev) => ({
+        ...prev,
+        [name]: allowed,
+      }));
+    },
+    [],
+  );
 
   const handleOnToggleSelectAll = useCallback((checked: boolean) => {
     setConsents((prev) => ({
@@ -75,7 +81,8 @@ export const ConsentStep: React.FC<BasicStepProps> = ({ onComplete, onError }) =
     <Container>
       <Container marginBottom={16}>
         <Text textAlign="center">
-          We would like your permission to use your data for the following purposes.
+          We would like your permission to use your data for the following
+          purposes.
         </Text>
       </Container>
       <Container gap={8} marginVertical={24}>
@@ -90,7 +97,12 @@ export const ConsentStep: React.FC<BasicStepProps> = ({ onComplete, onError }) =
           />
         ))}
       </Container>
-      <Container flexDirection="row" justifyContent="center" alignItems="center" gap={8}>
+      <Container
+        flexDirection="row"
+        justifyContent="center"
+        alignItems="center"
+        gap={8}
+      >
         <Text textAlign="center" fontWeight="700">
           Select all
         </Text>
@@ -98,10 +110,11 @@ export const ConsentStep: React.FC<BasicStepProps> = ({ onComplete, onError }) =
       </Container>
       <Container marginTop={24}>
         <Text textAlign="center" size="small" color="#8D8D8D">
-          You can withdraw your consent at any time by sending us an email at data@sophon.xyz.
-          Withdrawal will stop any future use of your data for these purposes, but it will not
-          affect processing already carried out while your consent was active. Please refer to our
-          Privacy Policy to find out how we process and protect your data and how you can exercise
+          You can withdraw your consent at any time by sending us an email at
+          data@sophon.xyz. Withdrawal will stop any future use of your data for
+          these purposes, but it will not affect processing already carried out
+          while your consent was active. Please refer to our Privacy Policy to
+          find out how we process and protect your data and how you can exercise
           your rights.
         </Text>
       </Container>
@@ -119,16 +132,16 @@ export const ConsentStep: React.FC<BasicStepProps> = ({ onComplete, onError }) =
 
 const styles = StyleSheet.create({
   walletButton: {
-    backgroundColor: "#EAF1FF",
+    backgroundColor: '#EAF1FF',
     borderRadius: 8,
     height: 44,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
     gap: 8,
   },
   walletText: {
-    color: "#0066FF",
-    fontWeight: "600",
+    color: '#0066FF',
+    fontWeight: '600',
   },
 });

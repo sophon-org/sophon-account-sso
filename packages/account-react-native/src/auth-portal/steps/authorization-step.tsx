@@ -1,26 +1,34 @@
-import { useCallback, useState } from "react";
-import { StyleSheet, View } from "react-native";
-import { useBooleanState, useFlowManager } from "../../hooks";
-import { Button, Card, CheckBox, Container, Text } from "../../ui";
-import { sentenceCase } from "../../utils/string-utils";
-import type { BasicStepProps } from "../types";
+import { useCallback, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { useBooleanState, useFlowManager } from '../../hooks';
+import { Button, Card, CheckBox, Container, Text } from '../../ui';
+import { sentenceCase } from '../../utils/string-utils';
+import type { BasicStepProps } from '../types';
 
-export const AuthorizationStep = ({ onComplete, onError, onCancel, scopes }: BasicStepProps) => {
+export const AuthorizationStep = ({
+  onComplete,
+  onError,
+  onCancel,
+  scopes,
+}: BasicStepProps) => {
   const isLoadingState = useBooleanState(false);
   const {
     actions: { authorize },
   } = useFlowManager();
   const [selectedScopes, setSelectedScopes] = useState<string[]>([]);
 
-  const handleOnSelectScope = useCallback((scope: string, isSelected: boolean) => {
-    setSelectedScopes((prev) => {
-      if (isSelected) {
-        return prev.includes(scope) ? prev : [...prev, scope];
-      } else {
-        return prev.filter((s) => s !== scope);
-      }
-    });
-  }, []);
+  const handleOnSelectScope = useCallback(
+    (scope: string, isSelected: boolean) => {
+      setSelectedScopes((prev) => {
+        if (isSelected) {
+          return prev.includes(scope) ? prev : [...prev, scope];
+        } else {
+          return prev.filter((s) => s !== scope);
+        }
+      });
+    },
+    [],
+  );
 
   const handleAuthorize = useCallback(async () => {
     try {
@@ -51,7 +59,11 @@ export const AuthorizationStep = ({ onComplete, onError, onCancel, scopes }: Bas
             locked
             label="See your address / identity, balance and activity"
           />
-          <CheckBox defaultChecked locked label="Ask for transactions to be approved" />
+          <CheckBox
+            defaultChecked
+            locked
+            label="Ask for transactions to be approved"
+          />
           {scopes?.map((scope) => (
             <CheckBox
               key={scope}
@@ -62,7 +74,10 @@ export const AuthorizationStep = ({ onComplete, onError, onCancel, scopes }: Bas
         </Container>
         <Container style={styles.cardSection}>
           <Text fontWeight="bold">It can’t</Text>
-          <CheckBox unavailable label="Perform actions or transfer funds on your behalf" />
+          <CheckBox
+            unavailable
+            label="Perform actions or transfer funds on your behalf"
+          />
         </Container>
       </Card>
       <View style={styles.buttons}>
@@ -89,10 +104,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   buttons: {
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     gap: 8,
     marginVertical: 16,
   },

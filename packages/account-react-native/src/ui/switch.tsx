@@ -1,14 +1,14 @@
-import React, { useEffect, useMemo } from "react";
-import { StyleSheet } from "react-native";
+import React, { useEffect, useMemo } from 'react';
+import { StyleSheet } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
   interpolateColor,
-  withSpring,
   runOnJS,
-} from "react-native-reanimated";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import { Container } from "./container";
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated';
+import { Container } from './container';
 
 type SwitchProps = {
   value: boolean;
@@ -24,7 +24,7 @@ export function Switch({
   value,
   onValueChange,
   disabled = false,
-  trackColors = { on: "#3377FF", off: "#A3A2A0" },
+  trackColors = { on: '#3377FF', off: '#A3A2A0' },
   size = 30,
 }: SwitchProps) {
   const progress = useSharedValue(value ? 1 : 0);
@@ -58,7 +58,10 @@ export function Switch({
       dragStart.value = progress.value;
     })
     .onUpdate((e) => {
-      const next = Math.min(Math.max(dragStart.value + e.translationX / MAX_TRANSLATE, 0), 1);
+      const next = Math.min(
+        Math.max(dragStart.value + e.translationX / MAX_TRANSLATE, 0),
+        1,
+      );
       progress.value = next;
     })
     .onEnd(() => {
@@ -82,7 +85,11 @@ export function Switch({
   const combo = Gesture.Simultaneous(tap, pan);
 
   const trackStyle = useAnimatedStyle(() => ({
-    backgroundColor: interpolateColor(progress.value, [0, 1], [trackColors.off, trackColors.on]),
+    backgroundColor: interpolateColor(
+      progress.value,
+      [0, 1],
+      [trackColors.off, trackColors.on],
+    ),
   }));
 
   const thumbStyle = useAnimatedStyle(() => ({
@@ -97,11 +104,19 @@ export function Switch({
     ],
   }));
   return (
-    <Container onStartShouldSetResponder={() => true} onTouchEnd={(e) => e.stopPropagation()}>
+    <Container
+      onStartShouldSetResponder={() => true}
+      onTouchEnd={(e) => e.stopPropagation()}
+    >
       <GestureDetector gesture={combo}>
         <Animated.View
           style={[
-            { width: WIDTH, height: HEIGHT, borderRadius: RADIUS, paddingHorizontal: PADDING },
+            {
+              width: WIDTH,
+              height: HEIGHT,
+              borderRadius: RADIUS,
+              paddingHorizontal: PADDING,
+            },
             styles.track,
             trackStyle,
           ]}
@@ -121,11 +136,11 @@ export function Switch({
 
 const styles = StyleSheet.create({
   track: {
-    justifyContent: "center",
+    justifyContent: 'center',
   },
   thumb: {
-    backgroundColor: "#FFF",
-    shadowColor: "#000",
+    backgroundColor: '#FFF',
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.25,
     shadowRadius: 1.5,
