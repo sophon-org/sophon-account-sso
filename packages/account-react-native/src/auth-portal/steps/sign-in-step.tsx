@@ -1,5 +1,5 @@
 import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { type AuthProvider, useEmbeddedAuth } from "../../auth/useAuth";
 import { AVAILABLE_PROVIDERS } from "../../constants";
@@ -13,6 +13,7 @@ export const SignInStep = ({ onComplete, onError, onAuthenticate }: BasicStepPro
   const params = useNavigationParams<SignInParams>();
   const { navigate } = useNavigationPortal();
   const loadingState = useBooleanState(false);
+  const requestRef = useRef(false);
   const [email, setEmail] = useState(params?.email || "");
   const { signInWithSocialProvider, signInWithEmail } = useEmbeddedAuth();
   const {
@@ -21,7 +22,9 @@ export const SignInStep = ({ onComplete, onError, onAuthenticate }: BasicStepPro
 
   const handleSocialProviderPress = useCallback(
     async (provider: AuthProvider) => {
+      if (requestRef.current) return;
       try {
+        requestRef.current = true;
         const waitFor = waitForAuthentication();
         await signInWithSocialProvider(provider);
         const ownerAddress = await waitFor;
@@ -30,12 +33,15 @@ export const SignInStep = ({ onComplete, onError, onAuthenticate }: BasicStepPro
         console.log("USER CANCELED");
         console.error(error);
         await onError(error as Error);
+      } finally {
+        requestRef.current = false;
       }
     },
     [signInWithSocialProvider, onComplete, onError],
   );
 
   const handleSignInWithEmail = useCallback(async () => {
+    if (loadingState.state) return;
     try {
       loadingState.setOn();
       await signInWithEmail(email);
@@ -51,7 +57,7 @@ export const SignInStep = ({ onComplete, onError, onAuthenticate }: BasicStepPro
     } finally {
       loadingState.setOff();
     }
-  }, [signInWithEmail, onComplete, onError, email]);
+  }, [signInWithEmail, onComplete, onError, email, loadingState.state]);
 
   const handleChangeText = useCallback((text: string) => {
     setEmail(text);

@@ -174,13 +174,36 @@ export const useNavigationController = () => {
     return hasHistory && canNavigateBack;
   }, [history.length, currentStep]);
 
+  const handleNavTitle = useMemo(() => {
+    const STEPS_WITH_SIGN_IN: AuthPortalStep[] = [
+      "signIn",
+      "loading",
+      "authorization",
+      "retry",
+      "verifyEmail",
+    ];
+
+    if (STEPS_WITH_SIGN_IN.includes(currentStep)) {
+      return "Sign in";
+    }
+
+    switch (currentStep) {
+      case "consent":
+        return "Data Permissions";
+    }
+
+    if (isConnectingAccount) return "coolkid123.soph.id";
+
+    return "Sign in";
+  }, [isConnectingAccount, currentStep]);
+
   const handleProps = useMemo(
     () => ({
       showBackButton,
       hideCloseButton: isLoading,
-      title: isConnectingAccount ? "coolkid123.soph.id" : "Sign in",
+      title: handleNavTitle,
     }),
-    [history, isLoading, isConnectingAccount],
+    [history, isLoading, handleNavTitle],
   );
 
   return {
