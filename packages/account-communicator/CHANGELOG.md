@@ -1,5 +1,11 @@
 # @sophon-labs/account-eip6963
 
+## 3.0.0-next.0
+
+### Major Changes
+
+- Initial release of the new sophon account v3 for testing purposes only
+
 ## 2.3.6
 
 ### Patch Changes

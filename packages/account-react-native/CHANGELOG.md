@@ -1,5 +1,19 @@
 # @sophon-labs/account-react-native
 
+## 3.0.0-next.0
+
+### Major Changes
+
+- Initial release of the new sophon account v3 for testing purposes only
+
+### Patch Changes
+
+- Updated dependencies
+  - @sophon-labs/account-message-bridge@3.0.0-next.0
+  - @sophon-labs/account-communicator@3.0.0-next.0
+  - @sophon-labs/account-provider@3.0.0-next.0
+  - @sophon-labs/account-core@3.0.0-next.0
+
 ## 2.3.6
 
 ### Patch Changes
