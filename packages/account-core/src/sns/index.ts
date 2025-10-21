@@ -117,7 +117,7 @@ export const snsManager = (
 ) => {
   // make sure to not use localStorage if not in the browser context
   let currentStorage = NoopStorage;
-  if (typeof window !== 'undefined') {
+  if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
     currentStorage = localStorage;
   }
   const snsStorage = cachedSNS(storage ?? currentStorage);

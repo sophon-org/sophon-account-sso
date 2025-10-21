@@ -1,5 +1,6 @@
 import { useReactiveClient } from '@dynamic-labs/react-hooks';
-import { useCallback } from 'react';
+import { DataScopes } from '@sophon-labs/account-core';
+import { useCallback, useMemo } from 'react';
 import { dynamicClient } from '../lib/dynamic';
 
 export enum AuthProvider {
@@ -46,6 +47,42 @@ export const useEmbeddedAuth = () => {
     return auth.social.getAllLinkedAccounts();
   }, [auth.social.getAllLinkedAccounts]);
 
+  const isConnected = useMemo(() => {
+    return auth.authenticatedUser !== null;
+  }, [auth.authenticatedUser]);
+
+  const getAvailableDataScopes = useCallback(async () => {
+    const available: DataScopes[] = [];
+    if (auth.authenticatedUser?.email) {
+      available.push(DataScopes.email);
+    }
+
+    const socials = await auth.social.getAllLinkedAccounts();
+    for (const social of socials) {
+      switch (social.provider) {
+        case 'google':
+          available.push(DataScopes.google);
+          break;
+        case 'twitter':
+          available.push(DataScopes.x);
+          break;
+        case 'discord':
+          available.push(DataScopes.discord);
+          break;
+        case 'telegram':
+          available.push(DataScopes.telegram);
+          break;
+        case 'apple':
+          available.push(DataScopes.apple);
+          break;
+        default:
+        // do nothing on unmapped providers
+      }
+    }
+
+    return available;
+  }, [auth.social.getAllLinkedAccounts, auth.authenticatedUser]);
+
   return {
     signInWithSocialProvider,
     getLinkedAccounts,
@@ -53,5 +90,7 @@ export const useEmbeddedAuth = () => {
     verifyEmailOTP,
     resendEmailOTP,
     logout,
+    getAvailableDataScopes,
+    isConnected,
   };
 };

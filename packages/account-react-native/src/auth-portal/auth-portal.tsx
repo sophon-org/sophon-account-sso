@@ -5,8 +5,9 @@ import BottomSheet, {
   BottomSheetView,
 } from '@gorhom/bottom-sheet';
 import type { DataScopes } from '@sophon-labs/account-core';
-import { useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Keyboard, Platform } from 'react-native';
+import { useEmbeddedAuth } from '../auth/useAuth';
 import { useBooleanState, useFlowManager } from '../hooks';
 import { useUIEventHandler } from '../messaging/ui';
 import { FooterSheet } from './components/footer-sheet';
@@ -154,6 +155,19 @@ export function AuthPortal(props: AuthPortalProps) {
     console.log('onError', error);
   }, []);
 
+  const { getAvailableDataScopes } = useEmbeddedAuth();
+
+  const [dataScopes, setDataScopes] = useState<DataScopes[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      const available = await getAvailableDataScopes();
+      setDataScopes(
+        props.scopes?.filter((scope) => available.includes(scope)) ?? [],
+      );
+    })();
+  }, [getAvailableDataScopes, props.scopes]);
+
   return (
     <AuthPortalContext.Provider
       value={{
@@ -195,7 +209,7 @@ export function AuthPortal(props: AuthPortalProps) {
               onCancel={onCancel}
               onError={onError}
               onAuthenticate={onAuthenticate}
-              scopes={props?.scopes}
+              scopes={dataScopes}
             />
           </StepTransitionView>
           <FooterSheet hideTerms={isLoading || isConnectingAccount} />

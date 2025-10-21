@@ -1,5 +1,6 @@
+import { shortenAddress } from '@sophon-labs/account-core';
 import { useCallback, useMemo, useState } from 'react';
-import { useSophonAccount } from '../../hooks';
+import { useSophonAccount, useSophonName } from '../../hooks';
 import { useFlowManager } from '../../hooks/use-flow-manager';
 import { useSophonContext } from '../../hooks/use-sophon-context';
 import type {
@@ -17,7 +18,7 @@ const initialState: NavigationAuthPortalState = {
 
 export const useNavigationController = () => {
   const { method } = useFlowManager();
-  const { isConnected } = useSophonAccount();
+  const { isConnected, account } = useSophonAccount();
   const { connectingAccount } = useSophonContext();
   const [state, setConfig] = useState<NavigationAuthPortalState | null>(
     initialState,
@@ -180,11 +181,19 @@ export const useNavigationController = () => {
     [history, currentStep],
   );
 
+  const userName = useSophonName();
+
+  const displayName = useMemo(() => {
+    if (userName) return userName;
+    if (account?.address?.trim()) return shortenAddress(account.address);
+    return null;
+  }, [account, userName]);
+
   const handleProps = useMemo(
     () => ({
       showBackButton,
       hideCloseButton: isLoading,
-      title: isConnectingAccount ? 'coolkid123.soph.id' : 'Sign in',
+      title: displayName ?? 'Sign in',
     }),
     [history, isLoading, isConnectingAccount],
   );
