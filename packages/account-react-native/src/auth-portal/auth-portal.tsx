@@ -9,6 +9,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Keyboard, Platform } from 'react-native';
 import { useEmbeddedAuth } from '../auth/useAuth';
 import { useBooleanState, useFlowManager } from '../hooks';
+import { useSophonPartner } from '../hooks/use-sophon-partner';
 import { useUIEventHandler } from '../messaging/ui';
 import { FooterSheet } from './components/footer-sheet';
 import { AuthPortalBottomSheetHandle } from './components/handle-sheet';
@@ -168,6 +169,8 @@ export function AuthPortal(props: AuthPortalProps) {
     })();
   }, [getAvailableDataScopes, props.scopes]);
 
+  const { partner } = useSophonPartner();
+
   return (
     <AuthPortalContext.Provider
       value={{
@@ -210,6 +213,7 @@ export function AuthPortal(props: AuthPortalProps) {
               onError={onError}
               onAuthenticate={onAuthenticate}
               scopes={dataScopes}
+              partner={partner}
             />
           </StepTransitionView>
           <FooterSheet hideTerms={isLoading || isConnectingAccount} />

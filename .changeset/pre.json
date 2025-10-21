@@ -10,6 +10,7 @@
     "@sophon-labs/account-message-bridge": "2.3.6",
     "@sophon-labs/account-provider": "2.3.6",
     "@sophon-labs/account-react": "2.3.6",
+    "@sophon-labs/account-partner": "2.3.6",
     "@sophon-labs/account-react-native": "2.3.6"
   },
   "changesets": [

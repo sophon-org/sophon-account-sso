@@ -10,6 +10,7 @@ export const AuthorizationStep = ({
   onError,
   onCancel,
   scopes,
+  partner,
 }: BasicStepProps) => {
   const isLoadingState = useBooleanState(false);
   const {
@@ -33,9 +34,11 @@ export const AuthorizationStep = ({
     <View style={styles.container}>
       <Container style={styles.content}>
         <Text size="large" textAlign="center">
-          Connect to SyncSwap
+          Connect to {partner?.name ?? 'Sophon'}
         </Text>
-        <Text textAlign="center">https://syncswap.xyz/</Text>
+        {!!partner?.domains.length && (
+          <Text textAlign="center">{partner?.domains[0]}</Text>
+        )}
       </Container>
       <Card style={styles.contentCard}>
         <View style={styles.cardSection}>
