@@ -1,16 +1,16 @@
-import type { DataScopes } from '@sophon-labs/account-core';
-import type { ViewStyle } from 'react-native';
+import type { DataScopes } from "@sophon-labs/account-core";
+import type { ViewStyle } from "react-native";
 
 export enum AuthPortalSteps {
-  SignIn = 'signIn',
-  VerifyEmail = 'verifyEmail',
-  ConnectWallet = 'connectWallet',
-  Authorization = 'authorization',
-  Loading = 'loading',
-  Retry = 'retry',
-  SignMessage = 'signMessage',
-  Transaction = 'transaction',
-  Consent = 'consent',
+  SignIn = "signIn",
+  VerifyEmail = "verifyEmail",
+  ConnectWallet = "connectWallet",
+  Authorization = "authorization",
+  Loading = "loading",
+  Retry = "retry",
+  SignMessage = "signMessage",
+  Transaction = "transaction",
+  Consent = "consent",
 }
 export type AuthPortalStep = `${AuthPortalSteps}`;
 
@@ -22,12 +22,13 @@ export type AuthPortalContextProps = {
   params: NavigateParams | null;
 };
 export interface BasicStepProps {
-  currentStep: AuthPortalContextProps['currentStep'];
+  currentStep: AuthPortalContextProps["currentStep"];
   style?: ViewStyle;
   onAuthenticate: (value: `0x${string}`) => Promise<void>;
   onComplete: (payload: { hide: boolean }) => Promise<void>;
+  onBackToSignIn: () => Promise<void>;
   onCancel: () => Promise<void>;
-  onError: (error: Error) => Promise<void>;
+  onError: (error: Error, step?: AuthPortalStep) => Promise<void>;
   scopes?: DataScopes[];
 }
 
@@ -43,7 +44,11 @@ export type VerifyCodeParams = {
   email: string;
 };
 
-export type NavigateParams = SignInParams | VerifyCodeParams;
+export type RetryParams = {
+  ownerAddress: `0x${string}`;
+};
+
+export type NavigateParams = SignInParams | VerifyCodeParams | RetryParams;
 
 export type NavigateOptions = {
   replace?: boolean;
