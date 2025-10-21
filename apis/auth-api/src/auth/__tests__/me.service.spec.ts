@@ -66,7 +66,7 @@ describe("MeService", () => {
 		};
 
 		const secretsMock: Partial<SecretsService> = {
-			loadJwtSecrets: jest.fn().mockResolvedValue({ dynamicToken: API_TOKEN }),
+			loadAWSSecrets: jest.fn().mockResolvedValue({ dynamicToken: API_TOKEN }),
 		};
 		const svc = new MeService(secretsMock as SecretsService);
 

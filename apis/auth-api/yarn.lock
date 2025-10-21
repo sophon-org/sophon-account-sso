@@ -5392,6 +5392,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@simplewebauthn/browser@npm:13.2.2":
+  version: 13.2.2
+  resolution: "@simplewebauthn/browser@npm:13.2.2"
+  checksum: 10c0/07cd7b71fbe975504c2de2d81b5e3d0174ce495e51795af002ff0f38cc55fd58d023abd914c35477d4bb28952de385d9948b7e2d872343ebadcbcdb9ddc05e1c
+  languageName: node
+  linkType: hard
+
 "@simplewebauthn/server@npm:^13.2.2":
   version: 13.2.2
   resolution: "@simplewebauthn/server@npm:13.2.2"
@@ -5922,11 +5929,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-core@link:../../packages/account-core::locator=%40sophon-labs%2Fauth-api%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@sophon-labs/account-core@link:../../packages/account-core::locator=%40sophon-labs%2Fauth-api%40workspace%3A."
+"@sophon-labs/account-core@file:../../packages/account-core::locator=%40sophon-labs%2Fauth-api%40workspace%3A.":
+  version: 2.3.5
+  resolution: "@sophon-labs/account-core@file:../../packages/account-core#../../packages/account-core::hash=4e6277&locator=%40sophon-labs%2Fauth-api%40workspace%3A."
+  dependencies:
+    text-encoding-polyfill: "npm:^0.6.7"
+  peerDependencies:
+    viem: ">=2.21.0"
+  checksum: 10c0/a784c1ded4742e0be9845853638834e6ecf78763533a9cef310fccd3d985dc730c84f45d4717308b617683d66ba928bc003d21b5f3d1b74cb4d7221854dffc4a
   languageName: node
-  linkType: soft
+  linkType: hard
 
 "@sophon-labs/auth-api@workspace:.":
   version: 0.0.0-use.local
@@ -5956,8 +5968,9 @@ __metadata:
     "@nestjs/typeorm": "npm:^11.0.0"
     "@sentry/node": "npm:^10.15.0"
     "@sentry/profiling-node": "npm:^10.15.0"
+    "@simplewebauthn/browser": "npm:13.2.2"
     "@simplewebauthn/server": "npm:^13.2.2"
-    "@sophon-labs/account-core": "link:../../packages/account-core"
+    "@sophon-labs/account-core": "file:../../packages/account-core"
     "@swc/cli": "npm:^0.6.0"
     "@swc/core": "npm:^1.10.7"
     "@types/cookie-parser": "npm:^1.4.9"
@@ -6000,7 +6013,7 @@ __metadata:
     tsconfig-paths: "npm:^4.2.0"
     typeorm: "npm:^0.3.26"
     typescript: "npm:^5.7.3"
-    viem: "npm:^2.36.0"
+    viem: "npm:2.36.0"
     zksync-sso: "github:sophon-org/zksync-sso-preview#20250901_1"
   languageName: unknown
   linkType: soft
@@ -13908,6 +13921,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"text-encoding-polyfill@npm:^0.6.7":
+  version: 0.6.7
+  resolution: "text-encoding-polyfill@npm:0.6.7"
+  checksum: 10c0/5486a2320e2384b0153d2835a8e6e3a643ff28fcd05c2e9fa5d69c7879a2b8fdb7faa44708792a9205f074f10606ee3b6470c8f3f4da1be90a014b79057008d0
+  languageName: node
+  linkType: hard
+
 "thread-stream@npm:^3.0.0":
   version: 3.1.0
   resolution: "thread-stream@npm:3.1.0"
@@ -14651,7 +14671,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"viem@npm:^2.36.0":
+"viem@npm:2.36.0":
   version: 2.36.0
   resolution: "viem@npm:2.36.0"
   dependencies:

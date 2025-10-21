@@ -5,12 +5,13 @@ import {
 	Injectable,
 } from "@nestjs/common";
 import { ConfigType } from "@nestjs/config";
+import { Address } from "viem";
 import { hyperindexConfig } from "../config/hyperindex.config";
 
 type K1OwnerState = {
 	id: string;
-	k1Owner: string;
-	accounts: string[];
+	k1Owner: Address;
+	accounts: Address[];
 };
 
 type GqlResp<T> = { data?: T; errors?: Array<{ message: string }> };
