@@ -1,5 +1,13 @@
 # @sophon-labs/account-api-sdk
 
+## 2.3.6
+
+### Patch Changes
+
+- Allowing auth to use owner as signer for JWT and moving common code to account-core
+- Updated dependencies
+  - @sophon-labs/account-core@2.3.6
+
 ## 2.3.5
 
 ### Patch Changes
