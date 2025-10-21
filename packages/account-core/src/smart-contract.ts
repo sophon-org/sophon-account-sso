@@ -82,11 +82,10 @@ export const getAccountAddressByUniqueId = async (
       args: [uniqueId],
     });
 
-    console.log('Existing account:', existingAccountAddress);
-
     return existingAccountAddress;
   } catch (checkError) {
-    console.log('Account check failed:', checkError);
+    // ignore errors
+    return null;
   }
 };
 
