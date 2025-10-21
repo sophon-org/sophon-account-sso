@@ -89,12 +89,14 @@ export class ContractService {
 		}
 
 		const chain = getChainById(process.env.CHAIN_ID as SupportedChainId);
+		const secrets = await this.secretsService.loadAWSSecrets();
+		const deployerAccount = privateKeyToAccount(secrets.deployer.privateKey);
 
 		// there are cases when the index don't have the information yet, so we need to verify contract salt
 		const deployedContract = await getDeployedSmartContractAddress(
 			chain,
 			ownerAddress,
-			ownerAddress,
+			deployerAccount.address,
 		);
 		if (deployedContract && deployedContract !== zeroAddress) {
 			this.logger.log("Contract already exists on chain");
@@ -103,9 +105,6 @@ export class ContractService {
 				owner: ownerAddress,
 			};
 		}
-
-		const secrets = await this.secretsService.loadAWSSecrets();
-		const deployerAccount = privateKeyToAccount(secrets.deployer.privateKey);
 
 		// deploy the contract
 		const deployerClient: WalletClient<Transport, Chain, Account> =
