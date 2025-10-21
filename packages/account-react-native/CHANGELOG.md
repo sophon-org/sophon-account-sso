@@ -1,5 +1,16 @@
 # @sophon-labs/account-react-native
 
+## 3.0.0-next.1
+
+### Patch Changes
+
+- Mobile capabilities
+- Updated dependencies
+  - @sophon-labs/account-message-bridge@3.0.0-next.1
+  - @sophon-labs/account-communicator@3.0.0-next.1
+  - @sophon-labs/account-provider@3.0.0-next.1
+  - @sophon-labs/account-core@3.0.0-next.1
+
 ## 3.0.0-next.0
 
 ### Major Changes

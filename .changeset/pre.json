@@ -13,6 +13,7 @@
     "@sophon-labs/account-react-native": "2.3.6"
   },
   "changesets": [
+    "puny-maps-dig",
     "sad-deer-tap"
   ]
 }
