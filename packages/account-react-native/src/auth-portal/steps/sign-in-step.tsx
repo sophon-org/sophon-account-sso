@@ -85,9 +85,12 @@ export const SignInStep = ({
         <BottomSheetTextInput
           onChangeText={handleChangeText}
           value={email}
+          textContentType="emailAddress"
+          keyboardType="email-address"
           placeholder="Enter email"
           placeholderTextColor="#999"
           style={styles.input}
+          autoCapitalize="none"
           onSubmitEditing={handleSignInWithEmail}
         />
 

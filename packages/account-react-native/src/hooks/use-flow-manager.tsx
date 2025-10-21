@@ -8,42 +8,27 @@ import { getRefusedRPC } from '../messaging/utils';
 import { useSophonContext } from './use-sophon-context';
 import { useSophonToken } from './use-sophon-token';
 
+const ACCOUNT_SERVER_URL = 'https://api-stg-auth.sophonapi.com';
+
 const getSmartAccount = async (owner: Address) => {
   const response = await fetch(
-    `http://localhost:4001/contract/by-owner/${owner}`,
+    `${ACCOUNT_SERVER_URL}/contract/by-owner/${owner}`,
   );
   if (!response.ok) {
-    throw new Error(
-      `Failed to get indexed smart account by owner: ${response.text()}`,
-    );
+    console.log('ERROR', response.status, response.statusText);
+    const content = await response.text();
+    console.log('ERROR', content);
+    throw new Error(`Failed to get indexed smart account by owner: ${content}`);
   }
-  return (await response.text()) as Address;
+  return (await response.json()) as Address[];
 };
 
 const deploySmartAccount = async (owner: Address) => {
-  const response = await fetch(`http://localhost:4001/contract/${owner}`, {
+  const response = await fetch(`${ACCOUNT_SERVER_URL}/contract/${owner}`, {
     method: 'POST',
   });
-  return response.json();
+  return response.json() as Promise<{ contracts: Address[]; owner: Address }>;
 };
-
-// biome-ignore lint/suspicious/noExplicitAny: to do
-function stableStringify(obj: any): string {
-  if (obj === null || typeof obj !== 'object') {
-    return JSON.stringify(obj);
-  }
-
-  if (Array.isArray(obj)) {
-    return `[${obj.map(stableStringify).join(',')}]`;
-  }
-
-  const keys = Object.keys(obj).sort();
-  const entries = keys.map(
-    (key) => `${JSON.stringify(key)}:${stableStringify(obj[key])}`,
-  );
-
-  return `{${entries.join(',')}}`;
-}
 
 const requestNonce = async (
   address: Address,
@@ -51,7 +36,7 @@ const requestNonce = async (
   fields: string[],
   userId?: string,
 ) => {
-  const response = await fetch(`http://localhost:4001/auth/nonce`, {
+  const response = await fetch(`${ACCOUNT_SERVER_URL}/auth/nonce`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -68,7 +53,7 @@ export const requestToken = async (
   nonceToken: string,
   ownerAddress?: Address, // for now, when we have the blockchain this is not required
 ) => {
-  const response = await fetch(`http://localhost:4001/auth/verify`, {
+  const response = await fetch(`${ACCOUNT_SERVER_URL}/auth/verify`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -98,7 +83,7 @@ export const requestToken = async (
 
 const requestConsent = async (accessToken: string, kinds: string[]) => {
   const consentResponse = await fetch(
-    `http://localhost:4001/me/consent/giveMany`,
+    `${ACCOUNT_SERVER_URL}/me/consent/giveMany`,
     {
       method: 'POST',
       headers: {
@@ -168,25 +153,27 @@ export const useFlowManager = () => {
     async (owner: Address) => {
       setConnectingAccount(undefined);
 
-      let account = await getSmartAccount(owner);
+      let accounts = await getSmartAccount(owner);
 
-      if (!account) {
+      if (!accounts.length) {
         const response = await deploySmartAccount(owner);
-        account = response.address;
+        if (response.contracts.length) {
+          accounts = response.contracts;
+        }
       }
 
-      if (!account) {
+      if (!accounts?.length || !accounts[0]) {
         throw new Error('Failed to deploy smart account');
       }
 
       console.log('setting connecting account', {
-        address: account,
+        address: accounts[0],
         owner: owner,
       });
 
       console.log('setting connecting account');
       setConnectingAccount({
-        address: account,
+        address: accounts[0],
         owner: owner,
       });
       // setCurrentRequest(undefined);
@@ -234,16 +221,9 @@ export const useFlowManager = () => {
         Message: embeddedUserId
           ? [...messageFields, { name: 'userId', type: 'string' }]
           : messageFields,
-        EIP712Domain: [
-          { name: 'name', type: 'string' },
-          { name: 'version', type: 'string' },
-          { name: 'chainId', type: 'uint256' },
-          { name: 'salt', type: 'string' },
-          { name: 'verifyingContract', type: 'string' },
-        ],
       },
       primaryType: 'Message',
-      // address: account.address,
+      address: connectingAccount.address,
       message: embeddedUserId
         ? { ...message, userId: embeddedUserId }
         : message,
@@ -257,10 +237,11 @@ export const useFlowManager = () => {
       })
     ).extend(eip712WalletActions());
 
-    // console.log('simpler signature', safePayload.message.content);
-    const messageToSign = stableStringify(safePayload.message);
-    const signature = await embeddedWalletClient.signMessage({
-      message: messageToSign,
+    const signature = await embeddedWalletClient.signTypedData({
+      domain: safePayload.domain,
+      types: safePayload.types,
+      primaryType: safePayload.primaryType,
+      message: safePayload.message,
       account: connectingAccount.owner,
     });
 

@@ -30,7 +30,6 @@ import { PartnerRegistryService } from "../partners/partner-registry.service";
 import { SessionsRepository } from "../sessions/sessions.repository";
 import { verifyEIP1271Signature } from "../utils/signature";
 import type { AccessTokenPayload, RefreshTokenPayload } from "./types";
-import stableStringify from "json-stable-stringify";
 
 type NoncePayload = JwtPayload & {
 	address: string;
