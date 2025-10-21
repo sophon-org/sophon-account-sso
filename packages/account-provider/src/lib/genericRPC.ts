@@ -1,14 +1,9 @@
-import {
-  AvailableRPCURL,
-  type SophonNetworkType,
-} from '@sophon-labs/account-core';
+import { AvailableRPCURL, type ChainId } from '@sophon-labs/account-core';
 import { JSONRPCClient } from 'json-rpc-2.0';
 
-export const genericRPCHandler = (
-  network: SophonNetworkType,
-): JSONRPCClient => {
+export const genericRPCHandler = (chainId: ChainId): JSONRPCClient => {
   const rpcClient: JSONRPCClient = new JSONRPCClient((jsonRPCRequest) =>
-    fetch(AvailableRPCURL[network], {
+    fetch(AvailableRPCURL[chainId], {
       method: 'POST',
       headers: {
         'content-type': 'application/json',

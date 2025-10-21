@@ -1,8 +1,5 @@
-import {
-  MAINNET_HEX_CHAIN_ID,
-  type SophonNetworkType,
-  TESTNET_HEX_CHAIN_ID,
-} from '@sophon-labs/account-core';
+import { type ChainId, SophonHexChainId } from '@sophon-labs/account-core';
+import type { Address } from 'viem';
 
 /**
  * Handle the wallet_switchEthereumChain request. We only support two networks:
@@ -16,17 +13,17 @@ import {
  * @returns The result of the request.
  */
 export const handleSwitchEthereumChain = async (
-  network: SophonNetworkType,
+  chainId: ChainId,
   params?: unknown[],
 ) => {
-  const firstParam = params?.[0] as { chainId: string };
+  const firstParam = params?.[0] as { chainId: Address };
   const targetChainId = firstParam?.chainId;
 
-  if ([MAINNET_HEX_CHAIN_ID, TESTNET_HEX_CHAIN_ID].includes(targetChainId)) {
+  if (Object.values(SophonHexChainId).includes(targetChainId)) {
     return null; // Success
   } else {
     throw new Error(
-      `Unsupported chain on network ${network}: ${targetChainId ? parseInt(targetChainId, 16) : targetChainId}`,
+      `Unsupported chain on chainId ${chainId}: ${targetChainId ? parseInt(targetChainId, 16) : targetChainId}`,
     );
   }
 };

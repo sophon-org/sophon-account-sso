@@ -1,14 +1,13 @@
-import type { SophonNetworkType } from '@sophon-labs/account-core';
+import { AccountAuthAPIURL, type ChainId } from '@sophon-labs/account-core';
 import axios from 'axios';
 import jwt, { type JwtPayload } from 'jsonwebtoken';
 import { JwksClient } from 'jwks-rsa';
-import { AccountServerAPI } from './constants';
 import type { AuthDecodedJWT } from './types';
 
 /**
  * Basic wrapper for the Sophon Account API calls related to authentication endpoints.
  *
- * @param network - The network to use.
+ * @param chainId - The chainId to use.
  * @param partnerId - The partner ID to use.
  */
 export class AuthAPIWrapper {
@@ -16,8 +15,8 @@ export class AuthAPIWrapper {
   private readonly partnerId: string;
   private readonly jwksClient: JwksClient;
 
-  constructor(network: SophonNetworkType, partnerId: string) {
-    this.apiUrl = AccountServerAPI[network];
+  constructor(chainId: ChainId, partnerId: string) {
+    this.apiUrl = AccountAuthAPIURL[chainId];
     this.partnerId = partnerId;
     this.jwksClient = new JwksClient({
       jwksUri: this.publicKeyUrl,
@@ -75,7 +74,7 @@ export class AuthAPIWrapper {
   }
 
   /**
-   * Public key url json for the provided network.
+   * Public key url json for the provided chainId.
    */
   public get publicKeyUrl(): string {
     return `${this.apiUrl}/.well-known/jwks.json`;

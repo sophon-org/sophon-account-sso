@@ -3,8 +3,9 @@ import type { Message } from '@sophon-labs/account-communicator';
 // everything else
 import {
   AccountServerURL,
+  type ChainId,
   type DataScopes,
-  type SophonNetworkType,
+  SophonChains,
   sophonActions,
 } from '@sophon-labs/account-core';
 import type { EIP1193Provider } from '@sophon-labs/account-provider';
@@ -68,7 +69,7 @@ export interface SophonContextConfig {
   setConnectingAccount: (account?: SophonAccount) => void;
   chain: Chain;
   provider?: EIP1193Provider;
-  network: SophonNetworkType;
+  chainId: ChainId;
   accessToken?: SophonJWTToken | null;
   refreshToken?: SophonJWTToken | null;
   updateAccessToken: (data: SophonJWTToken) => void;
@@ -87,7 +88,7 @@ export const SophonContext = createContext<SophonContextConfig>({
   chain: sophonTestnet,
   setAccount: () => {},
   setConnectingAccount: () => {},
-  network: 'testnet',
+  chainId: sophonTestnet.id,
   updateAccessToken: () => {},
   updateRefreshToken: () => {},
   logout: async () => {},
@@ -104,14 +105,14 @@ export interface SophonAccount {
 
 export const SophonContextProvider = ({
   children,
-  network = 'testnet',
+  chainId = sophonTestnet.id,
   authServerUrl,
   partnerId,
   dataScopes,
   insets,
 }: {
   children: React.ReactNode;
-  network: SophonNetworkType;
+  chainId: ChainId;
   authServerUrl?: string;
   partnerId: string;
   dataScopes: DataScopes[];
@@ -119,8 +120,8 @@ export const SophonContextProvider = ({
 }) => {
   const [error, setError] = useState<{ description: string; code: number }>();
   const serverUrl = useMemo(
-    () => authServerUrl ?? AccountServerURL[network],
-    [authServerUrl, network],
+    () => authServerUrl ?? AccountServerURL[chainId],
+    [authServerUrl, chainId],
   );
   const [account, setAccount] = useState<SophonAccount | undefined>();
   const [currentRequest, setCurrentRequest] = useState<Message | undefined>();
@@ -134,40 +135,13 @@ export const SophonContextProvider = ({
     SophonAccount | undefined
   >();
   const { logout: logoutEmbedded } = useEmbeddedAuth();
-  // const [walletClient, setWalletClient] = useState<WalletClient | undefined>();
-  // const { wallets } = useReactiveClient(dynamicClient);
-
-  // const account = useMemo((): SophonAccount | undefined => {
-  //   if (!wallets.primary) return undefined;
-
-  //   return {
-  //     address: wallets.primary.address as Address,
-  //   };
-  // }, [wallets.primary]);
-
-  const chain = useMemo(
-    () => (network === 'mainnet' ? sophon : sophonTestnet),
-    [network],
-  );
+  const chain = useMemo(() => SophonChains[chainId], [chainId]);
   const provider = useMemo(() => {
-    const provider = createMobileProvider(serverUrl, chain);
+    const provider = createMobileProvider(serverUrl, chainId);
     return provider;
   }, [serverUrl, chain]);
 
   const walletClient = createSophonWalletClient(chain, custom(provider));
-
-  // useEffect(() => {
-  //   (async () => {
-  //     if (wallets.primary) {
-  //       const client = await dynamicClient.viem.createWalletClient({
-  //         wallet: wallets.primary!,
-  //       });
-  //       setWalletClient(client);
-  //     } else if (!wallets.primary) {
-  //       setWalletClient(undefined);
-  //     }
-  //   })();
-  // }, [wallets.primary]);
 
   useEffect(() => {
     freshInstallActions();
@@ -247,7 +221,7 @@ export const SophonContextProvider = ({
   const contextValue = useMemo<SophonContextConfig>(
     () => ({
       initialized,
-      mainnet: network === 'mainnet',
+      mainnet: chainId === sophon.id,
       chain,
       authServerUrl: serverUrl,
       walletClient,
@@ -258,7 +232,7 @@ export const SophonContextProvider = ({
       partnerId,
       error,
       setError,
-      network,
+      chainId,
       updateAccessToken,
       updateRefreshToken,
       logout,
@@ -269,7 +243,7 @@ export const SophonContextProvider = ({
     }),
     [
       initialized,
-      network,
+      chainId,
       serverUrl,
       walletClient,
       account,
@@ -279,7 +253,7 @@ export const SophonContextProvider = ({
       partnerId,
       error,
       setError,
-      network,
+      chainId,
       updateAccessToken,
       updateRefreshToken,
       logout,

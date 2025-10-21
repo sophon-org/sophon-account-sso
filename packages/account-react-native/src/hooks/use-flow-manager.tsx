@@ -242,6 +242,7 @@ export const useFlowManager = () => {
       types: safePayload.types,
       primaryType: safePayload.primaryType,
       message: safePayload.message,
+      // TODO: review this to allow call to the blockchain if in the right chain
       account: connectingAccount.owner,
     });
 
