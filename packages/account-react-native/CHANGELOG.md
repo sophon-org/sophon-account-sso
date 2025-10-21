@@ -1,5 +1,17 @@
 # @sophon-labs/account-react-native
 
+## 3.0.0-next.2
+
+### Patch Changes
+
+- Dynamic partner info and sns
+- Updated dependencies
+  - @sophon-labs/account-message-bridge@3.0.0-next.2
+  - @sophon-labs/account-communicator@3.0.0-next.2
+  - @sophon-labs/account-provider@3.0.0-next.2
+  - @sophon-labs/account-partner@3.0.0-next.2
+  - @sophon-labs/account-core@3.0.0-next.2
+
 ## 3.0.0-next.1
 
 ### Patch Changes

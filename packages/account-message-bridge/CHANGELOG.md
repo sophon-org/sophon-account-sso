@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 3.0.0-next.2
+
+### Patch Changes
+
+- Dynamic partner info and sns
+
 ## 3.0.0-next.1
 
 ### Patch Changes

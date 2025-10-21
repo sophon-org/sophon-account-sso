@@ -1,5 +1,14 @@
 # @sophon-labs/account-eip6963
 
+## 3.0.0-next.2
+
+### Patch Changes
+
+- Dynamic partner info and sns
+- Updated dependencies
+  - @sophon-labs/account-communicator@3.0.0-next.2
+  - @sophon-labs/account-core@3.0.0-next.2
+
 ## 3.0.0-next.1
 
 ### Patch Changes

@@ -14,6 +14,7 @@
     "@sophon-labs/account-react-native": "2.3.6"
   },
   "changesets": [
+    "free-frogs-punch",
     "puny-maps-dig",
     "sad-deer-tap"
   ]
