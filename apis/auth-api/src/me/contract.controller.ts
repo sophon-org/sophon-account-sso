@@ -1,7 +1,6 @@
 import { Controller, Get, Param, Post } from "@nestjs/common";
 import { ApiOkResponse, ApiParam, ApiTags } from "@nestjs/swagger";
-import { Address } from "viem";
-import { K1OwnerStateDto } from "../hyperindex/dto/k1-owner-state.dto";
+import type { Address } from "viem";
 import { ContractService } from "./contract.service";
 import { ContractDeployResponse } from "./dto/contract-deploy-response.dto";
 
@@ -16,8 +15,8 @@ export class ContractController {
 		description: "EOA address (0x...) signer of the contract",
 		example: "0x19e7e376e7c213b7e7e46cc70a5dd086daff2a",
 	})
-	@ApiOkResponse({ type: K1OwnerStateDto, isArray: true })
-	async byOwner(@Param("owner") owner: Address) {
+	@ApiOkResponse({ type: String, isArray: true })
+	async byOwner(@Param("owner") owner: Address): Promise<Address[]> {
 		return this.contractService.getContractByOwner(owner);
 	}
 

@@ -123,10 +123,10 @@ describe("ContractService", () => {
 			expect(
 				hyperindexServiceMock.getK1OwnerStateByOwner,
 			).toHaveBeenCalledTimes(1);
-			expect(result).toBe(deployedAddress);
+			expect(result).toEqual([deployedAddress]);
 		});
 
-		it("calls hyperindex getK1OwnerStateByOwner and returns undefined when empty array", async () => {
+		it("calls hyperindex getK1OwnerStateByOwner and returns [] when empty array", async () => {
 			// given
 			hyperindexServiceMock.getK1OwnerStateByOwner.mockResolvedValue([]);
 
@@ -140,7 +140,7 @@ describe("ContractService", () => {
 			expect(
 				hyperindexServiceMock.getK1OwnerStateByOwner,
 			).toHaveBeenCalledTimes(1);
-			expect(result).toBeUndefined();
+			expect(result).toEqual([]);
 		});
 	});
 
@@ -188,7 +188,7 @@ describe("ContractService", () => {
 				validAddress,
 			);
 			expect(result).toEqual({
-				address: deployedAddress,
+				contracts: [deployedAddress],
 				owner: validAddress,
 			});
 			expect(getDeployedSmartContractAddress).not.toHaveBeenCalled();
@@ -222,7 +222,7 @@ describe("ContractService", () => {
 				mockAccount.address,
 			);
 			expect(result).toEqual({
-				address: deployedAddress,
+				contracts: [deployedAddress],
 				owner: validAddress,
 			});
 			expect(deployModularAccount).not.toHaveBeenCalled();
@@ -274,7 +274,7 @@ describe("ContractService", () => {
 				}),
 			);
 			expect(result).toEqual({
-				address: newDeployedAddress,
+				contracts: [newDeployedAddress],
 				owner: validAddress,
 			});
 		});

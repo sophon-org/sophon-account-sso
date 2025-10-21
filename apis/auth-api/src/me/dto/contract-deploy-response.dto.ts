@@ -5,7 +5,7 @@ import type { Address } from "viem";
 export class ContractDeployResponse {
 	@ApiProperty()
 	@IsEthereumAddress()
-	address: Address;
+	contracts: Address[];
 
 	@ApiProperty()
 	@IsEthereumAddress()

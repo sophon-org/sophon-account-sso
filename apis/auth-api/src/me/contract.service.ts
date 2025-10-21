@@ -39,7 +39,7 @@ export class ContractService {
 	 * @param owner the wallet addres that's signer of the contract
 	 * @returns the deployed contract address, if available
 	 */
-	async getContractByOwner(owner: Address): Promise<Address> {
+	async getContractByOwner(owner: Address): Promise<Address[]> {
 		if (!owner?.trim() || !isAddress(owner.toLowerCase())) {
 			throw new BadRequestException(`Invalid address provided: ${owner}`);
 		}
@@ -56,7 +56,7 @@ export class ContractService {
 			"contract-by-owner",
 		);
 
-		return rows.map((row) => row.accounts[0])[0];
+		return rows?.map((row) => row.accounts[0]) ?? [];
 	}
 
 	/**
@@ -79,11 +79,11 @@ export class ContractService {
 			{ evt: "me.contract.deploy.request", owner: ownerAddress },
 			"contract-deploy",
 		);
-		const existingContract = await this.getContractByOwner(ownerAddress);
-		if (existingContract) {
+		const existingContracts = await this.getContractByOwner(ownerAddress);
+		if (existingContracts.length > 0) {
 			this.logger.log("Contract already exists on index");
 			return {
-				address: existingContract,
+				contracts: existingContracts,
 				owner: ownerAddress,
 			};
 		}
@@ -101,7 +101,7 @@ export class ContractService {
 		if (deployedContract && deployedContract !== zeroAddress) {
 			this.logger.log("Contract already exists on chain");
 			return {
-				address: deployedContract,
+				contracts: [deployedContract],
 				owner: ownerAddress,
 			};
 		}
@@ -126,7 +126,7 @@ export class ContractService {
 		});
 
 		return {
-			address: deployedAccount.address,
+			contracts: [deployedAccount.address],
 			owner: ownerAddress,
 		};
 	}

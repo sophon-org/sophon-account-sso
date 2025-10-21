@@ -83,7 +83,7 @@ export const getAccountAddressByUniqueId = async (
     });
 
     return existingAccountAddress;
-  } catch (checkError) {
+  } catch {
     // ignore errors
     return null;
   }
