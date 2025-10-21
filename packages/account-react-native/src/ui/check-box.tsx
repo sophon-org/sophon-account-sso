@@ -1,24 +1,32 @@
-import type React from 'react';
-import { useCallback, useState } from 'react';
-import { Pressable, StyleSheet, type TextStyle, View } from 'react-native';
+import type React from "react";
+import { useCallback, useState } from "react";
+import { Pressable, StyleSheet, type TextStyle, View } from "react-native";
 import Animated, {
   interpolate,
   interpolateColor,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
-} from 'react-native-reanimated';
-import { Icon } from './icon';
-import { Text } from './text';
+} from "react-native-reanimated";
+import { Icon } from "./icon";
+import { Text } from "./text";
 
 export const CheckBox: React.FC<{
-  checked?: boolean;
+  defaultChecked?: boolean;
+  locked?: boolean;
   label: string;
   onChange?: (checked: boolean) => void;
-  blocked?: boolean;
+  unavailable?: boolean;
   textStyle?: TextStyle;
-}> = ({ label, onChange, checked = false, blocked = false, textStyle }) => {
-  const [_checked, setChecked] = useState(checked || blocked);
+}> = ({
+  label,
+  onChange,
+  defaultChecked = false,
+  unavailable = false,
+  textStyle,
+  locked = false,
+}) => {
+  const [_checked, setChecked] = useState(defaultChecked || unavailable);
   const progress = useSharedValue(_checked ? 1 : 0);
 
   const toggle = useCallback(() => {
@@ -29,16 +37,8 @@ export const CheckBox: React.FC<{
   }, [onChange, progress, _checked]);
 
   const boxStyle = useAnimatedStyle(() => ({
-    backgroundColor: interpolateColor(
-      progress.value,
-      [0, 1],
-      ['#FFF', '#0A7CFF'],
-    ),
-    borderColor: interpolateColor(
-      progress.value,
-      [0, 1],
-      ['#5C5851', '#0A7CFF'],
-    ),
+    backgroundColor: interpolateColor(progress.value, [0, 1], ["#FFF", "#0A7CFF"]),
+    borderColor: interpolateColor(progress.value, [0, 1], ["#5C5851", "#0A7CFF"]),
     borderRadius: interpolate(progress.value, [0, 1], [4, 10]),
   }));
 
@@ -48,14 +48,12 @@ export const CheckBox: React.FC<{
   }));
 
   return (
-    <Pressable onPress={toggle} style={styles.container} disabled={blocked}>
-      <Animated.View
-        style={[styles.checkbox, boxStyle, blocked && styles.blocked]}
-      >
+    <Pressable onPress={toggle} style={styles.container} disabled={unavailable || locked}>
+      <Animated.View style={[styles.checkbox, boxStyle, unavailable && styles.unavailable]}>
         <Animated.View style={[iconStyle, styles.icon]}>
           <Icon
-            name={blocked ? 'close' : 'checkmark'}
-            size={blocked ? 14 : 20}
+            name={unavailable ? "close" : "checkmark"}
+            size={unavailable ? 14 : 20}
             color="#ffffff"
           />
         </Animated.View>
@@ -69,8 +67,8 @@ export const CheckBox: React.FC<{
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    alignItems: "flex-start",
     gap: 8,
   },
   textWrapper: {
@@ -80,20 +78,20 @@ const styles = StyleSheet.create({
   icon: {
     width: 20,
     height: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center',
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
   },
-  blocked: {
-    backgroundColor: '#8D8D8D',
-    borderColor: '#8D8D8D',
+  unavailable: {
+    backgroundColor: "#8D8D8D",
+    borderColor: "#8D8D8D",
   },
   checkbox: {
     width: 20,
     height: 20,
     borderWidth: 2,
-    justifyContent: 'center',
-    alignItems: 'center',
-    top: 5,
+    justifyContent: "center",
+    alignItems: "center",
+    top: 3,
   },
 });
