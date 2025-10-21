@@ -6,7 +6,7 @@ export default defineConfig((options) => {
     platform: 'node',
     entry: ['src/**/*.ts', '!src/**/*.spec.ts'],
     splitting: false,
-    bundle: false,
+    bundle: true,
     sourcemap: !!options.watch,
     clean: true,
     treeshake: false,

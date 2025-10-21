@@ -7,8 +7,8 @@ import {
 	Injectable,
 	InternalServerErrorException,
 } from "@nestjs/common";
-import { AwsConfig, awsConfig } from "../config/aws.config";
 import { Hex } from "viem";
+import { AwsConfig, awsConfig } from "../config/aws.config";
 
 export type JwtSecrets = {
 	access: { kid: string; privateKeyPem: string; publicKeyPem: string };

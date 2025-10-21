@@ -5929,11 +5929,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-core@link:../../packages/account-core::locator=%40sophon-labs%2Fauth-api%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@sophon-labs/account-core@link:../../packages/account-core::locator=%40sophon-labs%2Fauth-api%40workspace%3A."
+"@sophon-labs/account-core@file:../../packages/account-core::locator=%40sophon-labs%2Fauth-api%40workspace%3A.":
+  version: 2.3.5
+  resolution: "@sophon-labs/account-core@file:../../packages/account-core#../../packages/account-core::hash=4e6277&locator=%40sophon-labs%2Fauth-api%40workspace%3A."
+  dependencies:
+    text-encoding-polyfill: "npm:^0.6.7"
+  peerDependencies:
+    viem: ">=2.21.0"
+  checksum: 10c0/a784c1ded4742e0be9845853638834e6ecf78763533a9cef310fccd3d985dc730c84f45d4717308b617683d66ba928bc003d21b5f3d1b74cb4d7221854dffc4a
   languageName: node
-  linkType: soft
+  linkType: hard
 
 "@sophon-labs/auth-api@workspace:.":
   version: 0.0.0-use.local
@@ -5965,7 +5970,7 @@ __metadata:
     "@sentry/profiling-node": "npm:^10.15.0"
     "@simplewebauthn/browser": "npm:13.2.2"
     "@simplewebauthn/server": "npm:^13.2.2"
-    "@sophon-labs/account-core": "link:../../packages/account-core"
+    "@sophon-labs/account-core": "file:../../packages/account-core"
     "@swc/cli": "npm:^0.6.0"
     "@swc/core": "npm:^1.10.7"
     "@types/cookie-parser": "npm:^1.4.9"
@@ -5986,7 +5991,6 @@ __metadata:
     graphql-request: "npm:^7.2.0"
     jest: "npm:^30.0.3"
     joi: "npm:^18.0.1"
-    json-stable-stringify: "npm:^1.3.0"
     jsonwebtoken: "npm:^9.0.2"
     lru-cache: "npm:^11.2.1"
     nestjs-pino: "npm:^4.4.1"
@@ -6008,7 +6012,7 @@ __metadata:
     tsconfig-paths: "npm:^4.2.0"
     typeorm: "npm:^0.3.26"
     typescript: "npm:^5.7.3"
-    viem: "npm:^2.36.0"
+    viem: "npm:2.36.0"
     zksync-sso: "github:sophon-org/zksync-sso-preview#20250901_1"
   languageName: unknown
   linkType: soft
@@ -11055,19 +11059,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"json-stable-stringify@npm:^1.3.0":
-  version: 1.3.0
-  resolution: "json-stable-stringify@npm:1.3.0"
-  dependencies:
-    call-bind: "npm:^1.0.8"
-    call-bound: "npm:^1.0.4"
-    isarray: "npm:^2.0.5"
-    jsonify: "npm:^0.0.1"
-    object-keys: "npm:^1.1.1"
-  checksum: 10c0/8b3ff19e4c23c0ad591a49bc3a015d89a538db787d12fe9c4072e1d64d8cfa481f8c37719c629c3d84e848847617bf49f5fee894cf1d25959ab5b67e1c517f31
-  languageName: node
-  linkType: hard
-
 "json-to-pretty-yaml@npm:^1.2.2":
   version: 1.2.2
   resolution: "json-to-pretty-yaml@npm:1.2.2"
@@ -11104,13 +11095,6 @@ __metadata:
     graceful-fs:
       optional: true
   checksum: 10c0/4f95b5e8a5622b1e9e8f33c96b7ef3158122f595998114d1e7f03985649ea99cb3cd99ce1ed1831ae94c8c8543ab45ebd044207612f31a56fd08462140e46865
-  languageName: node
-  linkType: hard
-
-"jsonify@npm:^0.0.1":
-  version: 0.0.1
-  resolution: "jsonify@npm:0.0.1"
-  checksum: 10c0/7f5499cdd59a0967ed35bda48b7cec43d850bbc8fb955cdd3a1717bb0efadbe300724d5646de765bb7a99fc1c3ab06eb80d93503c6faaf99b4ff50a3326692f6
   languageName: node
   linkType: hard
 
@@ -11999,13 +11983,6 @@ __metadata:
   version: 1.13.4
   resolution: "object-inspect@npm:1.13.4"
   checksum: 10c0/d7f8711e803b96ea3191c745d6f8056ce1f2496e530e6a19a0e92d89b0fa3c76d910c31f0aa270432db6bd3b2f85500a376a83aaba849a8d518c8845b3211692
-  languageName: node
-  linkType: hard
-
-"object-keys@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "object-keys@npm:1.1.1"
-  checksum: 10c0/b11f7ccdbc6d406d1f186cdadb9d54738e347b2692a14439ca5ac70c225fa6db46db809711b78589866d47b25fc3e8dee0b4c722ac751e11180f9380e3d8601d
   languageName: node
   linkType: hard
 
@@ -13916,6 +13893,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"text-encoding-polyfill@npm:^0.6.7":
+  version: 0.6.7
+  resolution: "text-encoding-polyfill@npm:0.6.7"
+  checksum: 10c0/5486a2320e2384b0153d2835a8e6e3a643ff28fcd05c2e9fa5d69c7879a2b8fdb7faa44708792a9205f074f10606ee3b6470c8f3f4da1be90a014b79057008d0
+  languageName: node
+  linkType: hard
+
 "thread-stream@npm:^3.0.0":
   version: 3.1.0
   resolution: "thread-stream@npm:3.1.0"
@@ -14659,7 +14643,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"viem@npm:^2.36.0":
+"viem@npm:2.36.0":
   version: 2.36.0
   resolution: "viem@npm:2.36.0"
   dependencies:
