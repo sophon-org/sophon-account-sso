@@ -8,7 +8,7 @@ import type { Address } from 'viem';
  *
  * So we just allow the user to switch between them.
  *
- * @param network - The network to use.
+ * @param chainId - The chainId to use.
  * @param params - The parameters of the request.
  * @returns The result of the request.
  */

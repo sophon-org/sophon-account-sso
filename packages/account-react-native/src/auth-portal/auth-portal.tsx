@@ -106,10 +106,11 @@ export function AuthPortal(props: AuthPortalProps) {
         {...renderProps}
         disappearsOnIndex={-1}
         appearsOnIndex={0}
+        onPress={onCloseAndCancel}
         pressBehavior={isLoading ? 'none' : 'close'}
       />
     ),
-    [isLoading],
+    [isLoading, onCloseAndCancel, bottomSheetRef],
   );
 
   useUIEventHandler('outgoingRpc', (request) => {

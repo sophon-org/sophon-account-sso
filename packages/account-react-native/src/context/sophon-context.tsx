@@ -28,6 +28,7 @@ import { erc7846Actions } from 'viem/experimental';
 import { eip712WalletActions } from 'viem/zksync';
 import { useEmbeddedAuth } from '../auth/useAuth';
 import { AuthPortal, type AuthPortalProps } from '../auth-portal';
+import type { Capabilities } from '../lib/capabilities';
 import { dynamicClient } from '../lib/dynamic';
 import { useUIEventHandler } from '../messaging';
 import {
@@ -80,6 +81,7 @@ export interface SophonContextConfig {
   insets?: AuthPortalProps['insets'];
   currentRequest?: Message;
   setCurrentRequest: (request?: Message) => void;
+  capabilities: Capabilities[];
 }
 
 export const SophonContext = createContext<SophonContextConfig>({
@@ -96,6 +98,7 @@ export const SophonContext = createContext<SophonContextConfig>({
   setError: (_: { description: string; code: number }) => {},
   currentRequest: undefined,
   setCurrentRequest: () => {},
+  capabilities: [],
 });
 
 export interface SophonAccount {
@@ -110,6 +113,7 @@ export const SophonContextProvider = ({
   partnerId,
   dataScopes,
   insets,
+  requestedCapabilities,
 }: {
   children: React.ReactNode;
   chainId: ChainId;
@@ -117,6 +121,7 @@ export const SophonContextProvider = ({
   partnerId: string;
   dataScopes: DataScopes[];
   insets?: AuthPortalProps['insets'];
+  requestedCapabilities?: Capabilities[];
 }) => {
   const [error, setError] = useState<{ description: string; code: number }>();
   const serverUrl = useMemo(
@@ -140,6 +145,10 @@ export const SophonContextProvider = ({
     const provider = createMobileProvider(serverUrl, chainId);
     return provider;
   }, [serverUrl, chain]);
+  const capabilities = useMemo<Capabilities[]>(
+    () => requestedCapabilities ?? [],
+    [requestedCapabilities],
+  );
 
   const walletClient = createSophonWalletClient(chain, custom(provider));
 
@@ -205,12 +214,6 @@ export const SophonContextProvider = ({
     }
   }, []);
 
-  // const walletClient = useMemo(async () => {
-  //   return await dynamicClient.viem.createWalletClient({
-  //     wallet: wallets.primary!,
-  //   });
-  // }, [wallets]);
-
   const logout = useCallback(async () => {
     await logoutEmbedded();
     await provider?.disconnect();
@@ -240,6 +243,7 @@ export const SophonContextProvider = ({
       setCurrentRequest,
       connectingAccount,
       setConnectingAccount,
+      capabilities,
     }),
     [
       initialized,
@@ -261,6 +265,7 @@ export const SophonContextProvider = ({
       setCurrentRequest,
       connectingAccount,
       setConnectingAccount,
+      capabilities,
     ],
   );
 

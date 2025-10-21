@@ -3,7 +3,11 @@ import { useCallback, useMemo, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { type AuthProvider, useEmbeddedAuth } from '../../auth/useAuth';
 import { AVAILABLE_PROVIDERS } from '../../constants';
-import { useBooleanState, useFlowManager } from '../../hooks';
+import {
+  useBooleanState,
+  useFlowManager,
+  useSophonCapabilities,
+} from '../../hooks';
 import { Button } from '../../ui/button';
 import { Icon } from '../../ui/icon';
 import { validateEmail } from '../../utils/validations';
@@ -66,6 +70,7 @@ export const SignInStep = ({
   }, []);
 
   const isEmailValid = useMemo(() => validateEmail(email), [email]);
+  const { isWalletConnectEnabled } = useSophonCapabilities();
 
   return (
     <View style={[styles.container]}>
@@ -102,17 +107,21 @@ export const SignInStep = ({
         />
       </View>
 
-      <View style={styles.dividerContainer}>
-        <View style={styles.divider} />
-        <Text style={styles.dividerText}>Alternatively</Text>
-        <View style={styles.divider} />
-      </View>
+      {isWalletConnectEnabled && (
+        <>
+          <View style={styles.dividerContainer}>
+            <View style={styles.divider} />
+            <Text style={styles.dividerText}>Alternatively</Text>
+            <View style={styles.divider} />
+          </View>
 
-      <Button
-        variant="secondary"
-        text="Sign in with Wallet"
-        onPress={() => navigate('loading')}
-      />
+          <Button
+            variant="secondary"
+            text="Sign in with Wallet"
+            onPress={() => navigate('loading')}
+          />
+        </>
+      )}
     </View>
   );
 };
