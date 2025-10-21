@@ -1,3 +1,11 @@
+import {
+  type Address,
+  getAddress,
+  type Hash,
+  type Hex,
+  type TypedDataParameter,
+} from 'viem';
+
 /**
  * Interface for the list of contract addresses used in the app.
  */
@@ -15,8 +23,6 @@ export interface ContractAddresses {
 /**
  * Session Keys related types
  */
-import { type Address, getAddress, type Hash, type Hex } from 'viem';
-
 export enum LimitType {
   Unlimited = 0,
   Lifetime = 1,
@@ -220,4 +226,20 @@ export interface StorageLike {
   setItem(key: string, value: string): void;
   removeItem(key: string): void;
   clear(): void;
+}
+
+export type TypedDataDomain = {
+  name?: string;
+  version?: string;
+  chainId?: number;
+  verifyingContract?: Address;
+  salt?: Hash;
+};
+
+export interface TypedDataSigningRequest {
+  domain: TypedDataDomain;
+  types: Record<string, readonly TypedDataParameter[]>;
+  primaryType: string;
+  message: Record<string, unknown>;
+  address: string;
 }

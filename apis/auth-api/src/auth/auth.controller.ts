@@ -116,6 +116,7 @@ export class AuthController {
 				body.signature,
 				body.nonceToken,
 				ci,
+				body.ownerAddress,
 			);
 
 			this.logger.info(
