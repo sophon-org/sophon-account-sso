@@ -1,11 +1,11 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState } from 'react';
 import type {
   AuthPortalStep,
   CurrentParams,
   NavigateOptions,
   NavigateParams,
   NavigationAuthPortalState,
-} from "../types";
+} from '../types';
 
 const initialState: NavigationAuthPortalState = {
   currentState: null,
@@ -14,7 +14,9 @@ const initialState: NavigationAuthPortalState = {
 };
 
 export const useNavigationController = () => {
-  const [state, setConfig] = useState<NavigationAuthPortalState | null>(initialState);
+  const [state, setConfig] = useState<NavigationAuthPortalState | null>(
+    initialState,
+  );
 
   const { history, currentState, currentParams } = state ?? {
     history: [],
@@ -49,7 +51,9 @@ export const useNavigationController = () => {
           (acc: CurrentParams, inheritStep) => {
             acc[inheritStep] =
               options?.params ||
-              prev?.currentParams?.[inheritStep as keyof typeof prev.currentParams] ||
+              prev?.currentParams?.[
+                inheritStep as keyof typeof prev.currentParams
+              ] ||
               null;
             return acc;
           },
@@ -61,9 +65,10 @@ export const useNavigationController = () => {
           [step]: options?.params || null,
           ...addInheritParams,
         };
-        const _history = [...(prev?.history || []), prev?.currentState || "signIn"].filter(
-          Boolean,
-        ) as AuthPortalStep[];
+        const _history = [
+          ...(prev?.history || []),
+          prev?.currentState || 'signIn',
+        ].filter(Boolean) as AuthPortalStep[];
 
         return {
           currentState: step,
@@ -80,11 +85,11 @@ export const useNavigationController = () => {
 
   const goBack = useCallback((options?: NavigateOptions) => {
     setConfig((prev) => {
-      if (prev.currentState === "retry") return initialState;
+      if (prev.currentState === 'retry') return initialState;
       if (!prev || prev.history.length === 0) return prev;
       const newHistory = prev.history.slice(0, -1);
       const newCurrentState = prev.history[prev.history.length - 1];
-      if (newCurrentState === "signIn") return initialState;
+      if (newCurrentState === 'signIn') return initialState;
       if (!newCurrentState) return prev;
       return {
         currentState: newCurrentState,
@@ -93,7 +98,9 @@ export const useNavigationController = () => {
           ...prev.currentParams,
           [newCurrentState]: Object.assign(
             {},
-            prev.currentParams?.[newCurrentState as keyof typeof prev.currentParams] ?? {},
+            prev.currentParams?.[
+              newCurrentState as keyof typeof prev.currentParams
+            ] ?? {},
             options?.params ?? {},
           ),
         },
@@ -111,8 +118,9 @@ export const useNavigationController = () => {
               currentParams: {
                 ...prev.currentParams,
                 [prev.currentState!]: {
-                  ...(prev.currentParams?.[prev.currentState as keyof typeof prev.currentParams] ??
-                    {}),
+                  ...(prev.currentParams?.[
+                    prev.currentState as keyof typeof prev.currentParams
+                  ] ?? {}),
                   ...params,
                 },
               },
@@ -137,4 +145,6 @@ export const useNavigationController = () => {
   };
 };
 
-export type NavigationControllerHook = ReturnType<typeof useNavigationController>;
+export type NavigationControllerHook = ReturnType<
+  typeof useNavigationController
+>;

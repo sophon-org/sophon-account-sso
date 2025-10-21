@@ -1,19 +1,19 @@
-import { shortenAddress } from "@sophon-labs/account-core";
-import { useMemo } from "react";
-import { useSophonAccount, useSophonName } from "../../hooks";
-import { useFlowManager } from "../../hooks/use-flow-manager";
-import { useSophonContext } from "../../hooks/use-sophon-context";
-import type { AuthPortalStep } from "../types";
-import { useNavigationController } from "./use-navigation-controller";
+import { shortenAddress } from '@sophon-labs/account-core';
+import { useMemo } from 'react';
+import { useSophonAccount, useSophonName } from '../../hooks';
+import { useFlowManager } from '../../hooks/use-flow-manager';
+import { useSophonContext } from '../../hooks/use-sophon-context';
+import type { AuthPortalStep } from '../types';
+import { useNavigationController } from './use-navigation-controller';
 
-const STEPS_ALLOW_BACK_BUTTON: AuthPortalStep[] = ["verifyEmail"];
+const STEPS_ALLOW_BACK_BUTTON: AuthPortalStep[] = ['verifyEmail'];
 
 const STEPS_WITH_SIGN_IN: AuthPortalStep[] = [
-  "signIn",
-  "loading",
-  "authorization",
-  "retry",
-  "verifyEmail",
+  'signIn',
+  'loading',
+  'authorization',
+  'retry',
+  'verifyEmail',
 ];
 
 export const useAuthPortalController = () => {
@@ -24,18 +24,18 @@ export const useAuthPortalController = () => {
 
   const currentStep = useMemo<AuthPortalStep | null | undefined>(() => {
     switch (method) {
-      case "eth_requestAccounts":
-      case "wallet_requestPermissions": {
-        if (isConnected || connectingAccount) return "authorization";
-        return navigation.currentState || "signIn";
+      case 'eth_requestAccounts':
+      case 'wallet_requestPermissions': {
+        if (isConnected || connectingAccount) return 'authorization';
+        return navigation.currentState || 'signIn';
       }
-      case "personal_sign":
-      case "eth_signTypedData_v4":
-        return "signMessage";
-      case "eth_sendTransaction":
-        return "transaction";
-      case "sophon_requestConsent":
-        return "consent";
+      case 'personal_sign':
+      case 'eth_signTypedData_v4':
+        return 'signMessage';
+      case 'eth_sendTransaction':
+        return 'transaction';
+      case 'sophon_requestConsent':
+        return 'consent';
       // case 'wallet_revokePermissions':
       // case 'wallet_disconnect':
       default:
@@ -45,17 +45,17 @@ export const useAuthPortalController = () => {
 
   const { isLoading, isConnectingAccount } = useMemo(() => {
     return {
-      isLoading: currentStep === "loading",
-      isConnectingAccount: currentStep === "authorization" || isConnected,
+      isLoading: currentStep === 'loading',
+      isConnectingAccount: currentStep === 'authorization' || isConnected,
     };
   }, [currentStep, isConnected]);
 
   const params = useMemo(() => {
-    return navigation.currentParams?.[currentStep || ""] || null;
+    return navigation.currentParams?.[currentStep || ''] || null;
   }, [currentStep, navigation.currentParams]);
 
   const showBackButton = useMemo(() => {
-    if (currentStep === "retry") return true;
+    if (currentStep === 'retry') return true;
 
     const hasHistory = Boolean((navigation.history.length ?? 0) > 0);
     const canNavigateBack = STEPS_ALLOW_BACK_BUTTON.includes(currentStep);
@@ -70,17 +70,17 @@ export const useAuthPortalController = () => {
     if (account?.address?.trim()) return shortenAddress(account.address);
 
     if (STEPS_WITH_SIGN_IN.includes(currentStep)) {
-      return "Sign in";
+      return 'Sign in';
     }
 
-    return "";
+    return '';
   }, [account, userName, isConnected]);
 
   const handleProps = useMemo(
     () => ({
       showBackButton,
       hideCloseButton: isLoading,
-      title: displayName ?? "Sign in",
+      title: displayName ?? 'Sign in',
     }),
     [navigation.history, isLoading, displayName],
   );
@@ -96,4 +96,6 @@ export const useAuthPortalController = () => {
   };
 };
 
-export type AuthPortalControllerHook = ReturnType<typeof useAuthPortalController>;
+export type AuthPortalControllerHook = ReturnType<
+  typeof useAuthPortalController
+>;

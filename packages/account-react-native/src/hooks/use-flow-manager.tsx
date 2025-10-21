@@ -277,15 +277,12 @@ export const useFlowManager = () => {
     [connectingAccount, setAccount, updateAccessToken, updateRefreshToken],
   );
 
-  const consent = useCallback(async () => {
+  const consent = useCallback(async (kinds: string[]) => {
     const accessToken = await getAccessToken();
     if (!accessToken) {
       throw new Error('No access token found');
     }
-    const consentResponse = await requestConsent(accessToken.value, [
-      'PERSONALIZATION_ADS',
-      'SHARING_DATA',
-    ]);
+    const consentResponse = await requestConsent(accessToken.value, kinds);
 
     console.log('consentResponse', consentResponse);
 
@@ -297,8 +294,8 @@ export const useFlowManager = () => {
       requestId: currentRequest!.id,
       content: {
         result: {
-          consentAds: true,
-          consentData: true,
+          consentAds: kinds.includes('PERSONALIZATION_ADS'),
+          consentData: kinds.includes('SHARING_DATA'),
         },
       },
     });

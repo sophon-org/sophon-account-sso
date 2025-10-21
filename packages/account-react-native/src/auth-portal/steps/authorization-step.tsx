@@ -50,9 +50,9 @@ export const AuthorizationStep = ({
         <Text size="large" textAlign="center">
           Connect to {partner?.name ?? 'Sophon'}
         </Text>
-        {!!partner?.domains.length && (
+        <Container isVisible={!!partner?.domains.length}>
           <Text textAlign="center">{partner?.domains[0]}</Text>
-        )}
+        </Container>
       </Container>
       <Card style={styles.contentCard}>
         <Container style={styles.cardSection} marginBottom={16}>

@@ -10,10 +10,7 @@ import {
 } from '../../hooks';
 import { Button, Container, Icon } from '../../ui';
 import { validateEmail } from '../../utils/validations';
-import {
-  useNavigationParams,
-  useNavigationPortal,
-} from '../hooks/use-auth-portal';
+import { useNavigationParams, useNavigationPortal } from '../hooks';
 import type { BasicStepProps, SignInParams } from '../types';
 
 export const SignInStep = ({

@@ -1,5 +1,5 @@
-import { useContext, useMemo } from "react";
-import { AuthPortalContext } from "../context/auth-sheet.context";
+import { useContext, useMemo } from 'react';
+import { AuthPortalContext } from '../context/auth-sheet.context';
 
 /**
  * @function useNavigationPortal
@@ -8,7 +8,11 @@ import { AuthPortalContext } from "../context/auth-sheet.context";
  */
 export function useNavigationPortal() {
   const context = useContext(AuthPortalContext);
-  if (!context) throw new Error("useAuthPortal must be used within AuthPortalProvider");
+  if (!context)
+    throw new Error('useAuthPortal must be used within AuthPortalProvider');
   const { navigate, goBack, setParams } = context;
-  return useMemo(() => ({ navigate, goBack, setParams }), [navigate, goBack, setParams]);
+  return useMemo(
+    () => ({ navigate, goBack, setParams }),
+    [navigate, goBack, setParams],
+  );
 }

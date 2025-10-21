@@ -83,11 +83,14 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'flex-start',
+    justifyContent: 'center',
     gap: 8,
   },
   textWrapper: {
     flex: 1,
     flexShrink: 1,
+    backgroundColor: 'green',
+    minHeight: 20,
   },
   icon: {
     width: 20,
@@ -106,6 +109,5 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     justifyContent: 'center',
     alignItems: 'center',
-    top: 3,
   },
 });

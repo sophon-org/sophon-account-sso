@@ -1,6 +1,6 @@
 import type React from 'react';
 import { useMemo } from 'react';
-import { StyleSheet, View, type ViewProps, type ViewStyle } from 'react-native';
+import { View, type ViewProps, type ViewStyle } from 'react-native';
 
 type ViewStylePropKeys =
   | 'flex'
@@ -68,6 +68,7 @@ type ContainerProps = ViewProps &
   InlineViewStyleProps & {
     isVisible?: boolean;
   };
+type ViewStyleKey = (typeof VIEW_STYLE_KEYS)[number];
 
 const VIEW_STYLE_KEYS: ReadonlyArray<ViewStylePropKeys> = [
   'flex',
@@ -139,7 +140,9 @@ export const Container: React.FC<ContainerProps> = ({
     const viewStyles: ViewStyle = {};
     VIEW_STYLE_KEYS.forEach((key) => {
       const value = rest[key];
-      if (value !== undefined) (viewStyles as any)[key] = value;
+      if (value !== undefined) {
+        (viewStyles as unknown as ViewStyleKey)[key] = value;
+      }
     });
     return viewStyles;
   }, [rest]);

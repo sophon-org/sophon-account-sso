@@ -84,7 +84,7 @@ export const Text: React.FC<Props> = ({ size = 'regular', style, ...rest }) => {
     const textStyles: TextStyle = {};
     TEXT_STYLE_KEYS.forEach((key) => {
       const value = rest[key];
-      if (value !== undefined) (textStyles as any)[key] = value;
+      if (value !== undefined) (textStyles as unknown)[key] = value;
     });
     return textStyles;
   }, [rest]);
