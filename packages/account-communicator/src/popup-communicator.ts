@@ -1,4 +1,4 @@
-import type { Communicator, Message } from './communicator.js';
+import type { Communicator, Message } from './types.js';
 import { standardErrors } from './errors';
 
 export interface PopupConfigMessage extends Message {

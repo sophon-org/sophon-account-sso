@@ -23,6 +23,7 @@ import {
 } from 'viem';
 import { sophon, sophonTestnet } from 'viem/chains';
 import { eip712WalletActions } from 'viem/zksync';
+import { SophonConnectorMetadata } from './constants';
 
 export const createSophonConnector = (
   chainId: ChainId = sophonTestnet.id,
@@ -56,13 +57,10 @@ export const createSophonConnector = (
   };
 
   return createConnector<EIP1193Provider>((config) => ({
-    id:
-      chainId === sophon.id
-        ? 'com.sophon.account'
-        : 'com.sophon.staging.account',
-    name: chainId === sophon.id ? 'Sophon Account' : 'Sophon Account Test',
-    icon: 'https://sophon.com/favicon.ico',
-    type: 'zksync-sso',
+    id: SophonConnectorMetadata[chainId].id,
+    name: SophonConnectorMetadata[chainId].name,
+    icon: SophonConnectorMetadata[chainId].icon,
+    type: SophonConnectorMetadata[chainId].type,
 
     async connect({ chainId } = {}) {
       try {
@@ -197,7 +195,6 @@ export const createSophonConnector = (
     },
     async onDisconnect(error) {
       config.emitter.emit('disconnect');
-      // if (error instanceof EthereumProviderError && error.code === 4900) return; // User initiated
       console.error('Account disconnected', error);
     },
   }));

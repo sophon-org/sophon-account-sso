@@ -12,3 +12,6 @@ export * from './utils';
 export * from './smart-contract';
 export * from './chain-helpers';
 export * from './viem';
+// temporary until we have final values and new chains on viem
+export * from './os/osMainnet';
+export * from './os/osTestnet';
