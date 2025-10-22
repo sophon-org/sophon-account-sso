@@ -2,23 +2,24 @@ import BottomSheet, {
   BottomSheetBackdrop,
   type BottomSheetBackdropProps,
   type BottomSheetHandleProps,
-  BottomSheetView,
+  BottomSheetScrollView,
 } from '@gorhom/bottom-sheet';
 import type { DataScopes } from '@sophon-labs/account-core';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Keyboard, Platform } from 'react-native';
 import { useEmbeddedAuth } from '../auth/useAuth';
 import { useBooleanState, useFlowManager } from '../hooks';
 import { useSophonPartner } from '../hooks/use-sophon-partner';
 import { useUIEventHandler } from '../messaging/ui';
+import { Container } from '../ui';
 import { FooterSheet } from './components/footer-sheet';
 import { AuthPortalBottomSheetHandle } from './components/handle-sheet';
 import { StepTransitionView } from './components/step-transition';
 import { AuthPortalContext } from './context/auth-sheet.context';
+import { useAuthPortalController } from './hooks';
 import { useKeyboard } from './hooks/use-keyboard';
-import { useNavigationController } from './hooks/use-navigation-controller';
 import { StepControllerComponent } from './steps';
-import type { BasicStepProps } from './types';
+import type { AuthPortalStep, BasicStepProps } from './types';
 
 export type AuthPortalProps = {
   debugEnabled?: boolean;
@@ -57,25 +58,33 @@ export function AuthPortal(props: AuthPortalProps) {
     goBack,
     cleanup,
     setParams,
-  } = useNavigationController();
+  } = useAuthPortalController();
+
+  const hideTerms = useMemo(
+    () => isLoading || isConnectingAccount || currentStep === 'retry',
+    [isLoading, isConnectingAccount, currentStep],
+  );
 
   const showModal = useCallback(() => {
     bottomSheetRef.current?.expand();
+    removeKeyboardListener();
     addKeyboardListener('keyboardWillHide', () => {
+      console.log('keyboard will hide - snap to index 0');
       bottomSheetRef.current?.snapToIndex(0);
     });
   }, []);
 
   const hideModal = useCallback(() => {
+    removeKeyboardListener();
     cleanup();
     Keyboard.dismiss();
     bottomSheetRef.current?.close();
   }, []);
 
   const onClose = useCallback(() => {
+    removeKeyboardListener();
     Keyboard.dismiss();
     cleanup();
-    removeKeyboardListener();
     disableAnimation.setOff();
   }, []);
 
@@ -137,10 +146,14 @@ export function AuthPortal(props: AuthPortalProps) {
 
   const onAuthenticate = useCallback<BasicStepProps['onAuthenticate']>(
     async (ownerAddress) => {
-      navigate('loading', { replace: true });
-      console.log('ui ownerAddress', ownerAddress);
-      await actions.authenticate(ownerAddress);
-      console.log('authenticated');
+      try {
+        console.log('ui ownerAddress', ownerAddress);
+        navigate('loading', { replace: true });
+        await actions.authenticate(ownerAddress);
+        console.log('authenticated');
+      } catch {
+        navigate('retry', { replace: true, params: { ownerAddress } });
+      }
     },
     [actions],
   );
@@ -149,11 +162,17 @@ export function AuthPortal(props: AuthPortalProps) {
     // clearCurrentRequest();
     console.log('onCancel');
     hideModal();
+    clearCurrentRequest();
   }, [hideModal]);
 
-  const onError = useCallback(async (error: Error) => {
+  const onBackToSignIn = useCallback(async () => {
+    console.log('onBackToSignIn');
+    cleanup();
+  }, [cleanup]);
+
+  const onError = useCallback(async (error: Error, step?: AuthPortalStep) => {
     // clearCurrentRequest();
-    console.log('onError', error);
+    console.log(`onError ${step ?? '-'}`, error);
   }, []);
 
   const { getAvailableDataScopes } = useEmbeddedAuth();
@@ -192,7 +211,7 @@ export function AuthPortal(props: AuthPortalProps) {
           disableAnimation.setState(currentIndex < 0);
         }}
         animateOnMount
-        enablePanDownToClose={true}
+        enablePanDownToClose={!handleProps?.hideCloseButton}
         enableDynamicSizing={true}
         keyboardBehavior={Platform.OS === 'ios' ? 'interactive' : 'fillParent'}
         keyboardBlurBehavior="restore"
@@ -200,24 +219,32 @@ export function AuthPortal(props: AuthPortalProps) {
         android_keyboardInputMode="adjustResize"
         handleIndicatorStyle={{ backgroundColor: '#ccc' }}
       >
-        <BottomSheetView style={{ padding: 24 }}>
-          <StepTransitionView
-            keyProp={currentStep ?? null}
-            isBackAvailable={!showBackButton}
-            disableAnimation={disableAnimation.state}
-          >
-            <StepControllerComponent
-              currentStep={currentStep ?? null}
-              onComplete={onComplete}
-              onCancel={onCancel}
-              onError={onError}
-              onAuthenticate={onAuthenticate}
-              scopes={dataScopes}
-              partner={partner}
-            />
-          </StepTransitionView>
-          <FooterSheet hideTerms={isLoading || isConnectingAccount} />
-        </BottomSheetView>
+        <BottomSheetScrollView
+          bounces={false}
+          keyboardDismissMode="on-drag"
+          keyboardShouldPersistTaps="never"
+        >
+          <Container margin={24}>
+            <StepTransitionView
+              keyProp={currentStep ?? null}
+              isBackAvailable={showBackButton}
+              disableAnimation={disableAnimation.state}
+            >
+              <StepControllerComponent
+                key={currentStep}
+                currentStep={currentStep ?? null}
+                onComplete={onComplete}
+                onCancel={onCancel}
+                onError={onError}
+                onAuthenticate={onAuthenticate}
+                onBackToSignIn={onBackToSignIn}
+                scopes={dataScopes}
+                partner={partner}
+              />
+            </StepTransitionView>
+            <FooterSheet hideTerms={hideTerms} />
+          </Container>
+        </BottomSheetScrollView>
       </BottomSheet>
     </AuthPortalContext.Provider>
   );

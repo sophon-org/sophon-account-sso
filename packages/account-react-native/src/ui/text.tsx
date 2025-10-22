@@ -7,7 +7,7 @@ import {
   type TextStyle,
 } from 'react-native';
 
-type TextVariant = 'small' | 'normal' | 'large';
+type TextVariant = 'small' | 'regular' | 'large';
 
 type TextStylePropKeys =
   | 'color'
@@ -79,15 +79,15 @@ const TEXT_STYLE_KEYS: ReadonlyArray<TextStylePropKeys> = [
   'paddingLeft',
 ] as const;
 
-export const Text: React.FC<Props> = ({ size = 'normal', style, ...rest }) => {
+export const Text: React.FC<Props> = ({ size = 'regular', style, ...rest }) => {
   const inlineStyle = useMemo(() => {
-    const s: TextStyle = {};
-    TEXT_STYLE_KEYS.forEach((k) => {
-      const v = rest[k];
-      // biome-ignore lint/suspicious/noExplicitAny: review this type
-      if (v !== undefined) s[k] = v as any;
+    const textStyles: TextStyle = {};
+    TEXT_STYLE_KEYS.forEach((key) => {
+      const value = rest[key];
+      // biome-ignore lint/suspicious/noExplicitAny: TODO @cleo to review this
+      if (value !== undefined) (textStyles as any)[key] = value;
     });
-    return s;
+    return textStyles;
   }, [rest]);
 
   const passThroughProps = useMemo(() => {
@@ -112,9 +112,9 @@ const styles = StyleSheet.create({
     fontSize: 10,
     lineHeight: 10 * 1.33,
   },
-  normal: {
+  regular: {
     fontSize: 15,
-    lineHeight: 20 * 1.33,
+    lineHeight: 15 * 1.33,
   },
   large: {
     fontSize: 18,

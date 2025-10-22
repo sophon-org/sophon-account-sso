@@ -12,13 +12,21 @@ import { Icon } from './icon';
 import { Text } from './text';
 
 export const CheckBox: React.FC<{
-  checked?: boolean;
+  defaultChecked?: boolean;
+  locked?: boolean;
   label: string;
   onChange?: (checked: boolean) => void;
-  blocked?: boolean;
+  unavailable?: boolean;
   textStyle?: TextStyle;
-}> = ({ label, onChange, checked = false, blocked = false, textStyle }) => {
-  const [_checked, setChecked] = useState(checked || blocked);
+}> = ({
+  label,
+  onChange,
+  defaultChecked = false,
+  unavailable = false,
+  textStyle,
+  locked = false,
+}) => {
+  const [_checked, setChecked] = useState(defaultChecked || unavailable);
   const progress = useSharedValue(_checked ? 1 : 0);
 
   const toggle = useCallback(() => {
@@ -48,14 +56,18 @@ export const CheckBox: React.FC<{
   }));
 
   return (
-    <Pressable onPress={toggle} style={styles.container} disabled={blocked}>
+    <Pressable
+      onPress={toggle}
+      style={styles.container}
+      disabled={unavailable || locked}
+    >
       <Animated.View
-        style={[styles.checkbox, boxStyle, blocked && styles.blocked]}
+        style={[styles.checkbox, boxStyle, unavailable && styles.unavailable]}
       >
         <Animated.View style={[iconStyle, styles.icon]}>
           <Icon
-            name={blocked ? 'close' : 'checkmark'}
-            size={blocked ? 14 : 20}
+            name={unavailable ? 'close' : 'checkmark'}
+            size={unavailable ? 14 : 20}
             color="#ffffff"
           />
         </Animated.View>
@@ -71,11 +83,13 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'flex-start',
+    justifyContent: 'center',
     gap: 8,
   },
   textWrapper: {
     flex: 1,
     flexShrink: 1,
+    minHeight: 20,
   },
   icon: {
     width: 20,
@@ -84,7 +98,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center',
   },
-  blocked: {
+  unavailable: {
     backgroundColor: '#8D8D8D',
     borderColor: '#8D8D8D',
   },
@@ -94,6 +108,5 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     justifyContent: 'center',
     alignItems: 'center',
-    top: 5,
   },
 });

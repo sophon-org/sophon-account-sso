@@ -2,6 +2,7 @@ import { AuthPortalSteps, type BasicStepProps } from '../types';
 import { AuthorizationStep } from './authorization-step';
 import { ConsentStep } from './consent-step';
 import { LoadingStep } from './loading-step';
+import { RetryStep } from './retry-step';
 import { SignInStep } from './sign-in-step';
 import { SignMessageStep } from './sign-message';
 import { TransactionStep } from './transaction-step';
@@ -24,6 +25,8 @@ export const StepControllerComponent = (props: BasicStepProps) => {
       return <ConsentStep {...props} />;
     case AuthPortalSteps.SignMessage:
       return <SignMessageStep {...props} />;
+    case AuthPortalSteps.Retry:
+      return <RetryStep {...props} />;
     default:
       return null;
   }

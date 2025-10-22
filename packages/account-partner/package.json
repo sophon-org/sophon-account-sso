@@ -27,21 +27,17 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
     "------------------------- UNIT TESTING -------------------------": "",
     "test": "vitest",
     "test:watch": "vitest --watch",
-    "test:ci": "vitest run --coverage",
-    "----------------------- INTEGRATION TESTING ---------------------": "",
-    "test:e2e:ci": "playwright test",
-    "test:e2e:ui": "playwright test --ui",
-    "test:e2e:dev": "npm-run-all --parallel dev test:e2e:ui"
+    "test:ci": "vitest run --coverage"
   },
   "dependencies": {
     "@sophon-labs/account-core": "3.0.0-next.2"
   },
   "devDependencies": {
     "@faker-js/faker": "^10.0.0",
-    "@playwright/test": "^1.54.1",
     "@types/node": "^20.0.0",
     "tsup": "^8.5.0",
     "typescript": "^5.0.0",

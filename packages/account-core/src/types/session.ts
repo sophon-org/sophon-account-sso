@@ -1,19 +1,4 @@
-import type { Address, Hash, Hex, TypedDataParameter } from 'viem';
-
-/**
- * Interface for the list of contract addresses used in the app.
- */
-export interface ContractAddresses {
-  session: `0x${string}`;
-  passkey: `0x${string}`;
-  accountFactory: `0x${string}`;
-  accountPaymaster: `0x${string}`;
-  recovery: `0x${string}`;
-  oidcKeyRegistry: `0x${string}`;
-  recoveryOidc: `0x${string}`;
-  snsRegistry: `0x${string}`;
-  accountCodeStorage: `0x${string}`;
-}
+import type { Address, Hash, Hex } from 'viem';
 
 /**
  * Session Keys related types
@@ -170,31 +155,3 @@ export type InstallSessionKeyModuleArgs = BaseTransactionArgs & {
 export type RevokeSessionArgs = BaseTransactionArgs & {
   sessionHash: `0x${string}`;
 };
-
-export interface StorageLike {
-  getItem(key: string): string | null;
-  setItem(key: string, value: string): void;
-  removeItem(key: string): void;
-  clear(): void;
-}
-
-export type TypedDataDomain = {
-  name?: string;
-  version?: string;
-  chainId?: number;
-  verifyingContract?: Address;
-  salt?: Hash;
-};
-
-export interface TypedDataSigningRequest {
-  domain: TypedDataDomain;
-  types: Record<string, readonly TypedDataParameter[]>;
-  primaryType: string;
-  message: Record<string, unknown>;
-  address: string;
-}
-
-export interface AAFactoryAccount {
-  accountId: `0x${string}`;
-  factoryVersion: Address;
-}

@@ -11,10 +11,10 @@ import {
 import { sophonTestnet } from 'viem/chains';
 import { snsRegistryAbi } from '../abis/SNSRegistryAbi';
 import { CHAIN_CONTRACTS, type ChainId, SophonChains } from '../constants';
-import type { StorageLike } from '../types';
+import type { StorageLike } from '../types/storage';
 import { cachedSNS } from './cache';
 
-export type { SNSName } from './types';
+export type { SNSName } from '../types/sns';
 
 /**
  * Resolve a name to an address on sophon chainId

@@ -1,10 +1,9 @@
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import {
   Keyboard,
   type NativeSyntheticEvent,
   StyleSheet,
-  Text,
   type TextInput,
   type TextInputKeyPressEventData,
   View,
@@ -18,14 +17,17 @@ import Animated, {
 import { useEmbeddedAuth } from '../../auth/useAuth';
 import { OTP_CODE_LENGTH } from '../../constants/verify-otp';
 import { useBooleanState, useFlowManager } from '../../hooks';
-import { Button } from '../../ui/button';
+import { Button, CardError, Container, Text } from '../../ui';
 import { useNavigationParams } from '../hooks';
 import type { BasicStepProps, VerifyCodeParams } from '../types';
 
+const defaultCodeArray = Array(OTP_CODE_LENGTH).fill('');
+
 export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
   const loadingState = useBooleanState(false);
+  const errorState = useBooleanState(false);
   const params = useNavigationParams<VerifyCodeParams>();
-  const [codes, setValues] = useState(Array(OTP_CODE_LENGTH).fill(''));
+  const [codes, setValues] = useState(defaultCodeArray);
   const inputsRef = useRef<TextInput[]>([]);
   const scales = useRef(codes.map(() => useSharedValue(1))).current;
   const opacities = useRef(codes.map(() => useSharedValue(0.3))).current;
@@ -35,9 +37,23 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
     actions: { waitForAuthentication },
   } = useFlowManager();
 
+  const handleOnError = useCallback(
+    async (error: Error) => {
+      errorState.setOn();
+      console.error(error);
+      onError(error, 'verifyEmail');
+      setValues(defaultCodeArray);
+      defaultCodeArray.forEach((_, index) => {
+        opacities[index]!.value = withTiming(0.3, { duration: 120 });
+      });
+    },
+    [onError],
+  );
+
   const handleVerifyEmailOTP = useCallback(
     async (code?: string) => {
       try {
+        errorState.setOff();
         loadingState.setOn();
         Keyboard.dismiss();
         const codeToVerify = code || codes.join('');
@@ -47,9 +63,8 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
         const ownerAddress = await waitFor;
         onAuthenticate(ownerAddress);
       } catch (error) {
-        console.log('USER CANCELED');
-        console.error(error);
-        await onError(error as Error);
+        console.log('USER CANCELED VerifyEmailOTP ');
+        handleOnError(error as Error);
         loadingState.setOff();
       }
     },
@@ -159,61 +174,50 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
     );
   };
 
-  useEffect(() => {
-    focusIndex(0);
-  }, []);
-
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Insert 6-digit code</Text>
+    <Container>
+      <Container gap={8} marginBottom={8}>
+        <Text size="large" textAlign="center">
+          Insert 6-digit code
+        </Text>
         <View>
-          <Text style={styles.text}>Check {params?.email} for</Text>
-          <Text style={styles.text}>the code</Text>
+          <Text textAlign="center">Check {params?.email} for</Text>
+          <Text textAlign="center">the code</Text>
         </View>
-      </View>
-      <View style={styles.containerInput}>{codes.map(renderInput)}</View>
-      <Button
-        variant="primary"
-        text="Verify"
-        loading={loadingState.state}
-        onPress={() => handleVerifyEmailOTP()}
-        disabled={codes.some((code) => code === '')}
-      />
-      <Text style={[styles.text, { color: '#8D8D8D' }]}>
-        Did not receive a code? Check spam or
-      </Text>
-      <Button variant="secondary" text="Resend link" onPress={resendEmailOTP} />
-    </View>
+      </Container>
+      <Container gap={12} marginVertical={16}>
+        <View style={styles.containerInput}>{codes.map(renderInput)}</View>
+        <Button
+          variant="primary"
+          text="Verify"
+          loading={loadingState.state}
+          onPress={() => handleVerifyEmailOTP()}
+          disabled={codes.some((code) => code === '')}
+        />
+        <CardError
+          isVisible={errorState.state}
+          text="Invalid code. Please check your email and try again."
+        />
+      </Container>
+      <Container gap={24} marginVertical={16}>
+        <Text color="#8D8D8D" textAlign="center">
+          Did not receive a code? Check spam or
+        </Text>
+        <Button
+          variant="secondary"
+          text="Resend link"
+          onPress={resendEmailOTP}
+        />
+      </Container>
+    </Container>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    gap: 24,
-  },
-  title: {
-    fontSize: 18,
-    lineHeight: 24,
-    fontWeight: '700',
-    textAlign: 'center',
-    color: '#2A2A2A',
-  },
-  text: {
-    fontSize: 15,
-    lineHeight: 24,
-    color: '#2A2A2A',
-    textAlign: 'center',
-  },
-  header: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 8,
-  },
   containerInput: {
     flexDirection: 'row',
     justifyContent: 'center',
-    gap: 12,
+    gap: 8,
   },
   box: {
     width: 48,

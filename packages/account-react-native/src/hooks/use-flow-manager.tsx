@@ -181,108 +181,108 @@ export const useFlowManager = () => {
     [setConnectingAccount],
   );
 
-  const authorize = useCallback(async () => {
-    if (!connectingAccount?.address) {
-      throw new Error('No account address found');
-    }
+  const authorize = useCallback(
+    async (fields: string[]) => {
+      if (!connectingAccount?.address) {
+        throw new Error('No account address found');
+      }
 
-    const embeddedUserId = dynamicClient.auth.authenticatedUser?.userId;
+      const embeddedUserId = dynamicClient.auth.authenticatedUser?.userId;
 
-    // request nonce
-    const nonce = await requestNonce(
-      connectingAccount.address,
-      partnerId,
-      [],
-      embeddedUserId,
-    );
+      // request nonce
+      const nonce = await requestNonce(
+        connectingAccount.address,
+        partnerId,
+        fields,
+        embeddedUserId,
+      );
 
-    // request signature
-    const messageFields = [
-      { name: 'content', type: 'string' },
-      { name: 'from', type: 'address' },
-      { name: 'nonce', type: 'string' },
-      { name: 'audience', type: 'string' },
-    ];
+      // request signature
+      const messageFields = [
+        { name: 'content', type: 'string' },
+        { name: 'from', type: 'address' },
+        { name: 'nonce', type: 'string' },
+        { name: 'audience', type: 'string' },
+      ];
 
-    const message = {
-      content: `Do you authorize this website to connect?!\n\nThis message confirms you control this wallet.`,
-      from: connectingAccount.address,
-      nonce,
-      audience: partnerId,
-    };
+      const message = {
+        content: `Do you authorize this website to connect?!\n\nThis message confirms you control this wallet.`,
+        from: connectingAccount.address,
+        nonce,
+        audience: partnerId,
+      };
 
-    const signAuth = {
-      domain: {
-        name: 'Sophon SSO',
-        version: '1',
-        chainId: chain.id,
-      },
-      types: {
-        Message: embeddedUserId
-          ? [...messageFields, { name: 'userId', type: 'string' }]
-          : messageFields,
-      },
-      primaryType: 'Message',
-      address: connectingAccount.address,
-      message: embeddedUserId
-        ? { ...message, userId: embeddedUserId }
-        : message,
-    };
+      const signAuth = {
+        domain: {
+          name: 'Sophon SSO',
+          version: '1',
+          chainId: chain.id,
+        },
+        types: {
+          Message: embeddedUserId
+            ? [...messageFields, { name: 'userId', type: 'string' }]
+            : messageFields,
+        },
+        primaryType: 'Message',
+        address: connectingAccount.address,
+        message: embeddedUserId
+          ? { ...message, userId: embeddedUserId }
+          : message,
+      };
 
-    const safePayload = safeParseTypedData(signAuth);
+      const safePayload = safeParseTypedData(signAuth);
 
-    const embeddedWalletClient = (
-      await dynamicClient.viem.createWalletClient({
-        wallet: dynamicClient.wallets.primary!,
-      })
-    ).extend(eip712WalletActions());
+      const embeddedWalletClient = (
+        await dynamicClient.viem.createWalletClient({
+          wallet: dynamicClient.wallets.primary!,
+        })
+      ).extend(eip712WalletActions());
 
-    const signature = await embeddedWalletClient.signTypedData({
-      domain: safePayload.domain,
-      types: safePayload.types,
-      primaryType: safePayload.primaryType,
-      message: safePayload.message,
-      // TODO: review this to allow call to the blockchain if in the right chain
-      account: connectingAccount.owner,
-    });
+      const signature = await embeddedWalletClient.signTypedData({
+        domain: safePayload.domain,
+        types: safePayload.types,
+        primaryType: safePayload.primaryType,
+        message: safePayload.message,
+        // TODO: review this to allow call to the blockchain if in the right chain
+        account: connectingAccount.owner,
+      });
 
-    // exchange tokens
-    const tokens = await requestToken(
-      connectingAccount.address,
-      signAuth,
-      signature,
-      nonce,
-      connectingAccount.owner,
-    );
-    console.log('tokens', tokens);
+      // exchange tokens
+      const tokens = await requestToken(
+        connectingAccount.address,
+        signAuth,
+        signature,
+        nonce,
+        connectingAccount.owner,
+      );
+      console.log('tokens', tokens);
 
-    // save tokens
-    setCurrentRequest(undefined);
+      // save tokens
+      setCurrentRequest(undefined);
 
-    updateAccessToken({
-      value: tokens.accessToken,
-      expiresAt: tokens.accessTokenExpiresAt,
-    });
-    updateRefreshToken({
-      value: tokens.refreshToken,
-      expiresAt: tokens.refreshTokenExpiresAt,
-    });
+      updateAccessToken({
+        value: tokens.accessToken,
+        expiresAt: tokens.accessTokenExpiresAt,
+      });
+      updateRefreshToken({
+        value: tokens.refreshToken,
+        expiresAt: tokens.refreshTokenExpiresAt,
+      });
 
-    setAccount({ ...connectingAccount });
-    setConnectingAccount(undefined);
-    // await 500 ms to allow react to propagate the change, to remove in the future
-    // await new Promise((resolve) => setTimeout(resolve, 500));
-  }, [connectingAccount, setAccount, updateAccessToken, updateRefreshToken]);
+      setAccount({ ...connectingAccount });
+      setConnectingAccount(undefined);
+      // await 500 ms to allow react to propagate the change, to remove in the future
+      // await new Promise((resolve) => setTimeout(resolve, 500));
+    },
+    [connectingAccount, setAccount, updateAccessToken, updateRefreshToken],
+  );
 
-  const consent = useCallback(async () => {
+  const consent = useCallback(async (kinds: string[]) => {
     const accessToken = await getAccessToken();
     if (!accessToken) {
       throw new Error('No access token found');
     }
-    const consentResponse = await requestConsent(accessToken.value, [
-      'PERSONALIZATION_ADS',
-      'SHARING_DATA',
-    ]);
+    const consentResponse = await requestConsent(accessToken.value, kinds);
 
     console.log('consentResponse', consentResponse);
 
@@ -294,8 +294,8 @@ export const useFlowManager = () => {
       requestId: currentRequest!.id,
       content: {
         result: {
-          consentAds: true,
-          consentData: true,
+          consentAds: kinds.includes('PERSONALIZATION_ADS'),
+          consentData: kinds.includes('SHARING_DATA'),
         },
       },
     });
