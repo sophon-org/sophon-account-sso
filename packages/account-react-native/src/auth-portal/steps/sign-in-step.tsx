@@ -1,6 +1,12 @@
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
-import { useCallback, useMemo, useRef, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useCallback, useMemo, useState } from 'react';
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { type AuthProvider, useEmbeddedAuth } from '../../auth/useAuth';
 import { AVAILABLE_PROVIDERS } from '../../constants';
 import {
@@ -8,7 +14,7 @@ import {
   useFlowManager,
   useSophonCapabilities,
 } from '../../hooks';
-import { Button, Container, Icon } from '../../ui';
+import { Button, CardError, Container, Icon } from '../../ui';
 import { validateEmail } from '../../utils/validations';
 import { useNavigationParams, useNavigationPortal } from '../hooks';
 import type { BasicStepProps, SignInParams } from '../types';
@@ -18,10 +24,13 @@ export const SignInStep = ({
   onError,
   onAuthenticate,
 }: BasicStepProps) => {
+  const [error, setError] = useState<null | string>(null);
   const params = useNavigationParams<SignInParams>();
   const { navigate } = useNavigationPortal();
   const loadingState = useBooleanState(false);
-  const requestRef = useRef(false);
+  const [providerRequest, setCurrentProviderLoadingState] = useState<
+    null | string
+  >(null);
   const [email, setEmail] = useState(params?.email || '');
   const { signInWithSocialProvider, signInWithEmail } = useEmbeddedAuth();
   const {
@@ -30,9 +39,9 @@ export const SignInStep = ({
 
   const handleSocialProviderPress = useCallback(
     async (provider: AuthProvider) => {
-      if (requestRef.current) return;
+      if (providerRequest) return;
       try {
-        requestRef.current = true;
+        setCurrentProviderLoadingState(provider);
         const waitFor = waitForAuthentication();
         await signInWithSocialProvider(provider);
         const ownerAddress = await waitFor;
@@ -42,14 +51,13 @@ export const SignInStep = ({
         console.error(error);
         await onError(error as Error);
       } finally {
-        requestRef.current = false;
+        setCurrentProviderLoadingState(null);
       }
     },
-    [signInWithSocialProvider, onComplete, onError],
+    [signInWithSocialProvider, onComplete, onError, providerRequest],
   );
-
+  const isEmailValid = useMemo(() => validateEmail(email), [email]);
   const handleSignInWithEmail = useCallback(async () => {
-    if (loadingState.state) return;
     try {
       loadingState.setOn();
       await signInWithEmail(email);
@@ -61,17 +69,17 @@ export const SignInStep = ({
     } catch (error) {
       console.log('USER CANCELED2');
       console.error(error);
+      setError(error?.message ?? null);
       await onError(error as Error, 'signIn');
     } finally {
       loadingState.setOff();
     }
-  }, [signInWithEmail, onComplete, onError, email, loadingState.state]);
+  }, [signInWithEmail, onComplete, onError, email, navigate]);
 
   const handleChangeText = useCallback((text: string) => {
     setEmail(text);
   }, []);
 
-  const isEmailValid = useMemo(() => validateEmail(email), [email]);
   const { isWalletConnectEnabled } = useSophonCapabilities();
 
   return (
@@ -81,10 +89,15 @@ export const SignInStep = ({
           <TouchableOpacity
             key={provider}
             style={styles.socialButton}
-            disabled={loadingState.state}
+            disabled={loadingState.state || !!providerRequest}
             onPress={() => handleSocialProviderPress(provider as AuthProvider)}
           >
             <Icon name={provider} size={24} />
+            {providerRequest === provider ? (
+              <View style={styles.overlay}>
+                <ActivityIndicator size="small" />
+              </View>
+            ) : null}
           </TouchableOpacity>
         ))}
       </View>
@@ -101,14 +114,16 @@ export const SignInStep = ({
           autoCapitalize="none"
           autoCorrect={false}
           returnKeyType="done"
-          onSubmitEditing={handleSignInWithEmail}
+          onSubmitEditing={isEmailValid && handleSignInWithEmail}
+          onFocus={() => setError(null)}
         />
         <Button
-          text="Sign in with Wallet"
+          text="Sign in"
           disabled={!isEmailValid}
           onPress={handleSignInWithEmail}
           loading={loadingState.state}
         />
+        <CardError isVisible={!!error} text={error} marginTop={12} />
       </Container>
       <Container
         isVisible={isWalletConnectEnabled}
@@ -160,6 +175,13 @@ const styles = StyleSheet.create({
   },
   inputValid: {
     borderColor: '#8D8D8D',
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject, // 🔹 cobre o botão todo
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.8)', // leve transparência
+    borderRadius: 16,
   },
   input: {
     height: 48,

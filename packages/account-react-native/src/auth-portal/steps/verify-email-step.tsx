@@ -1,5 +1,5 @@
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import {
   Keyboard,
   type NativeSyntheticEvent,
@@ -17,7 +17,7 @@ import Animated, {
 import { useEmbeddedAuth } from '../../auth/useAuth';
 import { OTP_CODE_LENGTH } from '../../constants/verify-otp';
 import { useBooleanState, useFlowManager } from '../../hooks';
-import { Button, Card, Container, Icon, Text } from '../../ui';
+import { Button, CardError, Container, Text } from '../../ui';
 import { useNavigationParams } from '../hooks';
 import type { BasicStepProps, VerifyCodeParams } from '../types';
 
@@ -174,15 +174,6 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
     );
   };
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (inputsRef.current[0]) {
-        focusIndex(0);
-      }
-    }, 100);
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
     <Container>
       <Container gap={8} marginBottom={8}>
@@ -203,21 +194,10 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
           onPress={() => handleVerifyEmailOTP()}
           disabled={codes.some((code) => code === '')}
         />
-        <Container isVisible={errorState.state}>
-          <Card style={styles.errorCard}>
-            <Icon
-              style={{ top: 5 }}
-              name="closeCircle"
-              size={20}
-              color="#F52109"
-            />
-            <View style={styles.textWrapper}>
-              <Text fontWeight="bold">
-                Invalid code. Please check your email and try again.
-              </Text>
-            </View>
-          </Card>
-        </Container>
+        <CardError
+          isVisible={errorState.state}
+          text="Invalid code. Please check your email and try again."
+        />
       </Container>
       <Container gap={24} marginVertical={16}>
         <Text color="#8D8D8D" textAlign="center">
@@ -258,17 +238,5 @@ const styles = StyleSheet.create({
   inputDisabled: {
     backgroundColor: '#F0F0F0',
     borderRadius: 12,
-  },
-  errorCard: {
-    flex: 1,
-    flexShrink: 1,
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    padding: 16,
-    gap: 8,
-  },
-  textWrapper: {
-    flex: 1,
-    flexShrink: 1,
   },
 });

@@ -11,6 +11,7 @@ import { useEmbeddedAuth } from '../auth/useAuth';
 import { useBooleanState, useFlowManager } from '../hooks';
 import { useSophonPartner } from '../hooks/use-sophon-partner';
 import { useUIEventHandler } from '../messaging/ui';
+import { Container } from '../ui';
 import { FooterSheet } from './components/footer-sheet';
 import { AuthPortalBottomSheetHandle } from './components/handle-sheet';
 import { StepTransitionView } from './components/step-transition';
@@ -66,21 +67,24 @@ export function AuthPortal(props: AuthPortalProps) {
 
   const showModal = useCallback(() => {
     bottomSheetRef.current?.expand();
+    removeKeyboardListener();
     addKeyboardListener('keyboardWillHide', () => {
+      console.log('keyboard will hide - snap to index 0');
       bottomSheetRef.current?.snapToIndex(0);
     });
   }, []);
 
   const hideModal = useCallback(() => {
+    removeKeyboardListener();
     cleanup();
     Keyboard.dismiss();
     bottomSheetRef.current?.close();
   }, []);
 
   const onClose = useCallback(() => {
+    removeKeyboardListener();
     Keyboard.dismiss();
     cleanup();
-    removeKeyboardListener();
     disableAnimation.setOff();
   }, []);
 
@@ -215,24 +219,31 @@ export function AuthPortal(props: AuthPortalProps) {
         android_keyboardInputMode="adjustResize"
         handleIndicatorStyle={{ backgroundColor: '#ccc' }}
       >
-        <BottomSheetScrollView style={{ padding: 24 }} bounces={false}>
-          <StepTransitionView
-            keyProp={currentStep ?? null}
-            isBackAvailable={!showBackButton}
-            disableAnimation={disableAnimation.state}
-          >
-            <StepControllerComponent
-              currentStep={currentStep ?? null}
-              onComplete={onComplete}
-              onCancel={onCancel}
-              onError={onError}
-              onAuthenticate={onAuthenticate}
-              onBackToSignIn={onBackToSignIn}
-              scopes={dataScopes}
-              partner={partner}
-            />
-          </StepTransitionView>
-          <FooterSheet hideTerms={hideTerms} />
+        <BottomSheetScrollView
+          bounces={false}
+          keyboardDismissMode="on-drag"
+          keyboardShouldPersistTaps="never"
+        >
+          <Container margin={24}>
+            <StepTransitionView
+              keyProp={currentStep}
+              isBackAvailable={showBackButton}
+              disableAnimation={disableAnimation.state}
+            >
+              <StepControllerComponent
+                key={currentStep}
+                currentStep={currentStep}
+                onComplete={onComplete}
+                onCancel={onCancel}
+                onError={onError}
+                onAuthenticate={onAuthenticate}
+                onBackToSignIn={onBackToSignIn}
+                scopes={dataScopes}
+                partner={partner}
+              />
+            </StepTransitionView>
+            <FooterSheet hideTerms={hideTerms} />
+          </Container>
         </BottomSheetScrollView>
       </BottomSheet>
     </AuthPortalContext.Provider>

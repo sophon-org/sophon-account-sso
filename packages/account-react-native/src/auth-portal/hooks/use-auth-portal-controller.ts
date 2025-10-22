@@ -19,7 +19,7 @@ const STEPS_WITH_SIGN_IN: AuthPortalStep[] = [
 export const useAuthPortalController = () => {
   const navigation = useNavigationController();
   const { method } = useFlowManager();
-  const { isConnected, account } = useSophonAccount();
+  const { isConnected, account, isConnecting } = useSophonAccount();
   const { connectingAccount } = useSophonContext();
 
   const currentStep = useMemo<AuthPortalStep | null | undefined>(() => {
@@ -74,15 +74,15 @@ export const useAuthPortalController = () => {
     }
 
     return '';
-  }, [account, userName, isConnected]);
+  }, [account, userName, isConnected, currentStep]);
 
   const handleProps = useMemo(
     () => ({
       showBackButton,
-      hideCloseButton: isLoading,
+      hideCloseButton: isLoading || isConnecting,
       title: displayName ?? 'Sign in',
     }),
-    [navigation.history, isLoading, displayName],
+    [navigation.history, isLoading, displayName, isConnecting],
   );
 
   return {
