@@ -28,6 +28,7 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
     "------------------------- TESTING -------------------------": "",
     "test": "vitest --watch false --passWithNoTests",
     "test:dev": "vitest --watch true --passWithNoTests",

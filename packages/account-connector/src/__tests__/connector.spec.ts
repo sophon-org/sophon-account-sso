@@ -1,10 +1,10 @@
-import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
-import { sophon, sophonTestnet } from 'viem/chains';
+import { sophonOS, sophonOSTestnet } from '@sophon-labs/account-core';
+import type { EIP1193Provider } from '@sophon-labs/account-provider';
 import { toHex } from 'viem';
+import { sophon, sophonTestnet } from 'viem/chains';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createSophonConnector } from '../connector';
 import { SophonConnectorMetadata } from '../constants';
-import type { EIP1193Provider } from '@sophon-labs/account-provider';
-import { sophonOS, sophonOSTestnet } from '@sophon-labs/account-core';
 
 // Mock the dependencies
 vi.mock('@sophon-labs/account-provider', () => ({

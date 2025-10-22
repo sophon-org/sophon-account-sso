@@ -1,5 +1,8 @@
-import { ChainId } from '@sophon-labs/account-core';
-import { sophonOS, sophonOSTestnet } from '@sophon-labs/account-core';
+import {
+  type ChainId,
+  sophonOS,
+  sophonOSTestnet,
+} from '@sophon-labs/account-core';
 import { sophon, sophonTestnet } from 'viem/chains';
 
 export interface ConnectorMetadata {
