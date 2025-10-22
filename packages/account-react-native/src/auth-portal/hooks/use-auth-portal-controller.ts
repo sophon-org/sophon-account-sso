@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { useSophonAccount, useSophonName } from '../../hooks';
 import { useFlowManager } from '../../hooks/use-flow-manager';
 import { useSophonContext } from '../../hooks/use-sophon-context';
+import { Capabilities } from '../../lib/capabilities';
 import type { AuthPortalStep, CurrentParams } from '../types';
 import { useNavigationController } from './use-navigation-controller';
 
@@ -21,12 +22,20 @@ export const useAuthPortalController = () => {
   const { method } = useFlowManager();
   const { isConnected, account, isConnecting } = useSophonAccount();
   const { connectingAccount } = useSophonContext();
+  const { capabilities } = useSophonContext();
+
+  const isAuthorizationModalEnabled = useMemo(
+    () => capabilities.includes(Capabilities.AUTHORIZATION_MODAL),
+    [capabilities],
+  );
+  const shouldAuthorize = isConnected || connectingAccount;
 
   const currentStep = useMemo<AuthPortalStep | null | undefined>(() => {
     switch (method) {
       case 'eth_requestAccounts':
       case 'wallet_requestPermissions': {
-        if (isConnected || connectingAccount) return 'authorization';
+        if (isAuthorizationModalEnabled && shouldAuthorize)
+          return 'authorization';
         return navigation.currentState || 'signIn';
       }
       case 'personal_sign':
@@ -43,12 +52,19 @@ export const useAuthPortalController = () => {
     }
   }, [method, navigation.currentState, isConnected, connectingAccount]);
 
+  const isAuthorizationEnabled = useMemo(
+    () => capabilities.includes(Capabilities.AUTHORIZATION_MODAL),
+    [capabilities],
+  );
+
   const { isLoading, isConnectingAccount } = useMemo(() => {
     return {
       isLoading: currentStep === 'loading',
-      isConnectingAccount: currentStep === 'authorization' || isConnected,
+      isConnectingAccount:
+        (isAuthorizationEnabled && currentStep === 'authorization') ||
+        isConnected,
     };
-  }, [currentStep, isConnected]);
+  }, [currentStep, isConnected, isAuthorizationEnabled]);
 
   const params = useMemo(() => {
     if (!currentStep) return null;

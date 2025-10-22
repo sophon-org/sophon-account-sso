@@ -61,13 +61,11 @@ export const SignInStep = ({
     try {
       loadingState.setOn();
       await signInWithEmail(email);
-      console.log('otp sent', email);
       navigate('verifyEmail', {
         params: { email },
         inheritParamsFrom: ['signIn'],
       });
     } catch (error) {
-      console.log('USER CANCELED2');
       console.error(error);
       setError((error as Error)?.message ?? null);
       await onError(error as Error, 'signIn');

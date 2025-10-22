@@ -15,7 +15,10 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
       // authServerUrl="http://localhost:3000"
       insets={insets}
       dataScopes={[DataScopes.email, DataScopes.apple]}
-      requestedCapabilities={[Capabilities.WALLET_CONNECT]}
+      requestedCapabilities={[
+        Capabilities.WALLET_CONNECT,
+        Capabilities.AUTHORIZATION_MODAL,
+      ]}
     >
       {children}
     </SophonContextProvider>

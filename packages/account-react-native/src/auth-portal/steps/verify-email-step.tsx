@@ -59,11 +59,9 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
         const codeToVerify = code || codes.join('');
         const waitFor = waitForAuthentication();
         await verifyEmailOTP(codeToVerify);
-        console.log('otp verified');
         const ownerAddress = await waitFor;
         onAuthenticate(ownerAddress);
       } catch (error) {
-        console.log('USER CANCELED VerifyEmailOTP ');
         handleOnError(error as Error);
         loadingState.setOff();
       }
@@ -158,6 +156,7 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
           ref={(el) => {
             inputsRef.current[index] = el as TextInput;
           }}
+          autoFocus={index === 0}
           selection={{ start: 1, end: 1 }}
           style={[styles.input, loadingState.state && styles.inputDisabled]}
           keyboardType="number-pad"

@@ -8,8 +8,14 @@ import type { DataScopes } from '@sophon-labs/account-core';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Keyboard, Platform } from 'react-native';
 import { useEmbeddedAuth } from '../auth/useAuth';
-import { useBooleanState, useFlowManager } from '../hooks';
+import {
+  useBooleanState,
+  useFlowManager,
+  useSophonAccount,
+  useSophonContext,
+} from '../hooks';
 import { useSophonPartner } from '../hooks/use-sophon-partner';
+import { Capabilities } from '../lib/capabilities';
 import { useUIEventHandler } from '../messaging/ui';
 import { Container } from '../ui';
 import { FooterSheet } from './components/footer-sheet';
@@ -147,10 +153,8 @@ export function AuthPortal(props: AuthPortalProps) {
   const onAuthenticate = useCallback<BasicStepProps['onAuthenticate']>(
     async (ownerAddress) => {
       try {
-        console.log('ui ownerAddress', ownerAddress);
         navigate('loading', { replace: true });
         await actions.authenticate(ownerAddress);
-        console.log('authenticated');
       } catch {
         navigate('retry', { replace: true, params: { ownerAddress } });
       }
@@ -189,6 +193,20 @@ export function AuthPortal(props: AuthPortalProps) {
   }, [getAvailableDataScopes, props.scopes]);
 
   const { partner } = useSophonPartner();
+
+  const { isConnected } = useSophonAccount();
+  const { capabilities } = useSophonContext();
+  const isAuthorizationModalEnabled = useMemo(
+    () => capabilities.includes(Capabilities.AUTHORIZATION_MODAL),
+    [capabilities],
+  );
+  useEffect(() => {
+    // if the user connected and we are not expecting the authorization modal to show up
+    // we can hide the modal
+    if (isConnected && !isAuthorizationModalEnabled && !currentStep) {
+      onComplete({ hide: true });
+    }
+  }, [onComplete, isAuthorizationModalEnabled, isConnected, currentStep]);
 
   return (
     <AuthPortalContext.Provider
