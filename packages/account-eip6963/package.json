@@ -47,6 +47,7 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
     "------------------------- UNIT TESTING -------------------------": "",
     "test": "vitest",
     "test:watch": "vitest --watch",

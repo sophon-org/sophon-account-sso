@@ -3,7 +3,10 @@ import type { EIP1193Provider } from '@sophon-labs/account-provider';
 import { toHex } from 'viem';
 import { sophon, sophonTestnet } from 'viem/chains';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { createSophonConnector } from '../connector';
+import {
+  createSophonConnector,
+  type SophonConnectorConfigType,
+} from '../connector';
 import { SophonConnectorMetadata } from '../constants';
 
 // Mock the dependencies
@@ -22,8 +25,7 @@ vi.mock('@wagmi/core', () => ({
 
 describe('Connector > createSophonConnector', () => {
   let mockProvider: Partial<EIP1193Provider>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let mockConfig: any;
+  let mockConfig: SophonConnectorConfigType;
 
   beforeEach(() => {
     // Reset mocks before each test
@@ -43,7 +45,12 @@ describe('Connector > createSophonConnector', () => {
       chains: [sophon, sophonTestnet],
       emitter: {
         emit: vi.fn(),
-      },
+        on: vi.fn(),
+        once: vi.fn(),
+        off: vi.fn(),
+        listenerCount: vi.fn(),
+        uid: 'test-uid',
+      } as unknown as SophonConnectorConfigType['emitter'],
     };
   });
 

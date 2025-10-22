@@ -25,6 +25,10 @@ import { sophon, sophonTestnet } from 'viem/chains';
 import { eip712WalletActions } from 'viem/zksync';
 import { SophonConnectorMetadata } from './constants';
 
+export type SophonConnectorConfigType = Parameters<
+  ReturnType<typeof createSophonConnector>
+>[0];
+
 export const createSophonConnector = (
   chainId: ChainId = sophonTestnet.id,
   partnerId?: string,

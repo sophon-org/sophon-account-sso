@@ -412,8 +412,7 @@ describe('PopupCommunicator', () => {
     it('should listen for PopupUnload event', async () => {
       // given
       const communicator = new PopupCommunicator('https://example.com/popup');
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const disconnectSpy = vi.spyOn(communicator as any, 'disconnect');
+      const disconnectSpy = vi.spyOn(communicator, 'disconnect');
 
       // Simulate PopupLoaded event
       setTimeout(() => {

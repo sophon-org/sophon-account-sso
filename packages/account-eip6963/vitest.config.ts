@@ -18,6 +18,14 @@ export default defineConfig({
         'src/types.ts',
         'tsup.config.ts',
         'vitest.config.ts',
+        // no need to cover the mainnet and testnet files
+        'src/mainnet.ts',
+        'src/testnet.ts',
+        'src/os-mainnet.ts',
+        'src/os-testnet.ts',
+        'src/constants.ts',
+        'src/types.ts',
+        'src/index.ts'
       ],
     },
   },
