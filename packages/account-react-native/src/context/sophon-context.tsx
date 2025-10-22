@@ -29,7 +29,7 @@ import { eip712WalletActions } from 'viem/zksync';
 import { useEmbeddedAuth } from '../auth/useAuth';
 import { AuthPortal, type AuthPortalProps } from '../auth-portal';
 import type { Capabilities } from '../lib/capabilities';
-import { dynamicClient } from '../lib/dynamic';
+import { createDynamicClient, type DynamicClientType } from '../lib/dynamic';
 import { useUIEventHandler } from '../messaging';
 import {
   createMobileProvider,
@@ -82,6 +82,7 @@ export interface SophonContextConfig {
   currentRequest?: Message;
   setCurrentRequest: (request?: Message) => void;
   capabilities: Capabilities[];
+  dynamicClient?: DynamicClientType;
 }
 
 export const SophonContext = createContext<SophonContextConfig>({
@@ -99,6 +100,7 @@ export const SophonContext = createContext<SophonContextConfig>({
   currentRequest: undefined,
   setCurrentRequest: () => {},
   capabilities: [],
+  dynamicClient: undefined,
 });
 
 export interface SophonAccount {
@@ -150,7 +152,16 @@ export const SophonContextProvider = ({
     [requestedCapabilities],
   );
 
-  const walletClient = createSophonWalletClient(chain, custom(provider));
+  const [dynamicClient, setDynamicClient] = useState<DynamicClientType>();
+
+  const walletClient = useMemo(
+    () => createSophonWalletClient(chain, custom(provider)),
+    [chain, provider],
+  );
+
+  useEffect(() => {
+    setDynamicClient(createDynamicClient(chainId));
+  }, [chainId]);
 
   useEffect(() => {
     freshInstallActions();
@@ -244,6 +255,7 @@ export const SophonContextProvider = ({
       connectingAccount,
       setConnectingAccount,
       capabilities,
+      dynamicClient,
     }),
     [
       initialized,
@@ -266,6 +278,7 @@ export const SophonContextProvider = ({
       connectingAccount,
       setConnectingAccount,
       capabilities,
+      dynamicClient,
     ],
   );
 
@@ -276,7 +289,7 @@ export const SophonContextProvider = ({
   return (
     <SophonContext.Provider value={contextValue}>
       {children}
-      <dynamicClient.reactNative.WebView />
+      {!!dynamicClient && <dynamicClient.reactNative.WebView />}
       <AuthPortal
         insets={insets}
         scopes={dataScopes}

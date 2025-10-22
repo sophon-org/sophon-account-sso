@@ -1,7 +1,9 @@
-import { useReactiveClient } from '@dynamic-labs/react-hooks';
+// import { useReactiveClient } from '@dynamic-labs/react-hooks';
 import { DataScopes } from '@sophon-labs/account-core';
 import { useCallback, useMemo } from 'react';
-import { dynamicClient } from '../lib/dynamic';
+import type { Address } from 'viem';
+import { eip712WalletActions } from 'viem/zksync';
+import { useSophonContext } from '../hooks';
 
 export enum AuthProvider {
   APPLE = 'apple',
@@ -12,53 +14,73 @@ export enum AuthProvider {
 }
 
 export const useEmbeddedAuth = () => {
-  const { auth } = useReactiveClient(dynamicClient);
+  const { dynamicClient } = useSophonContext();
+  // const auth = useMemo(() => dynamicClient, [dynamicClient]);
+
+  // const { auth } = useReactiveClient(
+  //   dynamicClient ?? {
+  //     auth: {
+  //       mocked: true,
+  //       authenticatedUser: null,
+  //       email: {
+  //         sendOTP: () => Promise.resolve(),
+  //         verifyOTP: () => Promise.resolve(),
+  //         resendOTP: () => Promise.resolve(),
+  //       },
+  //       social: {
+  //         connect: () => Promise.resolve(),
+  //         getAllLinkedAccounts: () => Promise.resolve(),
+  //       },
+  //       logout: () => Promise.resolve(),
+  //     },
+  //   },
+  // );
 
   const signInWithEmail = useCallback(
     async (email: string) => {
-      return auth.email.sendOTP(email);
+      return dynamicClient?.auth.email.sendOTP(email);
     },
-    [auth.email.sendOTP],
+    [dynamicClient?.auth.email.sendOTP],
   );
 
   const verifyEmailOTP = useCallback(
     async (token: string) => {
-      return auth.email.verifyOTP(token);
+      return dynamicClient?.auth.email.verifyOTP(token);
     },
-    [auth.email.verifyOTP],
+    [dynamicClient?.auth.email.verifyOTP],
   );
 
   const resendEmailOTP = useCallback(async () => {
-    return auth.email.resendOTP();
-  }, [auth.email.resendOTP]);
+    return dynamicClient?.auth.email.resendOTP();
+  }, [dynamicClient?.auth.email.resendOTP]);
 
   const logout = useCallback(async () => {
-    return auth.logout();
-  }, [auth.logout]);
+    return dynamicClient?.auth.logout();
+  }, [dynamicClient?.auth.logout]);
 
   const signInWithSocialProvider = useCallback(
     async (provider: AuthProvider) => {
-      return auth.social.connect({ provider });
+      return dynamicClient?.auth.social.connect({ provider });
     },
-    [auth.social.connect],
+    [dynamicClient?.auth.social.connect],
   );
 
   const getLinkedAccounts = useCallback(async () => {
-    return auth.social.getAllLinkedAccounts();
-  }, [auth.social.getAllLinkedAccounts]);
+    return dynamicClient?.auth.social.getAllLinkedAccounts();
+  }, [dynamicClient?.auth.social.getAllLinkedAccounts]);
 
   const isConnected = useMemo(() => {
-    return auth.authenticatedUser !== null;
-  }, [auth.authenticatedUser]);
+    return dynamicClient?.auth.authenticatedUser !== null;
+  }, [dynamicClient?.auth.authenticatedUser]);
 
   const getAvailableDataScopes = useCallback(async () => {
     const available: DataScopes[] = [];
-    if (auth.authenticatedUser?.email) {
+    if (dynamicClient?.auth.authenticatedUser?.email) {
       available.push(DataScopes.email);
     }
 
-    const socials = await auth.social.getAllLinkedAccounts();
-    for (const social of socials) {
+    const socials = await dynamicClient?.auth.social.getAllLinkedAccounts();
+    for (const social of socials ?? []) {
       switch (social.provider) {
         case 'google':
           available.push(DataScopes.google);
@@ -81,7 +103,40 @@ export const useEmbeddedAuth = () => {
     }
 
     return available;
-  }, [auth.social.getAllLinkedAccounts, auth.authenticatedUser]);
+  }, [
+    dynamicClient?.auth.social.getAllLinkedAccounts,
+    dynamicClient?.auth.authenticatedUser,
+  ]);
+
+  const waitForAuthentication = useCallback(async () => {
+    return new Promise<Address>((resolve, reject) => {
+      dynamicClient?.wallets.on('primaryChanged', (data) => {
+        console.log('primaryChanged', data);
+
+        if (data?.address) {
+          resolve(data.address as Address);
+        } else {
+          reject(new Error('No primary wallet found'));
+        }
+      });
+
+      dynamicClient?.auth.on('authFailed', (data) => {
+        reject(data);
+      });
+    });
+  }, [dynamicClient?.wallets, dynamicClient?.auth]);
+
+  const embeddedUserId = useMemo(() => {
+    return dynamicClient?.auth.authenticatedUser?.userId;
+  }, [dynamicClient?.auth.authenticatedUser]);
+
+  const createEmbeddedWalletClient = useCallback(async () => {
+    return (
+      await dynamicClient!.viem.createWalletClient({
+        wallet: dynamicClient!.wallets.primary!,
+      })
+    ).extend(eip712WalletActions());
+  }, [dynamicClient?.viem, dynamicClient?.wallets.primary]);
 
   return {
     signInWithSocialProvider,
@@ -92,5 +147,8 @@ export const useEmbeddedAuth = () => {
     logout,
     getAvailableDataScopes,
     isConnected,
+    waitForAuthentication,
+    embeddedUserId,
+    createEmbeddedWalletClient,
   };
 };

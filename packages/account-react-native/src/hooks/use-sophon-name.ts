@@ -5,7 +5,6 @@ import { useSophonContext } from './use-sophon-context';
 
 export const useSophonName = () => {
   const { account, chainId } = useSophonContext();
-  console.log('chainId', SophonAppStorage);
   const sns = useMemo(() => snsManager(chainId, SophonAppStorage), [chainId]);
   const [userName, setUserName] = useState<string | null>(null);
   useEffect(() => {

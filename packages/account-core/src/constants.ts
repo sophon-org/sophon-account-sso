@@ -6,6 +6,7 @@ import {
   type ChainCapability,
   ChainCapabilityValue,
   type ContractAddresses,
+  EmbeddedWalletService,
 } from './types';
 
 /**
@@ -23,6 +24,27 @@ export const SophonChains: Record<ChainId, Chain> = {
   [sophonTestnet.id]: sophonTestnet,
   [sophonOS.id]: sophonOS,
   [sophonOSTestnet.id]: sophonOSTestnet,
+};
+
+/**
+ * Maps the embedded wallet provider per chain, in the near future we may
+ * have one for the old chain and other for the new os chain
+ */
+export const SophonEmbeddedWalletService: Record<
+  ChainId,
+  EmbeddedWalletService
+> = {
+  [sophon.id]: EmbeddedWalletService.DYNAMIC,
+  [sophonTestnet.id]: EmbeddedWalletService.DYNAMIC,
+  [sophonOS.id]: EmbeddedWalletService.DYNAMIC,
+  [sophonOSTestnet.id]: EmbeddedWalletService.DYNAMIC,
+};
+
+export const SophonDynamicEnvironmentID: Record<ChainId, string> = {
+  [sophon.id]: '5d3cc669-95ff-4945-af82-ed29d3f6ff60',
+  [sophonTestnet.id]: '767555fd-deac-4852-bdf2-ec4442697ea7',
+  [sophonOS.id]: '5d3cc669-95ff-4945-af82-ed29d3f6ff60',
+  [sophonOSTestnet.id]: '767555fd-deac-4852-bdf2-ec4442697ea7',
 };
 
 /**
