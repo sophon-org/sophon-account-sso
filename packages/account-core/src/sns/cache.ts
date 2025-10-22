@@ -1,8 +1,8 @@
 import type { Address } from 'viem';
 import type { ChainId } from '../constants';
+import { SNS_CACHE_DURATION, SNS_STORAGE_KEY } from '../constants';
 import type { StorageLike } from '../types';
-import { SNS_CACHE_DURATION, SNS_STORAGE_KEY } from './constants';
-import type { SNSCache, SNSCacheEntry } from './types';
+import type { SNSCache, SNSCacheEntry } from '../types/sns';
 
 export const cachedSNS = (storage: StorageLike) => {
   /**

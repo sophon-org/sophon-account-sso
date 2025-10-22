@@ -53,7 +53,9 @@ export const useAuthPortalController = () => {
   const params = useMemo(() => {
     if (!currentStep) return null;
 
-    return navigation.currentParams?.[currentStep as keyof CurrentParams] || null;
+    return (
+      navigation.currentParams?.[currentStep as keyof CurrentParams] || null
+    );
   }, [currentStep, navigation.currentParams]);
 
   const showBackButton = useMemo(() => {
