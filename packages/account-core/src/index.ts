@@ -5,7 +5,7 @@ export * from './abis';
 export * from './avatar';
 export * from './constants';
 export * from './formatters';
-export * from './sessionHelper';
+export * from './session-helper';
 export * from './sns/index';
 export * from './types/index';
 export * from './utils';

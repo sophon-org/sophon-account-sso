@@ -14,7 +14,7 @@ import {
 import { sophonTestnet } from 'viem/chains';
 import { sophonAAFactoryAbi, sophonAccountCodeStorageAbi } from './abis';
 import { CHAIN_CONTRACTS, type ChainId, SophonChains } from './constants';
-import type { AAFactoryAccount } from './types/storage';
+import type { AAFactoryAccount } from './types';
 
 export const DYNAMIC_SALT_PREFIX = 'DynamicLabs';
 export const SOPHON_SALT_PREFIX = 'SophonLabs';
