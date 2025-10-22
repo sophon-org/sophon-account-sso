@@ -2,11 +2,11 @@ import { useMemo } from 'react';
 import {
   ActivityIndicator,
   StyleSheet,
-  Text,
   TouchableOpacity,
   type TouchableOpacityProps,
   View,
 } from 'react-native';
+import { Text } from './text';
 
 interface ButtonProps {
   variant?: 'primary' | 'secondary';
@@ -97,8 +97,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#0A7CFF',
   },
   primaryText: {
-    fontSize: 15,
-    lineHeight: 24,
     color: '#ffffff',
     fontWeight: '500',
   },
@@ -107,11 +105,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 16,
   },
   secondaryText: {
-    fontSize: 15,
-    lineHeight: 24,
     color: '#0066FF',
     fontWeight: '600',
   },

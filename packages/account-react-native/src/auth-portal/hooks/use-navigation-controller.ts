@@ -1,10 +1,7 @@
-import { shortenAddress } from '@sophon-labs/account-core';
-import { useCallback, useMemo, useState } from 'react';
-import { useSophonAccount, useSophonName } from '../../hooks';
-import { useFlowManager } from '../../hooks/use-flow-manager';
-import { useSophonContext } from '../../hooks/use-sophon-context';
+import { useCallback, useState } from 'react';
 import type {
   AuthPortalStep,
+  CurrentParams,
   NavigateOptions,
   NavigateParams,
   NavigationAuthPortalState,
@@ -17,9 +14,6 @@ const initialState: NavigationAuthPortalState = {
 };
 
 export const useNavigationController = () => {
-  const { method } = useFlowManager();
-  const { isConnected, account } = useSophonAccount();
-  const { connectingAccount } = useSophonContext();
   const [state, setConfig] = useState<NavigationAuthPortalState | null>(
     initialState,
   );
@@ -29,31 +23,10 @@ export const useNavigationController = () => {
     currentState: null,
     currentParams: null,
   };
-  const currentStep = useMemo<AuthPortalStep | null | undefined>(() => {
-    switch (method) {
-      case 'eth_requestAccounts':
-      case 'wallet_requestPermissions': {
-        if (isConnected || connectingAccount) return 'authorization';
-        return currentState || 'signIn';
-      }
-      case 'personal_sign':
-      case 'eth_signTypedData_v4':
-        return 'signMessage';
-      case 'eth_sendTransaction':
-        return 'transaction';
-      case 'sophon_requestConsent':
-        return 'consent';
-      // case 'wallet_revokePermissions':
-      // case 'wallet_disconnect':
-      default:
-        return null;
-    }
-  }, [method, currentState, isConnected, connectingAccount]);
 
   const navigate = useCallback(
     (step: AuthPortalStep, options?: NavigateOptions) =>
-      // biome-ignore lint/suspicious/noExplicitAny: reevaluate the any, @cleo
-      setConfig((prev: any) => {
+      setConfig((prev) => {
         if (options?.replace) {
           return {
             ...(prev || {}),
@@ -69,12 +42,13 @@ export const useNavigationController = () => {
         }
 
         const stepExists = prev?.history.some(
-          // biome-ignore lint/suspicious/noExplicitAny: reevaluate the any, @cleo
-          (existingStep: any) => existingStep === step,
+          (existingStep: AuthPortalStep) => existingStep === step,
         );
+
+        if (stepExists) return prev;
+
         const addInheritParams = options?.inheritParamsFrom?.reduce(
-          // biome-ignore lint/suspicious/noExplicitAny: reevaluate the any, @cleo
-          (acc: any, inheritStep) => {
+          (acc: CurrentParams, inheritStep) => {
             acc[inheritStep] =
               options?.params ||
               prev?.currentParams?.[
@@ -85,26 +59,33 @@ export const useNavigationController = () => {
           },
           {},
         );
-        return stepExists
-          ? prev
-          : {
-              currentState: step,
-              history: [
-                ...(prev?.history || []),
-                prev?.currentState || currentStep,
-              ].filter(Boolean) as AuthPortalStep[],
-              currentParams: {
-                ...prev?.currentParams,
-                [step]: options?.params || null,
-                ...addInheritParams,
-              },
-            };
+
+        const _currentParams = {
+          ...(prev?.currentParams ?? {}),
+          [step]: options?.params || null,
+          ...addInheritParams,
+        };
+        const _history = [
+          ...(prev?.history || []),
+          prev?.currentState || 'signIn',
+        ].filter(Boolean) as AuthPortalStep[];
+
+        return {
+          currentState: step,
+          history: _history,
+          currentParams: _currentParams,
+        };
       }),
-    [currentStep],
+    [],
   );
+
+  const cleanup = useCallback(() => {
+    setConfig(initialState);
+  }, []);
 
   const goBack = useCallback((options?: NavigateOptions) => {
     setConfig((prev) => {
+      if (prev.currentState === 'retry') return initialState;
       if (!prev || prev.history.length === 0) return prev;
       const newHistory = prev.history.slice(0, -1);
       const newCurrentState = prev.history[prev.history.length - 1];
@@ -148,66 +129,14 @@ export const useNavigationController = () => {
     [],
   );
 
-  const cleanup = useCallback(() => {
-    setConfig(initialState);
-  }, []);
-
   const initializeConfig = useCallback(() => {
     setConfig(initialState);
   }, []);
 
-  const { isLoading, isConnectingAccount } = useMemo(() => {
-    return {
-      isLoading: currentStep === 'loading',
-      isConnectingAccount: currentStep === 'authorization' || isConnected,
-    };
-  }, [currentStep, isConnected]);
-
-  const params = useMemo(() => {
-    if (!currentStep || currentParams) return null;
-    return currentParams?.[currentStep] || null;
-  }, [currentStep, currentParams]);
-
-  const showBackButton = useMemo(
-    () =>
-      Boolean((history.length ?? 0) > 0) &&
-      ![
-        'signMessage',
-        'transaction',
-        'consent',
-        'loading',
-        'authorization',
-      ].includes(currentStep ?? ''),
-    [history, currentStep],
-  );
-
-  const userName = useSophonName();
-
-  const displayName = useMemo(() => {
-    if (userName) return userName;
-    if (account?.address?.trim()) return shortenAddress(account.address);
-    return null;
-  }, [account, userName]);
-
-  const handleProps = useMemo(
-    () => ({
-      showBackButton,
-      hideCloseButton: isLoading,
-      title: displayName ?? 'Sign in',
-    }),
-    [history, isLoading, isConnectingAccount],
-  );
-
   return {
-    isLoading,
-    isConnectingAccount,
-    currentStep,
     history,
     currentState,
     currentParams,
-    showBackButton,
-    handleProps,
-    params,
     navigate,
     goBack,
     cleanup,
@@ -216,6 +145,6 @@ export const useNavigationController = () => {
   };
 };
 
-export type NavigationBottomSheetHook = ReturnType<
+export type NavigationControllerHook = ReturnType<
   typeof useNavigationController
 >;

@@ -27,8 +27,9 @@ export interface BasicStepProps {
   style?: ViewStyle;
   onAuthenticate: (value: `0x${string}`) => Promise<void>;
   onComplete: (payload: { hide: boolean }) => Promise<void>;
+  onBackToSignIn: () => Promise<void>;
   onCancel: () => Promise<void>;
-  onError: (error: Error) => Promise<void>;
+  onError: (error: Error, step?: AuthPortalStep) => Promise<void>;
   scopes?: DataScopes[];
   partner?: PartnerConfigSchema | null;
 }
@@ -45,7 +46,11 @@ export type VerifyCodeParams = {
   email: string;
 };
 
-export type NavigateParams = SignInParams | VerifyCodeParams;
+export type RetryParams = {
+  ownerAddress: `0x${string}`;
+};
+
+export type NavigateParams = SignInParams | VerifyCodeParams | RetryParams;
 
 export type NavigateOptions = {
   replace?: boolean;

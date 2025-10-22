@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useBooleanState, useFlowManager } from '../../hooks';
 import { Button, Card, CheckBox, Container, Text } from '../../ui';
@@ -16,11 +16,25 @@ export const AuthorizationStep = ({
   const {
     actions: { authorize },
   } = useFlowManager();
+  const [selectedScopes, setSelectedScopes] = useState<string[]>([]);
+
+  const handleOnSelectScope = useCallback(
+    (scope: string, isSelected: boolean) => {
+      setSelectedScopes((prev) => {
+        if (isSelected) {
+          return prev.includes(scope) ? prev : [...prev, scope];
+        } else {
+          return prev.filter((s) => s !== scope);
+        }
+      });
+    },
+    [],
+  );
 
   const handleAuthorize = useCallback(async () => {
     try {
       isLoadingState.setOn();
-      await authorize();
+      await authorize(selectedScopes);
       await onComplete({ hide: true });
     } catch (error) {
       console.error(error);
@@ -31,37 +45,43 @@ export const AuthorizationStep = ({
   }, [onComplete, onError, authorize]);
 
   return (
-    <View style={styles.container}>
+    <Container>
       <Container style={styles.content}>
         <Text size="large" textAlign="center">
           Connect to {partner?.name ?? 'Sophon'}
         </Text>
-        {!!partner?.domains.length && (
+        <Container isVisible={!!partner?.domains.length}>
           <Text textAlign="center">{partner?.domains[0]}</Text>
-        )}
+        </Container>
       </Container>
       <Card style={styles.contentCard}>
-        <View style={styles.cardSection}>
+        <Container style={styles.cardSection} marginBottom={16}>
           <Text fontWeight="bold">It can</Text>
           <CheckBox
-            checked
+            defaultChecked
+            locked
             label="See your address / identity, balance and activity"
           />
-          <CheckBox checked label="Ask for transactions to be approved" />
+          <CheckBox
+            defaultChecked
+            locked
+            label="Ask for transactions to be approved"
+          />
           {scopes?.map((scope) => (
             <CheckBox
               key={scope}
               label={`See your ${sentenceCase(scope)} account`}
+              onChange={(checked) => handleOnSelectScope(scope, checked)}
             />
           ))}
-        </View>
-        <View style={styles.cardSection}>
+        </Container>
+        <Container style={styles.cardSection}>
           <Text fontWeight="bold">It can’t</Text>
           <CheckBox
-            blocked={true}
+            unavailable
             label="Perform actions or transfer funds on your behalf"
           />
-        </View>
+        </Container>
       </Card>
       <View style={styles.buttons}>
         <Button
@@ -78,15 +98,11 @@ export const AuthorizationStep = ({
           loading={isLoadingState.state}
         />
       </View>
-    </View>
+    </Container>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#fff',
-    gap: 16,
-  },
   buttonWrapper: {
     flex: 1,
   },
@@ -96,7 +112,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     gap: 8,
-    marginBottom: 16,
+    marginVertical: 16,
   },
   content: {
     gap: 8,
@@ -104,6 +120,8 @@ const styles = StyleSheet.create({
   },
   contentCard: {
     gap: 24,
+    padding: 24,
+    marginVertical: 16,
   },
   cardSection: {
     gap: 12,

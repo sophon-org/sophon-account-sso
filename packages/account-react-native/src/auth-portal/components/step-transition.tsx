@@ -1,4 +1,5 @@
 import type React from 'react';
+import { memo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, {
   Easing,
@@ -23,45 +24,46 @@ type StepAnimatedViewProps = {
 const ANIMATED_DURATION = 250;
 const EASE = Easing.bezier(0.75, 0.21, 0.15, 1);
 
-export const StepTransitionView: React.FC<StepAnimatedViewProps> = ({
-  isBackAvailable,
-  children,
-  keyProp,
-  disableAnimation,
-}) => {
-  const duration = disableAnimation ? 1 : ANIMATED_DURATION;
-  const slideIn = (isBackAvailable ? SlideInLeft : SlideInRight)
-    .duration(duration)
-    .easing(EASE);
+export const StepTransitionView = memo<StepAnimatedViewProps>(
+  ({ isBackAvailable, children, keyProp, disableAnimation }) => {
+    const duration = disableAnimation ? 1 : ANIMATED_DURATION;
+    const slideIn = (isBackAvailable ? SlideInLeft : SlideInRight)
+      .duration(duration)
+      .easing(EASE);
 
-  const slideOut = (isBackAvailable ? SlideOutRight : SlideOutLeft)
-    .duration(duration)
-    .easing(EASE);
+    const slideOut = (isBackAvailable ? SlideOutRight : SlideOutLeft)
+      .duration(duration)
+      .easing(EASE);
 
-  const fadeIn = (isBackAvailable ? FadeInLeft : FadeInRight)
-    .duration(duration)
-    .easing(EASE);
+    const fadeIn = (isBackAvailable ? FadeInLeft : FadeInRight)
+      .duration(duration)
+      .easing(EASE);
 
-  const fadeOut = (isBackAvailable ? FadeOutRight : FadeOutLeft)
-    .duration(duration)
-    .easing(EASE);
+    const fadeOut = (isBackAvailable ? FadeOutRight : FadeOutLeft)
+      .duration(duration)
+      .easing(EASE);
 
-  return (
-    <View style={styles.container}>
-      <Animated.View
-        key={keyProp}
-        style={styles.step}
-        entering={slideIn}
-        exiting={fadeOut}
-        layout={LinearTransition.duration(duration / 2)}
-      >
-        <Animated.View entering={fadeIn} exiting={slideOut} style={styles.fill}>
-          {children}
+    return (
+      <View style={styles.container}>
+        <Animated.View
+          key={keyProp}
+          style={styles.step}
+          entering={slideIn}
+          exiting={fadeOut}
+          layout={LinearTransition.duration(duration / 2)}
+        >
+          <Animated.View
+            entering={fadeIn}
+            exiting={slideOut}
+            style={styles.fill}
+          >
+            {children}
+          </Animated.View>
         </Animated.View>
-      </Animated.View>
-    </View>
-  );
-};
+      </View>
+    );
+  },
+);
 
 const styles = StyleSheet.create({
   container: {

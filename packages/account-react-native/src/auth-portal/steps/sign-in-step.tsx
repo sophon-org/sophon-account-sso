@@ -1,6 +1,12 @@
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { useCallback, useMemo, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { type AuthProvider, useEmbeddedAuth } from '../../auth/useAuth';
 import { AVAILABLE_PROVIDERS } from '../../constants';
 import {
@@ -8,13 +14,9 @@ import {
   useFlowManager,
   useSophonCapabilities,
 } from '../../hooks';
-import { Button } from '../../ui/button';
-import { Icon } from '../../ui/icon';
+import { Button, CardError, Container, Icon } from '../../ui';
 import { validateEmail } from '../../utils/validations';
-import {
-  useNavigationParams,
-  useNavigationPortal,
-} from '../hooks/use-auth-portal';
+import { useNavigationParams, useNavigationPortal } from '../hooks';
 import type { BasicStepProps, SignInParams } from '../types';
 
 export const SignInStep = ({
@@ -22,9 +24,13 @@ export const SignInStep = ({
   onError,
   onAuthenticate,
 }: BasicStepProps) => {
+  const [error, setError] = useState<null | string>(null);
   const params = useNavigationParams<SignInParams>();
   const { navigate } = useNavigationPortal();
   const loadingState = useBooleanState(false);
+  const [providerRequest, setCurrentProviderLoadingState] = useState<
+    null | string
+  >(null);
   const [email, setEmail] = useState(params?.email || '');
   const { signInWithSocialProvider, signInWithEmail } = useEmbeddedAuth();
   const {
@@ -33,7 +39,9 @@ export const SignInStep = ({
 
   const handleSocialProviderPress = useCallback(
     async (provider: AuthProvider) => {
+      if (providerRequest) return;
       try {
+        setCurrentProviderLoadingState(provider);
         const waitFor = waitForAuthentication();
         await signInWithSocialProvider(provider);
         const ownerAddress = await waitFor;
@@ -42,11 +50,13 @@ export const SignInStep = ({
         console.log('USER CANCELED');
         console.error(error);
         await onError(error as Error);
+      } finally {
+        setCurrentProviderLoadingState(null);
       }
     },
-    [signInWithSocialProvider, onComplete, onError],
+    [signInWithSocialProvider, onComplete, onError, providerRequest],
   );
-
+  const isEmailValid = useMemo(() => validateEmail(email), [email]);
   const handleSignInWithEmail = useCallback(async () => {
     try {
       loadingState.setOn();
@@ -59,69 +69,77 @@ export const SignInStep = ({
     } catch (error) {
       console.log('USER CANCELED2');
       console.error(error);
-      await onError(error as Error);
+      setError(error?.message ?? null);
+      await onError(error as Error, 'signIn');
     } finally {
       loadingState.setOff();
     }
-  }, [signInWithEmail, onComplete, onError, email]);
+  }, [signInWithEmail, onComplete, onError, email, navigate]);
 
   const handleChangeText = useCallback((text: string) => {
     setEmail(text);
   }, []);
 
-  const isEmailValid = useMemo(() => validateEmail(email), [email]);
   const { isWalletConnectEnabled } = useSophonCapabilities();
 
   return (
-    <View style={[styles.container]}>
+    <View style={styles.container}>
       <View style={styles.socialRow}>
-        {AVAILABLE_PROVIDERS.map((scope) => (
+        {AVAILABLE_PROVIDERS.map((provider) => (
           <TouchableOpacity
-            key={scope}
+            key={provider}
             style={styles.socialButton}
-            onPress={() => handleSocialProviderPress(scope as AuthProvider)}
+            disabled={loadingState.state || !!providerRequest}
+            onPress={() => handleSocialProviderPress(provider as AuthProvider)}
           >
-            <Icon name={scope} size={24} />
+            <Icon name={provider} size={24} />
+            {providerRequest === provider ? (
+              <View style={styles.overlay}>
+                <ActivityIndicator size="small" />
+              </View>
+            ) : null}
           </TouchableOpacity>
         ))}
       </View>
 
-      <View style={styles.emailSection}>
+      <Container marginVertical={16}>
         <BottomSheetTextInput
           onChangeText={handleChangeText}
           value={email}
           textContentType="emailAddress"
           keyboardType="email-address"
           placeholder="Enter email"
-          placeholderTextColor="#999"
-          style={styles.input}
+          placeholderTextColor="#D2D2D2"
+          style={[styles.input, isEmailValid && styles.inputValid]}
           autoCapitalize="none"
-          onSubmitEditing={handleSignInWithEmail}
+          autoCorrect={false}
+          returnKeyType="done"
+          onSubmitEditing={isEmailValid && handleSignInWithEmail}
+          onFocus={() => setError(null)}
         />
-
         <Button
-          text="Sign in with Wallet"
+          text="Sign in"
           disabled={!isEmailValid}
           onPress={handleSignInWithEmail}
           loading={loadingState.state}
         />
-      </View>
-
-      {isWalletConnectEnabled && (
-        <>
-          <View style={styles.dividerContainer}>
-            <View style={styles.divider} />
-            <Text style={styles.dividerText}>Alternatively</Text>
-            <View style={styles.divider} />
-          </View>
-
-          <Button
-            variant="secondary"
-            text="Sign in with Wallet"
-            onPress={() => navigate('loading')}
-          />
-        </>
-      )}
+        <CardError isVisible={!!error} text={error} marginTop={12} />
+      </Container>
+      <Container
+        isVisible={isWalletConnectEnabled}
+        style={styles.dividerContainer}
+      >
+        <View style={styles.divider} />
+        <Text style={styles.dividerText}>Alternatively</Text>
+        <View style={styles.divider} />
+      </Container>
+      <Container isVisible={isWalletConnectEnabled} marginVertical={16}>
+        <Button
+          variant="secondary"
+          text="Sign in with Wallet"
+          onPress={() => navigate('loading')}
+        />
+      </Container>
     </View>
   );
 };
@@ -155,21 +173,32 @@ const styles = StyleSheet.create({
     borderColor: '#EBEBEB',
     borderWidth: 1,
   },
-  emailSection: {
-    marginVertical: 16,
+  inputValid: {
+    borderColor: '#8D8D8D',
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject, // 🔹 cobre o botão todo
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.8)', // leve transparência
+    borderRadius: 16,
   },
   input: {
-    height: 44,
+    height: 48,
     borderWidth: 1,
     borderColor: '#EEE',
-    borderRadius: 8,
-    paddingHorizontal: 10,
+    color: '##2A2A2A',
+    borderRadius: 12,
+    paddingHorizontal: 12,
     marginBottom: 10,
+    fontSize: 15,
+    lineHeight: 15 * 1.33,
   },
   dividerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginVertical: 8,
+    height: 32,
   },
   divider: {
     flex: 1,

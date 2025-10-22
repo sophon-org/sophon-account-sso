@@ -1,4 +1,5 @@
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
+import { Container, Text } from '../../ui';
 
 type FooterSheetProps = {
   hideTerms?: boolean;
@@ -7,43 +8,36 @@ type FooterSheetProps = {
 export function FooterSheet(props: FooterSheetProps) {
   return (
     <View style={styles.container}>
-      <TermsAndPrivacy {...props} />
+      <Container isVisible={!props?.hideTerms}>
+        <Text color="#8D8D8D" size="small">
+          {`By logging in you are accepting our\n`}
+          <Text color="#0066FF" size="small">
+            {' '}
+            Terms of Use{' '}
+          </Text>
+          and
+          <Text color="#0066FF" size="small">
+            {' '}
+            Privacy Policy
+          </Text>
+          .
+        </Text>
+      </Container>
       <View style={styles.row}>
-        <Text style={styles.footerText}>Powered by</Text>
+        <Text color="#8D8D8D">Powered by</Text>
         <Image source={require('../../assets/images/sophon-logo.png')} />
       </View>
     </View>
   );
 }
 
-function TermsAndPrivacy(props: FooterSheetProps) {
-  if (props?.hideTerms) return null;
-  return (
-    <View>
-      <Text style={styles.footerText}>
-        {`By logging in you are accepting our\n`}
-        <Text style={styles.link}> Terms of Use </Text>
-        and
-        <Text style={styles.link}> Privacy Policy</Text>.
-      </Text>
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
-  footerText: {
-    textAlign: 'center',
-    color: '#999',
-    fontSize: 12,
-    lineHeight: 24,
-  },
   container: {
     justifyContent: 'center',
     alignItems: 'center',
     gap: 16,
-  },
-  link: {
-    color: '#0066FF',
+    marginTop: 12,
+    flex: 1,
   },
   row: {
     flexDirection: 'row',
