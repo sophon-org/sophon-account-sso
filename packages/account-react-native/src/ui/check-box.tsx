@@ -89,7 +89,6 @@ const styles = StyleSheet.create({
   textWrapper: {
     flex: 1,
     flexShrink: 1,
-    backgroundColor: 'green',
     minHeight: 20,
   },
   icon: {

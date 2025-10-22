@@ -64,7 +64,7 @@ type ViewStylePropKeys =
 
 type InlineViewStyleProps = Partial<Pick<ViewStyle, ViewStylePropKeys>>;
 
-type ContainerProps = ViewProps &
+export type ContainerProps = ViewProps &
   InlineViewStyleProps & {
     isVisible?: boolean;
   };
