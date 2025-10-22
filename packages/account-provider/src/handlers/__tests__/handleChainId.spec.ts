@@ -1,23 +1,28 @@
 import {
-  MAINNET_HEX_CHAIN_ID,
-  type SophonNetworkType,
-  TESTNET_HEX_CHAIN_ID,
+  SophonHexChainId,
+  sophonOS,
+  sophonOSTestnet,
 } from '@sophon-labs/account-core';
 import { describe, expect, it } from 'vitest';
+import { sophon, sophonTestnet } from 'viem/chains';
+import { toHex } from 'viem';
 import { handleChainId } from '../handleChainId';
 
-describe('handleChainId', () => {
+describe('Provider > Handlers > handleChainId', () => {
   it.each([
-    ['mainnet' as SophonNetworkType, MAINNET_HEX_CHAIN_ID],
-    ['testnet' as SophonNetworkType, TESTNET_HEX_CHAIN_ID],
-  ])(
-    'should return network "%s" chainId "%s"',
-    async (network: SophonNetworkType, expectedChainId: string) => {
-      // when
-      const result = await handleChainId(network);
+    { chainId: sophon.id, description: 'sophon mainnet' },
+    { chainId: sophonTestnet.id, description: 'sophon testnet' },
+    { chainId: sophonOS.id, description: 'sophon OS mainnet' },
+    { chainId: sophonOSTestnet.id, description: 'sophon OS testnet' },
+  ])('should return hex chainId for $description', async ({ chainId }) => {
+    // given
+    const expectedChainId = SophonHexChainId[chainId];
 
-      // then
-      expect(result).toEqual(expectedChainId);
-    },
-  );
+    // when
+    const result = await handleChainId(chainId);
+
+    // then
+    expect(result).toBe(expectedChainId);
+    expect(result).toBe(toHex(chainId));
+  });
 });

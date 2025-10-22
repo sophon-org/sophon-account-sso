@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { handleSendTransaction } from '../handleSendTransaction';
 
-describe('handleSendTransaction', () => {
+describe('Provider > Handlers > handleSendTransaction', () => {
   it('should return result body if available', async () => {
     // given
     const expectedPayload = {

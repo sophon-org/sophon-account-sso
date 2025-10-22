@@ -15,9 +15,12 @@ export default defineConfig({
       exclude: [
         'node_modules',
         'dist',
-        'src/types.ts',
         'tsup.config.ts',
         'vitest.config.ts',
+        // no need to cover the mainnet and testnet files
+        'src/types.ts',
+        'src/provider.ts',
+        'src/index.ts'
       ],
     },
   },
