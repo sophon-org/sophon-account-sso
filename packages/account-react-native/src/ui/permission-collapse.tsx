@@ -48,7 +48,7 @@ export function PermissionCollapse({
         onValueChange={handleToggle}
       />
       <Accordion isExpanded={isExpanded.state} viewKey={`${name}_body`}>
-        {description}
+        {description ?? ''}
       </Accordion>
     </Container>
   );

@@ -44,7 +44,7 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
       onError(error, 'verifyEmail');
       setValues(defaultCodeArray);
       defaultCodeArray.forEach((_, index) => {
-        opacities[index].value = withTiming(0.3, { duration: 120 });
+        opacities[index]!.value = withTiming(0.3, { duration: 120 });
       });
     },
     [onError],
@@ -64,7 +64,7 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
         onAuthenticate(ownerAddress);
       } catch (error) {
         console.log('USER CANCELED VerifyEmailOTP ');
-        handleOnError(error);
+        handleOnError(error as Error);
         loadingState.setOff();
       }
     },

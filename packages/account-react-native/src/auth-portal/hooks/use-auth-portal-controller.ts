@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { useSophonAccount, useSophonName } from '../../hooks';
 import { useFlowManager } from '../../hooks/use-flow-manager';
 import { useSophonContext } from '../../hooks/use-sophon-context';
-import type { AuthPortalStep } from '../types';
+import type { AuthPortalStep, CurrentParams } from '../types';
 import { useNavigationController } from './use-navigation-controller';
 
 const STEPS_ALLOW_BACK_BUTTON: AuthPortalStep[] = ['verifyEmail'];
@@ -51,10 +51,13 @@ export const useAuthPortalController = () => {
   }, [currentStep, isConnected]);
 
   const params = useMemo(() => {
-    return navigation.currentParams?.[currentStep || ''] || null;
+    if (!currentStep) return null;
+
+    return navigation.currentParams?.[currentStep as keyof CurrentParams] || null;
   }, [currentStep, navigation.currentParams]);
 
   const showBackButton = useMemo(() => {
+    if (!currentStep) return false;
     if (currentStep === 'retry') return true;
 
     const hasHistory = Boolean((navigation.history.length ?? 0) > 0);
@@ -66,6 +69,7 @@ export const useAuthPortalController = () => {
   const userName = useSophonName();
 
   const displayName = useMemo(() => {
+    if (!currentStep) return '';
     if (userName) return userName;
     if (account?.address?.trim()) return shortenAddress(account.address);
 

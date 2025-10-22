@@ -69,7 +69,7 @@ export const SignInStep = ({
     } catch (error) {
       console.log('USER CANCELED2');
       console.error(error);
-      setError(error?.message ?? null);
+      setError((error as Error)?.message ?? null);
       await onError(error as Error, 'signIn');
     } finally {
       loadingState.setOff();
@@ -114,7 +114,7 @@ export const SignInStep = ({
           autoCapitalize="none"
           autoCorrect={false}
           returnKeyType="done"
-          onSubmitEditing={isEmailValid && handleSignInWithEmail}
+          onSubmitEditing={isEmailValid ? handleSignInWithEmail : undefined}
           onFocus={() => setError(null)}
         />
         <Button
@@ -123,7 +123,7 @@ export const SignInStep = ({
           onPress={handleSignInWithEmail}
           loading={loadingState.state}
         />
-        <CardError isVisible={!!error} text={error} marginTop={12} />
+        <CardError isVisible={!!error} text={error ?? ''} marginTop={12} />
       </Container>
       <Container
         isVisible={isWalletConnectEnabled}

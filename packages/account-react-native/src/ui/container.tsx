@@ -68,7 +68,6 @@ export type ContainerProps = ViewProps &
   InlineViewStyleProps & {
     isVisible?: boolean;
   };
-type ViewStyleKey = (typeof VIEW_STYLE_KEYS)[number];
 
 const VIEW_STYLE_KEYS: ReadonlyArray<ViewStylePropKeys> = [
   'flex',
@@ -141,7 +140,8 @@ export const Container: React.FC<ContainerProps> = ({
     VIEW_STYLE_KEYS.forEach((key) => {
       const value = rest[key];
       if (value !== undefined) {
-        (viewStyles as unknown as ViewStyleKey)[key] = value;
+        // biome-ignore lint/suspicious/noExplicitAny: TODO @cleo to review this
+        (viewStyles as any)[key] = value;
       }
     });
     return viewStyles;

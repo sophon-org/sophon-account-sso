@@ -19,7 +19,7 @@ import { AuthPortalContext } from './context/auth-sheet.context';
 import { useAuthPortalController } from './hooks';
 import { useKeyboard } from './hooks/use-keyboard';
 import { StepControllerComponent } from './steps';
-import type { AuthPortalSteps, BasicStepProps } from './types';
+import type { AuthPortalStep, BasicStepProps } from './types';
 
 export type AuthPortalProps = {
   debugEnabled?: boolean;
@@ -170,7 +170,7 @@ export function AuthPortal(props: AuthPortalProps) {
     cleanup();
   }, [cleanup]);
 
-  const onError = useCallback(async (error: Error, step?: AuthPortalSteps) => {
+  const onError = useCallback(async (error: Error, step?: AuthPortalStep) => {
     // clearCurrentRequest();
     console.log(`onError ${step ?? '-'}`, error);
   }, []);
@@ -226,13 +226,13 @@ export function AuthPortal(props: AuthPortalProps) {
         >
           <Container margin={24}>
             <StepTransitionView
-              keyProp={currentStep}
+              keyProp={currentStep ?? null}
               isBackAvailable={showBackButton}
               disableAnimation={disableAnimation.state}
             >
               <StepControllerComponent
                 key={currentStep}
-                currentStep={currentStep}
+                currentStep={currentStep ?? null}
                 onComplete={onComplete}
                 onCancel={onCancel}
                 onError={onError}

@@ -61,6 +61,14 @@ export type NavigateOptions = {
 export type CurrentParams = {
   signIn?: SignInParams;
   verifyCode?: VerifyCodeParams;
+  retry?: RetryParams;
+  signMessage?: undefined;
+  transaction?: undefined;
+  consent?: undefined;
+  verifyEmail?: undefined;
+  connectWallet?: undefined;
+  authorization?: undefined;
+  loading?: undefined;
 };
 
 export type NavigationAuthPortalState = {
