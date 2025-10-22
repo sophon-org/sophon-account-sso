@@ -1,6 +1,6 @@
 import { AvailableRPCURL } from '@sophon-labs/account-core';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { sophon, sophonTestnet } from 'viem/chains';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { genericRPCHandler } from '../genericRPC';
 
 describe('Provider > Lib > genericRPC', () => {
@@ -194,7 +194,9 @@ describe('Provider > Lib > genericRPC', () => {
       fetchMock.mockResolvedValue(mockResponse);
 
       // when/then
-      await expect(client.request('eth_blockNumber', [])).rejects.toThrow('Not Found');
+      await expect(client.request('eth_blockNumber', [])).rejects.toThrow(
+        'Not Found',
+      );
     });
 
     it('should throw error for 503 status', async () => {
@@ -218,7 +220,9 @@ describe('Provider > Lib > genericRPC', () => {
       fetchMock.mockRejectedValue(new Error('Network error'));
 
       // when/then
-      await expect(client.request('eth_blockNumber', [])).rejects.toThrow('Network error');
+      await expect(client.request('eth_blockNumber', [])).rejects.toThrow(
+        'Network error',
+      );
     });
   });
 
@@ -285,7 +289,10 @@ describe('Provider > Lib > genericRPC', () => {
       },
       {
         method: 'eth_call',
-        params: [{ to: '0x1234567890123456789012345678901234567890' }, 'latest'],
+        params: [
+          { to: '0x1234567890123456789012345678901234567890' },
+          'latest',
+        ],
       },
       { method: 'eth_gasPrice', params: [] },
       {
@@ -367,30 +374,27 @@ describe('Provider > Lib > genericRPC', () => {
     it.each([
       { chainId: sophon.id, description: 'sophon mainnet' },
       { chainId: sophonTestnet.id, description: 'sophon testnet' },
-    ])(
-      'should use correct RPC URL for $description',
-      async ({ chainId }) => {
-        // given
-        const client = genericRPCHandler(chainId);
-        const mockResponse = {
-          status: 200,
-          json: vi.fn().mockResolvedValue({
-            jsonrpc: '2.0',
-            id: 1,
-            result: '0x123',
-          }),
-        };
-        fetchMock.mockResolvedValue(mockResponse);
+    ])('should use correct RPC URL for $description', async ({ chainId }) => {
+      // given
+      const client = genericRPCHandler(chainId);
+      const mockResponse = {
+        status: 200,
+        json: vi.fn().mockResolvedValue({
+          jsonrpc: '2.0',
+          id: 1,
+          result: '0x123',
+        }),
+      };
+      fetchMock.mockResolvedValue(mockResponse);
 
-        // when
-        await client.request('eth_blockNumber', []);
+      // when
+      await client.request('eth_blockNumber', []);
 
-        // then
-        expect(fetchMock).toHaveBeenCalledWith(
-          AvailableRPCURL[chainId],
-          expect.any(Object),
-        );
-      },
-    );
+      // then
+      expect(fetchMock).toHaveBeenCalledWith(
+        AvailableRPCURL[chainId],
+        expect.any(Object),
+      );
+    });
   });
 });

@@ -1,6 +1,6 @@
 import { SophonHexChainId } from '@sophon-labs/account-core';
-import { describe, expect, it } from 'vitest';
 import { sophon, sophonTestnet } from 'viem/chains';
+import { describe, expect, it } from 'vitest';
 import { handleSwitchEthereumChain } from '../handleSwitchEthereumChain';
 
 describe('Provider > Handlers > handleSwitchEthereumChain', () => {

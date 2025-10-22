@@ -15,20 +15,24 @@ describe('Provider > Lib > popup', () => {
     messageListeners = [];
 
     // Create spies for window methods
-    windowAddEventListenerSpy = vi.fn((event: string, listener: (event: MessageEvent) => void) => {
-      if (event === 'message') {
-        messageListeners.push(listener);
-      }
-    });
-
-    windowRemoveEventListenerSpy = vi.fn((event: string, listener: (event: MessageEvent) => void) => {
-      if (event === 'message') {
-        const index = messageListeners.indexOf(listener);
-        if (index > -1) {
-          messageListeners.splice(index, 1);
+    windowAddEventListenerSpy = vi.fn(
+      (event: string, listener: (event: MessageEvent) => void) => {
+        if (event === 'message') {
+          messageListeners.push(listener);
         }
-      }
-    });
+      },
+    );
+
+    windowRemoveEventListenerSpy = vi.fn(
+      (event: string, listener: (event: MessageEvent) => void) => {
+        if (event === 'message') {
+          const index = messageListeners.indexOf(listener);
+          if (index > -1) {
+            messageListeners.splice(index, 1);
+          }
+        }
+      },
+    );
 
     // Mock window
     Object.defineProperty(global, 'window', {
@@ -133,7 +137,7 @@ describe('Provider > Lib > popup', () => {
 
       // when - advance time by less than delay
       vi.advanceTimersByTime(DEFAULT_UNLOAD_DELAY - 100);
-      
+
       // Promise should not resolve yet
       let resolved = false;
       resultPromise.then(() => {
@@ -422,4 +426,3 @@ describe('Provider > Lib > popup', () => {
     });
   });
 });
-

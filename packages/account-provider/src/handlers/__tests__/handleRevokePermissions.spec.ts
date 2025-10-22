@@ -1,7 +1,7 @@
 import type { StorageLike } from '@sophon-labs/account-core';
 import type EventEmitter from 'eventemitter3';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { sophonTestnet } from 'viem/chains';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { getAccounts, setAccounts } from '../../lib/accounts';
 import { handleRevokePermissions } from '../handleRevokePermissions';
 

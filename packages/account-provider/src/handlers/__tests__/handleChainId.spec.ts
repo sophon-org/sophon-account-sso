@@ -3,9 +3,9 @@ import {
   sophonOS,
   sophonOSTestnet,
 } from '@sophon-labs/account-core';
-import { describe, expect, it } from 'vitest';
-import { sophon, sophonTestnet } from 'viem/chains';
 import { toHex } from 'viem';
+import { sophon, sophonTestnet } from 'viem/chains';
+import { describe, expect, it } from 'vitest';
 import { handleChainId } from '../handleChainId';
 
 describe('Provider > Handlers > handleChainId', () => {

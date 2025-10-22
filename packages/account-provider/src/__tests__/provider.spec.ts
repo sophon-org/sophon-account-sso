@@ -1,7 +1,7 @@
-import type { StorageLike } from '@sophon-labs/account-core';
 import type { Communicator } from '@sophon-labs/account-communicator';
-import {  afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import type { StorageLike } from '@sophon-labs/account-core';
 import { sophon, sophonTestnet } from 'viem/chains';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createSophonEIP1193Provider } from '../provider';
 
 // Mock the dependencies
@@ -224,7 +224,9 @@ describe('Provider > createSophonEIP1193Provider', () => {
         mockStorage,
       );
       const account = '0x1234567890123456789012345678901234567890';
-      vi.mocked(mockCommunicator.postRequestAndWaitForResponse).mockResolvedValue({
+      vi.mocked(
+        mockCommunicator.postRequestAndWaitForResponse,
+      ).mockResolvedValue({
         id: crypto.randomUUID(),
         content: {
           result: {
@@ -267,7 +269,9 @@ describe('Provider > createSophonEIP1193Provider', () => {
 
       // then
       expect(result).toEqual([account]);
-      expect(mockCommunicator.postRequestAndWaitForResponse).not.toHaveBeenCalled();
+      expect(
+        mockCommunicator.postRequestAndWaitForResponse,
+      ).not.toHaveBeenCalled();
     });
   });
 
@@ -411,7 +415,9 @@ describe('Provider > createSophonEIP1193Provider', () => {
         mockStorage,
       );
       const signature = '0xsignature';
-      vi.mocked(mockCommunicator.postRequestAndWaitForResponse).mockResolvedValue({
+      vi.mocked(
+        mockCommunicator.postRequestAndWaitForResponse,
+      ).mockResolvedValue({
         id: crypto.randomUUID(),
         content: {
           result: signature,
@@ -438,7 +444,9 @@ describe('Provider > createSophonEIP1193Provider', () => {
         mockCommunicator,
         mockStorage,
       );
-      vi.mocked(mockCommunicator.postRequestAndWaitForResponse).mockResolvedValue({
+      vi.mocked(
+        mockCommunicator.postRequestAndWaitForResponse,
+      ).mockResolvedValue({
         id: crypto.randomUUID(),
         content: {
           error: {
@@ -471,7 +479,9 @@ describe('Provider > createSophonEIP1193Provider', () => {
         mockStorage,
       );
       const signature = '0xsignature';
-      vi.mocked(mockCommunicator.postRequestAndWaitForResponse).mockResolvedValue({
+      vi.mocked(
+        mockCommunicator.postRequestAndWaitForResponse,
+      ).mockResolvedValue({
         id: crypto.randomUUID(),
         content: {
           result: signature,
@@ -500,7 +510,9 @@ describe('Provider > createSophonEIP1193Provider', () => {
         mockStorage,
       );
       const txHash = '0xtxhash';
-      vi.mocked(mockCommunicator.postRequestAndWaitForResponse).mockResolvedValue({
+      vi.mocked(
+        mockCommunicator.postRequestAndWaitForResponse,
+      ).mockResolvedValue({
         id: crypto.randomUUID(),
         content: {
           result: txHash,
@@ -510,7 +522,9 @@ describe('Provider > createSophonEIP1193Provider', () => {
       // when
       const result = await provider.request({
         method: 'eth_sendTransaction',
-        params: [{ to: '0x1234567890123456789012345678901234567890', value: '0x0' }],
+        params: [
+          { to: '0x1234567890123456789012345678901234567890', value: '0x0' },
+        ],
       });
 
       // then
@@ -529,7 +543,9 @@ describe('Provider > createSophonEIP1193Provider', () => {
         mockStorage,
       );
       const consentResult = { consented: true };
-      vi.mocked(mockCommunicator.postRequestAndWaitForResponse).mockResolvedValue({
+      vi.mocked(
+        mockCommunicator.postRequestAndWaitForResponse,
+      ).mockResolvedValue({
         id: crypto.randomUUID(),
         content: {
           result: consentResult,
@@ -561,7 +577,9 @@ describe('Provider > createSophonEIP1193Provider', () => {
         `sophon::accounts::${sophonTestnet.id}`,
         JSON.stringify(['0x1234567890123456789012345678901234567890']),
       );
-      vi.mocked(mockCommunicator.postRequestAndWaitForResponse).mockResolvedValue({
+      vi.mocked(
+        mockCommunicator.postRequestAndWaitForResponse,
+      ).mockResolvedValue({
         id: crypto.randomUUID(),
         content: {},
       });
@@ -591,7 +609,9 @@ describe('Provider > createSophonEIP1193Provider', () => {
         mockStorage,
       );
       const account = '0x1234567890123456789012345678901234567890';
-      vi.mocked(mockCommunicator.postRequestAndWaitForResponse).mockResolvedValue({
+      vi.mocked(
+        mockCommunicator.postRequestAndWaitForResponse,
+      ).mockResolvedValue({
         id: crypto.randomUUID(),
         content: {
           result: {
@@ -722,7 +742,9 @@ describe('Provider > createSophonEIP1193Provider', () => {
         true, // native mode
       );
       const signature = '0xsignature';
-      vi.mocked(mockCommunicator.postRequestAndWaitForResponse).mockResolvedValue({
+      vi.mocked(
+        mockCommunicator.postRequestAndWaitForResponse,
+      ).mockResolvedValue({
         id: crypto.randomUUID(),
         content: {
           result: signature,
@@ -751,7 +773,9 @@ describe('Provider > createSophonEIP1193Provider', () => {
         false, // non-native mode
       );
       const signature = '0xsignature';
-      vi.mocked(mockCommunicator.postRequestAndWaitForResponse).mockResolvedValue({
+      vi.mocked(
+        mockCommunicator.postRequestAndWaitForResponse,
+      ).mockResolvedValue({
         id: crypto.randomUUID(),
         content: {
           result: signature,
@@ -769,4 +793,3 @@ describe('Provider > createSophonEIP1193Provider', () => {
     });
   });
 });
-

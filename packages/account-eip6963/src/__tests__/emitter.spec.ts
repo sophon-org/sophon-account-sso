@@ -1,7 +1,7 @@
 import { AccountAuthAPIURL } from '@sophon-labs/account-core';
 import type { EIP1193Provider } from '@sophon-labs/account-provider';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { sophon, sophonTestnet } from 'viem/chains';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { SophonEIP6963Metadata } from '../constants';
 import { createSophonEIP6963Emitter } from '../emitter';
 
@@ -341,4 +341,3 @@ describe('EIP6963 > Emitter', () => {
     });
   });
 });
-

@@ -20,7 +20,7 @@ export default defineConfig({
         // no need to cover the mainnet and testnet files
         'src/types.ts',
         'src/provider.ts',
-        'src/index.ts'
+        'src/index.ts',
       ],
     },
   },

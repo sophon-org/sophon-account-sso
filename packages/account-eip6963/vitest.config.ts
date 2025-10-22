@@ -25,7 +25,7 @@ export default defineConfig({
         'src/os-testnet.ts',
         'src/constants.ts',
         'src/types.ts',
-        'src/index.ts'
+        'src/index.ts',
       ],
     },
   },

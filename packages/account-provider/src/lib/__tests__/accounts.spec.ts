@@ -1,6 +1,6 @@
 import type { StorageLike } from '@sophon-labs/account-core';
-import { beforeEach, describe, expect, it } from 'vitest';
 import { sophonTestnet } from 'viem/chains';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { clearAccounts, getAccounts, setAccounts } from '../../lib/accounts';
 
 describe('Provider > Lib > accounts storage', () => {
