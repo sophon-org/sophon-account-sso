@@ -1,21 +1,15 @@
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { useCallback, useMemo, useState } from 'react';
-import {
-  ActivityIndicator,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { type AuthProvider, useEmbeddedAuth } from '../../auth/useAuth';
-import { AVAILABLE_PROVIDERS } from '../../constants';
 import {
   useBooleanState,
   useFlowManager,
   useSophonCapabilities,
 } from '../../hooks';
-import { Button, CardError, Container, Icon } from '../../ui';
+import { Button, CardError, Container } from '../../ui';
 import { validateEmail } from '../../utils/validations';
+import { SocialProviderButtons } from '../components/social-provider-buttons';
 import { useNavigationParams, useNavigationPortal } from '../hooks';
 import type { BasicStepProps, SignInParams } from '../types';
 
@@ -39,22 +33,27 @@ export const SignInStep = ({
 
   const handleSocialProviderPress = useCallback(
     async (provider: AuthProvider) => {
-      if (providerRequest) return;
       try {
-        setCurrentProviderLoadingState(provider);
         const waitFor = waitForAuthentication();
+        setCurrentProviderLoadingState(provider);
         await signInWithSocialProvider(provider);
         const ownerAddress = await waitFor;
-        onAuthenticate(ownerAddress);
+        loadingState.setOn();
+        onAuthenticate(ownerAddress, { provider });
       } catch (error) {
+        setCurrentProviderLoadingState(null);
         console.log('USER CANCELED');
         console.error(error);
-        await onError(error as Error);
-      } finally {
-        setCurrentProviderLoadingState(null);
+        onError(error as Error);
       }
     },
-    [signInWithSocialProvider, onComplete, onError, providerRequest],
+    [
+      signInWithSocialProvider,
+      onError,
+      providerRequest,
+      onAuthenticate,
+      waitForAuthentication,
+    ],
   );
   const isEmailValid = useMemo(() => validateEmail(email), [email]);
   const handleSignInWithEmail = useCallback(async () => {
@@ -82,29 +81,16 @@ export const SignInStep = ({
 
   return (
     <View style={styles.container}>
-      <View style={styles.socialRow}>
-        {AVAILABLE_PROVIDERS.map((provider) => (
-          <TouchableOpacity
-            key={provider}
-            style={styles.socialButton}
-            disabled={loadingState.state || !!providerRequest}
-            onPress={() => handleSocialProviderPress(provider as AuthProvider)}
-          >
-            <Icon name={provider} size={24} />
-            {providerRequest === provider ? (
-              <View style={styles.overlay}>
-                <ActivityIndicator size="small" />
-              </View>
-            ) : null}
-          </TouchableOpacity>
-        ))}
-      </View>
+      <SocialProviderButtons
+        isAuthenticating={loadingState.state}
+        providerRequest={providerRequest}
+        onPressSocialSignIn={handleSocialProviderPress}
+      />
 
       <Container marginVertical={16}>
         <BottomSheetTextInput
           onChangeText={handleChangeText}
           value={email}
-          textContentType="emailAddress"
           keyboardType="email-address"
           placeholder="Enter email"
           placeholderTextColor="#D2D2D2"

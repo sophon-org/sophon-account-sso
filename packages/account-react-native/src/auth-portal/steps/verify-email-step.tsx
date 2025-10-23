@@ -66,7 +66,7 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
         loadingState.setOff();
       }
     },
-    [verifyEmailOTP, onAuthenticate, codes, onError],
+    [verifyEmailOTP, onAuthenticate, codes, onError, waitForAuthentication],
   );
 
   const focusIndex = (index: number) => {
@@ -168,6 +168,11 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
           textAlign="center"
           returnKeyType="done"
           editable={!loadingState.state}
+          onSubmitEditing={() => {
+            if (index === OTP_CODE_LENGTH - 1 && value.length === 1) {
+              handleVerifyEmailOTP();
+            }
+          }}
         />
       </Animated.View>
     );

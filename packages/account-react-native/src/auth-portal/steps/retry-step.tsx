@@ -7,10 +7,10 @@ export const RetryStep = ({
   onAuthenticate,
   onBackToSignIn,
 }: BasicStepProps) => {
-  const { ownerAddress } = useNavigationParams<RetryParams>();
+  const { ownerAddress, provider } = useNavigationParams<RetryParams>();
 
   const handleOnRetry = () => {
-    onAuthenticate(ownerAddress);
+    onAuthenticate(ownerAddress, { provider, from: 'retry' });
   };
   return (
     <Container>
