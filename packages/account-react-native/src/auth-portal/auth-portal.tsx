@@ -107,10 +107,11 @@ export function AuthPortal(props: AuthPortalProps) {
     cancelCurrentRequest();
   }, [removeKeyboardListener, cleanup, disableAnimation, cancelCurrentRequest]);
 
-  const onCloseAndForceCancel = useCallback(() => {
+  const onCloseAndForceCancel = useCallback(async () => {
     hideModal();
     onClose();
-  }, [hideModal, onClose]);
+    cleanup();
+  }, [hideModal, onClose, cleanup]);
 
   const renderHandleComponent = useCallback(
     (renderProps: BottomSheetHandleProps) => {
@@ -180,17 +181,9 @@ export function AuthPortal(props: AuthPortalProps) {
     [actions, navigate],
   );
 
-  const onCancel = useCallback(async () => {
-    // clearCurrentRequest();
-    console.log('onCancel');
-    hideModal();
-    clearCurrentRequest();
-  }, [hideModal, clearCurrentRequest]);
-
   const onBackToSignIn = useCallback(async () => {
-    console.log('onBackToSignIn');
-    cleanup();
-  }, [cleanup]);
+    goBack();
+  }, [goBack]);
 
   const onError = useCallback(async (error: Error, step?: AuthPortalStep) => {
     // clearCurrentRequest();
@@ -255,7 +248,7 @@ export function AuthPortal(props: AuthPortalProps) {
                 key={currentStep}
                 currentStep={currentStep ?? null}
                 onComplete={onComplete}
-                onCancel={onCancel}
+                onCancel={onCloseAndForceCancel}
                 onError={onError}
                 onAuthenticate={onAuthenticate}
                 onBackToSignIn={onBackToSignIn}
