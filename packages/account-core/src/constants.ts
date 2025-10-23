@@ -71,7 +71,7 @@ export const SophonChainCapabilities: Record<ChainId, ChainCapability> = {
   },
   [sophonOSTestnet.id]: {
     signature: ChainCapabilityValue.DISABLED,
-    deployContract: ChainCapabilityValue.DISABLED,
+    deployContract: ChainCapabilityValue.OFF_CHAIN,
     sns: ChainCapabilityValue.DISABLED,
     transactions: ChainCapabilityValue.DISABLED,
   },
@@ -113,8 +113,8 @@ export const AvailableRPCURL: Record<ChainId, string> = {
 export const AvailableCDNURL: Record<ChainId, string> = {
   [sophon.id]: 'https://cdn.sophon.xyz',
   [sophonTestnet.id]: 'https://cdn.staging.sophon.xyz',
-  [sophonOS.id]: 'https://cdn.sophonapi.com',
-  [sophonOSTestnet.id]: 'https://cdn.staging.sophonapi.com',
+  [sophonOS.id]: 'https://cdn.sophon.xyz',
+  [sophonOSTestnet.id]: 'https://cdn.staging.sophon.xyz',
 };
 
 /**
@@ -123,8 +123,8 @@ export const AvailableCDNURL: Record<ChainId, string> = {
 export const SwapAPIURL: Record<ChainId, string> = {
   [sophon.id]: 'https://api.swap.sophon.xyz',
   [sophonTestnet.id]: 'https://api.swap.staging.sophon.xyz',
-  [sophonOS.id]: 'https://api.swap.sophonapi.com',
-  [sophonOSTestnet.id]: 'https://api.swap.staging.sophonapi.com',
+  [sophonOS.id]: 'https://api.swap.sophon.xyz',
+  [sophonOSTestnet.id]: 'https://api.swap.staging.sophon.xyz',
 };
 
 /**

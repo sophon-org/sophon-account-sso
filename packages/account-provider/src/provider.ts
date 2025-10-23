@@ -18,6 +18,7 @@ import { handleRevokePermissions } from './handlers/handleRevokePermissions';
 import { handleSendTransaction } from './handlers/handleSendTransaction';
 import { handleSignTypedDataV4 } from './handlers/handleSignTypedDataV4';
 import { handleSwitchEthereumChain } from './handlers/handleSwitchEthereumChain';
+import { handleWalletDisconnect } from './handlers/handleWalletDisconnect';
 import { clearAccounts, getAccounts } from './lib/accounts';
 import { genericRPCHandler } from './lib/genericRPC';
 import { awaitForPopupUnload } from './lib/popup';
@@ -148,6 +149,11 @@ export function createSophonEIP1193Provider(
             executeRequest,
             eventEmitter,
           );
+        }
+
+        case 'wallet_disconnect': {
+          // console.log('EIP-1193 wallet_disconnect:', method, params);
+          return handleWalletDisconnect(storage, chainId, eventEmitter);
         }
 
         default: {

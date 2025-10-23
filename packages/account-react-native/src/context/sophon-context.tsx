@@ -26,10 +26,13 @@ import {
 import { sophon, sophonTestnet } from 'viem/chains';
 import { erc7846Actions } from 'viem/experimental';
 import { eip712WalletActions } from 'viem/zksync';
-import { useEmbeddedAuth } from '../auth/useAuth';
 import { AuthPortal, type AuthPortalProps } from '../auth-portal';
 import type { Capabilities } from '../lib/capabilities';
-import { createDynamicClient, type DynamicClientType } from '../lib/dynamic';
+import {
+  createDynamicClient,
+  type DynamicClientType,
+  NoopDynamicClient,
+} from '../lib/dynamic';
 import { useUIEventHandler } from '../messaging';
 import {
   createMobileProvider,
@@ -75,14 +78,14 @@ export interface SophonContextConfig {
   refreshToken?: SophonJWTToken | null;
   updateAccessToken: (data: SophonJWTToken) => void;
   updateRefreshToken: (data: SophonJWTToken) => void;
-  logout: () => Promise<void>;
   error?: { description: string; code: number };
   setError: (error: { description: string; code: number }) => void;
   insets?: AuthPortalProps['insets'];
   currentRequest?: Message;
   setCurrentRequest: (request?: Message) => void;
   capabilities: Capabilities[];
-  dynamicClient?: DynamicClientType;
+  dynamicClient: DynamicClientType;
+  requiresAuthorization: boolean;
 }
 
 export const SophonContext = createContext<SophonContextConfig>({
@@ -94,13 +97,13 @@ export const SophonContext = createContext<SophonContextConfig>({
   chainId: sophonTestnet.id,
   updateAccessToken: () => {},
   updateRefreshToken: () => {},
-  logout: async () => {},
   error: undefined,
   setError: (_: { description: string; code: number }) => {},
   currentRequest: undefined,
   setCurrentRequest: () => {},
   capabilities: [],
-  dynamicClient: undefined,
+  dynamicClient: NoopDynamicClient,
+  requiresAuthorization: false,
 });
 
 export interface SophonAccount {
@@ -113,7 +116,7 @@ export const SophonContextProvider = ({
   chainId = sophonTestnet.id,
   authServerUrl,
   partnerId,
-  dataScopes,
+  dataScopes = [],
   insets,
   requestedCapabilities,
 }: {
@@ -121,7 +124,7 @@ export const SophonContextProvider = ({
   chainId: ChainId;
   authServerUrl?: string;
   partnerId: string;
-  dataScopes: DataScopes[];
+  dataScopes?: DataScopes[];
   insets?: AuthPortalProps['insets'];
   requestedCapabilities?: Capabilities[];
 }) => {
@@ -141,7 +144,6 @@ export const SophonContextProvider = ({
   const [connectingAccount, setConnectingAccount] = useState<
     SophonAccount | undefined
   >();
-  const { logout: logoutEmbedded } = useEmbeddedAuth();
   const chain = useMemo(() => SophonChains[chainId], [chainId]);
   const provider = useMemo(() => {
     const provider = createMobileProvider(serverUrl, chainId);
@@ -152,7 +154,12 @@ export const SophonContextProvider = ({
     [requestedCapabilities],
   );
 
-  const [dynamicClient, setDynamicClient] = useState<DynamicClientType>();
+  const requiresAuthorization = useMemo(
+    () => !!dataScopes?.length,
+    [dataScopes],
+  );
+  const [dynamicClient, setDynamicClient] =
+    useState<DynamicClientType>(NoopDynamicClient);
 
   const walletClient = useMemo(
     () => createSophonWalletClient(chain, custom(provider)),
@@ -225,12 +232,9 @@ export const SophonContextProvider = ({
     }
   }, []);
 
-  const logout = useCallback(async () => {
-    await logoutEmbedded();
-    await provider?.disconnect();
-    setAccount(undefined);
-    SophonAppStorage.clear();
-  }, [logoutEmbedded, provider, setAccount]);
+  if (!SophonChains[chainId]) {
+    throw new Error(`Chain ${chainId} is not supported`);
+  }
 
   const contextValue = useMemo<SophonContextConfig>(
     () => ({
@@ -249,17 +253,16 @@ export const SophonContextProvider = ({
       chainId,
       updateAccessToken,
       updateRefreshToken,
-      logout,
       currentRequest,
       setCurrentRequest,
       connectingAccount,
       setConnectingAccount,
       capabilities,
       dynamicClient,
+      requiresAuthorization,
     }),
     [
       initialized,
-      chainId,
       serverUrl,
       walletClient,
       account,
@@ -272,24 +275,22 @@ export const SophonContextProvider = ({
       chainId,
       updateAccessToken,
       updateRefreshToken,
-      logout,
       currentRequest,
       setCurrentRequest,
       connectingAccount,
       setConnectingAccount,
       capabilities,
       dynamicClient,
+      requiresAuthorization,
     ],
   );
-
-  useUIEventHandler('logout', () => {
-    logout();
-  });
 
   return (
     <SophonContext.Provider value={contextValue}>
       {children}
-      {!!dynamicClient && <dynamicClient.reactNative.WebView />}
+      {!!dynamicClient?.reactNative?.WebView && (
+        <dynamicClient.reactNative.WebView />
+      )}
       <AuthPortal
         insets={insets}
         scopes={dataScopes}

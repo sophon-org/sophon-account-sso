@@ -15,7 +15,6 @@ import {
   useSophonContext,
 } from '../hooks';
 import { useSophonPartner } from '../hooks/use-sophon-partner';
-import { Capabilities } from '../lib/capabilities';
 import { useUIEventHandler } from '../messaging/ui';
 import { Container } from '../ui';
 import { FooterSheet } from './components/footer-sheet';
@@ -155,7 +154,8 @@ export function AuthPortal(props: AuthPortalProps) {
       try {
         navigate('loading', { replace: true });
         await actions.authenticate(ownerAddress);
-      } catch {
+      } catch (error) {
+        console.error('🚨 authFailed', error);
         navigate('retry', { replace: true, params: { ownerAddress } });
       }
     },
@@ -195,18 +195,14 @@ export function AuthPortal(props: AuthPortalProps) {
   const { partner } = useSophonPartner();
 
   const { isConnected } = useSophonAccount();
-  const { capabilities } = useSophonContext();
-  const isAuthorizationModalEnabled = useMemo(
-    () => capabilities.includes(Capabilities.AUTHORIZATION_MODAL),
-    [capabilities],
-  );
+  const { requiresAuthorization } = useSophonContext();
   useEffect(() => {
     // if the user connected and we are not expecting the authorization modal to show up
     // we can hide the modal
-    if (isConnected && !isAuthorizationModalEnabled && !currentStep) {
+    if (isConnected && !requiresAuthorization && !currentStep) {
       onComplete({ hide: true });
     }
-  }, [onComplete, isAuthorizationModalEnabled, isConnected, currentStep]);
+  }, [onComplete, requiresAuthorization, isConnected, currentStep]);
 
   return (
     <AuthPortalContext.Provider

@@ -1,6 +1,8 @@
 // import { useReactiveClient } from '@dynamic-labs/react-hooks';
+
+import { useReactiveClient } from '@dynamic-labs/react-hooks';
 import { DataScopes } from '@sophon-labs/account-core';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import type { Address } from 'viem';
 import { eip712WalletActions } from 'viem/zksync';
 import { useSophonContext } from '../hooks';
@@ -15,71 +17,52 @@ export enum AuthProvider {
 
 export const useEmbeddedAuth = () => {
   const { dynamicClient } = useSophonContext();
-  // const auth = useMemo(() => dynamicClient, [dynamicClient]);
-
-  // const { auth } = useReactiveClient(
-  //   dynamicClient ?? {
-  //     auth: {
-  //       mocked: true,
-  //       authenticatedUser: null,
-  //       email: {
-  //         sendOTP: () => Promise.resolve(),
-  //         verifyOTP: () => Promise.resolve(),
-  //         resendOTP: () => Promise.resolve(),
-  //       },
-  //       social: {
-  //         connect: () => Promise.resolve(),
-  //         getAllLinkedAccounts: () => Promise.resolve(),
-  //       },
-  //       logout: () => Promise.resolve(),
-  //     },
-  //   },
-  // );
+  const { auth, wallets, viem } = useReactiveClient(dynamicClient);
 
   const signInWithEmail = useCallback(
     async (email: string) => {
-      return dynamicClient?.auth.email.sendOTP(email);
+      return auth.email.sendOTP(email);
     },
-    [dynamicClient?.auth.email.sendOTP],
+    [auth.email.sendOTP],
   );
 
   const verifyEmailOTP = useCallback(
     async (token: string) => {
-      return dynamicClient?.auth.email.verifyOTP(token);
+      return auth.email.verifyOTP(token);
     },
-    [dynamicClient?.auth.email.verifyOTP],
+    [auth.email.verifyOTP],
   );
 
   const resendEmailOTP = useCallback(async () => {
-    return dynamicClient?.auth.email.resendOTP();
-  }, [dynamicClient?.auth.email.resendOTP]);
+    return auth.email.resendOTP();
+  }, [auth.email.resendOTP]);
 
-  const logout = useCallback(async () => {
-    return dynamicClient?.auth.logout();
-  }, [dynamicClient?.auth.logout]);
+  const logout = async () => {
+    return dynamicClient.auth.logout();
+  };
 
   const signInWithSocialProvider = useCallback(
     async (provider: AuthProvider) => {
-      return dynamicClient?.auth.social.connect({ provider });
+      return auth.social.connect({ provider });
     },
-    [dynamicClient?.auth.social.connect],
+    [auth.social.connect],
   );
 
   const getLinkedAccounts = useCallback(async () => {
-    return dynamicClient?.auth.social.getAllLinkedAccounts();
-  }, [dynamicClient?.auth.social.getAllLinkedAccounts]);
+    return auth.social.getAllLinkedAccounts();
+  }, [auth.social.getAllLinkedAccounts]);
 
   const isConnected = useMemo(() => {
-    return dynamicClient?.auth.authenticatedUser !== null;
-  }, [dynamicClient?.auth.authenticatedUser]);
+    return auth.authenticatedUser !== null;
+  }, [auth.authenticatedUser]);
 
   const getAvailableDataScopes = useCallback(async () => {
     const available: DataScopes[] = [];
-    if (dynamicClient?.auth.authenticatedUser?.email) {
+    if (auth.authenticatedUser?.email) {
       available.push(DataScopes.email);
     }
 
-    const socials = await dynamicClient?.auth.social.getAllLinkedAccounts();
+    const socials = await auth.social.getAllLinkedAccounts();
     for (const social of socials ?? []) {
       switch (social.provider) {
         case 'google':
@@ -103,14 +86,11 @@ export const useEmbeddedAuth = () => {
     }
 
     return available;
-  }, [
-    dynamicClient?.auth.social.getAllLinkedAccounts,
-    dynamicClient?.auth.authenticatedUser,
-  ]);
+  }, [auth.social.getAllLinkedAccounts, auth.authenticatedUser]);
 
   const waitForAuthentication = useCallback(async () => {
     return new Promise<Address>((resolve, reject) => {
-      dynamicClient?.wallets.on('primaryChanged', (data) => {
+      wallets.on('primaryChanged', (data) => {
         console.log('primaryChanged', data);
 
         if (data?.address) {
@@ -120,15 +100,15 @@ export const useEmbeddedAuth = () => {
         }
       });
 
-      dynamicClient?.auth.on('authFailed', (data) => {
+      auth.on('authFailed', (data) => {
         reject(data);
       });
     });
-  }, [dynamicClient?.wallets, dynamicClient?.auth]);
+  }, [wallets, auth]);
 
   const embeddedUserId = useMemo(() => {
-    return dynamicClient?.auth.authenticatedUser?.userId;
-  }, [dynamicClient?.auth.authenticatedUser]);
+    return auth.authenticatedUser?.userId;
+  }, [auth.authenticatedUser]);
 
   const createEmbeddedWalletClient = useCallback(async () => {
     return (
@@ -136,7 +116,13 @@ export const useEmbeddedAuth = () => {
         wallet: dynamicClient!.wallets.primary!,
       })
     ).extend(eip712WalletActions());
-  }, [dynamicClient?.viem, dynamicClient?.wallets.primary]);
+  }, [viem, wallets.primary]);
+
+  useEffect(() => {
+    dynamicClient.auth.on('authFailed', (data) => {
+      console.log('🚨 authFailed', data);
+    });
+  }, [dynamicClient]);
 
   return {
     signInWithSocialProvider,

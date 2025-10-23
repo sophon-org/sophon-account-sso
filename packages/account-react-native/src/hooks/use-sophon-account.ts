@@ -1,18 +1,12 @@
 import { useCallback, useMemo, useState } from 'react';
 import type { Address } from 'viem';
 import { useEmbeddedAuth } from '../auth/useAuth';
+import { SophonAppStorage } from '../provider';
 import { useSophonContext } from './use-sophon-context';
 
 export const useSophonAccount = () => {
-  const {
-    initialized,
-    walletClient,
-    setAccount,
-    provider,
-    account,
-    error,
-    logout,
-  } = useSophonContext();
+  const { initialized, walletClient, setAccount, provider, account, error } =
+    useSophonContext();
   const [accountError, setAccountError] = useState<{
     description: string;
     code: number;
@@ -36,7 +30,7 @@ export const useSophonAccount = () => {
       if (addresses.length === 0) {
         throw new Error('No addresses found');
       }
-      console.log('addresses', addresses);
+
       setAccount({
         address: addresses[0] as Address,
         owner: addresses[0] as Address,
@@ -52,7 +46,24 @@ export const useSophonAccount = () => {
     } finally {
       setIsConnecting(false);
     }
-  }, [walletClient, isConnectedEmbedded, logoutEmbedded]);
+  }, [
+    walletClient,
+    isConnectedEmbedded,
+    logoutEmbedded,
+    isConnecting,
+    setAccount,
+  ]);
+
+  const logout = useCallback(async () => {
+    await Promise.all([
+      logoutEmbedded(),
+      walletClient?.disconnect(),
+      provider?.disconnect(),
+    ]);
+
+    setAccount(undefined);
+    SophonAppStorage.clear();
+  }, [logoutEmbedded, provider, setAccount, walletClient]);
 
   // Make sure to only return that the user is connected after
   // context initialization is complete, that way we make sure that

@@ -104,7 +104,10 @@ export default function HomeScreen() {
               {shortenAddress(account?.address)}
             </Text>
             <Button
-              onPress={logout}
+              onPress={async () => {
+                console.log('logging out', account?.address);
+                await logout();
+              }}
               className="mt-4 bg-red-500/90 w-full max-w-[80%]"
             >
               <Text className="text-white font-bold">Logout</Text>

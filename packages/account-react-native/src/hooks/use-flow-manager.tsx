@@ -1,5 +1,6 @@
 import {
   AuthService,
+  CHAIN_CONTRACTS,
   checkChainCapability,
   safeParseTypedData,
 } from '@sophon-labs/account-core';
@@ -7,7 +8,6 @@ import { useCallback, useMemo } from 'react';
 import type { Address } from 'viem';
 import { useEmbeddedAuth } from '../auth/useAuth';
 import type { SophonAccount } from '../context/sophon-context';
-import { Capabilities } from '../lib/capabilities';
 import { sendUIMessage } from '../messaging';
 import { getRefusedRPC } from '../messaging/utils';
 import { useSophonContext } from './use-sophon-context';
@@ -25,7 +25,7 @@ export const useFlowManager = () => {
     updateRefreshToken,
     setConnectingAccount,
     connectingAccount,
-    capabilities,
+    requiresAuthorization,
   } = useSophonContext();
   const { getAccessToken } = useSophonToken();
   const { waitForAuthentication, embeddedUserId, createEmbeddedWalletClient } =
@@ -43,7 +43,6 @@ export const useFlowManager = () => {
   const authorize = useCallback(
     async (fields: string[], directAccount?: SophonAccount) => {
       const account = directAccount ?? connectingAccount;
-      console.log('authorizing', account?.address);
       if (!account?.address) {
         throw new Error('No account address found');
       }
@@ -133,10 +132,39 @@ export const useFlowManager = () => {
         expiresAt: tokens.refreshTokenExpiresAt,
       });
 
-      console.log('setting account', account);
-
       setAccount({ ...account });
       setConnectingAccount(undefined);
+      if (currentRequest) {
+        sendUIMessage('incomingRpc', {
+          id: crypto.randomUUID(),
+          requestId: currentRequest.id,
+          content: {
+            result: {
+              account: {
+                address: account.address,
+                activeChainId: chainId,
+              },
+              chainsInfo: [
+                {
+                  id: chainId,
+                  capabilities: {
+                    paymasterService: { supported: true },
+                    atomicBatch: { supported: true },
+                    auxiliaryFunds: { supported: true },
+                  },
+                  contracts: {
+                    accountFactory: CHAIN_CONTRACTS[chainId].accountFactory,
+                    passkey: CHAIN_CONTRACTS[chainId].passkey,
+                    session: CHAIN_CONTRACTS[chainId].session,
+                    recovery: CHAIN_CONTRACTS[chainId].recovery,
+                    accountPaymaster: CHAIN_CONTRACTS[chainId].accountPaymaster,
+                  },
+                },
+              ],
+            },
+          },
+        });
+      }
       // await 500 ms to allow react to propagate the change, to remove in the future
       // await new Promise((resolve) => setTimeout(resolve, 500));
     },
@@ -146,6 +174,7 @@ export const useFlowManager = () => {
       updateAccessToken,
       updateRefreshToken,
       createEmbeddedWalletClient,
+      currentRequest,
     ],
   );
 
@@ -180,11 +209,11 @@ export const useFlowManager = () => {
 
       // if the modal is not enabled, we need to issue the authorization on behalf of the user with
       // limited data scopes for the partner
-      if (!capabilities.includes(Capabilities.AUTHORIZATION_MODAL)) {
+      if (!requiresAuthorization) {
         await authorize([], desiredAccount);
       }
     },
-    [setConnectingAccount, capabilities, authorize],
+    [setConnectingAccount, requiresAuthorization, authorize],
   );
 
   const consent = useCallback(async (kinds: string[]) => {

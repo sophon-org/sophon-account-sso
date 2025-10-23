@@ -24,3 +24,44 @@ export const createDynamicClient = (chainId: ChainId) => {
 };
 
 export type DynamicClientType = Awaited<ReturnType<typeof createDynamicClient>>;
+
+export const NoopDynamicClient: DynamicClientType = {
+  auth: {
+    on: () => {
+      return () => {
+        return;
+      };
+    },
+    off: () => {
+      return () => {
+        return;
+      };
+    },
+    email: {
+      sendOTP: () => {
+        return Promise.resolve();
+      },
+      verifyOTP: () => {
+        return Promise.resolve();
+      },
+      resendOTP: () => {
+        return Promise.resolve();
+      },
+    },
+    social: {
+      connect: () => {
+        return Promise.resolve();
+      },
+      getAllLinkedAccounts: () => {
+        return Promise.resolve([]);
+      },
+    },
+    logout: () => {
+      return Promise.resolve();
+    },
+    authenticatedUser: null,
+  },
+  wallets: {
+    primary: null,
+  },
+} as unknown as DynamicClientType;
