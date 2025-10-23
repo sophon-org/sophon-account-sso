@@ -12,8 +12,8 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
       chainId={sophonOSTestnet.id}
       partnerId="123b216c-678e-4611-af9a-2d5b7b061258"
       insets={insets}
-      dataScopes={[DataScopes.email, DataScopes.apple]}
-      requestedCapabilities={[Capabilities.WALLET_CONNECT]}
+      // dataScopes={[DataScopes.email, DataScopes.apple]}
+      // requestedCapabilities={[Capabilities.WALLET_CONNECT]}
     >
       {children}
     </SophonContextProvider>
