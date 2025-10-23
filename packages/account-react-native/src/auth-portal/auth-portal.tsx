@@ -85,7 +85,7 @@ export function AuthPortal(props: AuthPortalProps) {
   const showModal = useCallback(() => {
     bottomSheetRef.current?.expand();
     removeKeyboardListener();
-    addKeyboardListener('keyboardWillHide', () => {
+    addKeyboardListener('keyboardDidHide', () => {
       console.log('keyboard will hide - snap to index 0');
       bottomSheetRef.current?.snapToIndex(0);
     });
