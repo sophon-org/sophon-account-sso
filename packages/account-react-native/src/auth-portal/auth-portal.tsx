@@ -42,6 +42,7 @@ export type AuthPortalProps = {
 export function AuthPortal(props: AuthPortalProps) {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const disableAnimation = useBooleanState(true);
+  const { addKeyboardListener, removeKeyboardListener } = useKeyboard();
 
   const {
     currentRequest,
@@ -50,8 +51,10 @@ export function AuthPortal(props: AuthPortalProps) {
     clearCurrentRequest,
     actions,
   } = useFlowManager();
+  const { getAvailableDataScopes } = useEmbeddedAuth();
+  const { partner } = useSophonPartner();
 
-  const { addKeyboardListener, removeKeyboardListener } = useKeyboard();
+  const [dataScopes, setDataScopes] = useState<DataScopes[]>([]);
   const {
     currentStep,
     showBackButton,
@@ -64,6 +67,15 @@ export function AuthPortal(props: AuthPortalProps) {
     cleanup,
     setParams,
   } = useAuthPortalController();
+
+  useEffect(() => {
+    (async () => {
+      const available = await getAvailableDataScopes();
+      setDataScopes(
+        props.scopes?.filter((scope) => available.includes(scope)) ?? [],
+      );
+    })();
+  }, [getAvailableDataScopes, props.scopes]);
 
   const hideTerms = useMemo(
     () => isLoading || isConnectingAccount || currentStep === 'retry',
@@ -150,13 +162,21 @@ export function AuthPortal(props: AuthPortalProps) {
   );
 
   const onAuthenticate = useCallback<BasicStepProps['onAuthenticate']>(
-    async (ownerAddress) => {
+    async (ownerAddress, navigationParams) => {
       try {
-        navigate('loading', { replace: true });
+        if (!navigationParams || navigationParams?.from === 'retry') {
+          navigate('loading', {
+            replace: true,
+            params: { provider: navigationParams?.provider },
+          });
+        }
         await actions.authenticate(ownerAddress);
-      } catch (error) {
-        console.error('🚨 authFailed', error);
-        navigate('retry', { replace: true, params: { ownerAddress } });
+      } catch (err) {
+        console.error('Authentication failed', err);
+        navigate('retry', {
+          replace: true,
+          params: { ownerAddress, provider: navigationParams?.provider },
+        });
       }
     },
     [actions],
@@ -167,7 +187,7 @@ export function AuthPortal(props: AuthPortalProps) {
     console.log('onCancel');
     hideModal();
     clearCurrentRequest();
-  }, [hideModal]);
+  }, [hideModal, clearCurrentRequest]);
 
   const onBackToSignIn = useCallback(async () => {
     console.log('onBackToSignIn');
@@ -179,10 +199,6 @@ export function AuthPortal(props: AuthPortalProps) {
     console.log(`onError ${step ?? '-'}`, error);
   }, []);
 
-  const { getAvailableDataScopes } = useEmbeddedAuth();
-
-  const [dataScopes, setDataScopes] = useState<DataScopes[]>([]);
-
   useEffect(() => {
     (async () => {
       const available = await getAvailableDataScopes();
@@ -192,7 +208,7 @@ export function AuthPortal(props: AuthPortalProps) {
     })();
   }, [getAvailableDataScopes, props.scopes]);
 
-  const { partner } = useSophonPartner();
+  // const { partner } = useSophonPartner();
 
   const { isConnected } = useSophonAccount();
   const { requiresAuthorization } = useSophonContext();
@@ -203,6 +219,14 @@ export function AuthPortal(props: AuthPortalProps) {
       onComplete({ hide: true });
     }
   }, [onComplete, requiresAuthorization, isConnected, currentStep]);
+
+  // useEffect(() => {
+  //   // if the user connected and we are not expecting the authorization modal to show up
+  //   // we can hide the modal
+  //   if (isConnectedAndAuthorizationComplete) {
+  //     onComplete({ hide: true });
+  //   }
+  // }, [isConnectedAndAuthorizationComplete]);
 
   return (
     <AuthPortalContext.Provider
@@ -233,11 +257,7 @@ export function AuthPortal(props: AuthPortalProps) {
         android_keyboardInputMode="adjustResize"
         handleIndicatorStyle={{ backgroundColor: '#ccc' }}
       >
-        <BottomSheetScrollView
-          bounces={false}
-          keyboardDismissMode="on-drag"
-          keyboardShouldPersistTaps="never"
-        >
+        <BottomSheetScrollView bounces={false}>
           <Container margin={24}>
             <StepTransitionView
               keyProp={currentStep ?? null}

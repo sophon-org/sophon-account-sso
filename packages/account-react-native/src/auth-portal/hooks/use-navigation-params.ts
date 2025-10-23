@@ -10,6 +10,7 @@ export function useNavigationParams<T>() {
   const context = useContext(AuthPortalContext);
   if (!context)
     throw new Error('useAuthPortal must be used within AuthPortalProvider');
-  const { params } = context;
-  return useMemo(() => params as T, [params]);
+  const { params = {} } = context;
+
+  return useMemo(() => (params || {}) as T, [params]);
 }

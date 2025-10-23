@@ -22,10 +22,18 @@ export type AuthPortalContextProps = {
   setParams: (params: NavigateParams) => void;
   params: NavigateParams | null;
 };
+
+interface OnAuthenticateOptions {
+  provider?: string;
+  from?: AuthPortalStep;
+}
 export interface BasicStepProps {
   currentStep: AuthPortalContextProps['currentStep'];
   style?: ViewStyle;
-  onAuthenticate: (value: `0x${string}`) => Promise<void>;
+  onAuthenticate: (
+    value: `0x${string}`,
+    options?: OnAuthenticateOptions,
+  ) => Promise<void>;
   onComplete: (payload: { hide: boolean }) => Promise<void>;
   onBackToSignIn: () => Promise<void>;
   onCancel: () => Promise<void>;
@@ -48,9 +56,18 @@ export type VerifyCodeParams = {
 
 export type RetryParams = {
   ownerAddress: `0x${string}`;
+  provider?: string;
+};
+export type LoadingParams = {
+  provider?: string;
+  from?: AuthPortalStep;
 };
 
-export type NavigateParams = SignInParams | VerifyCodeParams | RetryParams;
+export type NavigateParams =
+  | SignInParams
+  | VerifyCodeParams
+  | RetryParams
+  | LoadingParams;
 
 export type NavigateOptions = {
   replace?: boolean;

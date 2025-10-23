@@ -45,8 +45,15 @@ export const ConsentStep: React.FC<BasicStepProps> = ({
     }));
   }, []);
 
+  const areAllConsentsSelected = useMemo(() => {
+    return Object.values(consents).every((allowed) => !!allowed);
+  }, [consents]);
+
   const handleConsentAll = useCallback(async () => {
     try {
+      if (!areAllConsentsSelected) {
+        throw new Error('Please select all consents');
+      }
       isLoadingState.setOn();
       const kinds = Object.entries(consents)
         .map(([key, allowed]) => (allowed ? key : null))
@@ -58,7 +65,14 @@ export const ConsentStep: React.FC<BasicStepProps> = ({
       onError(error as Error);
       isLoadingState.setOff();
     }
-  }, [onComplete, onError, consents, isLoadingState.state]);
+  }, [
+    onComplete,
+    onError,
+    consents,
+    isLoadingState,
+    consent,
+    areAllConsentsSelected,
+  ]);
 
   const handleOnPressEmail = useCallback(() => {
     Linking.openURL('mailto:data@sophon.xyz');
@@ -133,6 +147,7 @@ export const ConsentStep: React.FC<BasicStepProps> = ({
         <Button
           variant="primary"
           text="Confirm"
+          disabled={!areAllConsentsSelected}
           onPress={handleConsentAll}
           loading={isLoadingState.state}
         />

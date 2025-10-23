@@ -103,6 +103,10 @@ export const useAuthPortalController = () => {
     [navigation.history, isLoading, displayName, isConnecting],
   );
 
+  const isConnectedAndAuthorizationComplete = useMemo(() => {
+    return isConnected && !requiresAuthorization && !currentStep;
+  }, [isConnected, requiresAuthorization, currentStep]);
+
   return {
     isLoading,
     isConnectingAccount,
@@ -110,6 +114,7 @@ export const useAuthPortalController = () => {
     showBackButton,
     handleProps,
     params,
+    isConnectedAndAuthorizationComplete,
     ...navigation,
   };
 };
