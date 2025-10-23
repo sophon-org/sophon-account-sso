@@ -43,9 +43,10 @@ export function AuthPortal(props: AuthPortalProps) {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const disableAnimation = useBooleanState(true);
   const { addKeyboardListener, removeKeyboardListener } = useKeyboard();
+  const { isConnected } = useSophonAccount();
+  const { requiresAuthorization } = useSophonContext();
 
   const {
-    currentRequest,
     setCurrentRequest,
     cancelCurrentRequest,
     clearCurrentRequest,
@@ -103,16 +104,13 @@ export function AuthPortal(props: AuthPortalProps) {
     Keyboard.dismiss();
     cleanup();
     disableAnimation.setOff();
-  }, [removeKeyboardListener, cleanup, disableAnimation.setOff]);
+    cancelCurrentRequest();
+  }, [removeKeyboardListener, cleanup, disableAnimation, cancelCurrentRequest]);
 
-  const onCloseAndCancel = useCallback(() => {
+  const onCloseAndForceCancel = useCallback(() => {
     hideModal();
     onClose();
-    console.log('close modal', currentRequest?.id);
-    if (currentRequest?.id) {
-      cancelCurrentRequest();
-    }
-  }, [currentRequest, cancelCurrentRequest, hideModal, onClose]);
+  }, [hideModal, onClose]);
 
   const renderHandleComponent = useCallback(
     (renderProps: BottomSheetHandleProps) => {
@@ -121,11 +119,11 @@ export function AuthPortal(props: AuthPortalProps) {
           {...renderProps}
           {...handleProps}
           goBack={goBack}
-          close={onCloseAndCancel}
+          close={onCloseAndForceCancel}
         />
       );
     },
-    [onCloseAndCancel, goBack, handleProps],
+    [onCloseAndForceCancel, goBack, handleProps],
   );
 
   const renderBackdrop = useCallback(
@@ -134,11 +132,11 @@ export function AuthPortal(props: AuthPortalProps) {
         {...renderProps}
         disappearsOnIndex={-1}
         appearsOnIndex={0}
-        onPress={onCloseAndCancel}
+        onPress={onCloseAndForceCancel}
         pressBehavior={isLoading ? 'none' : 'close'}
       />
     ),
-    [isLoading, onCloseAndCancel],
+    [isLoading, onCloseAndForceCancel],
   );
 
   useUIEventHandler('outgoingRpc', (request) => {
@@ -209,8 +207,6 @@ export function AuthPortal(props: AuthPortalProps) {
     })();
   }, [getAvailableDataScopes, props.scopes]);
 
-  const { isConnected } = useSophonAccount();
-  const { requiresAuthorization } = useSophonContext();
   useEffect(() => {
     // if the user connected and we are not expecting the authorization modal to show up
     // we can hide the modal
