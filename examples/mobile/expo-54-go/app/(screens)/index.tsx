@@ -90,8 +90,16 @@ export default function HomeScreen() {
   }
 
   return (
-    <ScrollView>
-      <View className="flex-1 items-center justify-center bg-white py-8 h-screen">
+    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: 4,
+          backgroundColor: 'white',
+        }}
+      >
         {!isConnected && <ConnectButton />}
         {error && (
           <Text className="text-xl mt-2 font-bold text-red-500 p-2 mb-4 w-2/3 text-center">

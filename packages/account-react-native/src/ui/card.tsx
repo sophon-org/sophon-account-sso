@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { StyleSheet, View, type ViewProps } from 'react-native';
+import { Platform, StyleSheet, View, type ViewProps } from 'react-native';
 
 export function Card({ style, ...restProps }: ViewProps) {
   const cardStyle = useMemo(() => {
@@ -11,13 +11,19 @@ export function Card({ style, ...restProps }: ViewProps) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: 'rgba(245, 245, 245, 0.5)',
     borderRadius: 12,
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.04, // 4%
-    shadowRadius: 1,
-    elevation: 1,
+    borderWidth: 0.5,
+    borderColor: 'rgba(0,0,0,0.05)',
+    ...Platform.select({
+      ios: {
+        boxShadow: '0 2px 3px rgba(0, 0, 0, 0.08)',
+        backgroundColor: 'rgba(245, 245, 245, 0.5)',
+      },
+      android: {
+        backgroundColor: 'rgba(245, 245, 245, 1)',
+        elevation: 1,
+      },
+    }),
     overflow: 'hidden',
   },
 });
