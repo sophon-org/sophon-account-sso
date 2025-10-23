@@ -1,5 +1,17 @@
 # @sophon-labs/account-react-native
 
+## 3.0.0-next.4
+
+### Patch Changes
+
+- Flow fixes on android
+- Updated dependencies
+  - @sophon-labs/account-communicator@3.0.0-next.4
+  - @sophon-labs/account-core@3.0.0-next.4
+  - @sophon-labs/account-message-bridge@3.0.0-next.4
+  - @sophon-labs/account-partner@3.0.0-next.4
+  - @sophon-labs/account-provider@3.0.0-next.4
+
 ## 3.0.0-next.3
 
 ### Patch Changes

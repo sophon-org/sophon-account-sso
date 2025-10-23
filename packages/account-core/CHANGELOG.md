@@ -1,5 +1,11 @@
 # @sophon-labs/account-core
 
+## 3.0.0-next.4
+
+### Patch Changes
+
+- Flow fixes on android
+
 ## 3.0.0-next.3
 
 ### Patch Changes
