@@ -31,6 +31,7 @@ export function Accordion({
   );
   const bodyStyle = useAnimatedStyle(() => ({
     height: derivedHeight.value,
+    display: derivedHeight.value === 0 ? 'none' : 'flex',
   }));
 
   return (

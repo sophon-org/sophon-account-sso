@@ -62,7 +62,11 @@ export function Button({
         <Text style={theme.textStyle}>{text}</Text>
         {loading ? (
           <View style={styles.loading}>
-            <ActivityIndicator size="small" color={theme.textStyle.color} />
+            <ActivityIndicator
+              style={styles.loadingIndicator}
+              size="small"
+              color={theme.textStyle.color}
+            />
           </View>
         ) : null}
       </TouchableOpacity>
@@ -73,8 +77,16 @@ export function Button({
 const styles = StyleSheet.create({
   loading: {
     position: 'absolute',
-    top: 12,
-    right: 24,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    alignContent: 'center',
+  },
+  loadingIndicator: {
+    marginRight: 16,
   },
   fullWidth: {
     width: '100%',
@@ -86,6 +98,7 @@ const styles = StyleSheet.create({
     padding: 8,
     justifyContent: 'center',
     alignItems: 'center',
+    alignContent: 'center',
   },
   disabledButton: {
     backgroundColor: '#F0F0F0',

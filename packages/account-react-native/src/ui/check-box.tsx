@@ -82,9 +82,10 @@ export const CheckBox: React.FC<{
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
     justifyContent: 'center',
     gap: 8,
+    alignContent: 'center',
+    alignItems: 'center',
   },
   textWrapper: {
     flex: 1,

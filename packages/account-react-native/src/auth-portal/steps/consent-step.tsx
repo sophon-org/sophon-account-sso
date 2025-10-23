@@ -1,3 +1,7 @@
+import {
+  openBrowserAsync,
+  WebBrowserPresentationStyle,
+} from 'expo-web-browser';
 import { useCallback, useMemo, useState } from 'react';
 import { Linking } from 'react-native';
 import { useBooleanState, useFlowManager } from '../../hooks';
@@ -79,7 +83,9 @@ export const ConsentStep: React.FC<BasicStepProps> = ({
   }, []);
 
   const handleOnPressPrivacyPolicy = useCallback(() => {
-    Linking.openURL('https://sophon.xyz/privacypolicy');
+    openBrowserAsync('https://sophon.xyz/privacypolicy', {
+      presentationStyle: WebBrowserPresentationStyle.PAGE_SHEET,
+    });
   }, []);
 
   return (

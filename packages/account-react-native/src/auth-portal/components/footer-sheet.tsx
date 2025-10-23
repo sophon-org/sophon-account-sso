@@ -1,3 +1,7 @@
+import {
+  openBrowserAsync,
+  WebBrowserPresentationStyle,
+} from 'expo-web-browser';
 import { Image, StyleSheet, View } from 'react-native';
 import { Container, Text } from '../../ui';
 
@@ -11,12 +15,28 @@ export function FooterSheet(props: FooterSheetProps) {
       <Container isVisible={!props?.hideTerms}>
         <Text color="#8D8D8D" size="small">
           {`By logging in you are accepting our\n`}
-          <Text color="#0066FF" size="small">
+          <Text
+            onPress={() =>
+              openBrowserAsync('https://sophon.xyz/terms', {
+                presentationStyle: WebBrowserPresentationStyle.POPOVER,
+              })
+            }
+            color="#0066FF"
+            size="small"
+          >
             {' '}
             Terms of Use{' '}
           </Text>
           and
-          <Text color="#0066FF" size="small">
+          <Text
+            onPress={() =>
+              openBrowserAsync('https://sophon.xyz/privacypolicy', {
+                presentationStyle: WebBrowserPresentationStyle.PAGE_SHEET,
+              })
+            }
+            color="#0066FF"
+            size="small"
+          >
             {' '}
             Privacy Policy
           </Text>
