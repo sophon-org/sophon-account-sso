@@ -31,7 +31,7 @@ export function Accordion({
   );
   const bodyStyle = useAnimatedStyle(() => ({
     height: derivedHeight.value,
-    display: derivedHeight.value === 0 ? 'none' : 'flex',
+    display: isExpanded ? 'flex' : 'none',
   }));
 
   return (
@@ -55,6 +55,8 @@ const styles = StyleSheet.create({
   animatedView: {
     width: '100%',
     overflow: 'hidden',
+    padding: 0,
+    margin: 0,
   },
   wrapper: {
     width: '100%',
