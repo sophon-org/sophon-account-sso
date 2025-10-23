@@ -16,7 +16,7 @@ export const useSophonPartner = () => {
         }
       }
     })();
-  }, [partnerId]);
+  }, [partnerId, chainId]);
 
   return {
     partner,

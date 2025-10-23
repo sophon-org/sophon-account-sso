@@ -31,7 +31,7 @@ export const useSophonConsent = (force: boolean = false) => {
     } finally {
       setIsLoading(false);
     }
-  }, [walletClient, accessToken]);
+  }, [walletClient, accessToken, force]);
 
   return {
     requestConsent,

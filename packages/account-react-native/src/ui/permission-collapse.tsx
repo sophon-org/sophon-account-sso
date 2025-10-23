@@ -33,9 +33,12 @@ export function PermissionCollapse({
 }: PermissionCollapseProps) {
   const isExpanded = useBooleanState(initialExpanded);
 
-  const handleToggle = useCallback((value: boolean) => {
-    onChangePermission?.(value, name);
-  }, []);
+  const handleToggle = useCallback(
+    (value: boolean) => {
+      onChangePermission?.(value, name);
+    },
+    [name, onChangePermission],
+  );
 
   return (
     <Container backgroundColor="#F4F4F4" gap={8} padding={18} borderRadius={8}>
@@ -80,7 +83,7 @@ function CollapseHeader({
       duration,
       easing: Easing.out(Easing.cubic),
     });
-  }, [isExpanded]);
+  }, [isExpanded, duration, rotation]);
 
   const iconStyle = useAnimatedStyle(() => ({
     transform: [

@@ -46,13 +46,7 @@ export const useSophonAccount = () => {
     } finally {
       setIsConnecting(false);
     }
-  }, [
-    walletClient,
-    isConnectedEmbedded,
-    logoutEmbedded,
-    isConnecting,
-    setAccount,
-  ]);
+  }, [walletClient, isConnectedEmbedded, logoutEmbedded, setAccount]);
 
   const logout = useCallback(async () => {
     await Promise.all([

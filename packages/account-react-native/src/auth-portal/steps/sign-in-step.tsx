@@ -16,11 +16,7 @@ import { SocialProviderButtons } from '../components/social-provider-buttons';
 import { useNavigationParams, useNavigationPortal } from '../hooks';
 import type { BasicStepProps, SignInParams } from '../types';
 
-export const SignInStep = ({
-  onComplete,
-  onError,
-  onAuthenticate,
-}: BasicStepProps) => {
+export const SignInStep = ({ onError, onAuthenticate }: BasicStepProps) => {
   const [error, setError] = useState<null | string>(null);
   const params = useNavigationParams<SignInParams>();
   const { navigate } = useNavigationPortal();
@@ -53,9 +49,9 @@ export const SignInStep = ({
     [
       signInWithSocialProvider,
       onError,
-      providerRequest,
       onAuthenticate,
       waitForAuthentication,
+      loadingState,
     ],
   );
   const isEmailValid = useMemo(() => validateEmail(email), [email]);
@@ -74,7 +70,7 @@ export const SignInStep = ({
     } finally {
       loadingState.setOff();
     }
-  }, [signInWithEmail, onComplete, onError, email, navigate]);
+  }, [signInWithEmail, onError, email, navigate, loadingState]);
 
   const handleChangeText = useCallback((text: string) => {
     setEmail(text);

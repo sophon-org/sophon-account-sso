@@ -42,7 +42,7 @@ export const AuthorizationStep = ({
     } finally {
       isLoadingState.setOff();
     }
-  }, [onComplete, onError, authorize]);
+  }, [onComplete, onError, authorize, isLoadingState, selectedScopes]);
 
   return (
     <Container>

@@ -50,7 +50,7 @@ export function Switch({
         damping: 18,
       });
     }
-  }, [value, disabled]);
+  }, [value, disabled, progress]);
 
   const pan = Gesture.Pan()
     .enabled(!disabled)

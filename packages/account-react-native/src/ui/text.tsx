@@ -88,12 +88,14 @@ export const Text: React.FC<Props> = ({ size = 'regular', style, ...rest }) => {
       if (value !== undefined) (textStyles as any)[key] = value;
     });
     return textStyles;
+    // biome-ignore lint/correctness/useExhaustiveDependencies: biome is not smart enough to know that rest should not be a dependency
   }, [rest]);
 
   const passThroughProps = useMemo(() => {
     const clone: Record<string, unknown> = { ...rest };
     TEXT_STYLE_KEYS.forEach((k) => delete clone[k]);
     return clone as RNTextProps;
+    // biome-ignore lint/correctness/useExhaustiveDependencies: biome is not smart enough to know that rest should not be a dependency
   }, [rest]);
 
   return (

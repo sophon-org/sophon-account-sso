@@ -145,12 +145,14 @@ export const Container: React.FC<ContainerProps> = ({
       }
     });
     return viewStyles;
+    // biome-ignore lint/correctness/useExhaustiveDependencies: biome is not smart enough to know that rest should not be a dependency
   }, [rest]);
 
   const passThroughProps = useMemo(() => {
     const clone: Record<string, unknown> = { ...rest };
     VIEW_STYLE_KEYS.forEach((k) => delete clone[k]);
     return clone as ViewProps;
+    // biome-ignore lint/correctness/useExhaustiveDependencies: biome is not smart enough to know that rest should not be a dependency
   }, [rest]);
 
   if (!isVisible) return null;

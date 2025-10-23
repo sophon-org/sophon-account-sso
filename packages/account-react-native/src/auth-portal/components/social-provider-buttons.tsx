@@ -29,7 +29,7 @@ export const SocialProviderButtons = ({
     } else {
       opacity.value = withTiming(0, { duration: 200 });
     }
-  }, [providerRequest]);
+  }, [providerRequest, opacity]);
 
   const overlayStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,

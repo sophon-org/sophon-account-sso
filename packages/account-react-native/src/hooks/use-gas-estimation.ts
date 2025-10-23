@@ -95,7 +95,7 @@ export function useGasEstimation(
           setIsLoading(false);
         });
     }
-  }, [enabled, to, data, from, value, estimateGas, getGasPrice]);
+  }, [enabled, to, data, estimateGas, getGasPrice]);
 
   // Calculate total fee estimates
   const totalFeeEstimate =
