@@ -50,7 +50,12 @@ export const useAuthPortalController = () => {
       default:
         return null;
     }
-  }, [method, navigation.currentState, isConnected, connectingAccount]);
+  }, [
+    method,
+    navigation.currentState,
+    shouldAuthorize,
+    isAuthorizationModalEnabled,
+  ]);
 
   const isAuthorizationEnabled = useMemo(
     () => capabilities.includes(Capabilities.AUTHORIZATION_MODAL),
@@ -107,6 +112,10 @@ export const useAuthPortalController = () => {
     [navigation.history, isLoading, displayName, isConnecting],
   );
 
+  const isConnectedAndAuthorizationComplete = useMemo(() => {
+    return isConnected && !isAuthorizationModalEnabled && !currentStep;
+  }, [isConnected, isAuthorizationModalEnabled, currentStep]);
+
   return {
     isLoading,
     isConnectingAccount,
@@ -114,6 +123,7 @@ export const useAuthPortalController = () => {
     showBackButton,
     handleProps,
     params,
+    isConnectedAndAuthorizationComplete,
     ...navigation,
   };
 };
