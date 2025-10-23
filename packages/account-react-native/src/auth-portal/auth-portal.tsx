@@ -17,6 +17,7 @@ import { useEmbeddedAuth } from '../hooks/use-embedded-auth';
 import { useSophonPartner } from '../hooks/use-sophon-partner';
 import { useUIEventHandler } from '../messaging/ui';
 import { Container } from '../ui';
+import { execTimeoutActionByPlatform } from '../utils/platform-utils';
 import { FooterSheet } from './components/footer-sheet';
 import { AuthPortalBottomSheetHandle } from './components/handle-sheet';
 import { StepTransitionView } from './components/step-transition';
@@ -83,27 +84,40 @@ export function AuthPortal(props: AuthPortalProps) {
   );
 
   const showModal = useCallback(() => {
+    console.log('showModal');
     bottomSheetRef.current?.expand();
     removeKeyboardListener();
-    addKeyboardListener('keyboardDidHide', () => {
-      console.log('keyboard will hide - snap to index 0');
-      bottomSheetRef.current?.snapToIndex(0);
-    });
+    addKeyboardListener(
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
+      () => {
+        execTimeoutActionByPlatform(() => {
+          console.log('Keyboard snapping to index 0');
+          bottomSheetRef.current?.snapToIndex(0);
+        });
+      },
+    );
   }, [addKeyboardListener, removeKeyboardListener]);
 
   const hideModal = useCallback(() => {
     removeKeyboardListener();
-    cleanup();
     Keyboard.dismiss();
     bottomSheetRef.current?.close();
-  }, [removeKeyboardListener, cleanup]);
+  }, [removeKeyboardListener]);
 
   const onClose = useCallback(() => {
+    console.log('onClose called');
     removeKeyboardListener();
     Keyboard.dismiss();
+    disableAnimation.setOn();
     cleanup();
-    disableAnimation.setOff();
-  }, [removeKeyboardListener, cleanup, disableAnimation.setOff]);
+    // Android needs a small delay to avoid visual glitches
+    execTimeoutActionByPlatform(
+      () => {
+        bottomSheetRef.current?.close();
+      },
+      { platforms: ['android'] },
+    );
+  }, [removeKeyboardListener, cleanup, disableAnimation.setOn]);
 
   const onCloseAndCancel = useCallback(() => {
     hideModal();
