@@ -1,4 +1,4 @@
-import { AuthProvider } from '../auth/useAuth';
+import { AuthProvider } from '../hooks/use-embedded-auth';
 
 export const AVAILABLE_PROVIDERS = [
   AuthProvider.APPLE,

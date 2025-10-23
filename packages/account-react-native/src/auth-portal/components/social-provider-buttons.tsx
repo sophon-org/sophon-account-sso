@@ -5,8 +5,8 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import type { AuthProvider } from '../../auth/useAuth';
 import { AVAILABLE_PROVIDERS } from '../../constants';
+import type { AuthProvider } from '../../hooks/use-embedded-auth';
 import { Container, Icon } from '../../ui';
 import { AuthenticatingSpinner } from './circle-spinner';
 

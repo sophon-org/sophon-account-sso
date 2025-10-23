@@ -6,10 +6,10 @@ import {
 } from '@sophon-labs/account-core';
 import { useCallback, useMemo } from 'react';
 import type { Address } from 'viem';
-import { useEmbeddedAuth } from '../auth/useAuth';
 import type { SophonAccount } from '../context/sophon-context';
 import { sendUIMessage } from '../messaging';
 import { getRefusedRPC } from '../messaging/utils';
+import { useEmbeddedAuth } from './use-embedded-auth';
 import { useSophonContext } from './use-sophon-context';
 import { useSophonToken } from './use-sophon-token';
 

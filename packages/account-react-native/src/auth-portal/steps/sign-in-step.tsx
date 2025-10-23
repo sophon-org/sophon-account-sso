@@ -1,12 +1,15 @@
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { useCallback, useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { type AuthProvider, useEmbeddedAuth } from '../../auth/useAuth';
 import {
   useBooleanState,
   useFlowManager,
   useSophonCapabilities,
 } from '../../hooks';
+import {
+  type AuthProvider,
+  useEmbeddedAuth,
+} from '../../hooks/use-embedded-auth';
 import { Button, CardError, Container } from '../../ui';
 import { validateEmail } from '../../utils/validations';
 import { SocialProviderButtons } from '../components/social-provider-buttons';

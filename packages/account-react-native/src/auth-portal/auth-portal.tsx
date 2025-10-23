@@ -7,13 +7,13 @@ import BottomSheet, {
 import type { DataScopes } from '@sophon-labs/account-core';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Keyboard, Platform } from 'react-native';
-import { useEmbeddedAuth } from '../auth/useAuth';
 import {
   useBooleanState,
   useFlowManager,
   useSophonAccount,
   useSophonContext,
 } from '../hooks';
+import { useEmbeddedAuth } from '../hooks/use-embedded-auth';
 import { useSophonPartner } from '../hooks/use-sophon-partner';
 import { useUIEventHandler } from '../messaging/ui';
 import { Container } from '../ui';

@@ -5,7 +5,7 @@ import { DataScopes } from '@sophon-labs/account-core';
 import { useCallback, useEffect, useMemo } from 'react';
 import type { Address } from 'viem';
 import { eip712WalletActions } from 'viem/zksync';
-import { useSophonContext } from '../hooks';
+import { useSophonContext } from '.';
 
 export enum AuthProvider {
   APPLE = 'apple',

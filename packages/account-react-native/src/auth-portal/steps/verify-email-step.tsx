@@ -14,9 +14,9 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import { useEmbeddedAuth } from '../../auth/useAuth';
 import { OTP_CODE_LENGTH } from '../../constants/verify-otp';
 import { useBooleanState, useFlowManager } from '../../hooks';
+import { useEmbeddedAuth } from '../../hooks/use-embedded-auth';
 import { Button, CardError, Container, Text } from '../../ui';
 import { useNavigationParams } from '../hooks';
 import type { BasicStepProps, VerifyCodeParams } from '../types';
