@@ -112,15 +112,15 @@ export const useEmbeddedAuth = () => {
 
   const createEmbeddedWalletClient = useCallback(async () => {
     return (
-      await dynamicClient!.viem.createWalletClient({
-        wallet: dynamicClient!.wallets.primary!,
+      await viem.createWalletClient({
+        wallet: wallets.primary!,
       })
     ).extend(eip712WalletActions());
   }, [viem, wallets.primary]);
 
   useEffect(() => {
     dynamicClient.auth.on('authFailed', (data) => {
-      console.log('🚨 authFailed', data);
+      console.log('🚨 authFailed:', data);
     });
   }, [dynamicClient]);
 

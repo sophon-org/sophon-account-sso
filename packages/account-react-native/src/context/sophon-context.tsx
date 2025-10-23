@@ -148,7 +148,7 @@ export const SophonContextProvider = ({
   const provider = useMemo(() => {
     const provider = createMobileProvider(serverUrl, chainId);
     return provider;
-  }, [serverUrl, chain]);
+  }, [serverUrl, chainId]);
   const capabilities = useMemo<Capabilities[]>(
     () => requestedCapabilities ?? [],
     [requestedCapabilities],
@@ -271,17 +271,15 @@ export const SophonContextProvider = ({
       refreshToken,
       partnerId,
       error,
-      setError,
       chainId,
       updateAccessToken,
       updateRefreshToken,
       currentRequest,
-      setCurrentRequest,
       connectingAccount,
-      setConnectingAccount,
       capabilities,
       dynamicClient,
       requiresAuthorization,
+      setAccountWithEffect,
     ],
   );
 

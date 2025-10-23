@@ -39,19 +39,10 @@ export const useAuthPortalController = () => {
         return 'transaction';
       case 'sophon_requestConsent':
         return 'consent';
-      // case 'wallet_revokePermissions':
-      // case 'wallet_disconnect':
       default:
         return null;
     }
-  }, [
-    method,
-    navigation.currentState,
-    isConnected,
-    connectingAccount,
-    requiresAuthorization,
-    shouldAuthorize,
-  ]);
+  }, [method, navigation.currentState, requiresAuthorization, shouldAuthorize]);
 
   const { isLoading, isConnectingAccount } = useMemo(() => {
     return {
@@ -92,7 +83,7 @@ export const useAuthPortalController = () => {
     }
 
     return '';
-  }, [account, userName, isConnected, currentStep]);
+  }, [account, userName, currentStep]);
 
   const handleProps = useMemo(
     () => ({
@@ -100,7 +91,7 @@ export const useAuthPortalController = () => {
       hideCloseButton: isLoading || isConnecting,
       title: displayName ?? 'Sign in',
     }),
-    [navigation.history, isLoading, displayName, isConnecting],
+    [showBackButton, isLoading, displayName, isConnecting],
   );
 
   const isConnectedAndAuthorizationComplete = useMemo(() => {

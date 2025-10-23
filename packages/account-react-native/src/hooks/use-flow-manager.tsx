@@ -38,7 +38,7 @@ export const useFlowManager = () => {
 
   const clearCurrentRequest = useCallback(() => {
     setCurrentRequest(undefined);
-  }, []);
+  }, [setCurrentRequest]);
 
   const authorize = useCallback(
     async (fields: string[], directAccount?: SophonAccount) => {
@@ -175,6 +175,12 @@ export const useFlowManager = () => {
       updateRefreshToken,
       createEmbeddedWalletClient,
       currentRequest,
+      chain,
+      chainId,
+      partnerId,
+      embeddedUserId,
+      setConnectingAccount,
+      setCurrentRequest,
     ],
   );
 
@@ -213,41 +219,44 @@ export const useFlowManager = () => {
         await authorize([], desiredAccount);
       }
     },
-    [setConnectingAccount, requiresAuthorization, authorize],
+    [setConnectingAccount, requiresAuthorization, authorize, chainId],
   );
 
-  const consent = useCallback(async (kinds: string[]) => {
-    const accessToken = await getAccessToken();
-    if (!accessToken) {
-      throw new Error('No access token found');
-    }
-    const consentResponse = await AuthService.requestConsent(
-      chainId,
-      accessToken.value,
-      kinds,
-    );
+  const consent = useCallback(
+    async (kinds: string[]) => {
+      const accessToken = await getAccessToken();
+      if (!accessToken) {
+        throw new Error('No access token found');
+      }
+      const consentResponse = await AuthService.requestConsent(
+        chainId,
+        accessToken.value,
+        kinds,
+      );
 
-    // force refresh the token so we have the updated consent claims
-    await getAccessToken(true);
+      // force refresh the token so we have the updated consent claims
+      await getAccessToken(true);
 
-    sendUIMessage('incomingRpc', {
-      id: crypto.randomUUID(),
-      requestId: currentRequest!.id,
-      content: {
-        result: {
-          consentAds: consentResponse.some(
-            (consent: { kind: string }) =>
-              consent.kind === 'PERSONALIZATION_ADS',
-          ),
-          consentData: consentResponse.some(
-            (consent: { kind: string }) => consent.kind === 'SHARING_DATA',
-          ),
+      sendUIMessage('incomingRpc', {
+        id: crypto.randomUUID(),
+        requestId: currentRequest!.id,
+        content: {
+          result: {
+            consentAds: consentResponse.some(
+              (consent: { kind: string }) =>
+                consent.kind === 'PERSONALIZATION_ADS',
+            ),
+            consentData: consentResponse.some(
+              (consent: { kind: string }) => consent.kind === 'SHARING_DATA',
+            ),
+          },
         },
-      },
-    });
+      });
 
-    setCurrentRequest(undefined);
-  }, []);
+      setCurrentRequest(undefined);
+    },
+    [chainId, getAccessToken, currentRequest, setCurrentRequest],
+  );
 
   return {
     hasRequest: !!currentRequest,

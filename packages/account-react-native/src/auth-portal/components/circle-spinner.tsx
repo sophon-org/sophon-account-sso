@@ -32,7 +32,7 @@ export function AuthenticatingSpinner({
       }),
       -1,
     );
-  }, []);
+  }, [rotation]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ rotate: `${rotation.value}deg` }],

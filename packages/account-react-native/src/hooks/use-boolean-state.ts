@@ -17,15 +17,15 @@ export const useBooleanState = (initialState = false): BooleanStateHook => {
 
   const setOn = useCallback(() => {
     setState(true);
-  }, [setState]);
+  }, []);
 
   const setOff = useCallback(() => {
     setState(false);
-  }, [setState]);
+  }, []);
 
   const toggle = useCallback(() => {
     setState((state) => !state);
-  }, [setState]);
+  }, []);
 
   return {
     state,

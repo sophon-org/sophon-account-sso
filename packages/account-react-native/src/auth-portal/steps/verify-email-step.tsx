@@ -47,7 +47,7 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
         opacities[index]!.value = withTiming(0.3, { duration: 120 });
       });
     },
-    [onError],
+    [onError, errorState, opacities],
   );
 
   const handleVerifyEmailOTP = useCallback(
@@ -66,50 +66,65 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
         loadingState.setOff();
       }
     },
-    [verifyEmailOTP, onAuthenticate, codes, onError, waitForAuthentication],
+    [
+      verifyEmailOTP,
+      onAuthenticate,
+      codes,
+      errorState,
+      loadingState,
+      handleOnError,
+      waitForAuthentication,
+    ],
   );
 
-  const focusIndex = (index: number) => {
+  const focusIndex = useCallback((index: number) => {
     inputsRef.current[index]?.focus();
-  };
+  }, []);
 
   const onCompleteCode = useCallback(() => {
     Keyboard.dismiss();
     inputsRef.current.forEach((input) => input?.blur());
   }, []);
 
-  const handleChange = useCallback((text: string, index: number) => {
-    let digits = text.replace(/[^0-9]/g, '').split('');
-    if (digits.length === 0) return;
-    setValues((values) => {
-      const newValues = [...values];
-      let nextIndex = index;
-      // copy and paste case or multiple digits input
-      const currentValue = newValues[nextIndex];
-      if (currentValue && text.startsWith(currentValue)) {
-        digits = digits.slice(1);
-      }
-
-      digits.forEach((decimal) => {
-        if (nextIndex < OTP_CODE_LENGTH) {
-          newValues[nextIndex] = decimal;
-          scales[nextIndex]!.value = withTiming(1.1, { duration: 100 }, () => {
-            scales[nextIndex]!.value = withTiming(1, { duration: 100 });
-          });
-          opacities[nextIndex]!.value = withTiming(1, { duration: 150 });
+  const handleChange = useCallback(
+    (text: string, index: number) => {
+      let digits = text.replace(/[^0-9]/g, '').split('');
+      if (digits.length === 0) return;
+      setValues((values) => {
+        const newValues = [...values];
+        let nextIndex = index;
+        // copy and paste case or multiple digits input
+        const currentValue = newValues[nextIndex];
+        if (currentValue && text.startsWith(currentValue)) {
+          digits = digits.slice(1);
         }
-        nextIndex++;
+
+        digits.forEach((decimal) => {
+          if (nextIndex < OTP_CODE_LENGTH) {
+            newValues[nextIndex] = decimal;
+            scales[nextIndex]!.value = withTiming(
+              1.1,
+              { duration: 100 },
+              () => {
+                scales[nextIndex]!.value = withTiming(1, { duration: 100 });
+              },
+            );
+            opacities[nextIndex]!.value = withTiming(1, { duration: 150 });
+          }
+          nextIndex++;
+        });
+
+        if (nextIndex < OTP_CODE_LENGTH) {
+          focusIndex(nextIndex);
+        } else if (digits.length === OTP_CODE_LENGTH) {
+          onCompleteCode();
+        }
+
+        return newValues;
       });
-
-      if (nextIndex < OTP_CODE_LENGTH) {
-        focusIndex(nextIndex);
-      } else if (digits.length === OTP_CODE_LENGTH) {
-        onCompleteCode();
-      }
-
-      return newValues;
-    });
-  }, []);
+    },
+    [focusIndex, onCompleteCode, opacities, scales],
+  );
 
   const handleKeyPress = (
     event: NativeSyntheticEvent<TextInputKeyPressEventData>,

@@ -89,21 +89,21 @@ export function AuthPortal(props: AuthPortalProps) {
       console.log('keyboard will hide - snap to index 0');
       bottomSheetRef.current?.snapToIndex(0);
     });
-  }, []);
+  }, [addKeyboardListener, removeKeyboardListener]);
 
   const hideModal = useCallback(() => {
     removeKeyboardListener();
     cleanup();
     Keyboard.dismiss();
     bottomSheetRef.current?.close();
-  }, []);
+  }, [removeKeyboardListener, cleanup]);
 
   const onClose = useCallback(() => {
     removeKeyboardListener();
     Keyboard.dismiss();
     cleanup();
     disableAnimation.setOff();
-  }, []);
+  }, [removeKeyboardListener, cleanup, disableAnimation.setOff]);
 
   const onCloseAndCancel = useCallback(() => {
     hideModal();
@@ -112,7 +112,7 @@ export function AuthPortal(props: AuthPortalProps) {
     if (currentRequest?.id) {
       cancelCurrentRequest();
     }
-  }, [currentRequest]);
+  }, [currentRequest, cancelCurrentRequest, hideModal, onClose]);
 
   const renderHandleComponent = useCallback(
     (renderProps: BottomSheetHandleProps) => {
@@ -138,7 +138,7 @@ export function AuthPortal(props: AuthPortalProps) {
         pressBehavior={isLoading ? 'none' : 'close'}
       />
     ),
-    [isLoading, onCloseAndCancel, bottomSheetRef],
+    [isLoading, onCloseAndCancel],
   );
 
   useUIEventHandler('outgoingRpc', (request) => {
@@ -158,7 +158,7 @@ export function AuthPortal(props: AuthPortalProps) {
         hideModal();
       }
     },
-    [hideModal],
+    [hideModal, clearCurrentRequest],
   );
 
   const onAuthenticate = useCallback<BasicStepProps['onAuthenticate']>(
@@ -179,7 +179,7 @@ export function AuthPortal(props: AuthPortalProps) {
         });
       }
     },
-    [actions],
+    [actions, navigate],
   );
 
   const onCancel = useCallback(async () => {
@@ -196,6 +196,7 @@ export function AuthPortal(props: AuthPortalProps) {
 
   const onError = useCallback(async (error: Error, step?: AuthPortalStep) => {
     // clearCurrentRequest();
+    // TODO
     console.log(`onError ${step ?? '-'}`, error);
   }, []);
 
@@ -208,8 +209,6 @@ export function AuthPortal(props: AuthPortalProps) {
     })();
   }, [getAvailableDataScopes, props.scopes]);
 
-  // const { partner } = useSophonPartner();
-
   const { isConnected } = useSophonAccount();
   const { requiresAuthorization } = useSophonContext();
   useEffect(() => {
@@ -219,14 +218,6 @@ export function AuthPortal(props: AuthPortalProps) {
       onComplete({ hide: true });
     }
   }, [onComplete, requiresAuthorization, isConnected, currentStep]);
-
-  // useEffect(() => {
-  //   // if the user connected and we are not expecting the authorization modal to show up
-  //   // we can hide the modal
-  //   if (isConnectedAndAuthorizationComplete) {
-  //     onComplete({ hide: true });
-  //   }
-  // }, [isConnectedAndAuthorizationComplete]);
 
   return (
     <AuthPortalContext.Provider
