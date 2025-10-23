@@ -23,7 +23,7 @@ export const useAuthPortalController = () => {
   const { connectingAccount } = useSophonContext();
   const { requiresAuthorization } = useSophonContext();
 
-  const shouldAuthorize = isConnected || connectingAccount;
+  const shouldAuthorize = isConnected || !!connectingAccount;
 
   const currentStep = useMemo<AuthPortalStep | null | undefined>(() => {
     switch (method) {

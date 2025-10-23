@@ -11,9 +11,11 @@ import {
 import type { EIP1193Provider } from '@sophon-labs/account-provider';
 import {
   createContext,
+  type MutableRefObject,
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import {
@@ -82,6 +84,7 @@ export interface SophonContextConfig {
   setError: (error: { description: string; code: number }) => void;
   insets?: AuthPortalProps['insets'];
   currentRequest?: Message;
+  currentRequestId: MutableRefObject<Message['id'] | undefined>;
   setCurrentRequest: (request?: Message) => void;
   capabilities: Capabilities[];
   dynamicClient: DynamicClientType;
@@ -104,6 +107,9 @@ export const SophonContext = createContext<SophonContextConfig>({
   capabilities: [],
   dynamicClient: NoopDynamicClient,
   requiresAuthorization: false,
+  currentRequestId: { current: undefined } as MutableRefObject<
+    Message['id'] | undefined
+  >,
 });
 
 export interface SophonAccount {
@@ -135,7 +141,7 @@ export const SophonContextProvider = ({
   );
   const [account, setAccount] = useState<SophonAccount | undefined>();
   const [currentRequest, setCurrentRequest] = useState<Message | undefined>();
-
+  const currentRequestId = useRef<Message['id'] | undefined>();
   const [initialized, setInitialized] = useState(false);
   const [accessToken, setAccessToken] = useState<SophonJWTToken | undefined>();
   const [refreshToken, setRefreshToken] = useState<
@@ -165,6 +171,11 @@ export const SophonContextProvider = ({
     () => createSophonWalletClient(chain, custom(provider)),
     [chain, provider],
   );
+
+  const setCurrentRequestWithEffect = useCallback((request?: Message) => {
+    setCurrentRequest(request);
+    currentRequestId.current = request?.id;
+  }, []);
 
   useEffect(() => {
     setDynamicClient(createDynamicClient(chainId));
@@ -254,12 +265,13 @@ export const SophonContextProvider = ({
       updateAccessToken,
       updateRefreshToken,
       currentRequest,
-      setCurrentRequest,
+      setCurrentRequest: setCurrentRequestWithEffect,
       connectingAccount,
       setConnectingAccount,
       capabilities,
       dynamicClient,
       requiresAuthorization,
+      currentRequestId,
     }),
     [
       initialized,
@@ -280,6 +292,7 @@ export const SophonContextProvider = ({
       dynamicClient,
       requiresAuthorization,
       setAccountWithEffect,
+      setCurrentRequestWithEffect,
     ],
   );
 

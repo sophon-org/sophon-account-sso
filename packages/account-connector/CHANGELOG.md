@@ -1,5 +1,14 @@
 # @sophon-labs/account-connector
 
+## 3.0.0-next.3
+
+### Patch Changes
+
+- More enhancements on ui and auth flow
+- Updated dependencies
+  - @sophon-labs/account-core@3.0.0-next.3
+  - @sophon-labs/account-provider@3.0.0-next.3
+
 ## 3.0.0-next.2
 
 ### Patch Changes

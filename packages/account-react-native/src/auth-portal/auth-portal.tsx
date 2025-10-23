@@ -44,9 +44,10 @@ export function AuthPortal(props: AuthPortalProps) {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const disableAnimation = useBooleanState(true);
   const { addKeyboardListener, removeKeyboardListener } = useKeyboard();
+  const { isConnected } = useSophonAccount();
+  const { requiresAuthorization } = useSophonContext();
 
   const {
-    currentRequest,
     setCurrentRequest,
     cancelCurrentRequest,
     clearCurrentRequest,
@@ -117,16 +118,14 @@ export function AuthPortal(props: AuthPortalProps) {
       },
       { platforms: ['android'] },
     );
-  }, [removeKeyboardListener, cleanup, disableAnimation.setOn]);
+    cancelCurrentRequest();
+  }, [removeKeyboardListener, cleanup, disableAnimation, cancelCurrentRequest]);
 
-  const onCloseAndCancel = useCallback(() => {
+  const onCloseAndForceCancel = useCallback(async () => {
     hideModal();
     onClose();
-    console.log('close modal', currentRequest?.id);
-    if (currentRequest?.id) {
-      cancelCurrentRequest();
-    }
-  }, [currentRequest, cancelCurrentRequest, hideModal, onClose]);
+    cleanup();
+  }, [hideModal, onClose, cleanup]);
 
   const renderHandleComponent = useCallback(
     (renderProps: BottomSheetHandleProps) => {
@@ -135,11 +134,11 @@ export function AuthPortal(props: AuthPortalProps) {
           {...renderProps}
           {...handleProps}
           goBack={goBack}
-          close={onCloseAndCancel}
+          close={onCloseAndForceCancel}
         />
       );
     },
-    [onCloseAndCancel, goBack, handleProps],
+    [onCloseAndForceCancel, goBack, handleProps],
   );
 
   const renderBackdrop = useCallback(
@@ -148,11 +147,11 @@ export function AuthPortal(props: AuthPortalProps) {
         {...renderProps}
         disappearsOnIndex={-1}
         appearsOnIndex={0}
-        onPress={onCloseAndCancel}
+        onPress={onCloseAndForceCancel}
         pressBehavior={isLoading ? 'none' : 'close'}
       />
     ),
-    [isLoading, onCloseAndCancel],
+    [isLoading, onCloseAndForceCancel],
   );
 
   useUIEventHandler('outgoingRpc', (request) => {
@@ -196,17 +195,9 @@ export function AuthPortal(props: AuthPortalProps) {
     [actions, navigate],
   );
 
-  const onCancel = useCallback(async () => {
-    // clearCurrentRequest();
-    console.log('onCancel');
-    hideModal();
-    clearCurrentRequest();
-  }, [hideModal, clearCurrentRequest]);
-
   const onBackToSignIn = useCallback(async () => {
-    console.log('onBackToSignIn');
-    cleanup();
-  }, [cleanup]);
+    goBack();
+  }, [goBack]);
 
   const onError = useCallback(async (error: Error, step?: AuthPortalStep) => {
     // clearCurrentRequest();
@@ -223,8 +214,6 @@ export function AuthPortal(props: AuthPortalProps) {
     })();
   }, [getAvailableDataScopes, props.scopes]);
 
-  const { isConnected } = useSophonAccount();
-  const { requiresAuthorization } = useSophonContext();
   useEffect(() => {
     // if the user connected and we are not expecting the authorization modal to show up
     // we can hide the modal
@@ -273,7 +262,7 @@ export function AuthPortal(props: AuthPortalProps) {
                 key={currentStep}
                 currentStep={currentStep ?? null}
                 onComplete={onComplete}
-                onCancel={onCancel}
+                onCancel={onCloseAndForceCancel}
                 onError={onError}
                 onAuthenticate={onAuthenticate}
                 onBackToSignIn={onBackToSignIn}

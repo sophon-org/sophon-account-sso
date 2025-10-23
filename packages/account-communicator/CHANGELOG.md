@@ -1,5 +1,11 @@
 # @sophon-labs/account-eip6963
 
+## 3.0.0-next.3
+
+### Patch Changes
+
+- More enhancements on ui and auth flow
+
 ## 3.0.0-next.2
 
 ### Patch Changes

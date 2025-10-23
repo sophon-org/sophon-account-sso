@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { useBooleanState, useFlowManager } from '../../hooks';
+import { useBooleanState, useFlowManager, useSophonAccount } from '../../hooks';
 import { Button, Card, CheckBox, Container, Text } from '../../ui';
 import { sentenceCase } from '../../utils/string-utils';
 import type { BasicStepProps } from '../types';
@@ -16,6 +16,7 @@ export const AuthorizationStep = ({
   const {
     actions: { authorize },
   } = useFlowManager();
+  const { logout } = useSophonAccount();
   const [selectedScopes, setSelectedScopes] = useState<string[]>([]);
 
   const handleOnSelectScope = useCallback(
@@ -43,6 +44,10 @@ export const AuthorizationStep = ({
       isLoadingState.setOff();
     }
   }, [onComplete, onError, authorize, isLoadingState, selectedScopes]);
+
+  const handleCancel = useCallback(async () => {
+    await Promise.all([logout(), onCancel()]);
+  }, [logout, onCancel]);
 
   return (
     <Container>
@@ -88,7 +93,7 @@ export const AuthorizationStep = ({
           containerStyle={styles.buttonWrapper}
           text="Cancel"
           variant="secondary"
-          onPress={onCancel}
+          onPress={handleCancel}
           disabled={isLoadingState.state}
         />
         <Button

@@ -8,7 +8,7 @@ Before you start, you need these libraries:
 
 ```sh
 # Expo packages
-npx expo install expo-standard-web-crypto expo-crypto expo-network expo-secure-store expo-linking @react-native-async-storage/async-storage @gorhom/bottom-sheet react-native-gesture-handler react-native-reanimated react-native-svg
+npx expo install expo-standard-web-crypto expo-web-browser expo-crypto expo-network expo-secure-store expo-linking @react-native-async-storage/async-storage @gorhom/bottom-sheet react-native-gesture-handler react-native-reanimated react-native-svg
 ```
 
 After that, you are ready to install our SDK:

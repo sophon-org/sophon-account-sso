@@ -5,8 +5,15 @@ import { useEmbeddedAuth } from './use-embedded-auth';
 import { useSophonContext } from './use-sophon-context';
 
 export const useSophonAccount = () => {
-  const { initialized, walletClient, setAccount, provider, account, error } =
-    useSophonContext();
+  const {
+    initialized,
+    walletClient,
+    setAccount,
+    provider,
+    account,
+    error,
+    setConnectingAccount,
+  } = useSophonContext();
   const [accountError, setAccountError] = useState<{
     description: string;
     code: number;
@@ -55,9 +62,16 @@ export const useSophonAccount = () => {
       provider?.disconnect(),
     ]);
 
+    setConnectingAccount(undefined);
     setAccount(undefined);
     SophonAppStorage.clear();
-  }, [logoutEmbedded, provider, setAccount, walletClient]);
+  }, [
+    logoutEmbedded,
+    provider,
+    setAccount,
+    walletClient,
+    setConnectingAccount,
+  ]);
 
   // Make sure to only return that the user is connected after
   // context initialization is complete, that way we make sure that

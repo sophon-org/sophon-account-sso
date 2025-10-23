@@ -26,6 +26,7 @@ export const useFlowManager = () => {
     setConnectingAccount,
     connectingAccount,
     requiresAuthorization,
+    currentRequestId,
   } = useSophonContext();
   const { getAccessToken } = useSophonToken();
   const { waitForAuthentication, embeddedUserId, createEmbeddedWalletClient } =
@@ -222,6 +223,13 @@ export const useFlowManager = () => {
     [setConnectingAccount, requiresAuthorization, authorize, chainId],
   );
 
+  const cancelCurrentRequest = useCallback(() => {
+    if (currentRequestId.current) {
+      sendUIMessage('incomingRpc', getRefusedRPC(currentRequestId.current));
+      clearCurrentRequest();
+    }
+  }, [currentRequestId, clearCurrentRequest]);
+
   const consent = useCallback(
     async (kinds: string[]) => {
       const accessToken = await getAccessToken();
@@ -264,12 +272,7 @@ export const useFlowManager = () => {
     currentRequest,
     setCurrentRequest,
     clearCurrentRequest,
-    cancelCurrentRequest: () => {
-      if (currentRequest?.id) {
-        sendUIMessage('incomingRpc', getRefusedRPC(currentRequest.id));
-        clearCurrentRequest();
-      }
-    },
+    cancelCurrentRequest,
     connectingAccount,
     actions: {
       authenticate,
