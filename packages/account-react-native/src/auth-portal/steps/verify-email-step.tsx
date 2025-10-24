@@ -1,5 +1,5 @@
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Keyboard,
   type NativeSyntheticEvent,
@@ -173,7 +173,6 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
           ref={(el) => {
             inputsRef.current[index] = el as TextInput;
           }}
-          autoFocus={index === 0}
           selection={{ start: 1, end: 1 }}
           style={[styles.input, loadingState.state && styles.inputDisabled]}
           keyboardType="number-pad"
@@ -194,6 +193,10 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
       </Animated.View>
     );
   };
+
+  useEffect(() => {
+    focusIndex(0);
+  }, [focusIndex]);
 
   return (
     <Container>

@@ -246,10 +246,10 @@ export function AuthPortal(props: AuthPortalProps) {
         animateOnMount
         enablePanDownToClose={!handleProps?.hideCloseButton}
         enableDynamicSizing={true}
-        keyboardBehavior={Platform.OS === 'ios' ? 'interactive' : 'fillParent'}
+        keyboardBehavior="interactive"
         keyboardBlurBehavior="restore"
         enableBlurKeyboardOnGesture={true}
-        android_keyboardInputMode="adjustResize"
+        android_keyboardInputMode="adjustPan"
         handleIndicatorStyle={{ backgroundColor: '#ccc' }}
       >
         <BottomSheetScrollView
