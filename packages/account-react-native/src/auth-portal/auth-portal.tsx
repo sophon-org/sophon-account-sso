@@ -78,10 +78,14 @@ export function AuthPortal(props: AuthPortalProps) {
     [isLoading, isConnectingAccount, currentStep],
   );
 
+  const expandSheet = useCallback(() => {
+    bottomSheetRef.current?.expand();
+  }, []);
+
   const showModal = useCallback(() => {
+    removeKeyboardListener();
     console.log('showModal');
     bottomSheetRef.current?.expand();
-    removeKeyboardListener();
     addKeyboardListener(
       Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
       () => {
@@ -105,6 +109,7 @@ export function AuthPortal(props: AuthPortalProps) {
     removeKeyboardListener();
     Keyboard.dismiss();
     disableAnimation.setOn();
+    cancelCurrentRequest();
     cleanup();
     // Android needs a small delay to avoid visual glitches
     execTimeoutActionByPlatform(
@@ -113,7 +118,6 @@ export function AuthPortal(props: AuthPortalProps) {
       },
       { platforms: ['android'] },
     );
-    cancelCurrentRequest();
   }, [removeKeyboardListener, cleanup, disableAnimation, cancelCurrentRequest]);
 
   const onCloseAndForceCancel = useCallback(async () => {
@@ -226,6 +230,7 @@ export function AuthPortal(props: AuthPortalProps) {
         navigate,
         goBack,
         setParams,
+        expandSheet,
       }}
     >
       <BottomSheet
@@ -250,10 +255,11 @@ export function AuthPortal(props: AuthPortalProps) {
         <BottomSheetScrollView
           bounces={false}
           keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
           <Container margin={24}>
             <StepTransitionView
-              keyProp={currentStep ?? null}
+              keyProp={currentStep}
               isBackAvailable={showBackButton}
               disableAnimation={disableAnimation.state}
             >

@@ -1,6 +1,6 @@
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { useCallback, useMemo, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Keyboard, StyleSheet, Text, View } from 'react-native';
 import {
   useBooleanState,
   useFlowManager,
@@ -14,9 +14,12 @@ import { useTranslation } from '../../i18n';
 import { Button, CardError, Container } from '../../ui';
 import { validateEmail } from '../../utils/validations';
 import { SocialProviderButtons } from '../components/social-provider-buttons';
-import { useNavigationParams, useNavigationPortal } from '../hooks';
+import {
+  useBottomSheetKeyboardFix,
+  useNavigationParams,
+  useNavigationPortal,
+} from '../hooks';
 import type { BasicStepProps, SignInParams } from '../types';
-
 export const SignInStep = ({ onError, onAuthenticate }: BasicStepProps) => {
   const { t } = useTranslation();
   const [error, setError] = useState<null | string>(null);
@@ -32,9 +35,12 @@ export const SignInStep = ({ onError, onAuthenticate }: BasicStepProps) => {
     actions: { waitForAuthentication },
   } = useFlowManager();
 
+  useBottomSheetKeyboardFix();
+
   const handleSocialProviderPress = useCallback(
     async (provider: AuthProvider) => {
       try {
+        Keyboard.dismiss();
         const waitFor = waitForAuthentication();
         setCurrentProviderLoadingState(provider);
         await signInWithSocialProvider(provider);
