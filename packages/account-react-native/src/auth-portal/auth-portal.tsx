@@ -7,12 +7,7 @@ import BottomSheet, {
 import type { DataScopes } from '@sophon-labs/account-core';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Keyboard, Platform } from 'react-native';
-import {
-  useBooleanState,
-  useFlowManager,
-  useSophonAccount,
-  useSophonContext,
-} from '../hooks';
+import { useBooleanState, useFlowManager } from '../hooks';
 import { useEmbeddedAuth } from '../hooks/use-embedded-auth';
 import { useSophonPartner } from '../hooks/use-sophon-partner';
 import { useUIEventHandler } from '../messaging/ui';
@@ -44,8 +39,6 @@ export function AuthPortal(props: AuthPortalProps) {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const disableAnimation = useBooleanState(true);
   const { addKeyboardListener, removeKeyboardListener } = useKeyboard();
-  const { isConnected } = useSophonAccount();
-  const { requiresAuthorization } = useSophonContext();
 
   const {
     setCurrentRequest,
@@ -68,6 +61,7 @@ export function AuthPortal(props: AuthPortalProps) {
     goBack,
     cleanup,
     setParams,
+    isConnectedAndAuthorizationComplete,
   } = useAuthPortalController();
 
   useEffect(() => {
@@ -100,6 +94,7 @@ export function AuthPortal(props: AuthPortalProps) {
   }, [addKeyboardListener, removeKeyboardListener]);
 
   const hideModal = useCallback(() => {
+    console.log('hideModal called');
     removeKeyboardListener();
     Keyboard.dismiss();
     bottomSheetRef.current?.close();
@@ -148,10 +143,10 @@ export function AuthPortal(props: AuthPortalProps) {
         disappearsOnIndex={-1}
         appearsOnIndex={0}
         onPress={onCloseAndForceCancel}
-        pressBehavior={isLoading ? 'none' : 'close'}
+        pressBehavior={handleProps?.hideCloseButton ? 'none' : 'close'}
       />
     ),
-    [isLoading, onCloseAndForceCancel],
+    [handleProps?.hideCloseButton, onCloseAndForceCancel],
   );
 
   useUIEventHandler('outgoingRpc', (request) => {
@@ -160,6 +155,7 @@ export function AuthPortal(props: AuthPortalProps) {
   });
 
   useUIEventHandler('hideModal', () => {
+    console.log('useUIEventHandler hideModal called');
     hideModal();
   });
 
@@ -217,10 +213,10 @@ export function AuthPortal(props: AuthPortalProps) {
   useEffect(() => {
     // if the user connected and we are not expecting the authorization modal to show up
     // we can hide the modal
-    if (isConnected && !requiresAuthorization && !currentStep) {
+    if (isConnectedAndAuthorizationComplete) {
       onComplete({ hide: true });
     }
-  }, [onComplete, requiresAuthorization, isConnected, currentStep]);
+  }, [onComplete, isConnectedAndAuthorizationComplete]);
 
   return (
     <AuthPortalContext.Provider

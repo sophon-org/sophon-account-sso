@@ -1,4 +1,5 @@
 import { StyleSheet, View } from 'react-native';
+import { useTranslation } from '../../i18n';
 import { Button, Container, Text } from '../../ui';
 import { useNavigationParams } from '../hooks';
 import type { BasicStepProps, RetryParams } from '../types';
@@ -7,6 +8,7 @@ export const RetryStep = ({
   onAuthenticate,
   onBackToSignIn,
 }: BasicStepProps) => {
+  const { t } = useTranslation();
   const { ownerAddress, provider } = useNavigationParams<RetryParams>();
 
   const handleOnRetry = () => {
@@ -16,22 +18,20 @@ export const RetryStep = ({
     <Container>
       <Container marginBottom={16}>
         <Text size="large" textAlign="center">
-          Oops! That didn't work.
+          {t('retryStep.thatDidWork')}
         </Text>
-        <Text textAlign="center">
-          You can retry or check your details and try again.
-        </Text>
+        <Text textAlign="center">{t('retryStep.pleaseTryAgain')}</Text>
       </Container>
       <View style={styles.buttons}>
         <Button
           containerStyle={styles.buttonWrapper}
-          text="Back to sign in"
+          text={t('retryStep.backToSignIn')}
           variant="secondary"
           onPress={onBackToSignIn}
         />
         <Button
           containerStyle={styles.buttonWrapper}
-          text="Retry"
+          text={t('common.retry')}
           onPress={handleOnRetry}
         />
       </View>

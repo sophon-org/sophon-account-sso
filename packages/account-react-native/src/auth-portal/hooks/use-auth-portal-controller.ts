@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { useSophonAccount, useSophonName } from '../../hooks';
 import { useFlowManager } from '../../hooks/use-flow-manager';
 import { useSophonContext } from '../../hooks/use-sophon-context';
+import { useTranslation } from '../../i18n';
 import type { AuthPortalStep, CurrentParams } from '../types';
 import { useNavigationController } from './use-navigation-controller';
 
@@ -17,6 +18,7 @@ const STEPS_WITH_SIGN_IN: AuthPortalStep[] = [
 ];
 
 export const useAuthPortalController = () => {
+  const { t } = useTranslation();
   const navigation = useNavigationController();
   const { method } = useFlowManager();
   const { isConnected, account, isConnecting } = useSophonAccount();
@@ -79,19 +81,19 @@ export const useAuthPortalController = () => {
     if (account?.address?.trim()) return shortenAddress(account.address);
 
     if (STEPS_WITH_SIGN_IN.includes(currentStep)) {
-      return 'Sign in';
+      return t('common.signIn');
     }
 
     return '';
-  }, [account, userName, currentStep]);
+  }, [account, userName, currentStep, t]);
 
   const handleProps = useMemo(
     () => ({
       showBackButton,
       hideCloseButton: isLoading || isConnecting,
-      title: displayName ?? 'Sign in',
+      title: displayName ?? t('common.signIn'),
     }),
-    [showBackButton, isLoading, displayName, isConnecting],
+    [showBackButton, isLoading, displayName, isConnecting, t],
   );
 
   const isConnectedAndAuthorizationComplete = useMemo(() => {

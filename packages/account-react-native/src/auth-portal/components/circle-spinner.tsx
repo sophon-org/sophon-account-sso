@@ -9,6 +9,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import Svg, { Circle } from 'react-native-svg';
+import { useTranslation } from '../../i18n';
 import { Container } from '../../ui';
 
 const ANIMATED_DURATION = 150;
@@ -23,6 +24,8 @@ export function AuthenticatingSpinner({
   isAuthenticating?: boolean;
 }>) {
   const rotation = useSharedValue(0);
+
+  const { t } = useTranslation();
 
   useEffect(() => {
     rotation.value = withRepeat(
@@ -42,10 +45,10 @@ export function AuthenticatingSpinner({
     if (!isAuthenticating) return null;
     return (
       <Container justifyContent="center" alignItems="center">
-        <Text style={styles.text}>Signing in...</Text>
+        <Text style={styles.text}>{t('loadingStep.signingIn')}</Text>
       </Container>
     );
-  }, [isAuthenticating]);
+  }, [isAuthenticating, t]);
 
   return (
     <View style={[styles.containerAnimated]}>

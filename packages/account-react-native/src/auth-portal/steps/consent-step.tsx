@@ -5,13 +5,17 @@ import {
 import { useCallback, useMemo, useState } from 'react';
 import { Linking } from 'react-native';
 import { useBooleanState, useFlowManager } from '../../hooks';
+import { useTranslation } from '../../i18n';
 import { Button, Container, PermissionCollapse, Switch, Text } from '../../ui';
 import type { BasicStepProps } from '../types';
+
+const DATA_SHARING_EMAIL = 'data@sophon.xyz';
 
 export const ConsentStep: React.FC<BasicStepProps> = ({
   onComplete,
   onError,
 }) => {
+  const { t } = useTranslation();
   const isLoadingState = useBooleanState(false);
   const {
     actions: { consent },
@@ -79,7 +83,7 @@ export const ConsentStep: React.FC<BasicStepProps> = ({
   ]);
 
   const handleOnPressEmail = useCallback(() => {
-    Linking.openURL('mailto:data@sophon.xyz');
+    Linking.openURL(`mailto:${DATA_SHARING_EMAIL}`);
   }, []);
 
   const handleOnPressPrivacyPolicy = useCallback(() => {
@@ -91,23 +95,20 @@ export const ConsentStep: React.FC<BasicStepProps> = ({
   return (
     <Container>
       <Container marginBottom={16}>
-        <Text textAlign="center">
-          We would like your permission to use your data for the following
-          purposes.
-        </Text>
+        <Text textAlign="center">{t('consentStep.title')}</Text>
       </Container>
       <Container gap={8} marginVertical={24}>
         <PermissionCollapse
           name="PERSONALIZATION_ADS"
-          label="Personalization & Ads:"
-          description="Using your data to personalize your experience, including showing you relevant ads."
+          label={t('consentStep.personalization.label')}
+          description={t('consentStep.personalization.description')}
           allowed={consents.PERSONALIZATION_ADS}
           onChangePermission={handleOnChangePermission}
         />
         <PermissionCollapse
           name="SHARING_DATA"
-          label="Sharing your data:"
-          description="Sharing your data or zkTLS proofs related to such data with our data partners so they can deliver personalized ads, experiences and recommendations."
+          label={t('consentStep.sharingData.label')}
+          description={t('consentStep.sharingData.description')}
           allowed={consents.SHARING_DATA}
           onChangePermission={handleOnChangePermission}
         />
@@ -119,40 +120,37 @@ export const ConsentStep: React.FC<BasicStepProps> = ({
         gap={8}
       >
         <Text textAlign="center" fontWeight="700">
-          Select all
+          {t('consentStep.selectAll')}
         </Text>
         <Switch value={isSelectAll} onValueChange={handleOnToggleSelectAll} />
       </Container>
       <Container marginTop={24}>
         <Text textAlign="center" size="small" color="#8D8D8D">
-          You can withdraw your consent at any time by sending us an email at{' '}
+          {t('consentStep.withdrawalInfoPart1')}{' '}
           <Text
             color="#0066FF"
             size="small"
             selectable={false}
             onPress={handleOnPressEmail}
           >
-            data@sophon.xyz
+            {DATA_SHARING_EMAIL}
           </Text>
-          . Withdrawal will stop any future use of your data for these purposes,
-          but it will not affect processing already carried out while your
-          consent was active. Please refer to our{' '}
+          {t('consentStep.withdrawalInfoPart2')}{' '}
           <Text
             color="#0066FF"
             size="small"
             selectable={false}
             onPress={handleOnPressPrivacyPolicy}
           >
-            Privacy Policy
+            {t('common.privacyPolicy')}
           </Text>{' '}
-          to find out how we process and protect your data and how you can
-          exercise your rights.
+          {t('consentStep.withdrawalInfoPart3')}
         </Text>
       </Container>
       <Container marginVertical={16}>
         <Button
           variant="primary"
-          text="Confirm"
+          text={t('common.confirm')}
           disabled={!areAllConsentsSelected}
           onPress={handleConsentAll}
           loading={isLoadingState.state}

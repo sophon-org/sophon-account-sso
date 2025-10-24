@@ -17,6 +17,7 @@ import Animated, {
 import { OTP_CODE_LENGTH } from '../../constants/verify-otp';
 import { useBooleanState, useFlowManager } from '../../hooks';
 import { useEmbeddedAuth } from '../../hooks/use-embedded-auth';
+import { useTranslation } from '../../i18n';
 import { Button, CardError, Container, Text } from '../../ui';
 import { useNavigationParams } from '../hooks';
 import type { BasicStepProps, VerifyCodeParams } from '../types';
@@ -24,6 +25,7 @@ import type { BasicStepProps, VerifyCodeParams } from '../types';
 const defaultCodeArray = Array(OTP_CODE_LENGTH).fill('');
 
 export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
+  const { t } = useTranslation();
   const loadingState = useBooleanState(false);
   const errorState = useBooleanState(false);
   const params = useNavigationParams<VerifyCodeParams>();
@@ -197,11 +199,13 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
     <Container>
       <Container gap={8} marginBottom={8}>
         <Text size="large" textAlign="center">
-          Insert 6-digit code
+          {t('verifyEmailStep.insertCode')}
         </Text>
         <View>
-          <Text textAlign="center">Check {params?.email} for</Text>
-          <Text textAlign="center">the code</Text>
+          <Text textAlign="center">
+            {t('verifyEmailStep.checkEmailFor', { email: params?.email })}
+          </Text>
+          <Text textAlign="center">{t('verifyEmailStep.theCode')}</Text>
         </View>
       </Container>
       <Container gap={12} marginVertical={16}>
@@ -215,16 +219,16 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
         />
         <CardError
           isVisible={errorState.state}
-          text="Invalid code. Please check your email and try again."
+          text={t('verifyEmailStep.invalidCode')}
         />
       </Container>
       <Container gap={24} marginVertical={16}>
         <Text color="#8D8D8D" textAlign="center">
-          Did not receive a code? Check spam or
+          {t('verifyEmailStep.didNotReceiveCode')}
         </Text>
         <Button
           variant="secondary"
-          text="Resend link"
+          text={t('verifyEmailStep.resendLink')}
           onPress={resendEmailOTP}
         />
       </Container>
