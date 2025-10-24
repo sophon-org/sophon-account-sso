@@ -31,6 +31,8 @@ interface OnAuthenticateOptions {
 export interface BasicStepProps {
   currentStep: AuthPortalContextProps['currentStep'];
   style?: ViewStyle;
+  scopes?: DataScopes[];
+  partner?: PartnerConfigSchema | null;
   onAuthenticate: (
     value: `0x${string}`,
     options?: OnAuthenticateOptions,
@@ -39,8 +41,6 @@ export interface BasicStepProps {
   onBackToSignIn: () => Promise<void>;
   onCancel: () => Promise<void>;
   onError: (error: Error, step?: AuthPortalStep) => Promise<void>;
-  scopes?: DataScopes[];
-  partner?: PartnerConfigSchema | null;
 }
 
 export type AuthPortalContextType = AuthPortalContextProps;
