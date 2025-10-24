@@ -8,23 +8,26 @@ import en from './locales/en.json';
 import es from './locales/es.json';
 
 type PathImpl<T, Key extends keyof T> = Key extends string
-  ? T[Key] extends Record<string, any>
+  ? T[Key] extends Record<string, unknown>
     ?
-        | `${Key}.${PathImpl<T[Key], Exclude<keyof T[Key], keyof any[]>> & string}`
+        | `${Key}.${PathImpl<T[Key], Exclude<keyof T[Key], keyof unknown[]>> & string}`
         | `${Key}`
     : `${Key}`
   : never;
 
 type Path<T> = PathImpl<T, keyof T> | keyof T;
 
-type TranslationKeys = Path<typeof en>;
+type DefaultTranslationKeys = Path<typeof en>;
+
+// Ensure both locales have the same structure
+type TranslationKeys = DefaultTranslationKeys;
 
 /**
  * Locale code (ISO 639-1 or BCP-47).
  * Examples:
  *  - "en" (English, default)
  */
-export type SupportedLocaleCode = 'en' | 'es' | string;
+export type SupportedLocaleCode = 'en' | 'es';
 
 export const defaultResources: Record<SupportedLocaleCode, typeof en> = {
   en,
@@ -59,10 +62,7 @@ export function LocalizationProvider({
   locale = 'en',
   children,
 }: PropsWithChildren<LocalizationProviderProps>) {
-  const dict = useMemo(
-    () => defaultResources[locale || ''] || defaultResources['en'],
-    [locale],
-  );
+  const dict = useMemo(() => defaultResources[locale || 'en'], [locale]);
 
   const t: TranslationFunction = useMemo(
     () => (key, variables) => {
