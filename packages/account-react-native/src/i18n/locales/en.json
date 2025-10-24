@@ -1,0 +1,66 @@
+{
+  "loadingStep": {
+    "signingIn": "Signing in..."
+  },
+  "signInStep": {
+    "alternatively": "Alternatively",
+    "signInWithWallet": "Sign in with Wallet",
+    "enterEmail": "Enter your email"
+  },
+  "verifyEmailStep": {
+    "insertCode": "Insert 6-digit code",
+    "checkEmailFor": "Check {{email}} for confirmation",
+    "theCode": "the code",
+    "invalidCode": "Invalid code. Please check your email and try again.",
+    "didNotReceiveCode": "Did not receive a code? Check spam or",
+    "resendLink": "Resend link"
+  },
+  "authorizationStep": {
+    "connectWith": "Connect to {{partnerName}}",
+    "seeYourAddress": "See your address / identity, balance and activity",
+    "askForTransactionApproval": "Ask for transactions to be approved",
+    "performActionsOnYourBehalf": "Perform actions or transfer funds on your behalf",
+    "cant": "It can’t",
+    "can": "It can"
+  },
+  "consentStep": {
+    "title": "We would like your permission to use your data for the following purposes.",
+    "personalization": {
+      "label": "Personalization & Ads:",
+      "description": "Using your data to personalize your experience, including showing you relevant ads."
+    },
+    "sharingData": {
+      "label": "Sharing your data:",
+      "description": "Sharing your data or zkTLS proofs related to such data with our data partners so they can deliver personalized ads, experiences and recommendations."
+    },
+    "selectAll": "Select all",
+    "withdrawalInfoPart1": "You can withdraw your consent at any time by sending us an email at",
+    "withdrawalInfoPart2": ". Withdrawal will stop any future use of your data for these purposes, but it will not affect processing already carried out while your consent was active. Please refer to our",
+    "withdrawalInfoPart3": "to find out how we process and protect your data and how you can exercise your rights."
+  },
+  "signMessageStep": {
+    "placeholder": "Sign Message Placeholder."
+  },
+  "transactionStep": {
+    "placeholder": "Transaction Placeholder."
+  },
+  "footer": {
+    "byContinuing": "By logging in you are accepting our\n"
+  },
+  "retryStep": {
+    "thatDidWork": "Oops! That didn't work.",
+    "pleaseTryAgain": "You can retry or check your details and try again.",
+    "backToSignIn": "Back to sign in"
+  },
+  "common": {
+    "signIn": "Sign In",
+    "retry": "Retry",
+    "confirm": "Confirm",
+    "connect": "Connect",
+    "cancel": "Cancel",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfUse": "Terms of Use",
+    "poweredBy": "Powered by",
+    "and": "and"
+  }
+}
