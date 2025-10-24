@@ -247,7 +247,10 @@ export function AuthPortal(props: AuthPortalProps) {
         android_keyboardInputMode="adjustResize"
         handleIndicatorStyle={{ backgroundColor: '#ccc' }}
       >
-        <BottomSheetScrollView bounces={false}>
+        <BottomSheetScrollView
+          bounces={false}
+          keyboardShouldPersistTaps="handled"
+        >
           <Container margin={24}>
             <StepTransitionView
               keyProp={currentStep ?? null}
