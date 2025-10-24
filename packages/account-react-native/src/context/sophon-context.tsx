@@ -29,6 +29,7 @@ import { sophon, sophonTestnet } from 'viem/chains';
 import { erc7846Actions } from 'viem/experimental';
 import { eip712WalletActions } from 'viem/zksync';
 import { AuthPortal, type AuthPortalProps } from '../auth-portal';
+import { LocalizationProvider, type SupportedLocaleCode } from '../i18n';
 import type { Capabilities } from '../lib/capabilities';
 import {
   createDynamicClient,
@@ -117,6 +118,22 @@ export interface SophonAccount {
   owner: Address;
 }
 
+interface SophonContextProviderProps {
+  children: React.ReactNode;
+  chainId: ChainId;
+  authServerUrl?: string;
+  partnerId: string;
+  dataScopes?: DataScopes[];
+  insets?: AuthPortalProps['insets'];
+  requestedCapabilities?: Capabilities[];
+  /**
+   * Locale code for internationalization.
+   * @default "en"
+   * @supported "en" | "es"
+   */
+  locale?: SupportedLocaleCode;
+}
+
 export const SophonContextProvider = ({
   children,
   chainId = sophonTestnet.id,
@@ -125,15 +142,8 @@ export const SophonContextProvider = ({
   dataScopes = [],
   insets,
   requestedCapabilities,
-}: {
-  children: React.ReactNode;
-  chainId: ChainId;
-  authServerUrl?: string;
-  partnerId: string;
-  dataScopes?: DataScopes[];
-  insets?: AuthPortalProps['insets'];
-  requestedCapabilities?: Capabilities[];
-}) => {
+  locale,
+}: SophonContextProviderProps) => {
   const [error, setError] = useState<{ description: string; code: number }>();
   const serverUrl = useMemo(
     () => authServerUrl ?? AccountServerURL[chainId],
@@ -302,12 +312,14 @@ export const SophonContextProvider = ({
       {!!dynamicClient?.reactNative?.WebView && (
         <dynamicClient.reactNative.WebView />
       )}
-      <AuthPortal
-        insets={insets}
-        scopes={dataScopes}
-        authServerUrl={serverUrl}
-        partnerId={partnerId}
-      />
+      <LocalizationProvider locale={locale}>
+        <AuthPortal
+          insets={insets}
+          scopes={dataScopes}
+          authServerUrl={serverUrl}
+          partnerId={partnerId}
+        />
+      </LocalizationProvider>
     </SophonContext.Provider>
   );
 };
