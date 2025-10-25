@@ -22,7 +22,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import { AuthPortalBottomSheetHandle } from './components/handle-sheet';
+import { AuthPortalBottomSheetHandle } from './components/custom-sheet-handle';
 import { useAuthPortal } from './hooks';
 
 export type ModalSheetHandle = {
