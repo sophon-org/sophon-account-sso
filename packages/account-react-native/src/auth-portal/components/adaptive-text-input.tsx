@@ -2,7 +2,7 @@ import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import type { BottomSheetTextInputProps } from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheetTextInput';
 import React from 'react';
 import { TextInput, type TextInputProps } from 'react-native';
-import { useAdaptiveBottomSheetMode } from '../context/adpative-bottom-sheet.context';
+import { useAdaptiveBottomSheetMode } from '../context/adaptive-bottom-sheet.context';
 
 export const AdaptiveTextInput = React.forwardRef<
   TextInput,

@@ -85,12 +85,14 @@ export const ModalSheet = forwardRef<ModalSheetHandle, ModalSheetProps>(
     );
 
     const expand = useCallback(() => {
+      console.log('[ModalSheet] Expand called');
       setVisible(true);
-      requestAnimationFrame(() => animateIn());
+      animateIn();
     }, [animateIn]);
 
     const close = useCallback(() => {
       console.log('[ModalSheet] Close called - visible =>', visible);
+      if (!visible) return;
       animateOut(() => {
         setVisible(false);
         onClose?.();

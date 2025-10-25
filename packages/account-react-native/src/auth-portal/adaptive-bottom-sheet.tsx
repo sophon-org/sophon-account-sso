@@ -2,9 +2,15 @@ import BottomSheet, {
   type BottomSheetProps,
   BottomSheetScrollView,
 } from '@gorhom/bottom-sheet';
-import { forwardRef, useImperativeHandle, useRef } from 'react';
+import {
+  forwardRef,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { Platform, useWindowDimensions } from 'react-native';
-import { AdaptiveBottomSheetProvider } from './context/adpative-bottom-sheet.context';
+import { AdaptiveBottomSheetProvider } from './context/adaptive-bottom-sheet.context';
 import { ModalSheet, type ModalSheetHandle } from './modal-sheet';
 
 export interface AdaptiveBottomSheetHandle {
@@ -22,35 +28,59 @@ export const AdaptiveBottomSheet = forwardRef<
   const bottomSheetRef = useRef<BottomSheet>(null);
   const modalSheetRef = useRef<ModalSheetHandle>(null);
 
-  const calculateIsLargeScreen = () => {
+  const [initialMode, setInitialMode] = useState<
+    'modal' | 'bottomSheet' | null
+  >(null);
+
+  const isLargeScreen = useMemo(() => {
     return (
       (Platform.OS === 'ios' && Platform.isPad) ||
       (Platform.OS === 'android' && width > height)
     );
-  };
+  }, [width, height]);
 
-  const prevIsLargeScreen = useRef(calculateIsLargeScreen());
+  const mode = useMemo(() => {
+    if (!initialMode) {
+      return isLargeScreen ? 'modal' : 'bottomSheet';
+    }
+    return initialMode;
+  }, [initialMode, isLargeScreen]);
 
-  useImperativeHandle(ref, () => ({
-    expand() {
-      if (prevIsLargeScreen.current) modalSheetRef.current?.expand();
-      else bottomSheetRef.current?.expand?.();
-      prevIsLargeScreen.current = calculateIsLargeScreen();
-    },
-    close() {
-      if (prevIsLargeScreen.current) modalSheetRef.current?.close();
-      else bottomSheetRef.current?.close?.();
-      prevIsLargeScreen.current = calculateIsLargeScreen();
-    },
-    snapToIndex(index: number) {
-      if (prevIsLargeScreen.current) modalSheetRef.current?.snapToIndex(index);
-      else bottomSheetRef.current?.snapToIndex?.(index);
-    },
-  }));
+  useImperativeHandle(
+    ref,
+    () => ({
+      expand() {
+        const newMode = isLargeScreen ? 'modal' : 'bottomSheet';
+        setInitialMode(newMode);
+        if (newMode === 'modal') {
+          modalSheetRef.current?.expand();
+        } else {
+          bottomSheetRef.current?.expand?.();
+        }
+      },
+      close() {
+        if (mode === 'modal') {
+          modalSheetRef.current?.close();
+        } else {
+          bottomSheetRef.current?.close?.();
+        }
+        setInitialMode(null);
+      },
+      snapToIndex(index: number) {
+        if (mode === 'bottomSheet') {
+          console.log('[AdaptiveBottomSheet]: Snapping to index', index);
+          bottomSheetRef.current?.snapToIndex?.(index);
+        }
+      },
+    }),
+    [mode, isLargeScreen],
+  );
 
-  if (prevIsLargeScreen.current) {
+  const contextValue = useMemo(() => ({ mode }), [mode]);
+
+  if (mode === 'modal') {
     return (
-      <AdaptiveBottomSheetProvider value={{ mode: 'modal' }}>
+      <AdaptiveBottomSheetProvider value={contextValue}>
         <ModalSheet ref={modalSheetRef} onClose={restProps.onClose}>
           {children}
         </ModalSheet>
@@ -59,7 +89,7 @@ export const AdaptiveBottomSheet = forwardRef<
   }
 
   return (
-    <AdaptiveBottomSheetProvider value={{ mode: 'bottomSheet' }}>
+    <AdaptiveBottomSheetProvider value={contextValue}>
       <BottomSheet ref={bottomSheetRef} {...restProps}>
         <BottomSheetScrollView
           bounces={false}

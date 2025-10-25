@@ -5,7 +5,7 @@ import {
 } from '@gorhom/bottom-sheet';
 import { useEffect, useRef } from 'react';
 import { Keyboard, Platform } from 'react-native';
-import { useAdaptiveBottomSheetMode } from '../context/adpative-bottom-sheet.context';
+import { useAdaptiveBottomSheetMode } from '../context/adaptive-bottom-sheet.context';
 
 export function useSafeBottomSheetInternal() {
   const { mode } = useAdaptiveBottomSheetMode();

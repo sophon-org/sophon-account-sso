@@ -63,10 +63,6 @@ export function AuthPortal(props: AuthPortalProps) {
     isConnectedAndAuthorizationComplete,
   } = useAuthPortalController({ scopes: props.scopes });
 
-  const expandSheet = useCallback(() => {
-    bottomSheetRef.current?.expand();
-  }, []);
-
   const showModal = useCallback(() => {
     removeKeyboardListener();
     console.log('showModal');
@@ -207,7 +203,6 @@ export function AuthPortal(props: AuthPortalProps) {
         navigate,
         goBack,
         setParams,
-        expandSheet,
         handleProps,
         onCloseAndForceCancel,
       }}
