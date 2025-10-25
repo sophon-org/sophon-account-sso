@@ -1,16 +1,12 @@
-import {
-  BottomSheetHandle,
-  type BottomSheetHandleProps,
-} from '@gorhom/bottom-sheet';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { Icon } from '../../ui/icon';
 
-interface AuthPortalHandleProps extends BottomSheetHandleProps {
-  showBackButton: boolean;
+interface AuthPortalHandleProps {
+  showBackButton?: boolean;
   hideCloseButton?: boolean;
   title?: string;
-  goBack: () => void;
-  close: () => void;
+  goBack?: () => void;
+  close?: () => void;
 }
 
 export function AuthPortalBottomSheetHandle({
@@ -19,10 +15,9 @@ export function AuthPortalBottomSheetHandle({
   title,
   goBack,
   close,
-  ...props
 }: AuthPortalHandleProps) {
   return (
-    <BottomSheetHandle {...props}>
+    <View>
       <View
         style={{
           flexDirection: 'row',
@@ -54,6 +49,6 @@ export function AuthPortalBottomSheetHandle({
         ) : null}
       </View>
       <View style={{ height: 1, backgroundColor: '#eee' }} />
-    </BottomSheetHandle>
+    </View>
   );
 }

@@ -8,7 +8,7 @@ import Animated, {
 import { AVAILABLE_PROVIDERS } from '../../constants';
 import type { AuthProvider } from '../../hooks/use-embedded-auth';
 import { Container, Icon } from '../../ui';
-import { AuthenticatingSpinner } from './circle-spinner';
+import { AuthenticatingSpinner } from './authenticating-spinner';
 
 interface Props {
   providerRequest: string | null;

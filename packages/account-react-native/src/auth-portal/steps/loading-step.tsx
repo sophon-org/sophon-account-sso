@@ -1,6 +1,6 @@
 import { Image, StyleSheet, View } from 'react-native';
 import { Container, Icon } from '../../ui';
-import { AuthenticatingSpinner } from '../components/circle-spinner';
+import { AuthenticatingSpinner } from '../components/authenticating-spinner';
 import { useNavigationParams } from '../hooks';
 import type { LoadingParams } from '../types';
 

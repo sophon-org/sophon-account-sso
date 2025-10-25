@@ -1,4 +1,3 @@
-import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { useCallback, useMemo, useState } from 'react';
 import { Keyboard, StyleSheet, Text, View } from 'react-native';
 import {
@@ -13,6 +12,7 @@ import {
 import { useTranslation } from '../../i18n';
 import { Button, CardError, Container } from '../../ui';
 import { validateEmail } from '../../utils/validations';
+import { AdaptiveTextInput } from '../components/adaptive-text-input';
 import { SocialProviderButtons } from '../components/social-provider-buttons';
 import {
   useBottomSheetKeyboardFix,
@@ -20,6 +20,7 @@ import {
   useNavigationPortal,
 } from '../hooks';
 import type { BasicStepProps, SignInParams } from '../types';
+
 export const SignInStep = ({ onError, onAuthenticate }: BasicStepProps) => {
   const { t } = useTranslation();
   const [error, setError] = useState<null | string>(null);
@@ -95,7 +96,7 @@ export const SignInStep = ({ onError, onAuthenticate }: BasicStepProps) => {
       />
 
       <Container marginVertical={16}>
-        <BottomSheetTextInput
+        <AdaptiveTextInput
           onChangeText={handleChangeText}
           value={email}
           keyboardType="email-address"

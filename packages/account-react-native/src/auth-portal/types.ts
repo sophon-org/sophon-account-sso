@@ -20,8 +20,14 @@ export type AuthPortalContextProps = {
   navigate: (step: AuthPortalStep, options?: NavigateOptions) => void;
   goBack: () => void;
   expandSheet: () => void;
+  onCloseAndForceCancel: () => void;
   setParams: (params: NavigateParams) => void;
   params: NavigateParams | null;
+  handleProps: {
+    showBackButton: boolean;
+    hideCloseButton: boolean;
+    title: string;
+  };
 };
 
 interface OnAuthenticateOptions {
@@ -77,16 +83,15 @@ export type NavigateOptions = {
 };
 
 export type CurrentParams = {
-  signIn?: SignInParams;
-  verifyCode?: VerifyCodeParams;
-  retry?: RetryParams;
-  signMessage?: undefined;
-  transaction?: undefined;
-  consent?: undefined;
-  verifyEmail?: undefined;
-  connectWallet?: undefined;
-  authorization?: undefined;
-  loading?: undefined;
+  [AuthPortalSteps.SignIn]?: SignInParams;
+  [AuthPortalSteps.VerifyEmail]?: VerifyCodeParams;
+  [AuthPortalSteps.Loading]?: LoadingParams;
+  [AuthPortalSteps.Retry]?: RetryParams;
+  [AuthPortalSteps.ConnectWallet]?: undefined;
+  [AuthPortalSteps.Authorization]?: undefined;
+  [AuthPortalSteps.SignMessage]?: undefined;
+  [AuthPortalSteps.Transaction]?: undefined;
+  [AuthPortalSteps.Consent]?: undefined;
 };
 
 export type NavigationAuthPortalState = {

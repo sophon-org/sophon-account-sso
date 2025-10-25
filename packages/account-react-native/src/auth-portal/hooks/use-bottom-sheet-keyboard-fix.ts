@@ -5,14 +5,40 @@ import {
 } from '@gorhom/bottom-sheet';
 import { useEffect, useRef } from 'react';
 import { Keyboard, Platform } from 'react-native';
+import { useAdaptiveBottomSheetMode } from '../context/adpative-bottom-sheet.context';
+
+export function useSafeBottomSheetInternal() {
+  const { mode } = useAdaptiveBottomSheetMode();
+
+  if (mode === 'modal') {
+    return {
+      animatedKeyboardState: {
+        value: 1,
+        get: () => ({ status: KEYBOARD_STATUS.HIDDEN }),
+        set: () => {},
+      },
+      animatedPosition: { value: 0 },
+      animatedAnimationState: {
+        value: 0,
+        get: () => ({ status: ANIMATION_STATUS.STOPPED }),
+      },
+      close: () => {},
+      expand: () => {},
+      snapToIndex: () => {},
+    };
+  }
+
+  return useBottomSheetInternal();
+}
 
 export function useBottomSheetKeyboardFix() {
+  const { mode } = useAdaptiveBottomSheetMode();
   const { animatedKeyboardState, animatedAnimationState, animatedPosition } =
-    useBottomSheetInternal();
+    useSafeBottomSheetInternal();
   const isFixingRef = useRef(false);
 
   useEffect(() => {
-    if (Platform.OS !== 'ios') return;
+    if (Platform.OS !== 'ios' || mode === 'modal') return;
 
     const sub = Keyboard.addListener('keyboardDidShow', async (event) => {
       const keyboardHeight = event.endCoordinates.height;
@@ -61,5 +87,5 @@ export function useBottomSheetKeyboardFix() {
     });
 
     return () => sub.remove();
-  }, [animatedKeyboardState, animatedAnimationState, animatedPosition]);
+  }, [animatedKeyboardState, animatedAnimationState, animatedPosition, mode]);
 }
