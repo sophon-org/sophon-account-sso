@@ -3,24 +3,24 @@ import BottomSheet, {
   type BottomSheetBackdropProps,
   BottomSheetHandle,
   type BottomSheetHandleProps,
-} from "@gorhom/bottom-sheet";
-import type { DataScopes } from "@sophon-labs/account-core";
-import { useCallback, useEffect, useRef } from "react";
-import { Keyboard, Platform } from "react-native";
-import { useBooleanState, useFlowManager } from "../hooks";
-import { useSophonPartner } from "../hooks/use-sophon-partner";
-import { useUIEventHandler } from "../messaging/ui";
-import { Container } from "../ui";
-import { execTimeoutActionByPlatform } from "../utils/platform-utils";
-import { AdaptiveBottomSheet } from "./adaptive-bottom-sheet";
-import { FooterSheet } from "./components/footer-sheet";
-import { AuthPortalBottomSheetHandle } from "./components/handle-sheet";
-import { StepTransitionView } from "./components/step-transition";
-import { AuthPortalContext } from "./context/auth-sheet.context";
-import { useAuthPortalController } from "./hooks";
-import { useKeyboard } from "./hooks/use-keyboard";
-import { StepControllerComponent } from "./steps";
-import type { AuthPortalStep, BasicStepProps } from "./types";
+} from '@gorhom/bottom-sheet';
+import type { DataScopes } from '@sophon-labs/account-core';
+import { useCallback, useEffect, useRef } from 'react';
+import { Keyboard, Platform } from 'react-native';
+import { useBooleanState, useFlowManager } from '../hooks';
+import { useSophonPartner } from '../hooks/use-sophon-partner';
+import { useUIEventHandler } from '../messaging/ui';
+import { Container } from '../ui';
+import { execTimeoutActionByPlatform } from '../utils/platform-utils';
+import { AdaptiveBottomSheet } from './adaptive-bottom-sheet';
+import { FooterSheet } from './components/footer-sheet';
+import { AuthPortalBottomSheetHandle } from './components/handle-sheet';
+import { StepTransitionView } from './components/step-transition';
+import { AuthPortalContext } from './context/auth-sheet.context';
+import { useAuthPortalController } from './hooks';
+import { useKeyboard } from './hooks/use-keyboard';
+import { StepControllerComponent } from './steps';
+import type { AuthPortalStep, BasicStepProps } from './types';
 
 export type AuthPortalProps = {
   debugEnabled?: boolean;
@@ -40,8 +40,12 @@ export function AuthPortal(props: AuthPortalProps) {
   const disableAnimation = useBooleanState(true);
   const { addKeyboardListener, removeKeyboardListener } = useKeyboard();
 
-  const { setCurrentRequest, cancelCurrentRequest, clearCurrentRequest, actions } =
-    useFlowManager();
+  const {
+    setCurrentRequest,
+    cancelCurrentRequest,
+    clearCurrentRequest,
+    actions,
+  } = useFlowManager();
 
   const { partner } = useSophonPartner();
 
@@ -65,25 +69,28 @@ export function AuthPortal(props: AuthPortalProps) {
 
   const showModal = useCallback(() => {
     removeKeyboardListener();
-    console.log("showModal");
+    console.log('showModal');
     bottomSheetRef.current?.expand();
-    addKeyboardListener(Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide", () => {
-      execTimeoutActionByPlatform(() => {
-        console.log("Keyboard snapping to index 0");
-        bottomSheetRef.current?.snapToIndex(0);
-      });
-    });
+    addKeyboardListener(
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
+      () => {
+        execTimeoutActionByPlatform(() => {
+          console.log('Keyboard snapping to index 0');
+          bottomSheetRef.current?.snapToIndex(0);
+        });
+      },
+    );
   }, [addKeyboardListener, removeKeyboardListener]);
 
   const hideModal = useCallback(() => {
-    console.log("hideModal called");
+    console.log('hideModal called');
     removeKeyboardListener();
     Keyboard.dismiss();
     bottomSheetRef.current?.close();
   }, [removeKeyboardListener]);
 
   const onClose = useCallback(() => {
-    console.log("onClose called");
+    console.log('onClose called');
     removeKeyboardListener();
     Keyboard.dismiss();
     disableAnimation.setOn();
@@ -94,7 +101,7 @@ export function AuthPortal(props: AuthPortalProps) {
       () => {
         bottomSheetRef.current?.close();
       },
-      { platforms: ["android"] },
+      { platforms: ['android'] },
     );
   }, [removeKeyboardListener, cleanup, disableAnimation, cancelCurrentRequest]);
 
@@ -126,25 +133,25 @@ export function AuthPortal(props: AuthPortalProps) {
         disappearsOnIndex={-1}
         appearsOnIndex={0}
         onPress={onCloseAndForceCancel}
-        pressBehavior={handleProps?.hideCloseButton ? "none" : "close"}
+        pressBehavior={handleProps?.hideCloseButton ? 'none' : 'close'}
       />
     ),
     [handleProps?.hideCloseButton, onCloseAndForceCancel],
   );
 
-  useUIEventHandler("outgoingRpc", (request) => {
+  useUIEventHandler('outgoingRpc', (request) => {
     setCurrentRequest(request);
     showModal();
   });
 
-  useUIEventHandler("hideModal", () => {
-    console.log("useUIEventHandler hideModal called");
+  useUIEventHandler('hideModal', () => {
+    console.log('useUIEventHandler hideModal called');
     hideModal();
   });
 
-  const onComplete = useCallback<BasicStepProps["onComplete"]>(
+  const onComplete = useCallback<BasicStepProps['onComplete']>(
     async ({ hide }) => {
-      console.log("onComplete", hide);
+      console.log('onComplete', hide);
       if (hide) {
         clearCurrentRequest();
         hideModal();
@@ -153,19 +160,19 @@ export function AuthPortal(props: AuthPortalProps) {
     [hideModal, clearCurrentRequest],
   );
 
-  const onAuthenticate = useCallback<BasicStepProps["onAuthenticate"]>(
+  const onAuthenticate = useCallback<BasicStepProps['onAuthenticate']>(
     async (ownerAddress, navigationParams) => {
       try {
-        if (!navigationParams || navigationParams?.from === "retry") {
-          navigate("loading", {
+        if (!navigationParams || navigationParams?.from === 'retry') {
+          navigate('loading', {
             replace: true,
             params: { provider: navigationParams?.provider },
           });
         }
         await actions.authenticate(ownerAddress);
       } catch (err) {
-        console.error("Authentication failed", err);
-        navigate("retry", {
+        console.error('Authentication failed', err);
+        navigate('retry', {
           replace: true,
           params: { ownerAddress, provider: navigationParams?.provider },
         });
@@ -181,7 +188,7 @@ export function AuthPortal(props: AuthPortalProps) {
   const onError = useCallback(async (error: Error, step?: AuthPortalStep) => {
     // clearCurrentRequest();
     // TODO
-    console.log(`onError ${step ?? "-"}`, error);
+    console.log(`onError ${step ?? '-'}`, error);
   }, []);
 
   useEffect(() => {
@@ -222,7 +229,7 @@ export function AuthPortal(props: AuthPortalProps) {
         keyboardBlurBehavior="restore"
         enableBlurKeyboardOnGesture={true}
         android_keyboardInputMode="adjustResize"
-        handleIndicatorStyle={{ backgroundColor: "#ccc" }}
+        handleIndicatorStyle={{ backgroundColor: '#ccc' }}
       >
         <Container margin={24}>
           <StepTransitionView
