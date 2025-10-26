@@ -1,5 +1,17 @@
 # @sophon-labs/account-react-native
 
+## 3.0.0-next.5
+
+### Patch Changes
+
+- Support for localization
+- Updated dependencies
+  - @sophon-labs/account-communicator@3.0.0-next.5
+  - @sophon-labs/account-core@3.0.0-next.5
+  - @sophon-labs/account-message-bridge@3.0.0-next.5
+  - @sophon-labs/account-partner@3.0.0-next.5
+  - @sophon-labs/account-provider@3.0.0-next.5
+
 ## 3.0.0-next.4
 
 ### Patch Changes

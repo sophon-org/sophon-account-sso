@@ -1,5 +1,11 @@
 # @sophon-labs/account-eip6963
 
+## 3.0.0-next.5
+
+### Patch Changes
+
+- Support for localization
+
 ## 3.0.0-next.4
 
 ### Patch Changes

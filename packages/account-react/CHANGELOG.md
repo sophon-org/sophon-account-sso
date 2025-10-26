@@ -1,5 +1,14 @@
 # @sophon-labs/account-react
 
+## 3.0.0-next.5
+
+### Patch Changes
+
+- Support for localization
+- Updated dependencies
+  - @sophon-labs/account-connector@3.0.0-next.5
+  - @sophon-labs/account-core@3.0.0-next.5
+
 ## 3.0.0-next.4
 
 ### Patch Changes
