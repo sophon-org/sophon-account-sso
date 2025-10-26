@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useBooleanState, useFlowManager, useSophonAccount } from '../../hooks';
+import { useTranslation } from '../../i18n';
 import { Button, Card, CheckBox, Container, Text } from '../../ui';
 import { sentenceCase } from '../../utils/string-utils';
 import type { BasicStepProps } from '../types';
@@ -12,6 +13,7 @@ export const AuthorizationStep = ({
   scopes,
   partner,
 }: BasicStepProps) => {
+  const { t } = useTranslation();
   const isLoadingState = useBooleanState(false);
   const {
     actions: { authorize },
@@ -53,7 +55,9 @@ export const AuthorizationStep = ({
     <Container>
       <Container style={styles.content}>
         <Text size="large" textAlign="center">
-          Connect to {partner?.name ?? 'Sophon'}
+          {t('authorizationStep.connectWith', {
+            partnerName: partner?.name ?? 'Sophon',
+          })}
         </Text>
         <Container isVisible={!!partner?.domains.length}>
           <Text textAlign="center">{partner?.domains[0]}</Text>
@@ -61,16 +65,16 @@ export const AuthorizationStep = ({
       </Container>
       <Card style={styles.contentCard}>
         <Container style={styles.cardSection} marginBottom={16}>
-          <Text fontWeight="bold">It can</Text>
+          <Text fontWeight="bold">{t('authorizationStep.can')}</Text>
           <CheckBox
             defaultChecked
             locked
-            label="See your address / identity, balance and activity"
+            label={t('authorizationStep.seeYourAddress')}
           />
           <CheckBox
             defaultChecked
             locked
-            label="Ask for transactions to be approved"
+            label={t('authorizationStep.askForTransactionApproval')}
           />
           {scopes?.map((scope) => (
             <CheckBox
@@ -81,24 +85,24 @@ export const AuthorizationStep = ({
           ))}
         </Container>
         <Container style={styles.cardSection}>
-          <Text fontWeight="bold">It can’t</Text>
+          <Text fontWeight="bold">{t('authorizationStep.cant')}</Text>
           <CheckBox
             unavailable
-            label="Perform actions or transfer funds on your behalf"
+            label={t('authorizationStep.performActionsOnYourBehalf')}
           />
         </Container>
       </Card>
       <View style={styles.buttons}>
         <Button
           containerStyle={styles.buttonWrapper}
-          text="Cancel"
+          text={t('common.cancel')}
           variant="secondary"
           onPress={handleCancel}
           disabled={isLoadingState.state}
         />
         <Button
           containerStyle={styles.buttonWrapper}
-          text="Connect"
+          text={t('common.connect')}
           onPress={handleAuthorize}
           loading={isLoadingState.state}
         />

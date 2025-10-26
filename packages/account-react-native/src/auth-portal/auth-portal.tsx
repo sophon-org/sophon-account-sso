@@ -1,25 +1,20 @@
 import BottomSheet, {
   BottomSheetBackdrop,
   type BottomSheetBackdropProps,
+  BottomSheetHandle,
   type BottomSheetHandleProps,
-  BottomSheetScrollView,
 } from '@gorhom/bottom-sheet';
 import type { DataScopes } from '@sophon-labs/account-core';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { Keyboard, Platform } from 'react-native';
-import {
-  useBooleanState,
-  useFlowManager,
-  useSophonAccount,
-  useSophonContext,
-} from '../hooks';
-import { useEmbeddedAuth } from '../hooks/use-embedded-auth';
+import { useBooleanState, useFlowManager } from '../hooks';
 import { useSophonPartner } from '../hooks/use-sophon-partner';
 import { useUIEventHandler } from '../messaging/ui';
 import { Container } from '../ui';
 import { execTimeoutActionByPlatform } from '../utils/platform-utils';
+import { AdaptiveBottomSheet } from './adaptive-bottom-sheet';
+import { AuthPortalBottomSheetHandle } from './components/custom-sheet-handle';
 import { FooterSheet } from './components/footer-sheet';
-import { AuthPortalBottomSheetHandle } from './components/handle-sheet';
 import { StepTransitionView } from './components/step-transition';
 import { AuthPortalContext } from './context/auth-sheet.context';
 import { useAuthPortalController } from './hooks';
@@ -44,8 +39,6 @@ export function AuthPortal(props: AuthPortalProps) {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const disableAnimation = useBooleanState(true);
   const { addKeyboardListener, removeKeyboardListener } = useKeyboard();
-  const { isConnected } = useSophonAccount();
-  const { requiresAuthorization } = useSophonContext();
 
   const {
     setCurrentRequest,
@@ -53,41 +46,27 @@ export function AuthPortal(props: AuthPortalProps) {
     clearCurrentRequest,
     actions,
   } = useFlowManager();
-  const { getAvailableDataScopes } = useEmbeddedAuth();
+
   const { partner } = useSophonPartner();
 
-  const [dataScopes, setDataScopes] = useState<DataScopes[]>([]);
   const {
     currentStep,
     showBackButton,
-    isLoading,
     params,
     handleProps,
-    isConnectingAccount,
+    hideTerms,
     navigate,
     goBack,
     cleanup,
     setParams,
-  } = useAuthPortalController();
-
-  useEffect(() => {
-    (async () => {
-      const available = await getAvailableDataScopes();
-      setDataScopes(
-        props.scopes?.filter((scope) => available.includes(scope)) ?? [],
-      );
-    })();
-  }, [getAvailableDataScopes, props.scopes]);
-
-  const hideTerms = useMemo(
-    () => isLoading || isConnectingAccount || currentStep === 'retry',
-    [isLoading, isConnectingAccount, currentStep],
-  );
+    dataScopes,
+    isConnectedAndAuthorizationComplete,
+  } = useAuthPortalController({ scopes: props.scopes });
 
   const showModal = useCallback(() => {
+    removeKeyboardListener();
     console.log('showModal');
     bottomSheetRef.current?.expand();
-    removeKeyboardListener();
     addKeyboardListener(
       Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
       () => {
@@ -100,6 +79,7 @@ export function AuthPortal(props: AuthPortalProps) {
   }, [addKeyboardListener, removeKeyboardListener]);
 
   const hideModal = useCallback(() => {
+    console.log('hideModal called');
     removeKeyboardListener();
     Keyboard.dismiss();
     bottomSheetRef.current?.close();
@@ -110,6 +90,7 @@ export function AuthPortal(props: AuthPortalProps) {
     removeKeyboardListener();
     Keyboard.dismiss();
     disableAnimation.setOn();
+    cancelCurrentRequest();
     cleanup();
     // Android needs a small delay to avoid visual glitches
     execTimeoutActionByPlatform(
@@ -118,7 +99,6 @@ export function AuthPortal(props: AuthPortalProps) {
       },
       { platforms: ['android'] },
     );
-    cancelCurrentRequest();
   }, [removeKeyboardListener, cleanup, disableAnimation, cancelCurrentRequest]);
 
   const onCloseAndForceCancel = useCallback(async () => {
@@ -130,12 +110,13 @@ export function AuthPortal(props: AuthPortalProps) {
   const renderHandleComponent = useCallback(
     (renderProps: BottomSheetHandleProps) => {
       return (
-        <AuthPortalBottomSheetHandle
-          {...renderProps}
-          {...handleProps}
-          goBack={goBack}
-          close={onCloseAndForceCancel}
-        />
+        <BottomSheetHandle {...renderProps}>
+          <AuthPortalBottomSheetHandle
+            {...handleProps}
+            goBack={goBack}
+            close={onCloseAndForceCancel}
+          />
+        </BottomSheetHandle>
       );
     },
     [onCloseAndForceCancel, goBack, handleProps],
@@ -148,10 +129,10 @@ export function AuthPortal(props: AuthPortalProps) {
         disappearsOnIndex={-1}
         appearsOnIndex={0}
         onPress={onCloseAndForceCancel}
-        pressBehavior={isLoading ? 'none' : 'close'}
+        pressBehavior={handleProps?.hideCloseButton ? 'none' : 'close'}
       />
     ),
-    [isLoading, onCloseAndForceCancel],
+    [handleProps?.hideCloseButton, onCloseAndForceCancel],
   );
 
   useUIEventHandler('outgoingRpc', (request) => {
@@ -160,6 +141,7 @@ export function AuthPortal(props: AuthPortalProps) {
   });
 
   useUIEventHandler('hideModal', () => {
+    console.log('useUIEventHandler hideModal called');
     hideModal();
   });
 
@@ -206,21 +188,12 @@ export function AuthPortal(props: AuthPortalProps) {
   }, []);
 
   useEffect(() => {
-    (async () => {
-      const available = await getAvailableDataScopes();
-      setDataScopes(
-        props.scopes?.filter((scope) => available.includes(scope)) ?? [],
-      );
-    })();
-  }, [getAvailableDataScopes, props.scopes]);
-
-  useEffect(() => {
     // if the user connected and we are not expecting the authorization modal to show up
     // we can hide the modal
-    if (isConnected && !requiresAuthorization && !currentStep) {
+    if (isConnectedAndAuthorizationComplete) {
       onComplete({ hide: true });
     }
-  }, [onComplete, requiresAuthorization, isConnected, currentStep]);
+  }, [onComplete, isConnectedAndAuthorizationComplete]);
 
   return (
     <AuthPortalContext.Provider
@@ -230,9 +203,11 @@ export function AuthPortal(props: AuthPortalProps) {
         navigate,
         goBack,
         setParams,
+        handleProps,
+        onCloseAndForceCancel,
       }}
     >
-      <BottomSheet
+      <AdaptiveBottomSheet
         onClose={onClose}
         ref={bottomSheetRef}
         backdropComponent={renderBackdrop}
@@ -245,35 +220,33 @@ export function AuthPortal(props: AuthPortalProps) {
         animateOnMount
         enablePanDownToClose={!handleProps?.hideCloseButton}
         enableDynamicSizing={true}
-        keyboardBehavior={Platform.OS === 'ios' ? 'interactive' : 'fillParent'}
+        keyboardBehavior="interactive"
         keyboardBlurBehavior="restore"
         enableBlurKeyboardOnGesture={true}
         android_keyboardInputMode="adjustResize"
         handleIndicatorStyle={{ backgroundColor: '#ccc' }}
       >
-        <BottomSheetScrollView bounces={false}>
-          <Container margin={24}>
-            <StepTransitionView
-              keyProp={currentStep ?? null}
-              isBackAvailable={showBackButton}
-              disableAnimation={disableAnimation.state}
-            >
-              <StepControllerComponent
-                key={currentStep}
-                currentStep={currentStep ?? null}
-                onComplete={onComplete}
-                onCancel={onCloseAndForceCancel}
-                onError={onError}
-                onAuthenticate={onAuthenticate}
-                onBackToSignIn={onBackToSignIn}
-                scopes={dataScopes}
-                partner={partner}
-              />
-            </StepTransitionView>
-            <FooterSheet hideTerms={hideTerms} />
-          </Container>
-        </BottomSheetScrollView>
-      </BottomSheet>
+        <Container margin={24}>
+          <StepTransitionView
+            keyProp={currentStep}
+            isBackAvailable={showBackButton}
+            disableAnimation={disableAnimation.state}
+          >
+            <StepControllerComponent
+              key={currentStep}
+              currentStep={currentStep ?? null}
+              onComplete={onComplete}
+              onCancel={onCloseAndForceCancel}
+              onError={onError}
+              onAuthenticate={onAuthenticate}
+              onBackToSignIn={onBackToSignIn}
+              scopes={dataScopes}
+              partner={partner}
+            />
+          </StepTransitionView>
+          <FooterSheet hideTerms={hideTerms} />
+        </Container>
+      </AdaptiveBottomSheet>
     </AuthPortalContext.Provider>
   );
 }

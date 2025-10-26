@@ -1,8 +1,10 @@
-import { shortenAddress } from '@sophon-labs/account-core';
-import { useMemo } from 'react';
+import { type DataScopes, shortenAddress } from '@sophon-labs/account-core';
+import { useEffect, useMemo, useState } from 'react';
 import { useSophonAccount, useSophonName } from '../../hooks';
+import { useEmbeddedAuth } from '../../hooks/use-embedded-auth';
 import { useFlowManager } from '../../hooks/use-flow-manager';
 import { useSophonContext } from '../../hooks/use-sophon-context';
+import { useTranslation } from '../../i18n';
 import type { AuthPortalStep, CurrentParams } from '../types';
 import { useNavigationController } from './use-navigation-controller';
 
@@ -16,12 +18,28 @@ const STEPS_WITH_SIGN_IN: AuthPortalStep[] = [
   'verifyEmail',
 ];
 
-export const useAuthPortalController = () => {
+interface Props {
+  scopes: DataScopes[];
+}
+
+export const useAuthPortalController = (props: Props) => {
+  const { t } = useTranslation();
   const navigation = useNavigationController();
   const { method } = useFlowManager();
   const { isConnected, account, isConnecting } = useSophonAccount();
   const { connectingAccount } = useSophonContext();
   const { requiresAuthorization } = useSophonContext();
+  const { getAvailableDataScopes } = useEmbeddedAuth();
+  const [dataScopes, setDataScopes] = useState<DataScopes[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      const available = await getAvailableDataScopes();
+      setDataScopes(
+        props.scopes?.filter((scope) => available.includes(scope)) ?? [],
+      );
+    })();
+  }, [getAvailableDataScopes, props.scopes]);
 
   const shouldAuthorize = isConnected || !!connectingAccount;
 
@@ -79,24 +97,29 @@ export const useAuthPortalController = () => {
     if (account?.address?.trim()) return shortenAddress(account.address);
 
     if (STEPS_WITH_SIGN_IN.includes(currentStep)) {
-      return 'Sign in';
+      return t('common.signIn');
     }
 
     return '';
-  }, [account, userName, currentStep]);
+  }, [account, userName, currentStep, t]);
 
   const handleProps = useMemo(
     () => ({
       showBackButton,
       hideCloseButton: isLoading || isConnecting,
-      title: displayName ?? 'Sign in',
+      title: displayName ?? t('common.signIn'),
     }),
-    [showBackButton, isLoading, displayName, isConnecting],
+    [showBackButton, isLoading, displayName, isConnecting, t],
   );
 
   const isConnectedAndAuthorizationComplete = useMemo(() => {
     return isConnected && !requiresAuthorization && !currentStep;
   }, [isConnected, requiresAuthorization, currentStep]);
+
+  const hideTerms = useMemo(
+    () => isLoading || isConnectingAccount || currentStep === 'retry',
+    [isLoading, isConnectingAccount, currentStep],
+  );
 
   return {
     isLoading,
@@ -106,6 +129,8 @@ export const useAuthPortalController = () => {
     handleProps,
     params,
     isConnectedAndAuthorizationComplete,
+    dataScopes,
+    hideTerms,
     ...navigation,
   };
 };

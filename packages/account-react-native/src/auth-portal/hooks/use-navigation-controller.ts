@@ -48,23 +48,18 @@ export const useNavigationController = () => {
 
         if (stepExists) return prev;
 
-        const addInheritParams = options?.inheritParamsFrom?.reduce(
-          (acc: CurrentParams, inheritStep) => {
-            acc[inheritStep] = (options?.params ||
-              prev?.currentParams?.[
-                inheritStep as keyof typeof prev.currentParams
-              ] ||
-              // biome-ignore lint/suspicious/noExplicitAny: TODO @cleo to review this
-              undefined) as any;
-            return acc;
-          },
-          {},
-        );
+        const addInheritParams = (options?.inheritParamsFrom ?? []).reduce<
+          Partial<Record<keyof CurrentParams, unknown>>
+        >((acc, inheritStep) => {
+          acc[inheritStep] =
+            options?.params ?? prev?.currentParams?.[inheritStep] ?? undefined;
+          return acc;
+        }, {}) as CurrentParams;
 
         const _currentParams = {
           ...(prev?.currentParams ?? {}),
           [step]: options?.params || null,
-          ...addInheritParams,
+          ...(addInheritParams ?? {}),
         };
         const _history = [
           ...(prev?.history || []),

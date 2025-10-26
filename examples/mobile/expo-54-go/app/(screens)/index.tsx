@@ -8,6 +8,7 @@ import {
   useSophonClient,
   useSophonConsent,
 } from '@sophon-labs/account-react-native';
+import * as ScreenOrientation from 'expo-screen-orientation';
 import { useEffect, useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import {
@@ -33,6 +34,13 @@ export default function HomeScreen() {
     console.log('is connected', isConnected);
     console.log('is initialized', initialized);
   }, [isConnected, initialized]);
+
+  useEffect(() => {
+    const unlockScreenOerientation = async () => {
+      await ScreenOrientation.unlockAsync();
+    };
+    unlockScreenOerientation();
+  }, []);
 
   const { walletClient } = useSophonClient();
   const [signature, setSignature] = useState<string>();

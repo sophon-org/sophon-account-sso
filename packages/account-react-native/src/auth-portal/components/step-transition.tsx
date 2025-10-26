@@ -17,7 +17,7 @@ import Animated, {
 type StepAnimatedViewProps = {
   isBackAvailable?: boolean;
   children: React.ReactNode;
-  keyProp: string | null;
+  keyProp?: string | null;
   disableAnimation?: boolean;
 };
 

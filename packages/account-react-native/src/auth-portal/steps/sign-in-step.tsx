@@ -1,6 +1,5 @@
-import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { useCallback, useMemo, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Keyboard, StyleSheet, Text, View } from 'react-native';
 import {
   useBooleanState,
   useFlowManager,
@@ -10,13 +9,20 @@ import {
   type AuthProvider,
   useEmbeddedAuth,
 } from '../../hooks/use-embedded-auth';
+import { useTranslation } from '../../i18n';
 import { Button, CardError, Container } from '../../ui';
 import { validateEmail } from '../../utils/validations';
+import { AdaptiveTextInput } from '../components/adaptive-text-input';
 import { SocialProviderButtons } from '../components/social-provider-buttons';
-import { useNavigationParams, useNavigationPortal } from '../hooks';
+import {
+  useBottomSheetKeyboardFix,
+  useNavigationParams,
+  useNavigationPortal,
+} from '../hooks';
 import type { BasicStepProps, SignInParams } from '../types';
 
 export const SignInStep = ({ onError, onAuthenticate }: BasicStepProps) => {
+  const { t } = useTranslation();
   const [error, setError] = useState<null | string>(null);
   const params = useNavigationParams<SignInParams>();
   const { navigate } = useNavigationPortal();
@@ -30,9 +36,12 @@ export const SignInStep = ({ onError, onAuthenticate }: BasicStepProps) => {
     actions: { waitForAuthentication },
   } = useFlowManager();
 
+  useBottomSheetKeyboardFix();
+
   const handleSocialProviderPress = useCallback(
     async (provider: AuthProvider) => {
       try {
+        Keyboard.dismiss();
         const waitFor = waitForAuthentication();
         setCurrentProviderLoadingState(provider);
         await signInWithSocialProvider(provider);
@@ -87,11 +96,11 @@ export const SignInStep = ({ onError, onAuthenticate }: BasicStepProps) => {
       />
 
       <Container marginVertical={16}>
-        <BottomSheetTextInput
+        <AdaptiveTextInput
           onChangeText={handleChangeText}
           value={email}
           keyboardType="email-address"
-          placeholder="Enter email"
+          placeholder={t('signInStep.enterEmail')}
           placeholderTextColor="#D2D2D2"
           style={[styles.input, isEmailValid && styles.inputValid]}
           autoCapitalize="none"
@@ -101,7 +110,7 @@ export const SignInStep = ({ onError, onAuthenticate }: BasicStepProps) => {
           onFocus={() => setError(null)}
         />
         <Button
-          text="Sign in"
+          text={t('common.signIn')}
           disabled={!isEmailValid}
           onPress={handleSignInWithEmail}
           loading={loadingState.state}
@@ -113,13 +122,13 @@ export const SignInStep = ({ onError, onAuthenticate }: BasicStepProps) => {
         style={styles.dividerContainer}
       >
         <View style={styles.divider} />
-        <Text style={styles.dividerText}>Alternatively</Text>
+        <Text style={styles.dividerText}>{t('signInStep.alternatively')}</Text>
         <View style={styles.divider} />
       </Container>
       <Container isVisible={isWalletConnectEnabled} marginVertical={16}>
         <Button
           variant="secondary"
-          text="Sign in with Wallet"
+          text={t('signInStep.signInWithWallet')}
           onPress={() => navigate('loading')}
         />
       </Container>

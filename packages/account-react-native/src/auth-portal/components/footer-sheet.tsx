@@ -3,6 +3,7 @@ import {
   WebBrowserPresentationStyle,
 } from 'expo-web-browser';
 import { Image, StyleSheet, View } from 'react-native';
+import { useTranslation } from '../../i18n';
 import { Container, Text } from '../../ui';
 
 type FooterSheetProps = {
@@ -10,11 +11,12 @@ type FooterSheetProps = {
 };
 
 export function FooterSheet(props: FooterSheetProps) {
+  const { t } = useTranslation();
   return (
     <View style={styles.container}>
       <Container isVisible={!props?.hideTerms}>
-        <Text color="#8D8D8D" size="small">
-          {`By logging in you are accepting our\n`}
+        <Text color="#8D8D8D" size="small" textAlign="center">
+          {t('footer.byContinuing')}
           <Text
             onPress={() =>
               openBrowserAsync('https://sophon.xyz/terms', {
@@ -25,9 +27,9 @@ export function FooterSheet(props: FooterSheetProps) {
             size="small"
           >
             {' '}
-            Terms of Use{' '}
+            {t('common.termsOfUse')}{' '}
           </Text>
-          and
+          {t('common.and')}
           <Text
             onPress={() =>
               openBrowserAsync('https://sophon.xyz/privacypolicy', {
@@ -38,13 +40,13 @@ export function FooterSheet(props: FooterSheetProps) {
             size="small"
           >
             {' '}
-            Privacy Policy
+            {t('common.privacyPolicy')}
           </Text>
           .
         </Text>
       </Container>
       <View style={styles.row}>
-        <Text color="#8D8D8D">Powered by</Text>
+        <Text color="#8D8D8D">{t('common.poweredBy')}</Text>
         <Image source={require('../../assets/images/sophon-logo.png')} />
       </View>
     </View>

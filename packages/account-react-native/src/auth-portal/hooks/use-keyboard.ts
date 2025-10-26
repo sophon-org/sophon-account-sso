@@ -1,21 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import { Keyboard, type KeyboardEventName } from 'react-native';
 
 export function useKeyboard() {
-  const [keyboardOffSet, setKeyboardOffSet] = useState(0);
-
-  useEffect(() => {
-    const listenerShow = Keyboard.addListener('keyboardWillShow', (event) => {
-      setKeyboardOffSet((event?.endCoordinates?.height || 0) * 0.5);
-    });
-    const listenerHide = Keyboard.addListener('keyboardWillHide', () => {
-      setKeyboardOffSet(0);
-    });
-    return () => {
-      listenerShow.remove();
-      listenerHide.remove();
-    };
-  }, []);
   const listenerRef = useRef<ReturnType<typeof Keyboard.addListener> | null>(
     null,
   );
@@ -36,8 +22,6 @@ export function useKeyboard() {
   };
 
   return {
-    keyboardOffSet,
-    isKeyboardVisible: keyboardOffSet > 0,
     addKeyboardListener,
     removeKeyboardListener,
   };
