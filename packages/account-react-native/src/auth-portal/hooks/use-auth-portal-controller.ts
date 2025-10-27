@@ -9,6 +9,7 @@ import type { AuthPortalStep, CurrentParams } from '../types';
 import { useNavigationController } from './use-navigation-controller';
 
 const STEPS_ALLOW_BACK_BUTTON: AuthPortalStep[] = ['verifyEmail'];
+const STEPS_FORCE_DISPLAY_BACK_BUTTON: AuthPortalStep[] = ['retry'];
 
 const STEPS_WITH_SIGN_IN: AuthPortalStep[] = [
   'signIn',
@@ -81,13 +82,15 @@ export const useAuthPortalController = (props: Props) => {
 
   const showBackButton = useMemo(() => {
     if (!currentStep) return false;
-    if (currentStep === 'retry') return true;
 
-    const hasHistory = Boolean((navigation.history.length ?? 0) > 0);
-    const canNavigateBack = STEPS_ALLOW_BACK_BUTTON.includes(currentStep);
+    const shouldDisplayBackButton =
+      STEPS_FORCE_DISPLAY_BACK_BUTTON.includes(currentStep);
+    const canGoBack =
+      STEPS_ALLOW_BACK_BUTTON.includes(currentStep) &&
+      Boolean((navigation.history?.length ?? 0) > 0);
 
-    return hasHistory && canNavigateBack;
-  }, [navigation.history.length, currentStep]);
+    return shouldDisplayBackButton || canGoBack;
+  }, [navigation.history?.length, currentStep]);
 
   const userName = useSophonName();
 
