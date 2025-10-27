@@ -62,6 +62,7 @@
     "privacyPolicy": "Privacy Policy",
     "termsOfUse": "Terms of Use",
     "poweredBy": "Powered by",
-    "and": "and"
+    "and": "and",
+    "genericError": "An unexpected error occurred. Please try again."
   }
 }

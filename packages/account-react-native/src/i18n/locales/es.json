@@ -62,6 +62,7 @@
     "privacyPolicy": "Política de privacidad",
     "termsOfUse": "Términos de uso",
     "poweredBy": "Desarrollado por",
-    "and": "y"
+    "and": "y",
+    "genericError": "Ocurrió un error inesperado. Por favor, inténtalo de nuevo."
   }
 }

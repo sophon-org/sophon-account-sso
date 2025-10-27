@@ -6,8 +6,15 @@ import { useCallback, useMemo, useState } from 'react';
 import { Linking } from 'react-native';
 import { useBooleanState, useFlowManager } from '../../hooks';
 import { useTranslation } from '../../i18n';
-import { Button, Container, PermissionCollapse, Switch, Text } from '../../ui';
-import type { BasicStepProps } from '../types';
+import {
+  Button,
+  CardError,
+  Container,
+  PermissionCollapse,
+  Switch,
+  Text,
+} from '../../ui';
+import type { BaseAuthError, BasicStepProps } from '../types';
 
 const DATA_SHARING_EMAIL = 'data@sophon.xyz';
 
@@ -20,7 +27,7 @@ export const ConsentStep: React.FC<BasicStepProps> = ({
   const {
     actions: { consent },
   } = useFlowManager();
-
+  const [error, setError] = useState<null | string>(null);
   const [consents, setConsents] = useState<{ [key: string]: boolean }>({
     PERSONALIZATION_ADS: false,
     SHARING_DATA: false,
@@ -70,6 +77,9 @@ export const ConsentStep: React.FC<BasicStepProps> = ({
       await onComplete({ hide: true });
     } catch (error) {
       console.error(error);
+      setError(
+        (error as BaseAuthError)?.shortMessage ?? t('common.genericError'),
+      );
       onError(error as Error);
       isLoadingState.setOff();
     }
@@ -80,6 +90,7 @@ export const ConsentStep: React.FC<BasicStepProps> = ({
     isLoadingState,
     consent,
     areAllConsentsSelected,
+    t,
   ]);
 
   const handleOnPressEmail = useCallback(() => {
@@ -147,6 +158,7 @@ export const ConsentStep: React.FC<BasicStepProps> = ({
           {t('consentStep.withdrawalInfoPart3')}
         </Text>
       </Container>
+      <CardError isVisible={!!error} text={error ?? ''} marginVertical={8} />
       <Container marginVertical={16}>
         <Button
           variant="primary"
