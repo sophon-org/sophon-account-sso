@@ -2,9 +2,9 @@ import { useCallback, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useBooleanState, useFlowManager, useSophonAccount } from '../../hooks';
 import { useTranslation } from '../../i18n';
-import { Button, Card, CheckBox, Container, Text } from '../../ui';
+import { Button, Card, CardError, CheckBox, Container, Text } from '../../ui';
 import { sentenceCase } from '../../utils/string-utils';
-import type { BasicStepProps } from '../types';
+import type { BaseAuthError, BasicStepProps } from '../types';
 
 export const AuthorizationStep = ({
   onComplete,
@@ -19,6 +19,7 @@ export const AuthorizationStep = ({
     actions: { authorize },
   } = useFlowManager();
   const { logout } = useSophonAccount();
+  const [error, setError] = useState<null | string>(null);
   const [selectedScopes, setSelectedScopes] = useState<string[]>([]);
 
   const handleOnSelectScope = useCallback(
@@ -36,16 +37,20 @@ export const AuthorizationStep = ({
 
   const handleAuthorize = useCallback(async () => {
     try {
+      setError(null);
       isLoadingState.setOn();
       await authorize(selectedScopes);
       await onComplete({ hide: true });
     } catch (error) {
-      console.error(error);
+      console.error(JSON.stringify(error, null, 2));
+      setError(
+        (error as BaseAuthError)?.shortMessage ?? t('common.genericError'),
+      );
       onError(error as Error);
     } finally {
       isLoadingState.setOff();
     }
-  }, [onComplete, onError, authorize, isLoadingState, selectedScopes]);
+  }, [onComplete, onError, authorize, isLoadingState, selectedScopes, t]);
 
   const handleCancel = useCallback(async () => {
     await Promise.all([logout(), onCancel()]);
@@ -92,6 +97,7 @@ export const AuthorizationStep = ({
           />
         </Container>
       </Card>
+      <CardError isVisible={!!error} text={error ?? ''} marginVertical={8} />
       <View style={styles.buttons}>
         <Button
           containerStyle={styles.buttonWrapper}

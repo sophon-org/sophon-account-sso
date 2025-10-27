@@ -98,3 +98,28 @@ export type NavigationAuthPortalState = {
   history: AuthPortalStep[];
   currentParams: CurrentParams | null;
 };
+
+export class BaseAuthError extends Error {
+  code?: number;
+  shortMessage?: string;
+  details?: string;
+
+  constructor(
+    message: string,
+    options?: {
+      code?: number;
+      shortMessage?: string;
+      details?: string;
+      name?: string;
+      cause?: Error;
+    },
+  ) {
+    super(message);
+
+    this.name = options?.name ?? 'BaseError';
+    this.code = options?.code;
+    this.shortMessage = options?.shortMessage;
+    this.details = options?.details;
+    this.cause = options?.cause;
+  }
+}
