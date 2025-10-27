@@ -87,6 +87,11 @@ export const useFlowManager = () => {
           Message: embeddedUserId
             ? [...messageFields, { name: 'userId', type: 'string' }]
             : messageFields,
+          EIP712Domain: [
+            { name: 'name', type: 'string' },
+            { name: 'version', type: 'string' },
+            { name: 'chainId', type: 'uint256' },
+          ],
         },
         primaryType: 'Message',
         address: account.address,
