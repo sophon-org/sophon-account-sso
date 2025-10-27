@@ -92,11 +92,20 @@ export const useAuthPortalController = (props: Props) => {
     return shouldDisplayBackButton || canGoBack;
   }, [navigation.history?.length, currentStep]);
 
+  const stepDisplayName = useMemo(() => {
+    switch (currentStep) {
+      case 'consent':
+        return t('common.consent');
+      default:
+        return null;
+    }
+  }, [t, currentStep]);
+
   const userName = useSophonName();
 
   const displayName = useMemo(() => {
     if (!currentStep) return '';
-    if (currentStep === 'consent') return t('common.consent');
+    if (stepDisplayName) return stepDisplayName;
     if (userName) return userName;
     if (account?.address?.trim()) return shortenAddress(account.address);
 
@@ -105,7 +114,7 @@ export const useAuthPortalController = (props: Props) => {
     }
 
     return '';
-  }, [account, userName, currentStep, t]);
+  }, [account, userName, currentStep, t, stepDisplayName]);
 
   const handleProps = useMemo(
     () => ({
