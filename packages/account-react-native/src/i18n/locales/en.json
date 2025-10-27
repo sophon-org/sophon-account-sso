@@ -54,6 +54,7 @@
   },
   "common": {
     "signIn": "Sign In",
+    "consent": "Data Permission",
     "retry": "Retry",
     "confirm": "Confirm",
     "connect": "Connect",

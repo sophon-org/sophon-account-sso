@@ -1,8 +1,5 @@
 import { DataScopes, sophonOSTestnet } from '@sophon-labs/account-core';
-import {
-  Capabilities,
-  SophonContextProvider,
-} from '@sophon-labs/account-react-native';
+import { SophonContextProvider } from '@sophon-labs/account-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export const Web3Provider = ({ children }: { children: React.ReactNode }) => {

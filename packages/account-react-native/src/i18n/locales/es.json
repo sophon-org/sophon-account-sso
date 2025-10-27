@@ -54,6 +54,7 @@
   },
   "common": {
     "signIn": "Iniciar sesión",
+    "consent": "Consentimiento de datos",
     "retry": "Reintentar",
     "confirm": "Confirmar",
     "connect": "Conectar",

@@ -96,6 +96,7 @@ export const useAuthPortalController = (props: Props) => {
 
   const displayName = useMemo(() => {
     if (!currentStep) return '';
+    if (currentStep === 'consent') return t('common.consent');
     if (userName) return userName;
     if (account?.address?.trim()) return shortenAddress(account.address);
 
