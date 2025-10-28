@@ -4,6 +4,7 @@ import {
   useContext,
   useMemo,
 } from 'react';
+import { type ColorSchemeName, useColorScheme } from 'react-native';
 
 export type ThemeColorType = typeof COLORS.light | typeof COLORS.dark;
 
@@ -12,10 +13,11 @@ const ThemeContext = createContext<ThemeColorType | null>(null);
 export function ThemeProvider({
   children,
   theme,
-}: PropsWithChildren<{ theme?: 'light' | 'dark' }>) {
+}: PropsWithChildren<{ theme?: ColorSchemeName }>) {
+  const colorScheme = useColorScheme();
   const values = useMemo(() => {
-    return COLORS[theme || 'light'];
-  }, [theme]);
+    return COLORS[theme || colorScheme || 'light'];
+  }, [theme, colorScheme]);
 
   return (
     <ThemeContext.Provider value={values}>{children}</ThemeContext.Provider>

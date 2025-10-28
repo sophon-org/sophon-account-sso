@@ -28,6 +28,7 @@ export const useNavigationController = () => {
     (step: AuthPortalStep, options?: NavigateOptions) =>
       setConfig((prev) => {
         if (!prev) return initialState;
+
         if (options?.replace) {
           return {
             ...(prev || {}),
@@ -82,11 +83,15 @@ export const useNavigationController = () => {
   const goBack = useCallback((options?: NavigateOptions) => {
     setConfig((prev) => {
       if (prev?.currentState === 'retry') return initialState;
+
       if (!prev || prev.history.length === 0) return prev;
+
       const newHistory = prev.history.slice(0, -1);
       const newCurrentState = prev.history[prev.history.length - 1];
+
       if (newCurrentState === 'signIn') return initialState;
       if (!newCurrentState) return prev;
+
       return {
         currentState: newCurrentState,
         history: newHistory,

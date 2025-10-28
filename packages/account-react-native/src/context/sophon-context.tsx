@@ -135,8 +135,8 @@ interface SophonContextProviderProps {
   locale?: SupportedLocaleCode;
   /**
    * Theme mode
-   * @default 'light'
-   * @supported 'light' | 'dark'
+   * @default "system"
+   * @supported "light" | "dark"
    */
   theme?: 'light' | 'dark';
 }
