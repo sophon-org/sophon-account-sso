@@ -56,7 +56,7 @@ export const useFlowManager = () => {
       // request nonce
       const nonce = await AuthService.requestNonce(
         chainId,
-        account.address,
+        account.address.toLowerCase() as Address,
         partnerId,
         fields,
         embeddedUserId,
@@ -72,7 +72,7 @@ export const useFlowManager = () => {
 
       const message = {
         content: `Do you authorize this website to connect?!\n\nThis message confirms you control this wallet.`,
-        from: account.address,
+        from: account.address.toLowerCase(),
         nonce,
         audience: partnerId,
       };
@@ -94,7 +94,7 @@ export const useFlowManager = () => {
           ],
         },
         primaryType: 'Message',
-        address: account.address,
+        address: account.address.toLowerCase(),
         message: embeddedUserId
           ? { ...message, userId: embeddedUserId }
           : message,
@@ -111,19 +111,22 @@ export const useFlowManager = () => {
         message: safePayload.message,
         // if the contract deployment is disabled, then we use the owner address as signer,
         // so we can actually issue the JWT token that can be verified on the server
-        account: onChainDeploy ? account.address : account.owner,
+        account: (onChainDeploy
+          ? account.address
+          : account.owner
+        ).toLowerCase() as Address,
       });
 
       // exchange tokens
       const tokens = await AuthService.requestToken(
         chainId,
-        account.address,
+        account.address.toLowerCase() as Address,
         signAuth,
         signature,
         nonce,
         // if the contract deployment is disabled, we don't send the owner, its only
         // required in the server if there's no contract deployment
-        onChainDeploy ? undefined : account.owner,
+        onChainDeploy ? undefined : (account.owner.toLowerCase() as Address),
       );
 
       // save tokens
