@@ -9,7 +9,6 @@ export const AdaptiveTextInput = React.forwardRef<
   TextInputProps | BottomSheetTextInputProps
 >((props, ref) => {
   const { mode } = useAdaptiveBottomSheetMode();
-
   if (mode === 'bottomSheet') {
     return (
       <BottomSheetTextInput

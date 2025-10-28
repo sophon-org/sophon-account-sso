@@ -66,8 +66,8 @@ export function AuthPortal(props: AuthPortalProps) {
 
   const showModal = useCallback(() => {
     removeKeyboardListener();
-    console.log('showModal');
     bottomSheetRef.current?.expand();
+    console.log('showModal');
     addKeyboardListener(
       Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
       () => {
@@ -77,36 +77,47 @@ export function AuthPortal(props: AuthPortalProps) {
         });
       },
     );
+    // Android requires listening to keyboardDidShow to avoid issues with timing
+    addKeyboardListener('keyboardDidShow', () => {
+      execTimeoutActionByPlatform(
+        () => {
+          console.log('[Android] keyboardDidShow snapping to index 0');
+          bottomSheetRef.current?.snapToIndex(0);
+        },
+        {
+          platforms: ['android'],
+          androidTimeout: 100,
+        },
+      );
+    });
   }, [addKeyboardListener, removeKeyboardListener]);
 
   const hideModal = useCallback(() => {
     console.log('hideModal called');
     removeKeyboardListener();
-    Keyboard.dismiss();
     bottomSheetRef.current?.close();
   }, [removeKeyboardListener]);
 
   const onClose = useCallback(() => {
     console.log('onClose called');
     removeKeyboardListener();
-    Keyboard.dismiss();
     disableAnimation.setOn();
     cancelCurrentRequest();
     cleanup();
-    // Android needs a small delay to avoid visual glitches
+    // // Android needs a small delay to avoid visual glitches
     execTimeoutActionByPlatform(
       () => {
         bottomSheetRef.current?.close();
       },
       { platforms: ['android'] },
     );
+    Keyboard.dismiss();
   }, [removeKeyboardListener, cleanup, disableAnimation, cancelCurrentRequest]);
 
   const onCloseAndForceCancel = useCallback(async () => {
     hideModal();
-    onClose();
-    cleanup();
-  }, [hideModal, onClose, cleanup]);
+    cancelCurrentRequest();
+  }, [hideModal, cancelCurrentRequest]);
 
   const renderHandleComponent = useCallback(
     (renderProps: BottomSheetHandleProps) => {
@@ -205,7 +216,6 @@ export function AuthPortal(props: AuthPortalProps) {
         goBack,
         setParams,
         handleProps,
-        onCloseAndForceCancel,
       }}
     >
       <AdaptiveBottomSheet

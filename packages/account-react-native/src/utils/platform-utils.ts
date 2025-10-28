@@ -30,7 +30,7 @@ export function execTimeoutActionByPlatform(
     },
     android: () => {
       if (!platforms.includes('android')) return;
-      setTimeout(callBack, androidTimeout ?? 30);
+      setTimeout(callBack, androidTimeout ?? 50);
     },
   });
 }

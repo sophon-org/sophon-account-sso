@@ -54,6 +54,7 @@ export const AdaptiveBottomSheet = forwardRef<
       expand() {
         const newMode = isLargeScreen ? 'modal' : 'bottomSheet';
         setInitialMode(newMode);
+        console.log('[AdaptiveBottomSheet]: Expanding sheet', newMode);
         if (newMode === 'modal') {
           modalSheetRef.current?.expand();
         } else {
@@ -61,6 +62,7 @@ export const AdaptiveBottomSheet = forwardRef<
         }
       },
       close() {
+        console.log('[AdaptiveBottomSheet]: Closing sheet', mode);
         if (mode === 'modal') {
           modalSheetRef.current?.close();
         } else {
@@ -96,6 +98,7 @@ export const AdaptiveBottomSheet = forwardRef<
         <BottomSheetScrollView
           bounces={false}
           keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ backgroundColor: colors.background.primary }}
         >

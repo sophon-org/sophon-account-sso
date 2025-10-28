@@ -200,7 +200,7 @@ const createStyles = (colors: ThemeColorType) =>
       alignItems: 'center',
     },
     modalContainer: {
-      backgroundColor: colors.white,
+      backgroundColor: colors.background.primary,
       borderRadius: 24,
       overflow: 'hidden',
       elevation: 8,
