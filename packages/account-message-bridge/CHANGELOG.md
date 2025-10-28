@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 3.0.0-next.9
+
+### Patch Changes
+
+- Fixing issue on consent
+
 ## 3.0.0-next.8
 
 ### Patch Changes

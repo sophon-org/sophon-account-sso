@@ -1,5 +1,13 @@
 # @sophon-labs/account-api-sdk
 
+## 3.0.0-next.9
+
+### Patch Changes
+
+- Fixing issue on consent
+- Updated dependencies
+  - @sophon-labs/account-core@3.0.0-next.9
+
 ## 3.0.0-next.8
 
 ### Patch Changes
