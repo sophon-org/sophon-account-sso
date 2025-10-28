@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Keyboard,
-  type NativeSyntheticEvent,
+  Platform,
   StyleSheet,
   type TextInput,
-  type TextInputKeyPressEventData,
   View,
 } from 'react-native';
 import Animated, {
@@ -103,10 +102,42 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
     inputsRef.current.forEach((input) => input?.blur());
   }, []);
 
+  const handleKeyPress = useCallback(
+    (key: string, index: number) => {
+      if (key === 'Backspace') {
+        const newCodes = [...codesRef.current];
+        if (index > 0 && !codesRef.current[index]) {
+          const indexToFocus = index - 1;
+          newCodes[indexToFocus] = '';
+          opacities[indexToFocus]!.value = withTiming(0.3, { duration: 100 });
+        }
+        newCodes[index] = '';
+        codesRef.current = newCodes;
+        forceUpdate({});
+
+        opacities[index]!.value = withTiming(0.3, { duration: 100 });
+        const isLastCodeHasValue = Boolean(
+          index === OTP_CODE_LENGTH - 1 && codesRef.current[index],
+        );
+        if (index > 0 && !isLastCodeHasValue) {
+          focusIndex(index - 1);
+        }
+      }
+    },
+    [focusIndex, opacities],
+  );
+
   const handleChange = useCallback(
     (text: string, index: number) => {
       let digits = text.replace(/[^0-9]/g, '').split('');
-      if (digits.length === 0) return;
+
+      const prev = codesRef.current[index];
+      if (digits.length === 0) {
+        if (Platform.OS === 'android' && prev && prev.length) {
+          return handleKeyPress('Backspace', index);
+        }
+        return;
+      }
 
       const newValues = [...codesRef.current];
       let nextIndex = index;
@@ -136,35 +167,7 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
         onCompleteCode();
       }
     },
-    [focusIndex, onCompleteCode, opacities, scales],
-  );
-
-  const handleKeyPress = useCallback(
-    (
-      event: NativeSyntheticEvent<TextInputKeyPressEventData>,
-      index: number,
-    ) => {
-      if (event.nativeEvent.key === 'Backspace') {
-        const newCodes = [...codesRef.current];
-        if (index > 0 && !codesRef.current[index]) {
-          const indexToFocus = index - 1;
-          newCodes[indexToFocus] = '';
-          opacities[indexToFocus]!.value = withTiming(0.3, { duration: 100 });
-        }
-        newCodes[index] = '';
-        codesRef.current = newCodes;
-        forceUpdate({});
-
-        opacities[index]!.value = withTiming(0.3, { duration: 100 });
-        const isLastCodeHasValue = Boolean(
-          index === OTP_CODE_LENGTH - 1 && codesRef.current[index],
-        );
-        if (index > 0 && !isLastCodeHasValue) {
-          focusIndex(index - 1);
-        }
-      }
-    },
-    [focusIndex, opacities],
+    [focusIndex, onCompleteCode, opacities, scales, handleKeyPress],
   );
 
   const renderInput = useCallback(
@@ -202,7 +205,7 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
             value={value}
             cursorColor={colors.black}
             onChangeText={(code) => handleChange(code, index)}
-            onKeyPress={(event) => handleKeyPress(event, index)}
+            onKeyPress={(event) => handleKeyPress(event.nativeEvent.key, index)}
             textAlign="center"
             returnKeyType="done"
             editable={!loadingState.state}
