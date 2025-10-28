@@ -4,7 +4,7 @@ import {
 } from 'expo-web-browser';
 import { Image, StyleSheet, View } from 'react-native';
 import { useTranslation } from '../../i18n';
-import { Container, Text } from '../../ui';
+import { Container, Text, useThemeColors } from '../../ui';
 
 type FooterSheetProps = {
   hideTerms?: boolean;
@@ -12,10 +12,11 @@ type FooterSheetProps = {
 
 export function FooterSheet(props: FooterSheetProps) {
   const { t } = useTranslation();
+  const colors = useThemeColors();
   return (
     <View style={styles.container}>
       <Container isVisible={!props?.hideTerms}>
-        <Text color="#8D8D8D" size="small" textAlign="center">
+        <Text color={colors.text.secondary} size="small" textAlign="center">
           {t('footer.byContinuing')}
           <Text
             onPress={() =>
@@ -23,7 +24,7 @@ export function FooterSheet(props: FooterSheetProps) {
                 presentationStyle: WebBrowserPresentationStyle.POPOVER,
               })
             }
-            color="#0066FF"
+            color={colors.text.link}
             size="small"
           >
             {' '}
@@ -36,7 +37,7 @@ export function FooterSheet(props: FooterSheetProps) {
                 presentationStyle: WebBrowserPresentationStyle.PAGE_SHEET,
               })
             }
-            color="#0066FF"
+            color={colors.text.link}
             size="small"
           >
             {' '}
@@ -46,7 +47,7 @@ export function FooterSheet(props: FooterSheetProps) {
         </Text>
       </Container>
       <View style={styles.row}>
-        <Text color="#8D8D8D">{t('common.poweredBy')}</Text>
+        <Text color={colors.text.secondary}>{t('common.poweredBy')}</Text>
         <Image source={require('../../assets/images/sophon-logo.png')} />
       </View>
     </View>

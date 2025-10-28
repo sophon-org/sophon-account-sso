@@ -7,6 +7,7 @@ import {
   View,
 } from 'react-native';
 import { Text } from './text';
+import { type ThemeColorType, useThemedStyles } from './theme-provider';
 
 interface ButtonProps {
   variant?: 'primary' | 'secondary';
@@ -27,6 +28,7 @@ export function Button({
   containerStyle,
   ...restProps
 }: ButtonProps & TouchableOpacityProps) {
+  const styles = useThemedStyles(createStyles);
   const theme = useMemo(() => {
     if (disabled) {
       return {
@@ -45,7 +47,7 @@ export function Button({
       buttonStyle: styles.primaryButton,
       textStyle: styles.primaryText,
     };
-  }, [disabled, variant]);
+  }, [disabled, variant, styles]);
 
   return (
     <View style={containerStyle}>
@@ -74,53 +76,54 @@ export function Button({
   );
 }
 
-const styles = StyleSheet.create({
-  loading: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    justifyContent: 'center',
-    alignItems: 'flex-end',
-    alignContent: 'center',
-  },
-  loadingIndicator: {
-    marginRight: 16,
-  },
-  fullWidth: {
-    width: '100%',
-  },
-  button: {
-    borderRadius: 12,
-    minWidth: 150,
-    height: 48,
-    padding: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignContent: 'center',
-  },
-  disabledButton: {
-    backgroundColor: '#F0F0F0',
-  },
-  disabledText: {
-    color: '#D2D2D2',
-  },
-  primaryButton: {
-    backgroundColor: '#0A7CFF',
-  },
-  primaryText: {
-    color: '#ffffff',
-    fontWeight: '500',
-  },
-  secondaryButton: {
-    backgroundColor: '#EAF1FF',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  secondaryText: {
-    color: '#0066FF',
-    fontWeight: '600',
-  },
-});
+const createStyles = (colors: ThemeColorType) =>
+  StyleSheet.create({
+    loading: {
+      position: 'absolute',
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+      justifyContent: 'center',
+      alignItems: 'flex-end',
+      alignContent: 'center',
+    },
+    loadingIndicator: {
+      marginRight: 16,
+    },
+    fullWidth: {
+      width: '100%',
+    },
+    button: {
+      borderRadius: 12,
+      minWidth: 150,
+      height: 48,
+      padding: 8,
+      justifyContent: 'center',
+      alignItems: 'center',
+      alignContent: 'center',
+    },
+    disabledButton: {
+      backgroundColor: colors.gray[100],
+    },
+    disabledText: {
+      color: colors.text.disabled,
+    },
+    primaryButton: {
+      backgroundColor: colors.blue[300],
+    },
+    primaryText: {
+      color: colors.white,
+      fontWeight: '500',
+    },
+    secondaryButton: {
+      backgroundColor: colors.blue[50],
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    secondaryText: {
+      color: colors.text.link,
+      fontWeight: '600',
+    },
+  });

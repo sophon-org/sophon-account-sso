@@ -6,6 +6,7 @@ import {
   StyleSheet,
   type TextStyle,
 } from 'react-native';
+import { type ThemeColorType, useThemedStyles } from './theme-provider';
 
 type TextVariant = 'small' | 'regular' | 'large';
 
@@ -80,6 +81,7 @@ const TEXT_STYLE_KEYS: ReadonlyArray<TextStylePropKeys> = [
 ] as const;
 
 export const Text: React.FC<Props> = ({ size = 'regular', style, ...rest }) => {
+  const styles = useThemedStyles(createStyles);
   const inlineStyle = useMemo(() => {
     const textStyles: TextStyle = {};
     TEXT_STYLE_KEYS.forEach((key) => {
@@ -106,21 +108,22 @@ export const Text: React.FC<Props> = ({ size = 'regular', style, ...rest }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  base: {
-    color: '#2A2A2A',
-  },
-  small: {
-    fontSize: 10,
-    lineHeight: 10 * 1.33,
-  },
-  regular: {
-    fontSize: 15,
-    lineHeight: 15 * 1.33,
-  },
-  large: {
-    fontSize: 18,
-    lineHeight: 24,
-    fontWeight: 'bold',
-  },
-});
+const createStyles = (colors: ThemeColorType) =>
+  StyleSheet.create({
+    base: {
+      color: colors.text.primary,
+    },
+    small: {
+      fontSize: 10,
+      lineHeight: 10 * 1.33,
+    },
+    regular: {
+      fontSize: 15,
+      lineHeight: 15 * 1.33,
+    },
+    large: {
+      fontSize: 18,
+      lineHeight: 24,
+      fontWeight: 'bold',
+    },
+  });

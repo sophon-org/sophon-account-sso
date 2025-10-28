@@ -44,6 +44,7 @@ import {
 } from '../provider';
 import { freshInstallActions } from '../provider/fresh-install';
 import type { SophonJWTToken } from '../types';
+import { ThemeProvider } from '../ui/theme-provider';
 
 export const createSophonWalletClient = (
   chain: Chain,
@@ -132,6 +133,12 @@ interface SophonContextProviderProps {
    * @supported "en" | "es"
    */
   locale?: SupportedLocaleCode;
+  /**
+   * Theme mode
+   * @default "system"
+   * @supported "light" | "dark"
+   */
+  theme?: 'light' | 'dark';
 }
 
 export const SophonContextProvider = ({
@@ -143,6 +150,7 @@ export const SophonContextProvider = ({
   insets,
   requestedCapabilities,
   locale,
+  theme,
 }: SophonContextProviderProps) => {
   const [error, setError] = useState<{ description: string; code: number }>();
   const serverUrl = useMemo(
@@ -312,14 +320,16 @@ export const SophonContextProvider = ({
       {!!dynamicClient?.reactNative?.WebView && (
         <dynamicClient.reactNative.WebView />
       )}
-      <LocalizationProvider locale={locale}>
-        <AuthPortal
-          insets={insets}
-          scopes={dataScopes}
-          authServerUrl={serverUrl}
-          partnerId={partnerId}
-        />
-      </LocalizationProvider>
+      <ThemeProvider theme={theme}>
+        <LocalizationProvider locale={locale}>
+          <AuthPortal
+            insets={insets}
+            scopes={dataScopes}
+            authServerUrl={serverUrl}
+            partnerId={partnerId}
+          />
+        </LocalizationProvider>
+      </ThemeProvider>
     </SophonContext.Provider>
   );
 };

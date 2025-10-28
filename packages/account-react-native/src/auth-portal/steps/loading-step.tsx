@@ -1,12 +1,12 @@
 import { Image, StyleSheet, View } from 'react-native';
-import { Container, Icon } from '../../ui';
+import { Container, Icon, useThemeColors } from '../../ui';
 import { AuthenticatingSpinner } from '../components/authenticating-spinner';
 import { useNavigationParams } from '../hooks';
 import type { LoadingParams } from '../types';
 
 export const LoadingStep = () => {
   const { provider } = useNavigationParams<LoadingParams>();
-
+  const colors = useThemeColors();
   return (
     <View style={[styles.container]}>
       <AuthenticatingSpinner isAuthenticating>
@@ -17,7 +17,7 @@ export const LoadingStep = () => {
             width={44}
             height={44}
           >
-            <Icon name={provider} size={32} color="#3377FF" />
+            <Icon name={provider} size={32} color={colors.blue[100]} />
           </Container>
         ) : (
           <Image

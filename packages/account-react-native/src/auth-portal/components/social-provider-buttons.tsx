@@ -7,7 +7,13 @@ import Animated, {
 } from 'react-native-reanimated';
 import { AVAILABLE_PROVIDERS } from '../../constants';
 import type { AuthProvider } from '../../hooks/use-embedded-auth';
-import { Container, Icon } from '../../ui';
+import {
+  Container,
+  Icon,
+  type ThemeColorType,
+  useThemeColors,
+  useThemedStyles,
+} from '../../ui';
 import { AuthenticatingSpinner } from './authenticating-spinner';
 
 interface Props {
@@ -22,6 +28,8 @@ export const SocialProviderButtons = ({
   isAuthenticating,
 }: Props) => {
   const opacity = useSharedValue(0);
+  const colors = useThemeColors();
+  const styles = useThemedStyles(createStyles);
 
   useEffect(() => {
     if (providerRequest) {
@@ -46,7 +54,7 @@ export const SocialProviderButtons = ({
             disabled={!!providerRequest || isAuthenticating}
             onPress={() => onPressSocialSignIn(provider)}
           >
-            <Icon name={provider} size={24} />
+            <Icon name={provider} size={24} color={colors.black} />
           </TouchableOpacity>
         ))}
       </View>
@@ -54,7 +62,7 @@ export const SocialProviderButtons = ({
         {providerRequest && (
           <Animated.View style={[styles.overlayContent]}>
             <AuthenticatingSpinner
-              stroke="#3377FF"
+              stroke={colors.blue[100]}
               isAuthenticating={isAuthenticating}
             >
               <Container
@@ -63,7 +71,11 @@ export const SocialProviderButtons = ({
                 width={44}
                 height={44}
               >
-                <Icon name={providerRequest} size={32} color="#3377FF" />
+                <Icon
+                  name={providerRequest}
+                  size={32}
+                  color={colors.blue[300]}
+                />
               </Container>
             </AuthenticatingSpinner>
           </Animated.View>
@@ -73,34 +85,35 @@ export const SocialProviderButtons = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    marginBottom: 16,
-  },
-  socialButton: {
-    width: 56,
-    height: 48,
-    borderRadius: 16,
-    backgroundColor: '#F6F7F9',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderColor: '#EBEBEB',
-    borderWidth: 1,
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    zIndex: 10,
-    flex: 1,
-    width: '100%',
-    height: '100%',
-    backgroundColor: 'rgba(255,255,255,01)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  overlayContent: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+const createStyles = (colors: ThemeColorType) =>
+  StyleSheet.create({
+    container: {
+      flexDirection: 'row',
+      justifyContent: 'space-evenly',
+      marginBottom: 16,
+    },
+    socialButton: {
+      width: 56,
+      height: 48,
+      borderRadius: 16,
+      backgroundColor: colors.background.tertiary,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderColor: colors.border.light,
+      borderWidth: 1,
+    },
+    overlay: {
+      ...StyleSheet.absoluteFillObject,
+      zIndex: 10,
+      flex: 1,
+      width: '100%',
+      height: '100%',
+      backgroundColor: colors.background.primary,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    overlayContent: {
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+  });

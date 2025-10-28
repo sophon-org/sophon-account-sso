@@ -10,6 +10,7 @@ import {
   useState,
 } from 'react';
 import { Platform, useWindowDimensions } from 'react-native';
+import { useThemeColors } from '../ui/theme-provider';
 import { AdaptiveBottomSheetProvider } from './context/adaptive-bottom-sheet.context';
 import { ModalSheet, type ModalSheetHandle } from './modal-sheet';
 
@@ -23,6 +24,7 @@ export const AdaptiveBottomSheet = forwardRef<
   AdaptiveBottomSheetHandle,
   BottomSheetProps
 >(({ children, ...restProps }, ref) => {
+  const colors = useThemeColors();
   const { width, height } = useWindowDimensions();
 
   const bottomSheetRef = useRef<BottomSheet>(null);
@@ -95,6 +97,7 @@ export const AdaptiveBottomSheet = forwardRef<
           bounces={false}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ backgroundColor: colors.background.primary }}
         >
           {children}
         </BottomSheetScrollView>

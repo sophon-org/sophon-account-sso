@@ -10,6 +10,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Icon } from './icon';
 import { Text } from './text';
+import { useThemeColors } from './theme-provider';
 
 export const CheckBox: React.FC<{
   defaultChecked?: boolean;
@@ -26,6 +27,7 @@ export const CheckBox: React.FC<{
   textStyle,
   locked = false,
 }) => {
+  const colors = useThemeColors();
   const [_checked, setChecked] = useState(defaultChecked || unavailable);
   const progress = useSharedValue(_checked ? 1 : 0);
 
@@ -40,12 +42,12 @@ export const CheckBox: React.FC<{
     backgroundColor: interpolateColor(
       progress.value,
       [0, 1],
-      ['#FFF', '#0A7CFF'],
+      [colors.white, colors.blue[300]],
     ),
     borderColor: interpolateColor(
       progress.value,
       [0, 1],
-      ['#5C5851', '#0A7CFF'],
+      [colors.gray[400], colors.blue[300]],
     ),
     borderRadius: interpolate(progress.value, [0, 1], [4, 10]),
   }));
@@ -62,13 +64,20 @@ export const CheckBox: React.FC<{
       disabled={unavailable || locked}
     >
       <Animated.View
-        style={[styles.checkbox, boxStyle, unavailable && styles.unavailable]}
+        style={[
+          styles.checkbox,
+          boxStyle,
+          unavailable && {
+            backgroundColor: colors.border.dark,
+            borderColor: colors.border.dark,
+          },
+        ]}
       >
         <Animated.View style={[iconStyle, styles.icon]}>
           <Icon
             name={unavailable ? 'close' : 'checkmark'}
             size={unavailable ? 14 : 20}
-            color="#ffffff"
+            color={colors.white}
           />
         </Animated.View>
       </Animated.View>
@@ -98,10 +107,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',
-  },
-  unavailable: {
-    backgroundColor: '#8D8D8D',
-    borderColor: '#8D8D8D',
   },
   checkbox: {
     width: 20,

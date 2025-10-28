@@ -10,7 +10,7 @@ import { Keyboard, Platform } from 'react-native';
 import { useBooleanState, useFlowManager } from '../hooks';
 import { useSophonPartner } from '../hooks/use-sophon-partner';
 import { useUIEventHandler } from '../messaging/ui';
-import { Container } from '../ui';
+import { Container, useThemeColors } from '../ui';
 import { execTimeoutActionByPlatform } from '../utils/platform-utils';
 import { AdaptiveBottomSheet } from './adaptive-bottom-sheet';
 import { AuthPortalBottomSheetHandle } from './components/custom-sheet-handle';
@@ -36,6 +36,7 @@ export type AuthPortalProps = {
 };
 
 export function AuthPortal(props: AuthPortalProps) {
+  const colors = useThemeColors();
   const bottomSheetRef = useRef<BottomSheet>(null);
   const disableAnimation = useBooleanState(true);
   const { addKeyboardListener, removeKeyboardListener } = useKeyboard();
@@ -224,9 +225,10 @@ export function AuthPortal(props: AuthPortalProps) {
         keyboardBlurBehavior="restore"
         enableBlurKeyboardOnGesture={true}
         android_keyboardInputMode="adjustResize"
-        handleIndicatorStyle={{ backgroundColor: '#ccc' }}
+        handleIndicatorStyle={{ backgroundColor: colors.gray[600] }}
+        backgroundStyle={{ backgroundColor: colors.background.primary }}
       >
-        <Container margin={24}>
+        <Container margin={24} backgroundColor={colors.background.primary}>
           <StepTransitionView
             keyProp={currentStep}
             isBackAvailable={showBackButton}

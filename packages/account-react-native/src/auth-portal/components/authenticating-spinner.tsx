@@ -1,5 +1,5 @@
 import { type PropsWithChildren, useEffect, useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import Animated, {
   Easing,
   FadeIn,
@@ -10,19 +10,19 @@ import Animated, {
 } from 'react-native-reanimated';
 import Svg, { Circle } from 'react-native-svg';
 import { useTranslation } from '../../i18n';
-import { Container } from '../../ui';
+import { Container, Text, useThemeColors } from '../../ui';
 
 const ANIMATED_DURATION = 150;
 const EASE = Easing.bezier(0.75, 0.21, 0.15, 1);
 
 export function AuthenticatingSpinner({
   children,
-  stroke = '#0A7CFF',
   isAuthenticating = true,
 }: PropsWithChildren<{
   stroke?: string;
   isAuthenticating?: boolean;
 }>) {
+  const colors = useThemeColors();
   const rotation = useSharedValue(0);
 
   const { t } = useTranslation();
@@ -45,10 +45,12 @@ export function AuthenticatingSpinner({
     if (!isAuthenticating) return null;
     return (
       <Container justifyContent="center" alignItems="center">
-        <Text style={styles.text}>{t('loadingStep.signingIn')}</Text>
+        <Text color={colors.text.primary} style={styles.text}>
+          {t('loadingStep.signingIn')}
+        </Text>
       </Container>
     );
-  }, [isAuthenticating, t]);
+  }, [isAuthenticating, t, colors.text.primary]);
 
   return (
     <View style={[styles.containerAnimated]}>
@@ -59,7 +61,7 @@ export function AuthenticatingSpinner({
               cx="36"
               cy="36"
               r="30"
-              stroke={stroke}
+              stroke={colors.blue[300]}
               strokeWidth="5"
               fill="none"
               strokeDasharray={180}
@@ -99,7 +101,6 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 15,
     lineHeight: 24,
-    color: '#2A2A2A',
   },
   image: { width: 46, height: 46 },
 });

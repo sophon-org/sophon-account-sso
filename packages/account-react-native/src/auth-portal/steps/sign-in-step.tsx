@@ -10,7 +10,14 @@ import {
   useEmbeddedAuth,
 } from '../../hooks/use-embedded-auth';
 import { useTranslation } from '../../i18n';
-import { Button, CardError, Container } from '../../ui';
+import {
+  Button,
+  CardError,
+  Container,
+  type ThemeColorType,
+  useThemeColors,
+  useThemedStyles,
+} from '../../ui';
 import { validateEmail } from '../../utils/validations';
 import { AdaptiveTextInput } from '../components/adaptive-text-input';
 import { SocialProviderButtons } from '../components/social-provider-buttons';
@@ -22,6 +29,8 @@ import {
 import type { BasicStepProps, SignInParams } from '../types';
 
 export const SignInStep = ({ onError, onAuthenticate }: BasicStepProps) => {
+  const colors = useThemeColors();
+  const styles = useThemedStyles(createStyles);
   const { t } = useTranslation();
   const [error, setError] = useState<null | string>(null);
   const params = useNavigationParams<SignInParams>();
@@ -88,7 +97,7 @@ export const SignInStep = ({ onError, onAuthenticate }: BasicStepProps) => {
   const { isWalletConnectEnabled } = useSophonCapabilities();
 
   return (
-    <View style={styles.container}>
+    <View>
       <SocialProviderButtons
         isAuthenticating={loadingState.state}
         providerRequest={providerRequest}
@@ -101,7 +110,7 @@ export const SignInStep = ({ onError, onAuthenticate }: BasicStepProps) => {
           value={email}
           keyboardType="email-address"
           placeholder={t('signInStep.enterEmail')}
-          placeholderTextColor="#D2D2D2"
+          placeholderTextColor={colors.neutral[600]}
           style={[styles.input, isEmailValid && styles.inputValid]}
           autoCapitalize="none"
           autoCorrect={false}
@@ -136,69 +145,50 @@ export const SignInStep = ({ onError, onAuthenticate }: BasicStepProps) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#fff',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: '600',
-  },
-  socialRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    marginBottom: 16,
-  },
-  socialButton: {
-    width: 56,
-    height: 48,
-    borderRadius: 16,
-    backgroundColor: '#F6F7F9',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderColor: '#EBEBEB',
-    borderWidth: 1,
-  },
-  inputValid: {
-    borderColor: '#8D8D8D',
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject, // 🔹 cobre o botão todo
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.8)', // leve transparência
-    borderRadius: 16,
-  },
-  input: {
-    height: 48,
-    borderWidth: 1,
-    borderColor: '#EEE',
-    color: '##2A2A2A',
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    marginBottom: 10,
-    fontSize: 15,
-    lineHeight: 15 * 1.33,
-  },
-  dividerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 8,
-    height: 32,
-  },
-  divider: {
-    flex: 1,
-    height: 1,
-    backgroundColor: '#EEE',
-  },
-  dividerText: {
-    marginHorizontal: 10,
-    color: '#999',
-  },
-});
+const createStyles = (colors: ThemeColorType) =>
+  StyleSheet.create({
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 20,
+    },
+    title: {
+      fontSize: 18,
+      fontWeight: '600',
+    },
+    socialRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-evenly',
+      marginBottom: 16,
+    },
+    inputValid: {
+      borderColor: colors.text.secondary,
+    },
+    input: {
+      height: 48,
+      borderWidth: 1,
+      borderColor: colors.gray[700],
+      color: colors.text.primary,
+      borderRadius: 12,
+      paddingHorizontal: 12,
+      marginBottom: 10,
+      fontSize: 15,
+      lineHeight: 15 * 1.33,
+    },
+    dividerContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginVertical: 8,
+      height: 32,
+    },
+    divider: {
+      flex: 1,
+      height: 1,
+      backgroundColor: colors.gray[700],
+    },
+    dividerText: {
+      marginHorizontal: 10,
+      color: colors.gray[500],
+    },
+  });

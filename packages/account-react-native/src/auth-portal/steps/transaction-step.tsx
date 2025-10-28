@@ -1,5 +1,6 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { useTranslation } from '../../i18n';
+import { Text } from '../../ui';
 import type { BasicStepProps } from '../types';
 
 export const TransactionStep: React.FC<BasicStepProps> = () => {
@@ -13,7 +14,6 @@ export const TransactionStep: React.FC<BasicStepProps> = () => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
     marginBottom: 16,
   },
 });

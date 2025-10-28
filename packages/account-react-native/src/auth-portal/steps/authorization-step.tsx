@@ -86,6 +86,7 @@ export const AuthorizationStep = ({
               key={scope}
               label={`See your ${sentenceCase(scope)} account`}
               onChange={(checked) => handleOnSelectScope(scope, checked)}
+              locked={isLoadingState.state}
             />
           ))}
         </Container>
