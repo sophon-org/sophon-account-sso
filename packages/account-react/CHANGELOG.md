@@ -1,5 +1,14 @@
 # @sophon-labs/account-react
 
+## 3.0.0-next.8
+
+### Patch Changes
+
+- Consent flag
+- Updated dependencies
+  - @sophon-labs/account-connector@3.0.0-next.8
+  - @sophon-labs/account-core@3.0.0-next.8
+
 ## 3.0.0-next.7
 
 ### Patch Changes
