@@ -22,6 +22,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
+import { type ThemeColorType, useThemedStyles } from '../ui/theme-provider';
 import { AuthPortalBottomSheetHandle } from './components/custom-sheet-handle';
 import { useAuthPortal } from './hooks';
 
@@ -43,6 +44,7 @@ const MAX_WIDTH = 500;
 
 export const ModalSheet = forwardRef<ModalSheetHandle, ModalSheetProps>(
   ({ children, onClose, widthPercent = 0.7, maxHeightPercent = 0.85 }, ref) => {
+    const styles = useThemedStyles(createStyles);
     const { handleProps, goBack } = useAuthPortal();
     const [visible, setVisible] = useState(false);
     const opacity = useSharedValue(0);
@@ -186,27 +188,28 @@ export const ModalSheet = forwardRef<ModalSheetHandle, ModalSheetProps>(
   },
 );
 
-const styles = StyleSheet.create({
-  backdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: '#000',
-  },
-  centered: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 24,
-    overflow: 'hidden',
-    elevation: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-  },
-  scrollContent: {
-    flexGrow: 1,
-  },
-});
+const createStyles = (colors: ThemeColorType) =>
+  StyleSheet.create({
+    backdrop: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: colors.black,
+    },
+    centered: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    modalContainer: {
+      backgroundColor: colors.white,
+      borderRadius: 24,
+      overflow: 'hidden',
+      elevation: 8,
+      shadowColor: colors.black,
+      shadowOffset: { width: 0, height: 6 },
+      shadowOpacity: 0.3,
+      shadowRadius: 10,
+    },
+    scrollContent: {
+      flexGrow: 1,
+    },
+  });

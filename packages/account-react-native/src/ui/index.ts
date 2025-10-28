@@ -8,3 +8,4 @@ export * from './icon';
 export * from './permission-collapse';
 export * from './switch';
 export * from './text';
+export * from './theme-provider';

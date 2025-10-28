@@ -17,7 +17,15 @@ import { OTP_CODE_LENGTH } from '../../constants/verify-otp';
 import { useBooleanState, useFlowManager } from '../../hooks';
 import { useEmbeddedAuth } from '../../hooks/use-embedded-auth';
 import { useTranslation } from '../../i18n';
-import { Button, CardError, Container, Text } from '../../ui';
+import {
+  Button,
+  CardError,
+  Container,
+  Text,
+  type ThemeColorType,
+  useThemeColors,
+  useThemedStyles,
+} from '../../ui';
 import { AdaptiveTextInput } from '../components/adaptive-text-input';
 import { useNavigationParams } from '../hooks';
 import type { BasicStepProps, VerifyCodeParams } from '../types';
@@ -25,6 +33,8 @@ import type { BasicStepProps, VerifyCodeParams } from '../types';
 const defaultCodeArray = Array(OTP_CODE_LENGTH).fill('');
 
 export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
+  const styles = useThemedStyles(createStyles);
+  const colors = useThemeColors();
   const { t } = useTranslation();
   const loadingState = useBooleanState(false);
   const errorState = useBooleanState(false);
@@ -165,7 +175,7 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
         const borderColor = interpolateColor(
           opacity,
           [0.3, 1],
-          ['#D2D2D2', '#8D8D8D'],
+          [colors.text.disabled, colors.text.secondary],
         ) as string;
 
         return {
@@ -190,6 +200,7 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
             textContentType="oneTimeCode"
             maxLength={maxLength}
             value={value}
+            cursorColor={colors.black}
             onChangeText={(code) => handleChange(code, index)}
             onKeyPress={(event) => handleKeyPress(event, index)}
             textAlign="center"
@@ -211,6 +222,8 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
       loadingState.state,
       opacities,
       scales,
+      colors,
+      styles,
     ],
   );
 
@@ -248,7 +261,7 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
         />
       </Container>
       <Container gap={24} marginVertical={16}>
-        <Text color="#8D8D8D" textAlign="center">
+        <Text color={colors.text.secondary} textAlign="center">
           {t('verifyEmailStep.didNotReceiveCode')}
         </Text>
         <Button
@@ -261,30 +274,31 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
   );
 }
 
-const styles = StyleSheet.create({
-  containerInput: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 8,
-  },
-  box: {
-    width: 48,
-    height: 48,
-    borderWidth: 1,
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-  },
-  input: {
-    fontSize: 15,
-    width: '100%',
-    height: '100%',
-    textAlign: 'center',
-    color: '#2A2A2A',
-  },
-  inputDisabled: {
-    backgroundColor: '#F0F0F0',
-    borderRadius: 12,
-  },
-});
+const createStyles = (colors: ThemeColorType) =>
+  StyleSheet.create({
+    containerInput: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      gap: 8,
+    },
+    box: {
+      width: 48,
+      height: 48,
+      borderWidth: 1,
+      borderRadius: 12,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: colors.white,
+    },
+    input: {
+      fontSize: 15,
+      width: '100%',
+      height: '100%',
+      textAlign: 'center',
+      color: colors.text.primary,
+    },
+    inputDisabled: {
+      backgroundColor: colors.gray[100],
+      borderRadius: 12,
+    },
+  });

@@ -9,6 +9,7 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 import { Container } from './container';
+import { useThemeColors } from './theme-provider';
 
 type SwitchProps = {
   value: boolean;
@@ -24,9 +25,16 @@ export function Switch({
   value,
   onValueChange,
   disabled = false,
-  trackColors = { on: '#3377FF', off: '#A3A2A0' },
+  trackColors,
   size = 30,
 }: SwitchProps) {
+  const colors = useThemeColors();
+  const defaultTrackColors = useMemo(
+    () => ({ on: colors.blue[100], off: colors.gray[300] }),
+    [colors],
+  );
+  const finalTrackColors = trackColors || defaultTrackColors;
+
   const progress = useSharedValue(value ? 1 : 0);
   const dragStart = useSharedValue(0);
 
@@ -88,7 +96,7 @@ export function Switch({
     backgroundColor: interpolateColor(
       progress.value,
       [0, 1],
-      [trackColors.off, trackColors.on],
+      [finalTrackColors.off, finalTrackColors.on],
     ),
   }));
 
@@ -126,6 +134,10 @@ export function Switch({
               { width: THUMB, height: THUMB, borderRadius: RADIUS },
               styles.thumb,
               thumbStyle,
+              {
+                backgroundColor: colors.white,
+                shadowColor: colors.black,
+              },
             ]}
           />
         </Animated.View>
@@ -139,8 +151,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   thumb: {
-    backgroundColor: '#FFF',
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.25,
     shadowRadius: 1.5,

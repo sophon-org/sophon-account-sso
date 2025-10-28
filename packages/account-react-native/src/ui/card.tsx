@@ -1,29 +1,35 @@
 import { useMemo } from 'react';
 import { Platform, StyleSheet, View, type ViewProps } from 'react-native';
+import { type ThemeColorType, useThemedStyles } from './theme-provider';
 
 export function Card({ style, ...restProps }: ViewProps) {
+  const styles = useThemedStyles(createStyles);
   const cardStyle = useMemo(() => {
     return [styles.card, style].filter(Boolean);
-  }, [style]);
+  }, [style, styles]);
 
   return <View style={cardStyle} {...restProps} />;
 }
 
-const styles = StyleSheet.create({
-  card: {
-    borderRadius: 12,
-    borderWidth: 0.5,
-    borderColor: 'rgba(0,0,0,0.05)',
-    ...Platform.select({
-      ios: {
-        boxShadow: '0 2px 3px rgba(0, 0, 0, 0.08)',
-        backgroundColor: 'rgba(245, 245, 245, 0.5)',
-      },
-      android: {
-        backgroundColor: 'rgba(245, 245, 245, 1)',
-        elevation: 1,
-      },
-    }),
-    overflow: 'hidden',
-  },
-});
+const createStyles = (colors: ThemeColorType) =>
+  StyleSheet.create({
+    card: {
+      borderRadius: 12,
+      borderWidth: 0.5,
+      borderColor: colors.border.subtle,
+      ...Platform.select({
+        ios: {
+          shadowColor: colors.black,
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.08,
+          shadowRadius: 3,
+          backgroundColor: colors.background.secondary,
+        },
+        android: {
+          backgroundColor: colors.background.secondary,
+          elevation: 1,
+        },
+      }),
+      overflow: 'hidden',
+    },
+  });

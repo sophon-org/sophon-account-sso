@@ -6,6 +6,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { Text } from './text';
+import { useThemeColors } from './theme-provider';
 
 interface AccordionItemProps {
   isExpanded: boolean;
@@ -23,6 +24,8 @@ export function Accordion({
   children,
 }: AccordionItemProps) {
   const height = useSharedValue(0);
+
+  const colors = useThemeColors();
 
   const derivedHeight = useDerivedValue(() =>
     withTiming(height.value * Number(isExpanded), {
@@ -45,7 +48,7 @@ export function Accordion({
         }}
         style={styles.wrapper}
       >
-        <Text color="#8D8D8D">{children}</Text>
+        <Text color={colors.text.secondary}>{children}</Text>
       </View>
     </Animated.View>
   );

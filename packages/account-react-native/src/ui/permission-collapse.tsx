@@ -14,6 +14,7 @@ import { Container } from './container';
 import { Icon } from './icon';
 import { Switch } from './switch';
 import { Text } from './text';
+import { useThemeColors } from './theme-provider';
 
 interface PermissionCollapseProps {
   name: string;
@@ -31,6 +32,7 @@ export function PermissionCollapse({
   initialExpanded = false,
   allowed = false,
 }: PermissionCollapseProps) {
+  const colors = useThemeColors();
   const isExpanded = useBooleanState(initialExpanded);
 
   const handleToggle = useCallback(
@@ -41,7 +43,12 @@ export function PermissionCollapse({
   );
 
   return (
-    <Container backgroundColor="#F4F4F4" gap={8} padding={18} borderRadius={8}>
+    <Container
+      backgroundColor={colors.gray[200]}
+      gap={8}
+      padding={18}
+      borderRadius={8}
+    >
       <CollapseHeader
         viewKey={`${name}_header`}
         label={label}
