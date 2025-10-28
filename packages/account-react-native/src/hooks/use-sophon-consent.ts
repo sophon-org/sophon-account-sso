@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import type { ConsentResponse } from '../types/consent';
 import { hasRequiredConsents } from '../utils/consent';
 import { useSophonContext } from './use-sophon-context';
@@ -7,6 +7,11 @@ export const useSophonConsent = (force: boolean = false) => {
   const { walletClient, accessToken } = useSophonContext();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const hasConsent = useMemo(
+    () => hasRequiredConsents(accessToken?.value),
+    [accessToken],
+  );
 
   const requestConsent = useCallback(async (): Promise<ConsentResponse> => {
     setIsLoading(true);
@@ -35,6 +40,7 @@ export const useSophonConsent = (force: boolean = false) => {
 
   return {
     requestConsent,
+    hasConsent,
     isLoading,
     error,
   };
