@@ -9,20 +9,22 @@ export const AdaptiveTextInput = React.forwardRef<
   TextInputProps | BottomSheetTextInputProps
 >((props, ref) => {
   const { mode } = useAdaptiveBottomSheetMode();
-  if (mode === 'bottomSheet') {
-    return (
-      <BottomSheetTextInput
-        ref={(_ref) => {
-          if (typeof ref === 'function') {
-            ref(_ref as TextInput);
-          } else if (ref) {
-            ref.current = _ref as TextInput;
-          }
-        }}
-        {...props}
-      />
-    );
+
+  if (mode === 'modal') {
+    return <TextInput ref={ref} {...props} />;
   }
-  return <TextInput ref={ref} {...props} />;
+
+  return (
+    <BottomSheetTextInput
+      ref={(_ref) => {
+        if (typeof ref === 'function') {
+          ref(_ref as TextInput);
+        } else if (ref) {
+          ref.current = _ref as TextInput;
+        }
+      }}
+      {...props}
+    />
+  );
 });
 AdaptiveTextInput.displayName = 'BottomSheetTextInput';

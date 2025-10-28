@@ -5,10 +5,11 @@ import { Icon } from './icon';
 import { Text } from './text';
 
 interface CardErrorProps extends ContainerProps {
-  text: string;
+  text?: string | null;
 }
 
 export function CardError({ text, ...restProps }: CardErrorProps) {
+  if (!text) return null;
   return (
     <Container {...restProps}>
       <Card style={styles.errorCard}>

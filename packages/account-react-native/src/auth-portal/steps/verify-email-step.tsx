@@ -36,7 +36,11 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
   const colors = useThemeColors();
   const { t } = useTranslation();
   const loadingState = useBooleanState(false);
-  const errorState = useBooleanState(false);
+  const loadingResendState = useBooleanState(false);
+  const [error, setError] = useState<{
+    type: 'invalidCode' | 'resendLink';
+    message: string;
+  } | null>(null);
   const params = useNavigationParams<VerifyCodeParams>();
   const [, forceUpdate] = useState({});
   const codesRef = useRef<string[]>(defaultCodeArray);
@@ -55,7 +59,10 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
 
   const handleOnError = useCallback(
     async (error: Error) => {
-      errorState.setOn();
+      setError({
+        type: 'invalidCode',
+        message: t('verifyEmailStep.invalidCode'),
+      });
       console.error(error);
       onError(error, 'verifyEmail');
       codesRef.current = [...defaultCodeArray];
@@ -64,13 +71,13 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
         opacities[index]!.value = withTiming(0.3, { duration: 100 });
       });
     },
-    [onError, errorState, opacities],
+    [onError, opacities, t],
   );
 
   const handleVerifyEmailOTP = useCallback(
     async (code?: string) => {
       try {
-        errorState.setOff();
+        setError(null);
         loadingState.setOn();
         Keyboard.dismiss();
         const codeToVerify = code || codesRef.current.join('');
@@ -86,12 +93,26 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
     [
       verifyEmailOTP,
       onAuthenticate,
-      errorState,
       loadingState,
       handleOnError,
       waitForAuthentication,
     ],
   );
+
+  const handleResendEmailOTP = useCallback(async () => {
+    try {
+      setError(null);
+      loadingResendState.setOn();
+      await resendEmailOTP();
+    } catch (error) {
+      setError({
+        type: 'resendLink',
+        message: t('verifyEmailStep.errorResendLink'),
+      });
+    } finally {
+      loadingResendState.setOff();
+    }
+  }, [resendEmailOTP, t, loadingResendState]);
 
   const focusIndex = useCallback((index: number) => {
     inputsRef.current[index]?.focus();
@@ -208,7 +229,7 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
             onKeyPress={(event) => handleKeyPress(event.nativeEvent.key, index)}
             textAlign="center"
             returnKeyType="done"
-            editable={!loadingState.state}
+            editable={!loadingState.state || loadingResendState.state}
             onSubmitEditing={() => {
               if (index === OTP_CODE_LENGTH - 1 && value.length === 1) {
                 handleVerifyEmailOTP();
@@ -223,6 +244,7 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
       handleKeyPress,
       handleVerifyEmailOTP,
       loadingState.state,
+      loadingResendState.state,
       opacities,
       scales,
       colors,
@@ -256,11 +278,14 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
           text="Verify"
           loading={loadingState.state}
           onPress={() => handleVerifyEmailOTP()}
-          disabled={codesRef.current.some((code) => code === '')}
+          disabled={
+            codesRef.current.some((code) => code === '') ||
+            loadingResendState.state
+          }
         />
         <CardError
-          isVisible={errorState.state}
-          text={t('verifyEmailStep.invalidCode')}
+          isVisible={error?.type === 'invalidCode'}
+          text={error?.message}
         />
       </Container>
       <Container gap={24} marginVertical={16}>
@@ -270,7 +295,12 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
         <Button
           variant="secondary"
           text={t('verifyEmailStep.resendLink')}
-          onPress={resendEmailOTP}
+          loading={loadingResendState.state}
+          onPress={handleResendEmailOTP}
+        />
+        <CardError
+          isVisible={error?.type === 'resendLink'}
+          text={error?.message}
         />
       </Container>
     </Container>

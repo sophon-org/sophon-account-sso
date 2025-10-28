@@ -41,6 +41,7 @@ export interface ModalSheetProps {
 }
 
 const MAX_WIDTH = 500;
+const MIN_WIDTH = 360;
 
 export const ModalSheet = forwardRef<ModalSheetHandle, ModalSheetProps>(
   ({ children, onClose, widthPercent = 0.7, maxHeightPercent = 0.85 }, ref) => {
@@ -163,6 +164,7 @@ export const ModalSheet = forwardRef<ModalSheetHandle, ModalSheetProps>(
               {
                 width: modalWidth,
                 maxWidth: MAX_WIDTH,
+                minWidth: MIN_WIDTH,
                 maxHeight: modalMaxHeight,
               },
               modalAnimatedStyle,
