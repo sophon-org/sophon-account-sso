@@ -1,6 +1,6 @@
 {
   "name": "@sophon-labs/account-provider",
-  "version": "3.0.0-next.9",
+  "version": "3.0.0-next.10",
   "description": "EIP-1193 provider for Sophon Account",
   "license": "MIT",
   "author": "Sophon Team",
@@ -62,8 +62,8 @@
     "vitest": "^3.2.4"
   },
   "dependencies": {
-    "@sophon-labs/account-communicator": "3.0.0-next.9",
-    "@sophon-labs/account-core": "3.0.0-next.9",
+    "@sophon-labs/account-communicator": "3.0.0-next.10",
+    "@sophon-labs/account-core": "3.0.0-next.10",
     "eventemitter3": "^5.0.1",
     "json-rpc-2.0": "^1.7.1"
   },

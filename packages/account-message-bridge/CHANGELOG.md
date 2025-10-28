@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 3.0.0-next.10
+
+### Patch Changes
+
+- More languages support
+
 ## 3.0.0-next.9
 
 ### Patch Changes
