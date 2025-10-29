@@ -109,8 +109,7 @@ export const AdaptiveBottomSheet = forwardRef<
       <BottomSheet ref={bottomSheetRef} {...restProps}>
         <BottomSheetScrollView
           bounces={false}
-          keyboardShouldPersistTaps="handled"
-          keyboardDismissMode="on-drag"
+          keyboardShouldPersistTaps={'handled'}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ backgroundColor: colors.background.primary }}
         >

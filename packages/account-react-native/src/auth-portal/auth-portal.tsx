@@ -111,32 +111,15 @@ export function AuthPortal(props: AuthPortalProps) {
         console.log('requestClose: already closed, skipping');
         return;
       }
-
       removeKeyboardListener();
-      if (Platform.OS === 'ios') {
-        Keyboard.dismiss();
-      }
+
+      Keyboard.dismiss();
+
       if (forceClose) bottomSheetRef.current?.close();
       console.log('requestClose called');
       isClosedModalRef.current = true;
       cancelCurrentRequest();
       cleanup();
-      // execTimeoutActionByPlatform(
-      //   () => {
-      //     bottomSheetRef.current?.forceClose();
-      //     execTimeoutActionByPlatform(
-      //       () => {
-      //         Keyboard.dismiss();
-      //       },
-      //       {
-      //         androidTimeout: 80,
-      //       },
-      //     );
-      //   },
-      //   {
-      //     androidTimeout: 80,
-      //   },
-      // );
     },
     [removeKeyboardListener, cleanup, cancelCurrentRequest],
   );
@@ -168,10 +151,28 @@ export function AuthPortal(props: AuthPortalProps) {
 
   const onCloseAndForceCancel = useCallback(async () => {
     isClosedModalRef.current = false;
-    console.log('onCloseAndForceCancel called');
-    hideModal();
-    cancelCurrentRequest();
-  }, [hideModal, cancelCurrentRequest]);
+    if (Platform.OS === 'android' && Keyboard.isVisible()) {
+      console.log('onCloseAndForceCancel waiting for keyboard to hide');
+      removeKeyboardListener();
+      addKeyboardListener('keyboardDidHide', () => {
+        setTimeout(() => {
+          console.log('onCloseAndForceCancel called');
+          hideModal();
+          cancelCurrentRequest();
+        }, 50);
+      });
+      Keyboard.dismiss();
+    } else {
+      console.log('onCloseAndForceCancel called');
+      hideModal();
+      cancelCurrentRequest();
+    }
+  }, [
+    hideModal,
+    cancelCurrentRequest,
+    removeKeyboardListener,
+    addKeyboardListener,
+  ]);
 
   const renderHandleComponent = useCallback(
     (renderProps: BottomSheetHandleProps) => {
