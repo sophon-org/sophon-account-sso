@@ -38,10 +38,6 @@ export default function HomeScreen() {
   const [showTestDashboard, setShowTestDashboard] = useState(false);
   const { requestConsent, hasConsent } = useSophonConsent();
 
-  useEffect(() => {
-    console.log('accountError', error);
-  }, [error]);
-
   if (!initialized) {
     return (
       <View className="flex-1 items-center justify-center bg-white py-8 h-screen">

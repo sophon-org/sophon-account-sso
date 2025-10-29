@@ -75,7 +75,6 @@ export function AuthPortal(props: AuthPortalProps) {
     isOpeningModalRef.current = true;
     isClosedModalRef.current = false;
     removeKeyboardListener();
-    console.log('showModal');
     bottomSheetRef.current?.expand();
 
     // Reset opening flag after expansion animation
@@ -108,7 +107,6 @@ export function AuthPortal(props: AuthPortalProps) {
   const requestClose = useCallback(
     (forceClose?: boolean) => {
       if (isClosedModalRef.current && !forceClose) {
-        console.log('requestClose: already closed, skipping');
         return;
       }
       removeKeyboardListener();
@@ -116,7 +114,6 @@ export function AuthPortal(props: AuthPortalProps) {
       Keyboard.dismiss();
 
       if (forceClose) bottomSheetRef.current?.close();
-      console.log('requestClose called');
       isClosedModalRef.current = true;
       cancelCurrentRequest();
       cleanup();
@@ -126,11 +123,9 @@ export function AuthPortal(props: AuthPortalProps) {
 
   const hideModal = useCallback(() => {
     if (isClosedModalRef.current) {
-      console.log('hideModal: already closed, skipping');
       return;
     }
 
-    console.log('hideModal called');
     removeKeyboardListener();
     if (Platform.OS === 'ios') {
       Keyboard.dismiss();
@@ -140,9 +135,7 @@ export function AuthPortal(props: AuthPortalProps) {
   }, [requestClose, removeKeyboardListener]);
 
   const onBottomSheetClose = useCallback(() => {
-    console.log('onBottomSheetClose called');
     if (isClosedModalRef.current) {
-      console.log('onBottomSheetClose: already handled, skipping');
       return;
     }
     removeKeyboardListener();
@@ -152,18 +145,15 @@ export function AuthPortal(props: AuthPortalProps) {
   const onCloseAndForceCancel = useCallback(async () => {
     isClosedModalRef.current = false;
     if (Platform.OS === 'android' && Keyboard.isVisible()) {
-      console.log('onCloseAndForceCancel waiting for keyboard to hide');
       removeKeyboardListener();
       addKeyboardListener('keyboardDidHide', () => {
         setTimeout(() => {
-          console.log('onCloseAndForceCancel called');
           hideModal();
           cancelCurrentRequest();
         }, 50);
       });
       Keyboard.dismiss();
     } else {
-      console.log('onCloseAndForceCancel called');
       hideModal();
       cancelCurrentRequest();
     }
@@ -216,7 +206,6 @@ export function AuthPortal(props: AuthPortalProps) {
 
   const onComplete = useCallback<BasicStepProps['onComplete']>(
     async ({ hide }) => {
-      console.log('onComplete', hide);
       if (hide) {
         clearCurrentRequest();
         hideModal();
@@ -285,7 +274,6 @@ export function AuthPortal(props: AuthPortalProps) {
         topInset={props.insets?.top ?? 0}
         index={-1}
         onChange={(index) => {
-          console.log('[AuthPortal] onChange index:', index);
           disableAnimation.setState(index < 0);
         }}
         animateOnMount={Platform.OS === 'ios'}

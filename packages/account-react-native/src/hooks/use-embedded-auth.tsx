@@ -37,9 +37,9 @@ export const useEmbeddedAuth = () => {
     return auth.email.resendOTP();
   }, [auth.email.resendOTP]);
 
-  const logout = async () => {
-    return dynamicClient.auth.logout();
-  };
+  const logout = useCallback(async () => {
+    return auth.logout();
+  }, [auth]);
 
   const signInWithSocialProvider = useCallback(
     async (provider: AuthProvider) => {
@@ -91,8 +91,6 @@ export const useEmbeddedAuth = () => {
   const waitForAuthentication = useCallback(async () => {
     return new Promise<Address>((resolve, reject) => {
       wallets.on('primaryChanged', (data) => {
-        console.log('primaryChanged', data);
-
         if (data?.address) {
           resolve(data.address as Address);
         } else {

@@ -27,7 +27,6 @@ const stepComponents: Record<
 
 export const StepControllerComponent = memo(
   (props: BasicStepProps) => {
-    console.log('Rendering step', props?.currentStep);
     if (!props?.currentStep) {
       return null;
     }

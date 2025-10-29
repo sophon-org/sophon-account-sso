@@ -19,8 +19,25 @@ export const useSophonAccount = () => {
     code: number;
   }>();
   const [isConnecting, setIsConnecting] = useState(false);
-  const { logout: logoutEmbedded, isConnected: isConnectedEmbedded } =
-    useEmbeddedAuth();
+  const { logout: logoutEmbedded } = useEmbeddedAuth();
+
+  const logout = useCallback(async () => {
+    await Promise.all([
+      logoutEmbedded(),
+      walletClient?.disconnect(),
+      provider?.disconnect(),
+    ]);
+
+    setConnectingAccount(undefined);
+    setAccount(undefined);
+    SophonAppStorage.clear();
+  }, [
+    logoutEmbedded,
+    provider,
+    setAccount,
+    walletClient,
+    setConnectingAccount,
+  ]);
 
   const connect = useCallback(async () => {
     setIsConnecting(true);
@@ -28,9 +45,7 @@ export const useSophonAccount = () => {
     try {
       // make sure that if there are any error that prevents the user to finish the flow
       // we won't block new connections on the embedded provider
-      if (isConnectedEmbedded) {
-        await logoutEmbedded();
-      }
+      await logout();
 
       setAccountError(undefined);
       const addresses = await walletClient!.requestAddresses();
@@ -53,25 +68,7 @@ export const useSophonAccount = () => {
     } finally {
       setIsConnecting(false);
     }
-  }, [walletClient, isConnectedEmbedded, logoutEmbedded, setAccount]);
-
-  const logout = useCallback(async () => {
-    await Promise.all([
-      logoutEmbedded(),
-      walletClient?.disconnect(),
-      provider?.disconnect(),
-    ]);
-
-    setConnectingAccount(undefined);
-    setAccount(undefined);
-    SophonAppStorage.clear();
-  }, [
-    logoutEmbedded,
-    provider,
-    setAccount,
-    walletClient,
-    setConnectingAccount,
-  ]);
+  }, [walletClient, logout, setAccount]);
 
   // Make sure to only return that the user is connected after
   // context initialization is complete, that way we make sure that
