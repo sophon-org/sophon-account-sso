@@ -1,5 +1,14 @@
 # @sophon-labs/account-connector
 
+## 3.0.0-next.11
+
+### Patch Changes
+
+- Minor fixes
+- Updated dependencies
+  - @sophon-labs/account-provider@3.0.0-next.11
+  - @sophon-labs/account-core@3.0.0-next.11
+
 ## 3.0.0-next.10
 
 ### Patch Changes

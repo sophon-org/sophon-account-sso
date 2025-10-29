@@ -1,5 +1,11 @@
 # @sophon-labs/account-eip6963
 
+## 3.0.0-next.11
+
+### Patch Changes
+
+- Minor fixes
+
 ## 3.0.0-next.10
 
 ### Patch Changes
