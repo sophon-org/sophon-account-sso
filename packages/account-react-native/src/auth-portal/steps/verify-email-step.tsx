@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Keyboard,
   Platform,
   StyleSheet,
   type TextInput,
+  useWindowDimensions,
   View,
 } from 'react-native';
 import Animated, {
@@ -25,15 +26,24 @@ import {
   useThemeColors,
   useThemedStyles,
 } from '../../ui';
+import { scaleWithBoxInput } from '../../utils/platform-utils';
 import { AdaptiveTextInput } from '../components/adaptive-text-input';
 import { useNavigationParams } from '../hooks';
 import type { BasicStepProps, VerifyCodeParams } from '../types';
 
 const defaultCodeArray = Array(OTP_CODE_LENGTH).fill('');
+const SCALE_ANIMATION_DURATION = 60;
+const OPACITY_ANIMATION_DURATION = 80;
 
 export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
+  const layout = useWindowDimensions();
+  const boxWidth = useMemo(
+    () => scaleWithBoxInput(layout.width),
+    [layout.width],
+  );
   const styles = useThemedStyles(createStyles);
   const colors = useThemeColors();
+
   const { t } = useTranslation();
   const loadingState = useBooleanState(false);
   const loadingResendState = useBooleanState(false);
@@ -41,8 +51,10 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
     type: 'invalidCode' | 'resendLink';
     message: string;
   } | null>(null);
+
   const params = useNavigationParams<VerifyCodeParams>();
   const [, forceUpdate] = useState({});
+
   const codesRef = useRef<string[]>(defaultCodeArray);
   const inputsRef = useRef<TextInput[]>([]);
   const scales = useRef(
@@ -68,7 +80,9 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
       codesRef.current = [...defaultCodeArray];
       forceUpdate({});
       defaultCodeArray.forEach((_, index) => {
-        opacities[index]!.value = withTiming(0.3, { duration: 100 });
+        opacities[index]!.value = withTiming(0.3, {
+          duration: OPACITY_ANIMATION_DURATION,
+        });
       });
     },
     [onError, opacities, t],
@@ -124,13 +138,15 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
   }, []);
 
   const handleKeyPress = useCallback(
-    (key: string, index: number) => {
+    (key: string, index: number, forceFocusIndex?: boolean) => {
       if (key === 'Backspace') {
         const newCodes = [...codesRef.current];
         if (index > 0 && !codesRef.current[index]) {
           const indexToFocus = index - 1;
           newCodes[indexToFocus] = '';
-          opacities[indexToFocus]!.value = withTiming(0.3, { duration: 100 });
+          opacities[indexToFocus]!.value = withTiming(0.3, {
+            duration: OPACITY_ANIMATION_DURATION,
+          });
         }
         newCodes[index] = '';
         const isLastCodeHasValue = Boolean(
@@ -139,8 +155,10 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
         codesRef.current = newCodes;
         forceUpdate({});
 
-        opacities[index]!.value = withTiming(0.3, { duration: 100 });
-        if (index > 0 && !isLastCodeHasValue) {
+        opacities[index]!.value = withTiming(0.3, {
+          duration: OPACITY_ANIMATION_DURATION,
+        });
+        if ((index > 0 && !isLastCodeHasValue) || forceFocusIndex) {
           focusIndex(index - 1);
         }
       }
@@ -154,7 +172,8 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
       const prev = codesRef.current[index];
       if (digits.length === 0) {
         if (Platform.OS === 'android' && prev && prev.length) {
-          return handleKeyPress('Backspace', index);
+          // force backspace on android when deleting the only digit with keyboard external
+          return handleKeyPress('Backspace', index, true);
         }
         return;
       }
@@ -162,14 +181,23 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
       const newValues = [...codesRef.current];
       let nextIndex = index;
 
+      // OneTimeCode auto fill case
       if (digits.length === OTP_CODE_LENGTH && index === 0) {
         digits.forEach((decimal, idx) => {
           if (idx < OTP_CODE_LENGTH) {
             newValues[idx] = decimal;
-            scales[idx]!.value = withTiming(1.08, { duration: 80 }, () => {
-              scales[idx]!.value = withTiming(1, { duration: 80 });
+            scales[idx]!.value = withTiming(
+              1.08,
+              { duration: SCALE_ANIMATION_DURATION },
+              () => {
+                scales[idx]!.value = withTiming(1, {
+                  duration: SCALE_ANIMATION_DURATION,
+                });
+              },
+            );
+            opacities[idx]!.value = withTiming(1, {
+              duration: OPACITY_ANIMATION_DURATION,
             });
-            opacities[idx]!.value = withTiming(1, { duration: 100 });
           }
         });
         codesRef.current = newValues;
@@ -187,10 +215,18 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
       digits.forEach((decimal) => {
         if (nextIndex < OTP_CODE_LENGTH) {
           newValues[nextIndex] = decimal;
-          scales[nextIndex]!.value = withTiming(1.08, { duration: 80 }, () => {
-            scales[nextIndex]!.value = withTiming(1, { duration: 80 });
+          scales[nextIndex]!.value = withTiming(
+            1.08,
+            { duration: SCALE_ANIMATION_DURATION },
+            () => {
+              scales[nextIndex]!.value = withTiming(1, {
+                duration: SCALE_ANIMATION_DURATION,
+              });
+            },
+          );
+          opacities[nextIndex]!.value = withTiming(1, {
+            duration: OPACITY_ANIMATION_DURATION,
           });
-          opacities[nextIndex]!.value = withTiming(1, { duration: 100 });
         }
         nextIndex++;
       });
@@ -236,14 +272,21 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
         ? 1
         : OTP_CODE_LENGTH - index + value.length;
       return (
-        <Animated.View key={index} style={[styles.box, animatedStyle]}>
+        <Animated.View
+          key={index}
+          style={[
+            styles.box,
+            loadingState.state && styles.inputDisabled,
+            animatedStyle,
+          ]}
+        >
           <AdaptiveTextInput
             ref={(el) => {
               inputsRef.current[index] = el as TextInput;
             }}
             selection={{ start: 1, end: 1 }}
-            style={[styles.input, loadingState.state && styles.inputDisabled]}
-            keyboardType="number-pad"
+            style={[styles.input, { width: boxWidth }]}
+            keyboardType="numeric"
             textContentType="oneTimeCode"
             maxLength={maxLength}
             value={value}
@@ -257,6 +300,8 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
             onSubmitEditing={() => {
               if (index === OTP_CODE_LENGTH - 1 && value.length === 1) {
                 handleVerifyEmailOTP();
+              } else {
+                Keyboard.dismiss();
               }
             }}
           />
@@ -273,6 +318,7 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
       scales,
       colors,
       styles,
+      boxWidth,
     ],
   );
 
@@ -339,8 +385,9 @@ const createStyles = (colors: ThemeColorType) =>
       gap: 8,
     },
     box: {
-      width: 48,
+      minWidth: 32,
       height: 48,
+      maxWidth: 48,
       borderWidth: 1,
       borderRadius: 12,
       justifyContent: 'center',

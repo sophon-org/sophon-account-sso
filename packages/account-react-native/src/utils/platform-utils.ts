@@ -34,3 +34,16 @@ export function execTimeoutActionByPlatform(
     },
   });
 }
+
+const BASE_WIDTH = 408;
+
+export function scaleWithBoxInput(
+  screenWidth: number,
+  min: number = 30,
+  max: number = 48,
+): number {
+  const availableWidth = Math.max(screenWidth, 0);
+  const scaleFactor = availableWidth / BASE_WIDTH;
+  const scaled = scaleFactor * max;
+  return Math.min(Math.max(scaled, min), max);
+}
