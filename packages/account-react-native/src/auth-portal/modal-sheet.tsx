@@ -41,11 +41,12 @@ export interface ModalSheetProps {
 }
 
 const MAX_WIDTH = 500;
+const MIN_WIDTH = 360;
 
 export const ModalSheet = forwardRef<ModalSheetHandle, ModalSheetProps>(
-  ({ children, onClose, widthPercent = 0.7, maxHeightPercent = 0.85 }, ref) => {
+  ({ children, widthPercent = 0.7, maxHeightPercent = 0.85 }, ref) => {
     const styles = useThemedStyles(createStyles);
-    const { handleProps, goBack } = useAuthPortal();
+    const { handleProps, goBack, requestClose } = useAuthPortal();
     const [visible, setVisible] = useState(false);
     const opacity = useSharedValue(0);
     const scale = useSharedValue(0.96);
@@ -93,13 +94,13 @@ export const ModalSheet = forwardRef<ModalSheetHandle, ModalSheetProps>(
     }, [animateIn]);
 
     const close = useCallback(() => {
-      console.log('[ModalSheet] Close called - visible =>', visible);
       if (!visible) return;
+      console.log('[ModalSheet] Close called');
       animateOut(() => {
         setVisible(false);
-        onClose?.();
+        requestClose?.();
       });
-    }, [animateOut, onClose, visible]);
+    }, [animateOut, requestClose, visible]);
 
     const snapToIndex = useCallback(
       (index: number) => {
@@ -163,6 +164,7 @@ export const ModalSheet = forwardRef<ModalSheetHandle, ModalSheetProps>(
               {
                 width: modalWidth,
                 maxWidth: MAX_WIDTH,
+                minWidth: MIN_WIDTH,
                 maxHeight: modalMaxHeight,
               },
               modalAnimatedStyle,
@@ -172,6 +174,7 @@ export const ModalSheet = forwardRef<ModalSheetHandle, ModalSheetProps>(
               {...handleProps}
               goBack={goBack}
               close={close}
+              style={{ borderTopLeftRadius: 24, borderTopRightRadius: 24 }}
             />
             <ScrollView
               contentContainerStyle={styles.scrollContent}
@@ -192,7 +195,7 @@ const createStyles = (colors: ThemeColorType) =>
   StyleSheet.create({
     backdrop: {
       ...StyleSheet.absoluteFillObject,
-      backgroundColor: colors.black,
+      backgroundColor: colors.surface,
     },
     centered: {
       flex: 1,
@@ -200,9 +203,8 @@ const createStyles = (colors: ThemeColorType) =>
       alignItems: 'center',
     },
     modalContainer: {
-      backgroundColor: colors.white,
+      backgroundColor: colors.background.primary,
       borderRadius: 24,
-      overflow: 'hidden',
       elevation: 8,
       shadowColor: colors.black,
       shadowOffset: { width: 0, height: 6 },
@@ -211,5 +213,13 @@ const createStyles = (colors: ThemeColorType) =>
     },
     scrollContent: {
       flexGrow: 1,
+      backgroundColor: colors.background.primary,
+      borderBottomLeftRadius: 24,
+      borderBottomStartRadius: 24,
+      borderBottomEndRadius: 24,
+      borderBottomRightRadius: 24,
+    },
+    modalContent: {
+      backgroundColor: colors.background.primary,
     },
   });

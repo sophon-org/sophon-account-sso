@@ -19,7 +19,8 @@ export type AuthPortalContextProps = {
   currentStep: AuthPortalStep | null;
   navigate: (step: AuthPortalStep, options?: NavigateOptions) => void;
   goBack: () => void;
-  onCloseAndForceCancel: () => void;
+  requestClose: (forceClose?: boolean) => void;
+  hideModal: () => void;
   setParams: (params: NavigateParams) => void;
   params: NavigateParams | null;
   handleProps: {

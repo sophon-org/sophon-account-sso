@@ -1,14 +1,14 @@
 import {
+  concat,
   encodeAbiParameters,
   encodeFunctionData,
+  getCreate2Address,
+  type Hex,
+  isAddress,
   keccak256,
   pad,
   parseAbiParameters,
   toHex,
-  concat,
-  getCreate2Address,
-  isAddress,
-  type Hex,
 } from 'viem';
 
 /** INexus.initializeAccount(bytes) */

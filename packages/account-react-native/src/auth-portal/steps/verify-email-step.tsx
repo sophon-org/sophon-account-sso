@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Keyboard,
-  type NativeSyntheticEvent,
+  Platform,
   StyleSheet,
   type TextInput,
-  type TextInputKeyPressEventData,
   View,
 } from 'react-native';
 import Animated, {
@@ -37,7 +36,11 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
   const colors = useThemeColors();
   const { t } = useTranslation();
   const loadingState = useBooleanState(false);
-  const errorState = useBooleanState(false);
+  const loadingResendState = useBooleanState(false);
+  const [error, setError] = useState<{
+    type: 'invalidCode' | 'resendLink';
+    message: string;
+  } | null>(null);
   const params = useNavigationParams<VerifyCodeParams>();
   const [, forceUpdate] = useState({});
   const codesRef = useRef<string[]>(defaultCodeArray);
@@ -56,7 +59,10 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
 
   const handleOnError = useCallback(
     async (error: Error) => {
-      errorState.setOn();
+      setError({
+        type: 'invalidCode',
+        message: t('verifyEmailStep.invalidCode'),
+      });
       console.error(error);
       onError(error, 'verifyEmail');
       codesRef.current = [...defaultCodeArray];
@@ -65,20 +71,20 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
         opacities[index]!.value = withTiming(0.3, { duration: 100 });
       });
     },
-    [onError, errorState, opacities],
+    [onError, opacities, t],
   );
 
   const handleVerifyEmailOTP = useCallback(
     async (code?: string) => {
       try {
-        errorState.setOff();
+        setError(null);
         loadingState.setOn();
-        Keyboard.dismiss();
         const codeToVerify = code || codesRef.current.join('');
         const waitFor = waitForAuthentication();
         await verifyEmailOTP(codeToVerify);
         const ownerAddress = await waitFor;
         onAuthenticate(ownerAddress);
+        Keyboard.dismiss();
       } catch (error) {
         handleOnError(error as Error);
         loadingState.setOff();
@@ -87,12 +93,26 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
     [
       verifyEmailOTP,
       onAuthenticate,
-      errorState,
       loadingState,
       handleOnError,
       waitForAuthentication,
     ],
   );
+
+  const handleResendEmailOTP = useCallback(async () => {
+    try {
+      setError(null);
+      loadingResendState.setOn();
+      await resendEmailOTP();
+    } catch {
+      setError({
+        type: 'resendLink',
+        message: t('verifyEmailStep.errorResendLink'),
+      });
+    } finally {
+      loadingResendState.setOff();
+    }
+  }, [resendEmailOTP, t, loadingResendState]);
 
   const focusIndex = useCallback((index: number) => {
     inputsRef.current[index]?.focus();
@@ -103,13 +123,61 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
     inputsRef.current.forEach((input) => input?.blur());
   }, []);
 
+  const handleKeyPress = useCallback(
+    (key: string, index: number) => {
+      if (key === 'Backspace') {
+        const newCodes = [...codesRef.current];
+        if (index > 0 && !codesRef.current[index]) {
+          const indexToFocus = index - 1;
+          newCodes[indexToFocus] = '';
+          opacities[indexToFocus]!.value = withTiming(0.3, { duration: 100 });
+        }
+        newCodes[index] = '';
+        const isLastCodeHasValue = Boolean(
+          index === OTP_CODE_LENGTH - 1 && codesRef.current[index],
+        );
+        codesRef.current = newCodes;
+        forceUpdate({});
+
+        opacities[index]!.value = withTiming(0.3, { duration: 100 });
+        if (index > 0 && !isLastCodeHasValue) {
+          focusIndex(index - 1);
+        }
+      }
+    },
+    [focusIndex, opacities],
+  );
+
   const handleChange = useCallback(
     (text: string, index: number) => {
       let digits = text.replace(/[^0-9]/g, '').split('');
-      if (digits.length === 0) return;
+      const prev = codesRef.current[index];
+      if (digits.length === 0) {
+        if (Platform.OS === 'android' && prev && prev.length) {
+          return handleKeyPress('Backspace', index);
+        }
+        return;
+      }
 
       const newValues = [...codesRef.current];
       let nextIndex = index;
+
+      if (digits.length === OTP_CODE_LENGTH && index === 0) {
+        digits.forEach((decimal, idx) => {
+          if (idx < OTP_CODE_LENGTH) {
+            newValues[idx] = decimal;
+            scales[idx]!.value = withTiming(1.08, { duration: 80 }, () => {
+              scales[idx]!.value = withTiming(1, { duration: 80 });
+            });
+            opacities[idx]!.value = withTiming(1, { duration: 100 });
+          }
+        });
+        codesRef.current = newValues;
+        forceUpdate({});
+        onCompleteCode();
+        handleVerifyEmailOTP(newValues.join(''));
+        return;
+      }
 
       const currentValue = newValues[nextIndex];
       if (currentValue && text.startsWith(currentValue)) {
@@ -136,35 +204,14 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
         onCompleteCode();
       }
     },
-    [focusIndex, onCompleteCode, opacities, scales],
-  );
-
-  const handleKeyPress = useCallback(
-    (
-      event: NativeSyntheticEvent<TextInputKeyPressEventData>,
-      index: number,
-    ) => {
-      if (event.nativeEvent.key === 'Backspace') {
-        const newCodes = [...codesRef.current];
-        if (index > 0 && !codesRef.current[index]) {
-          const indexToFocus = index - 1;
-          newCodes[indexToFocus] = '';
-          opacities[indexToFocus]!.value = withTiming(0.3, { duration: 100 });
-        }
-        newCodes[index] = '';
-        codesRef.current = newCodes;
-        forceUpdate({});
-
-        opacities[index]!.value = withTiming(0.3, { duration: 100 });
-        const isLastCodeHasValue = Boolean(
-          index === OTP_CODE_LENGTH - 1 && codesRef.current[index],
-        );
-        if (index > 0 && !isLastCodeHasValue) {
-          focusIndex(index - 1);
-        }
-      }
-    },
-    [focusIndex, opacities],
+    [
+      focusIndex,
+      onCompleteCode,
+      opacities,
+      scales,
+      handleKeyPress,
+      handleVerifyEmailOTP,
+    ],
   );
 
   const renderInput = useCallback(
@@ -202,10 +249,11 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
             value={value}
             cursorColor={colors.black}
             onChangeText={(code) => handleChange(code, index)}
-            onKeyPress={(event) => handleKeyPress(event, index)}
+            onKeyPress={(event) => handleKeyPress(event.nativeEvent.key, index)}
             textAlign="center"
             returnKeyType="done"
-            editable={!loadingState.state}
+            submitBehavior="submit"
+            editable={!loadingState.state || loadingResendState.state}
             onSubmitEditing={() => {
               if (index === OTP_CODE_LENGTH - 1 && value.length === 1) {
                 handleVerifyEmailOTP();
@@ -220,6 +268,7 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
       handleKeyPress,
       handleVerifyEmailOTP,
       loadingState.state,
+      loadingResendState.state,
       opacities,
       scales,
       colors,
@@ -253,11 +302,14 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
           text="Verify"
           loading={loadingState.state}
           onPress={() => handleVerifyEmailOTP()}
-          disabled={codesRef.current.some((code) => code === '')}
+          disabled={
+            codesRef.current.some((code) => code === '') ||
+            loadingResendState.state
+          }
         />
         <CardError
-          isVisible={errorState.state}
-          text={t('verifyEmailStep.invalidCode')}
+          isVisible={error?.type === 'invalidCode'}
+          text={error?.message}
         />
       </Container>
       <Container gap={24} marginVertical={16}>
@@ -267,7 +319,12 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
         <Button
           variant="secondary"
           text={t('verifyEmailStep.resendLink')}
-          onPress={resendEmailOTP}
+          loading={loadingResendState.state}
+          onPress={handleResendEmailOTP}
+        />
+        <CardError
+          isVisible={error?.type === 'resendLink'}
+          text={error?.message}
         />
       </Container>
     </Container>

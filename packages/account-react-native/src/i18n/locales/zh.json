@@ -13,7 +13,8 @@
     "theCode": "验证码",
     "invalidCode": "无效的验证码。请检查您的电子邮件后重试。",
     "didNotReceiveCode": "没有收到验证码？请检查垃圾邮件或",
-    "resendLink": "重新发送链接"
+    "resendLink": "重新发送链接",
+    "errorResendLink": "发送验证码时出错。请稍后再试。"
   },
   "authorizationStep": {
     "connectWith": "连接到 {{partnerName}}",

@@ -13,7 +13,8 @@
     "theCode": "코드",
     "invalidCode": "잘못된 코드입니다. 이메일을 확인하고 다시 시도하세요.",
     "didNotReceiveCode": "코드를 받지 못하셨나요? 스팸함을 확인하거나",
-    "resendLink": "링크 재전송"
+    "resendLink": "링크 재전송",
+    "errorResendLink": "코드를 보내는 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요."
   },
   "authorizationStep": {
     "connectWith": "{{partnerName}}에 연결",

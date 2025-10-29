@@ -37,6 +37,8 @@ export type AuthPortalProps = {
 
 export function AuthPortal(props: AuthPortalProps) {
   const colors = useThemeColors();
+  const isClosedModalRef = useRef(false);
+  const isOpeningModalRef = useRef(false);
   const bottomSheetRef = useRef<BottomSheet>(null);
   const disableAnimation = useBooleanState(true);
   const { addKeyboardListener, removeKeyboardListener } = useKeyboard();
@@ -65,48 +67,112 @@ export function AuthPortal(props: AuthPortalProps) {
   } = useAuthPortalController({ scopes: props.scopes });
 
   const showModal = useCallback(() => {
+    if (isOpeningModalRef.current) {
+      console.log('showModal: already opening, skipping');
+      return;
+    }
+
+    isOpeningModalRef.current = true;
+    isClosedModalRef.current = false;
     removeKeyboardListener();
     console.log('showModal');
     bottomSheetRef.current?.expand();
+
+    // Reset opening flag after expansion animation
+    execTimeoutActionByPlatform(
+      () => {
+        isOpeningModalRef.current = false;
+      },
+      {
+        iosTimeout: 200,
+        androidTimeout: 200,
+      },
+    );
+
     addKeyboardListener(
       Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
       () => {
-        execTimeoutActionByPlatform(() => {
-          console.log('Keyboard snapping to index 0');
-          bottomSheetRef.current?.snapToIndex(0);
-        });
+        execTimeoutActionByPlatform(
+          () => {
+            console.log('Keyboard snapping to index 0');
+            bottomSheetRef.current?.snapToIndex(0);
+          },
+          {
+            iosTimeout: 50,
+          },
+        );
       },
     );
   }, [addKeyboardListener, removeKeyboardListener]);
 
+  const requestClose = useCallback(
+    (forceClose?: boolean) => {
+      if (isClosedModalRef.current && !forceClose) {
+        console.log('requestClose: already closed, skipping');
+        return;
+      }
+      removeKeyboardListener();
+
+      Keyboard.dismiss();
+
+      if (forceClose) bottomSheetRef.current?.close();
+      console.log('requestClose called');
+      isClosedModalRef.current = true;
+      cancelCurrentRequest();
+      cleanup();
+    },
+    [removeKeyboardListener, cleanup, cancelCurrentRequest],
+  );
+
   const hideModal = useCallback(() => {
+    if (isClosedModalRef.current) {
+      console.log('hideModal: already closed, skipping');
+      return;
+    }
+
     console.log('hideModal called');
     removeKeyboardListener();
-    Keyboard.dismiss();
+    if (Platform.OS === 'ios') {
+      Keyboard.dismiss();
+    }
     bottomSheetRef.current?.close();
-  }, [removeKeyboardListener]);
+    requestClose();
+  }, [requestClose, removeKeyboardListener]);
 
-  const onClose = useCallback(() => {
-    console.log('onClose called');
+  const onBottomSheetClose = useCallback(() => {
+    console.log('onBottomSheetClose called');
+    if (isClosedModalRef.current) {
+      console.log('onBottomSheetClose: already handled, skipping');
+      return;
+    }
     removeKeyboardListener();
-    Keyboard.dismiss();
-    disableAnimation.setOn();
-    cancelCurrentRequest();
-    cleanup();
-    // Android needs a small delay to avoid visual glitches
-    execTimeoutActionByPlatform(
-      () => {
-        bottomSheetRef.current?.close();
-      },
-      { platforms: ['android'] },
-    );
-  }, [removeKeyboardListener, cleanup, disableAnimation, cancelCurrentRequest]);
+    requestClose();
+  }, [requestClose, removeKeyboardListener]);
 
   const onCloseAndForceCancel = useCallback(async () => {
-    hideModal();
-    onClose();
-    cleanup();
-  }, [hideModal, onClose, cleanup]);
+    isClosedModalRef.current = false;
+    if (Platform.OS === 'android' && Keyboard.isVisible()) {
+      console.log('onCloseAndForceCancel waiting for keyboard to hide');
+      removeKeyboardListener();
+      addKeyboardListener('keyboardDidHide', () => {
+        setTimeout(() => {
+          console.log('onCloseAndForceCancel called');
+          hideModal();
+          cancelCurrentRequest();
+        }, 50);
+      });
+      Keyboard.dismiss();
+    } else {
+      console.log('onCloseAndForceCancel called');
+      hideModal();
+      cancelCurrentRequest();
+    }
+  }, [
+    hideModal,
+    cancelCurrentRequest,
+    removeKeyboardListener,
+    addKeyboardListener,
+  ]);
 
   const renderHandleComponent = useCallback(
     (renderProps: BottomSheetHandleProps) => {
@@ -137,13 +203,15 @@ export function AuthPortal(props: AuthPortalProps) {
   );
 
   useUIEventHandler('outgoingRpc', (request) => {
+    isClosedModalRef.current = false;
+    isOpeningModalRef.current = false;
     setCurrentRequest(request);
     showModal();
   });
 
   useUIEventHandler('hideModal', () => {
     console.log('useUIEventHandler hideModal called');
-    hideModal();
+    onCloseAndForceCancel();
   });
 
   const onComplete = useCallback<BasicStepProps['onComplete']>(
@@ -205,23 +273,27 @@ export function AuthPortal(props: AuthPortalProps) {
         goBack,
         setParams,
         handleProps,
-        onCloseAndForceCancel,
+        requestClose,
+        hideModal,
       }}
     >
       <AdaptiveBottomSheet
-        onClose={onClose}
         ref={bottomSheetRef}
+        onClose={onBottomSheetClose}
         backdropComponent={renderBackdrop}
         handleComponent={renderHandleComponent}
         topInset={props.insets?.top ?? 0}
         index={-1}
-        onChange={(currentIndex) => {
-          disableAnimation.setState(currentIndex < 0);
+        onChange={(index) => {
+          console.log('[AuthPortal] onChange index:', index);
+          disableAnimation.setState(index < 0);
         }}
-        animateOnMount
-        enablePanDownToClose={!handleProps?.hideCloseButton}
+        animateOnMount={Platform.OS === 'ios'}
+        enablePanDownToClose={
+          !handleProps?.hideCloseButton || currentStep !== 'verifyEmail'
+        }
         enableDynamicSizing={true}
-        keyboardBehavior="interactive"
+        keyboardBehavior={Platform.OS === 'ios' ? 'interactive' : 'extend'}
         keyboardBlurBehavior="restore"
         enableBlurKeyboardOnGesture={true}
         android_keyboardInputMode="adjustResize"
