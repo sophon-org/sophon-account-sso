@@ -1,5 +1,13 @@
 # @sophon-labs/account-api-sdk
 
+## 3.0.0-next.12
+
+### Patch Changes
+
+- Keyboard behavior on android and otp responsivity
+- Updated dependencies
+  - @sophon-labs/account-core@3.0.0-next.12
+
 ## 3.0.0-next.11
 
 ### Patch Changes

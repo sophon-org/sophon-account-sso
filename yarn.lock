@@ -5024,7 +5024,7 @@ __metadata:
   resolution: "@sophon-labs/account-api-sdk@workspace:packages/account-api-sdk"
   dependencies:
     "@playwright/test": "npm:^1.54.1"
-    "@sophon-labs/account-core": "npm:3.0.0-next.11"
+    "@sophon-labs/account-core": "npm:3.0.0-next.12"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@types/jsonwebtoken": "npm:^9"
@@ -5042,7 +5042,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@sophon-labs/account-communicator@npm:3.0.0-next.11, @sophon-labs/account-communicator@workspace:packages/account-communicator":
+"@sophon-labs/account-communicator@npm:3.0.0-next.12, @sophon-labs/account-communicator@workspace:packages/account-communicator":
   version: 0.0.0-use.local
   resolution: "@sophon-labs/account-communicator@workspace:packages/account-communicator"
   dependencies:
@@ -5056,13 +5056,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@sophon-labs/account-connector@npm:3.0.0-next.11, @sophon-labs/account-connector@workspace:packages/account-connector":
+"@sophon-labs/account-connector@npm:3.0.0-next.12, @sophon-labs/account-connector@workspace:packages/account-connector":
   version: 0.0.0-use.local
   resolution: "@sophon-labs/account-connector@workspace:packages/account-connector"
   dependencies:
     "@playwright/test": "npm:^1.54.1"
-    "@sophon-labs/account-core": "npm:3.0.0-next.11"
-    "@sophon-labs/account-provider": "npm:3.0.0-next.11"
+    "@sophon-labs/account-core": "npm:3.0.0-next.12"
+    "@sophon-labs/account-provider": "npm:3.0.0-next.12"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@types/node": "npm:^20.0.0"
@@ -5078,7 +5078,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@sophon-labs/account-core@npm:3.0.0-next.11, @sophon-labs/account-core@workspace:packages/account-core":
+"@sophon-labs/account-core@npm:3.0.0-next.12, @sophon-labs/account-core@workspace:packages/account-core":
   version: 0.0.0-use.local
   resolution: "@sophon-labs/account-core@workspace:packages/account-core"
   dependencies:
@@ -5103,8 +5103,8 @@ __metadata:
   resolution: "@sophon-labs/account-eip6963@workspace:packages/account-eip6963"
   dependencies:
     "@faker-js/faker": "npm:^10.0.0"
-    "@sophon-labs/account-core": "npm:3.0.0-next.11"
-    "@sophon-labs/account-provider": "npm:3.0.0-next.11"
+    "@sophon-labs/account-core": "npm:3.0.0-next.12"
+    "@sophon-labs/account-provider": "npm:3.0.0-next.12"
     "@types/node": "npm:^20.0.0"
     eventemitter3: "npm:^5.0.1"
     json-rpc-2.0: "npm:^1.7.1"
@@ -5116,7 +5116,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@sophon-labs/account-message-bridge@npm:3.0.0-next.11, @sophon-labs/account-message-bridge@workspace:packages/account-message-bridge":
+"@sophon-labs/account-message-bridge@npm:3.0.0-next.12, @sophon-labs/account-message-bridge@workspace:packages/account-message-bridge":
   version: 0.0.0-use.local
   resolution: "@sophon-labs/account-message-bridge@workspace:packages/account-message-bridge"
   dependencies:
@@ -5138,12 +5138,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@sophon-labs/account-partner@npm:3.0.0-next.11, @sophon-labs/account-partner@workspace:packages/account-partner":
+"@sophon-labs/account-partner@npm:3.0.0-next.12, @sophon-labs/account-partner@workspace:packages/account-partner":
   version: 0.0.0-use.local
   resolution: "@sophon-labs/account-partner@workspace:packages/account-partner"
   dependencies:
     "@faker-js/faker": "npm:^10.0.0"
-    "@sophon-labs/account-core": "npm:3.0.0-next.11"
+    "@sophon-labs/account-core": "npm:3.0.0-next.12"
     "@types/node": "npm:^20.0.0"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.0.0"
@@ -5153,13 +5153,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@sophon-labs/account-provider@npm:3.0.0-next.11, @sophon-labs/account-provider@workspace:packages/account-provider":
+"@sophon-labs/account-provider@npm:3.0.0-next.12, @sophon-labs/account-provider@workspace:packages/account-provider":
   version: 0.0.0-use.local
   resolution: "@sophon-labs/account-provider@workspace:packages/account-provider"
   dependencies:
     "@faker-js/faker": "npm:^10.0.0"
-    "@sophon-labs/account-communicator": "npm:3.0.0-next.11"
-    "@sophon-labs/account-core": "npm:3.0.0-next.11"
+    "@sophon-labs/account-communicator": "npm:3.0.0-next.12"
+    "@sophon-labs/account-core": "npm:3.0.0-next.12"
     "@types/node": "npm:^20.0.0"
     eventemitter3: "npm:^5.0.1"
     json-rpc-2.0: "npm:^1.7.1"
@@ -5187,11 +5187,11 @@ __metadata:
     "@react-native-async-storage/async-storage": "npm:^2.2.0"
     "@react-native/babel-preset": "npm:0.78.2"
     "@release-it/conventional-changelog": "npm:^9.0.2"
-    "@sophon-labs/account-communicator": "npm:3.0.0-next.11"
-    "@sophon-labs/account-core": "npm:3.0.0-next.11"
-    "@sophon-labs/account-message-bridge": "npm:3.0.0-next.11"
-    "@sophon-labs/account-partner": "npm:3.0.0-next.11"
-    "@sophon-labs/account-provider": "npm:3.0.0-next.11"
+    "@sophon-labs/account-communicator": "npm:3.0.0-next.12"
+    "@sophon-labs/account-core": "npm:3.0.0-next.12"
+    "@sophon-labs/account-message-bridge": "npm:3.0.0-next.12"
+    "@sophon-labs/account-partner": "npm:3.0.0-next.12"
+    "@sophon-labs/account-provider": "npm:3.0.0-next.12"
     "@types/jest": "npm:^29.5.5"
     axios: "npm:^1.11.0"
     commitlint: "npm:^19.6.1"
@@ -5235,8 +5235,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@sophon-labs/account-react@workspace:packages/account-react"
   dependencies:
-    "@sophon-labs/account-connector": "npm:3.0.0-next.11"
-    "@sophon-labs/account-core": "npm:3.0.0-next.11"
+    "@sophon-labs/account-connector": "npm:3.0.0-next.12"
+    "@sophon-labs/account-core": "npm:3.0.0-next.12"
     "@testing-library/jest-dom": "npm:^6.1.0"
     "@testing-library/react": "npm:^14.1.0"
     "@types/js-cookie": "npm:^3"
