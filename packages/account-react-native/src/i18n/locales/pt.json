@@ -13,7 +13,8 @@
     "theCode": "o código",
     "invalidCode": "Código inválido. Por favor, verifique seu e-mail e tente novamente.",
     "didNotReceiveCode": "Não recebeu o código? Verifique o spam ou",
-    "resendLink": "Reenviar link"
+    "resendLink": "Reenviar link",
+    "errorResendLink": "Ocorreu um erro ao enviar o código. Tente novamente em breve."
   },
   "authorizationStep": {
     "connectWith": "Conectar com {{partnerName}}",
