@@ -79,12 +79,12 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
       try {
         setError(null);
         loadingState.setOn();
-        Keyboard.dismiss();
         const codeToVerify = code || codesRef.current.join('');
         const waitFor = waitForAuthentication();
         await verifyEmailOTP(codeToVerify);
         const ownerAddress = await waitFor;
         onAuthenticate(ownerAddress);
+        Keyboard.dismiss();
       } catch (error) {
         handleOnError(error as Error);
         loadingState.setOff();
@@ -104,7 +104,7 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
       setError(null);
       loadingResendState.setOn();
       await resendEmailOTP();
-    } catch (error) {
+    } catch {
       setError({
         type: 'resendLink',
         message: t('verifyEmailStep.errorResendLink'),
@@ -119,7 +119,6 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
   }, []);
 
   const onCompleteCode = useCallback(() => {
-    Keyboard.dismiss();
     inputsRef.current.forEach((input) => input?.blur());
   }, []);
 
@@ -229,6 +228,7 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
             onKeyPress={(event) => handleKeyPress(event.nativeEvent.key, index)}
             textAlign="center"
             returnKeyType="done"
+            submitBehavior="submit"
             editable={!loadingState.state || loadingResendState.state}
             onSubmitEditing={() => {
               if (index === OTP_CODE_LENGTH - 1 && value.length === 1) {

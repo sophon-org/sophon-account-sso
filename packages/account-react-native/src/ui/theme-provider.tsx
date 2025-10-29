@@ -137,7 +137,7 @@ const lightColors = {
     dark: 'rgb(141, 141, 141)', // #8D8D8D
     subtle: 'rgba(0, 0, 0, 0.05)', // Very subtle border
   },
-  surface: 'rgb(255, 255, 255)', // #FFFFFF
+  surface: 'rgb(0, 0, 0)', // #000000
   white: 'rgb(255, 255, 255)', // #FFFFFF
   black: 'rgb(0, 0, 0)', // #000000
   transparent: 'rgba(0, 0, 0, 0)', // Transparent

@@ -1,4 +1,4 @@
-import { TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View, type ViewStyle } from 'react-native';
 import { Icon, Text } from '../../ui';
 import { useThemeColors } from '../../ui/theme-provider';
 
@@ -8,6 +8,7 @@ interface AuthPortalHandleProps {
   title?: string;
   goBack?: () => void;
   close?: () => void;
+  style?: ViewStyle;
 }
 
 export function AuthPortalBottomSheetHandle({
@@ -16,10 +17,11 @@ export function AuthPortalBottomSheetHandle({
   title,
   goBack,
   close,
+  style,
 }: AuthPortalHandleProps) {
   const colors = useThemeColors();
   return (
-    <View style={{ backgroundColor: colors.background.primary }}>
+    <View style={[{ backgroundColor: colors.background.primary }, style]}>
       <View
         style={{
           flexDirection: 'row',

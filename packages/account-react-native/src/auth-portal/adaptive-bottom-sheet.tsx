@@ -4,6 +4,7 @@ import BottomSheet, {
 } from '@gorhom/bottom-sheet';
 import {
   forwardRef,
+  useEffect,
   useImperativeHandle,
   useMemo,
   useRef,
@@ -17,6 +18,7 @@ import { ModalSheet, type ModalSheetHandle } from './modal-sheet';
 export interface AdaptiveBottomSheetHandle {
   expand: () => void;
   close: () => void;
+  forceClose: () => void;
   snapToIndex: (index: number) => void;
 }
 
@@ -30,62 +32,72 @@ export const AdaptiveBottomSheet = forwardRef<
   const bottomSheetRef = useRef<BottomSheet>(null);
   const modalSheetRef = useRef<ModalSheetHandle>(null);
 
-  const [initialMode, setInitialMode] = useState<
-    'modal' | 'bottomSheet' | null
-  >(null);
-
   const isLargeScreen = useMemo(() => {
-    return (
-      (Platform.OS === 'ios' && Platform.isPad) ||
-      (Platform.OS === 'android' && width > height)
-    );
+    const isPad = Platform.OS === 'ios' && Platform.isPad;
+    const isLandscapeTablet = Platform.OS === 'android' && width > height;
+    return isPad || isLandscapeTablet;
   }, [width, height]);
 
-  const mode = useMemo(() => {
-    if (!initialMode) {
-      return isLargeScreen ? 'modal' : 'bottomSheet';
-    }
-    return initialMode;
-  }, [initialMode, isLargeScreen]);
+  const [isModal, setIsModal] = useState(
+    Platform.OS === 'ios' && Platform.isPad,
+  );
+  const pendingExpandRef = useRef(false);
 
   useImperativeHandle(
     ref,
     () => ({
       expand() {
-        const newMode = isLargeScreen ? 'modal' : 'bottomSheet';
-        setInitialMode(newMode);
-        console.log('[AdaptiveBottomSheet]: Expanding sheet', newMode);
-        if (newMode === 'modal') {
-          modalSheetRef.current?.expand();
-        } else {
-          bottomSheetRef.current?.expand?.();
-        }
+        const useModal = isLargeScreen;
+        setIsModal(useModal);
+        pendingExpandRef.current = isModal !== useModal;
+        if (isModal !== useModal) return;
+        if (useModal) modalSheetRef.current?.expand();
+        else bottomSheetRef.current?.expand();
       },
       close() {
-        console.log('[AdaptiveBottomSheet]: Closing sheet', mode);
-        if (mode === 'modal') {
+        pendingExpandRef.current = false;
+        if (isModal) {
           modalSheetRef.current?.close();
         } else {
-          bottomSheetRef.current?.close?.();
+          bottomSheetRef.current?.close();
         }
-        setInitialMode(null);
       },
       snapToIndex(index: number) {
-        if (mode === 'bottomSheet') {
-          console.log('[AdaptiveBottomSheet]: Snapping to index', index);
-          bottomSheetRef.current?.snapToIndex?.(index);
+        if (!isModal && bottomSheetRef.current) {
+          bottomSheetRef.current.snapToIndex(index);
         }
       },
+      forceClose() {
+        pendingExpandRef.current = false;
+        bottomSheetRef.current?.forceClose();
+        modalSheetRef.current?.close();
+        setIsModal(isLargeScreen);
+      },
     }),
-    [mode, isLargeScreen],
+    [isModal, isLargeScreen],
   );
 
-  const contextValue = useMemo(() => ({ mode }), [mode]);
+  useEffect(() => {
+    if (!pendingExpandRef.current) return;
+    pendingExpandRef.current = false;
+    const current = setTimeout(() => {
+      if (isModal) modalSheetRef.current?.expand();
+      else bottomSheetRef.current?.expand();
+    }, 80);
 
-  if (mode === 'modal') {
+    return () => clearTimeout(current);
+  }, [isModal]);
+
+  if (isModal) {
     return (
-      <AdaptiveBottomSheetProvider value={contextValue}>
-        <ModalSheet ref={modalSheetRef} onClose={restProps.onClose}>
+      <AdaptiveBottomSheetProvider value={{ mode: 'modal' }}>
+        <ModalSheet
+          ref={modalSheetRef}
+          onClose={() => {
+            restProps.onClose?.();
+            setIsModal(isLargeScreen);
+          }}
+        >
           {children}
         </ModalSheet>
       </AdaptiveBottomSheetProvider>
@@ -93,7 +105,7 @@ export const AdaptiveBottomSheet = forwardRef<
   }
 
   return (
-    <AdaptiveBottomSheetProvider value={contextValue}>
+    <AdaptiveBottomSheetProvider value={{ mode: 'bottomSheet' }}>
       <BottomSheet ref={bottomSheetRef} {...restProps}>
         <BottomSheetScrollView
           bounces={false}

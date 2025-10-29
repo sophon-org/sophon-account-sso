@@ -6,15 +6,6 @@ export function useKeyboard() {
     Map<KeyboardEventName, ReturnType<typeof Keyboard.addListener>>
   >(new Map());
 
-  const addKeyboardListener = (
-    event: KeyboardEventName,
-    callback: () => void,
-  ) => {
-    removeKeyboardListener(event);
-    const listener = Keyboard.addListener(event, callback);
-    listenersRef.current.set(event, listener);
-  };
-
   const removeKeyboardListener = (event?: KeyboardEventName) => {
     if (event) {
       const listener = listenersRef.current.get(event);
@@ -26,6 +17,15 @@ export function useKeyboard() {
       listenersRef.current.forEach((listener) => listener.remove());
       listenersRef.current.clear();
     }
+  };
+
+  const addKeyboardListener = (
+    event: KeyboardEventName,
+    callback: () => void,
+  ) => {
+    removeKeyboardListener(event);
+    const listener = Keyboard.addListener(event, callback);
+    listenersRef.current.set(event, listener);
   };
 
   return {
