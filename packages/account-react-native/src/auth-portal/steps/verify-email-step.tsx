@@ -119,6 +119,7 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
   }, []);
 
   const onCompleteCode = useCallback(() => {
+    Keyboard.dismiss();
     inputsRef.current.forEach((input) => input?.blur());
   }, []);
 
@@ -132,13 +133,13 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
           opacities[indexToFocus]!.value = withTiming(0.3, { duration: 100 });
         }
         newCodes[index] = '';
+        const isLastCodeHasValue = Boolean(
+          index === OTP_CODE_LENGTH - 1 && codesRef.current[index],
+        );
         codesRef.current = newCodes;
         forceUpdate({});
 
         opacities[index]!.value = withTiming(0.3, { duration: 100 });
-        const isLastCodeHasValue = Boolean(
-          index === OTP_CODE_LENGTH - 1 && codesRef.current[index],
-        );
         if (index > 0 && !isLastCodeHasValue) {
           focusIndex(index - 1);
         }
@@ -150,7 +151,6 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
   const handleChange = useCallback(
     (text: string, index: number) => {
       let digits = text.replace(/[^0-9]/g, '').split('');
-
       const prev = codesRef.current[index];
       if (digits.length === 0) {
         if (Platform.OS === 'android' && prev && prev.length) {
@@ -161,6 +161,23 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
 
       const newValues = [...codesRef.current];
       let nextIndex = index;
+
+      if (digits.length === OTP_CODE_LENGTH && index === 0) {
+        digits.forEach((decimal, idx) => {
+          if (idx < OTP_CODE_LENGTH) {
+            newValues[idx] = decimal;
+            scales[idx]!.value = withTiming(1.08, { duration: 80 }, () => {
+              scales[idx]!.value = withTiming(1, { duration: 80 });
+            });
+            opacities[idx]!.value = withTiming(1, { duration: 100 });
+          }
+        });
+        codesRef.current = newValues;
+        forceUpdate({});
+        onCompleteCode();
+        handleVerifyEmailOTP(newValues.join(''));
+        return;
+      }
 
       const currentValue = newValues[nextIndex];
       if (currentValue && text.startsWith(currentValue)) {
@@ -187,7 +204,14 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
         onCompleteCode();
       }
     },
-    [focusIndex, onCompleteCode, opacities, scales, handleKeyPress],
+    [
+      focusIndex,
+      onCompleteCode,
+      opacities,
+      scales,
+      handleKeyPress,
+      handleVerifyEmailOTP,
+    ],
   );
 
   const renderInput = useCallback(

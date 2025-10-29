@@ -98,7 +98,7 @@ export function AuthPortal(props: AuthPortalProps) {
             bottomSheetRef.current?.snapToIndex(0);
           },
           {
-            iosTimeout: 20,
+            iosTimeout: 50,
           },
         );
       },
