@@ -1,5 +1,41 @@
 # @sophon-labs/account-react-native
 
+## 3.0.0-next.10
+
+### Patch Changes
+
+- More languages support
+- Updated dependencies
+  - @sophon-labs/account-message-bridge@3.0.0-next.10
+  - @sophon-labs/account-communicator@3.0.0-next.10
+  - @sophon-labs/account-provider@3.0.0-next.10
+  - @sophon-labs/account-partner@3.0.0-next.10
+  - @sophon-labs/account-core@3.0.0-next.10
+
+## 3.0.0-next.9
+
+### Patch Changes
+
+- Fixing issue on consent
+- Updated dependencies
+  - @sophon-labs/account-message-bridge@3.0.0-next.9
+  - @sophon-labs/account-communicator@3.0.0-next.9
+  - @sophon-labs/account-provider@3.0.0-next.9
+  - @sophon-labs/account-partner@3.0.0-next.9
+  - @sophon-labs/account-core@3.0.0-next.9
+
+## 3.0.0-next.8
+
+### Patch Changes
+
+- Consent flag
+- Updated dependencies
+  - @sophon-labs/account-message-bridge@3.0.0-next.8
+  - @sophon-labs/account-communicator@3.0.0-next.8
+  - @sophon-labs/account-provider@3.0.0-next.8
+  - @sophon-labs/account-partner@3.0.0-next.8
+  - @sophon-labs/account-core@3.0.0-next.8
+
 ## 3.0.0-next.7
 
 ### Patch Changes

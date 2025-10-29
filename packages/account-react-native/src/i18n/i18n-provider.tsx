@@ -6,6 +6,10 @@ import {
 } from 'react';
 import en from './locales/en.json';
 import es from './locales/es.json';
+import jp from './locales/jp.json';
+import ko from './locales/ko.json';
+import pt from './locales/pt.json';
+import zh from './locales/zh.json';
 
 type PathImpl<T, Key extends keyof T> = Key extends string
   ? T[Key] extends Record<string, unknown>
@@ -27,11 +31,15 @@ type TranslationKeys = DefaultTranslationKeys;
  * Examples:
  *  - "en" (English, default)
  */
-export type SupportedLocaleCode = 'en' | 'es';
+export type SupportedLocaleCode = 'en' | 'es' | 'jp' | 'ko' | 'pt' | 'zh';
 
 export const defaultResources: Record<SupportedLocaleCode, typeof en> = {
   en,
   es,
+  jp,
+  ko,
+  pt,
+  zh,
 };
 
 export type TranslationFunction = (

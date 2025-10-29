@@ -1,7 +1,4 @@
-import {
-  type ConsentResponse,
-  shortenAddress,
-} from '@sophon-labs/account-core';
+import { shortenAddress } from '@sophon-labs/account-core';
 import {
   ConnectButton,
   useSophonAccount,
@@ -11,12 +8,7 @@ import {
 import * as ScreenOrientation from 'expo-screen-orientation';
 import { useEffect, useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
-import {
-  erc20Abi,
-  parseEther,
-  parseUnits,
-  UserRejectedRequestError,
-} from 'viem';
+import { erc20Abi, parseEther, parseUnits } from 'viem';
 import { sophonTestnet } from 'viem/chains';
 import { nftAbi } from '@/abis/nft';
 import { unverifiedAbi } from '@/abis/unverified';
@@ -27,13 +19,9 @@ import { TestDashboard } from '@/components/test-dashboard';
 import { Button } from '@/components/ui/button';
 
 export default function HomeScreen() {
-  const { initialized, connect, isConnected, account, logout, isConnecting } =
-    useSophonAccount();
+  const { initialized, isConnected, account, logout } = useSophonAccount();
 
-  useEffect(() => {
-    console.log('is connected', isConnected);
-    console.log('is initialized', initialized);
-  }, [isConnected, initialized]);
+  useEffect(() => {}, [isConnected, initialized]);
 
   useEffect(() => {
     const unlockScreenOerientation = async () => {
@@ -48,26 +36,11 @@ export default function HomeScreen() {
   const [transaction, setTransaction] = useState<string>();
   const [error, setError] = useState<string>('');
   const [showTestDashboard, setShowTestDashboard] = useState(false);
-  const { requestConsent } = useSophonConsent(true);
-  const [consent, setConsent] = useState<ConsentResponse>({
-    consentAds: false,
-    consentData: false,
-  });
+  const { requestConsent, hasConsent } = useSophonConsent();
 
   useEffect(() => {
     console.log('accountError', error);
   }, [error]);
-
-  const handleAuthenticate = async () => {
-    setError('');
-    await connect().catch((e) => {
-      console.log(e);
-      if (e.code !== UserRejectedRequestError.code) {
-        // non user rejected errors
-        setError(e.details ?? e.message);
-      }
-    });
-  };
 
   if (!initialized) {
     return (
@@ -151,7 +124,6 @@ export default function HomeScreen() {
                 setError('');
                 const response = await requestConsent();
                 console.log('consent', response);
-                setConsent(response);
               } catch (e: any) {
                 setError(e.details ?? e.message);
               }
@@ -161,18 +133,9 @@ export default function HomeScreen() {
           </Button>
         )}
         {isConnected && (
-          <>
-            <Text className="text-xs my-4 text-black max-w-[80%]">
-              {consent?.consentAds
-                ? 'Consent granted for ads'
-                : 'Consent denied for ads'}
-            </Text>
-            <Text className="text-xs my-4 text-black max-w-[80%]">
-              {consent?.consentData
-                ? 'Consent granted for data'
-                : 'Consent denied for data'}
-            </Text>
-          </>
+          <Text className="text-xs my-4 text-black max-w-[80%]">
+            {hasConsent ? 'Consent granted' : 'Consent denied'}
+          </Text>
         )}
         {isConnected && (
           <>
