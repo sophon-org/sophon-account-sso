@@ -1,5 +1,14 @@
 # @sophon-labs/account-react
 
+## 3.0.0-next.14
+
+### Patch Changes
+
+- Returning user data on connect
+- Updated dependencies
+  - @sophon-labs/account-connector@3.0.0-next.14
+  - @sophon-labs/account-core@3.0.0-next.14
+
 ## 3.0.0-next.13
 
 ### Patch Changes

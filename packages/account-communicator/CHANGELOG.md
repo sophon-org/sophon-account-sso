@@ -1,5 +1,11 @@
 # @sophon-labs/account-eip6963
 
+## 3.0.0-next.14
+
+### Patch Changes
+
+- Returning user data on connect
+
 ## 3.0.0-next.13
 
 ### Patch Changes
