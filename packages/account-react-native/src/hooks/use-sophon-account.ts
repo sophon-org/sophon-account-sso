@@ -53,10 +53,14 @@ export const useSophonAccount = () => {
         throw new Error('No addresses found');
       }
 
-      setAccount({
+      // TODO: get the owner address from the wallet client
+      const currentAccount = {
         address: addresses[0] as Address,
         owner: addresses[0] as Address,
-      });
+      };
+      setAccount(currentAccount);
+
+      return currentAccount;
       // biome-ignore lint/suspicious/noExplicitAny: Better typing is not possible at the moment
     } catch (error: any) {
       setAccount(undefined);
