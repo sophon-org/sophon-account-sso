@@ -1,5 +1,11 @@
 # @sophon-labs/account-core
 
+## 3.0.0-next.13
+
+### Patch Changes
+
+- Fixing keyboard behavior
+
 ## 3.0.0-next.12
 
 ### Patch Changes
