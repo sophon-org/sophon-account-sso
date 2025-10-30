@@ -9,15 +9,12 @@ import { HyperindexService } from "src/hyperindex/hyperindex.service";
 import { normalizeAndValidateAddress } from "src/utils/address";
 import { getChainById, SupportedChainId } from "src/utils/chain";
 import {
-	Account,
-	Address,
-	Chain,
 	createWalletClient,
 	http,
 	isAddress,
-	Transport,
-	WalletClient,
 	zeroAddress,
+	type Chain as ViemChain,
+	type Address,
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { eip712WalletActions } from "viem/zksync";
@@ -88,13 +85,14 @@ export class ContractService {
 			};
 		}
 
-		const chain = getChainById(process.env.CHAIN_ID as SupportedChainId);
+		const rawChain = getChainById(process.env.CHAIN_ID as SupportedChainId);
+		const chainForClient = rawChain as unknown as any;
 		const secrets = await this.secretsService.loadAWSSecrets();
 		const deployerAccount = privateKeyToAccount(secrets.deployer.privateKey);
 
 		// there are cases when the index don't have the information yet, so we need to verify contract salt
 		const deployedContract = await getDeployedSmartContractAddress(
-			chain,
+			chainForClient,
 			ownerAddress,
 			deployerAccount.address,
 		);
@@ -107,18 +105,17 @@ export class ContractService {
 		}
 
 		// deploy the contract
-		const deployerClient: WalletClient<Transport, Chain, Account> =
-			createWalletClient({
-				account: deployerAccount,
-				chain: chain,
-				transport: http(),
-			}).extend(eip712WalletActions());
+		const deployerClient = createWalletClient({
+			account: deployerAccount,
+			chain: chainForClient,
+			transport: http(),
+		}).extend(eip712WalletActions());
 
 		this.logger.log("Deploying contract");
 		const deployedAccount = await deployModularAccount(deployerClient, {
-			accountFactory: CHAIN_CONTRACTS[chain.id].accountFactory,
+			accountFactory: CHAIN_CONTRACTS[(rawChain as any).id].accountFactory,
 			paymaster: {
-				location: CHAIN_CONTRACTS[chain.id].accountPaymaster,
+				location: CHAIN_CONTRACTS[(rawChain as any).id].accountPaymaster,
 			},
 			uniqueAccountId: SOPHON_SALT_PREFIX,
 			owners: [ownerAddress],
