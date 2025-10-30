@@ -281,10 +281,10 @@ export function AuthPortal(props: AuthPortalProps) {
           !handleProps?.hideCloseButton || currentStep !== 'verifyEmail'
         }
         enableDynamicSizing={true}
-        keyboardBehavior={Platform.OS === 'ios' ? 'interactive' : 'extend'}
+        keyboardBehavior="interactive"
         keyboardBlurBehavior="restore"
         enableBlurKeyboardOnGesture={true}
-        android_keyboardInputMode="adjustResize"
+        android_keyboardInputMode="adjustPan"
         handleIndicatorStyle={{ backgroundColor: colors.gray[600] }}
         backgroundStyle={{ backgroundColor: colors.background.primary }}
       >
