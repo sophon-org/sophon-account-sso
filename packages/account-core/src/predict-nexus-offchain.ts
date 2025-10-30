@@ -2,14 +2,17 @@ import {
   concat,
   encodeAbiParameters,
   encodeFunctionData,
-  getCreate2Address,
-  type Hex,
-  isAddress,
   keccak256,
   pad,
   parseAbiParameters,
   toHex,
+  getCreate2Address,
+  isAddress,
+  type Hex,
+  zeroAddress,
 } from 'viem';
+import { CHAIN_CONTRACTS, type ChainId } from  './constants';
+
 
 /** INexus.initializeAccount(bytes) */
 const INexusAbi = [
@@ -109,6 +112,62 @@ export type PredictNexusOffchainResult = {
   initCode: Hex;
   initCodeHash: `0x${string}`;
 };
+
+export type PredictNexusOffchainByChainParams = {
+  chainId: ChainId;
+  owner: `0x${string}`;
+  index?: bigint | number | string;
+  proxyCreationCode?: Hex;
+  log?: boolean;
+};
+
+export function predictNexusOffchainByChain(
+  params: PredictNexusOffchainByChainParams,
+) {
+  const { chainId, owner, index = 0, proxyCreationCode, log = true } = params;
+
+  const cfg = CHAIN_CONTRACTS[chainId];
+  if (!cfg) throw new Error(`Unsupported chainId: ${chainId}`);
+
+  const {
+    accountFactory,
+    accountImplementation,
+    bootstrap,
+    accountCodeStorage,
+  } = cfg;
+
+  // quick sanity on required addresses
+  for (const [label, addr] of Object.entries({
+    accountFactory,
+    accountImplementation,
+    bootstrap,
+  })) {
+    if (!isAddress(addr) || addr === zeroAddress)
+      throw new Error(`Missing/zero ${label} for chainId ${chainId}`);
+  }
+  const looksLikeAddress = /^0x[0-9a-fA-F]{40}$/.test(accountCodeStorage);
+  const creationCode: Hex = looksLikeAddress
+    ? (() => {
+        if (!proxyCreationCode)
+          throw new Error(
+            `CHAIN_CONTRACTS[${chainId}].accountCodeStorage is an address (${accountCodeStorage}). ` +
+              `Provide 'proxyCreationCode' explicitly for off-chain prediction.`,
+          );
+        return proxyCreationCode;
+      })()
+    : (accountCodeStorage as Hex);
+
+
+  return predictNexusOffchain({
+    factory: accountFactory as `0x${string}`,
+    implementation: accountImplementation as `0x${string}`,
+    bootstrap: bootstrap as `0x${string}`,
+    proxyCreationCode: creationCode,
+    owner,
+    index,
+    log,
+  });
+}
 
 /** Predict the counterfactual Nexus account address fully off-chain (no deps on abstractjs). */
 export function predictNexusOffchain(
