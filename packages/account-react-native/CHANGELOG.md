@@ -1,5 +1,17 @@
 # @sophon-labs/account-react-native
 
+## 3.0.0-next.13
+
+### Patch Changes
+
+- Fixing keyboard behavior
+- Updated dependencies
+  - @sophon-labs/account-message-bridge@3.0.0-next.13
+  - @sophon-labs/account-communicator@3.0.0-next.13
+  - @sophon-labs/account-provider@3.0.0-next.13
+  - @sophon-labs/account-partner@3.0.0-next.13
+  - @sophon-labs/account-core@3.0.0-next.13
+
 ## 3.0.0-next.12
 
 ### Patch Changes
