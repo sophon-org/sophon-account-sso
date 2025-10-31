@@ -1,5 +1,17 @@
 # @sophon-labs/account-react-native
 
+## 3.0.0-next.17
+
+### Patch Changes
+
+- Ordering social button depending on platform
+- Updated dependencies
+  - @sophon-labs/account-message-bridge@3.0.0-next.17
+  - @sophon-labs/account-communicator@3.0.0-next.17
+  - @sophon-labs/account-provider@3.0.0-next.17
+  - @sophon-labs/account-partner@3.0.0-next.17
+  - @sophon-labs/account-core@3.0.0-next.17
+
 ## 3.0.0-next.16
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 3.0.0-next.17
+
+### Patch Changes
+
+- Ordering social button depending on platform
+
 ## 3.0.0-next.16
 
 ### Patch Changes
