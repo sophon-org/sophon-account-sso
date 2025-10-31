@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 3.0.0-next.15
+
+### Patch Changes
+
+- Login/Logout event + Error on auth retry modal
+
 ## 3.0.0-next.14
 
 ### Patch Changes

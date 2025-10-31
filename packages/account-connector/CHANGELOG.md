@@ -1,5 +1,14 @@
 # @sophon-labs/account-connector
 
+## 3.0.0-next.15
+
+### Patch Changes
+
+- Login/Logout event + Error on auth retry modal
+- Updated dependencies
+  - @sophon-labs/account-provider@3.0.0-next.15
+  - @sophon-labs/account-core@3.0.0-next.15
+
 ## 3.0.0-next.14
 
 ### Patch Changes
