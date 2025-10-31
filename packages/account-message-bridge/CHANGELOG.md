@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 3.0.0-next.16
+
+### Patch Changes
+
+- Previewing sophon account address off chain
+
 ## 3.0.0-next.15
 
 ### Patch Changes

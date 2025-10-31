@@ -1,5 +1,17 @@
 # @sophon-labs/account-react-native
 
+## 3.0.0-next.16
+
+### Patch Changes
+
+- Previewing sophon account address off chain
+- Updated dependencies
+  - @sophon-labs/account-message-bridge@3.0.0-next.16
+  - @sophon-labs/account-communicator@3.0.0-next.16
+  - @sophon-labs/account-provider@3.0.0-next.16
+  - @sophon-labs/account-partner@3.0.0-next.16
+  - @sophon-labs/account-core@3.0.0-next.16
+
 ## 3.0.0-next.15
 
 ### Patch Changes
