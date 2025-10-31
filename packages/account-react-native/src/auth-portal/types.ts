@@ -67,6 +67,7 @@ export type VerifyCodeParams = {
 export type RetryParams = {
   ownerAddress: `0x${string}`;
   provider?: string;
+  error?: Error;
 };
 export type LoadingParams = {
   provider?: string;

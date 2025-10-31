@@ -36,7 +36,7 @@ import {
   type DynamicClientType,
   NoopDynamicClient,
 } from '../lib/dynamic';
-import { useUIEventHandler } from '../messaging';
+import { type SophonUIActions, useUIEventHandler } from '../messaging';
 import {
   createMobileProvider,
   SophonAppStorage,
@@ -119,6 +119,11 @@ export interface SophonAccount {
   owner: Address;
 }
 
+export type SophonContextEvents = {
+  onLoginSuccess?: (payload: SophonUIActions['onLoginSuccess']) => void;
+  onLogout?: (payload: SophonUIActions['onLogout']) => void;
+};
+
 interface SophonContextProviderProps {
   children: React.ReactNode;
   chainId: ChainId;
@@ -127,18 +132,22 @@ interface SophonContextProviderProps {
   dataScopes?: DataScopes[];
   insets?: AuthPortalProps['insets'];
   requestedCapabilities?: Capabilities[];
+
   /**
    * Locale code for internationalization.
    * @default "en"
    * @supported "en" | "es"
    */
   locale?: SupportedLocaleCode;
+
   /**
    * Theme mode
    * @default "system"
    * @supported "light" | "dark"
    */
   theme?: 'light' | 'dark';
+
+  events?: SophonContextEvents;
   authConfig?: AuthFlowConfig;
 }
 
@@ -152,6 +161,7 @@ export const SophonContextProvider = ({
   requestedCapabilities,
   locale,
   theme,
+  events,
   authConfig,
 }: SophonContextProviderProps) => {
   const [error, setError] = useState<{ description: string; code: number }>();
@@ -223,6 +233,14 @@ export const SophonContextProvider = ({
     }
 
     setInitialized(true);
+  });
+
+  useUIEventHandler('onLoginSuccess', (payload) => {
+    events?.onLoginSuccess?.(payload);
+  });
+
+  useUIEventHandler('onLogout', (payload) => {
+    events?.onLogout?.(payload);
   });
 
   useUIEventHandler('setAccessToken', (incomingToken) => {

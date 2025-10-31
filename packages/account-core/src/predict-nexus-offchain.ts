@@ -2,17 +2,16 @@ import {
   concat,
   encodeAbiParameters,
   encodeFunctionData,
+  getCreate2Address,
+  type Hex,
+  isAddress,
   keccak256,
   pad,
   parseAbiParameters,
   toHex,
-  getCreate2Address,
-  isAddress,
-  type Hex,
   zeroAddress,
 } from 'viem';
-import { CHAIN_CONTRACTS, type ChainId } from  './constants';
-
+import { CHAIN_CONTRACTS, type ChainId } from './constants';
 
 /** INexus.initializeAccount(bytes) */
 const INexusAbi = [
@@ -156,7 +155,6 @@ export function predictNexusOffchainByChain(
         return proxyCreationCode;
       })()
     : (accountCodeStorage as Hex);
-
 
   return predictNexusOffchain({
     factory: accountFactory as `0x${string}`,

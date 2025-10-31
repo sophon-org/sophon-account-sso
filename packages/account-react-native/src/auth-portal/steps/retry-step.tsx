@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 import { useTranslation } from '../../i18n';
-import { Button, Container, Text } from '../../ui';
+import { Button, CardError, Container, Text } from '../../ui';
 import { useNavigationParams } from '../hooks';
 import type { BasicStepProps, RetryParams } from '../types';
 
@@ -9,11 +9,12 @@ export const RetryStep = ({
   onBackToSignIn,
 }: BasicStepProps) => {
   const { t } = useTranslation();
-  const { ownerAddress, provider } = useNavigationParams<RetryParams>();
+  const { ownerAddress, provider, error } = useNavigationParams<RetryParams>();
 
   const handleOnRetry = () => {
     onAuthenticate(ownerAddress, { provider, from: 'retry' });
   };
+
   return (
     <Container>
       <Container marginBottom={16}>
@@ -22,6 +23,11 @@ export const RetryStep = ({
         </Text>
         <Text textAlign="center">{t('retryStep.pleaseTryAgain')}</Text>
       </Container>
+      <CardError
+        isVisible={!!error}
+        text={error?.message ?? ''}
+        marginTop={12}
+      />
       <View style={styles.buttons}>
         <Button
           containerStyle={styles.buttonWrapper}
