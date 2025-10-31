@@ -174,8 +174,12 @@ export const useFlowManager = () => {
           },
         });
       }
-      // await 500 ms to allow react to propagate the change, to remove in the future
-      // await new Promise((resolve) => setTimeout(resolve, 500));
+
+      sendUIMessage('onLoginSuccess', {
+        address: account.address,
+        owner: account.owner,
+        accessToken: tokens.accessToken,
+      });
     },
     [
       connectingAccount,

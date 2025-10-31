@@ -15,6 +15,8 @@ export enum AuthProvider {
   TELEGRAM = 'telegram',
 }
 
+const SOCIAL_AUTH_TIMEOUT = 2 * 60 * 1000;
+
 export const useEmbeddedAuth = () => {
   const { dynamicClient } = useSophonContext();
   const { auth, wallets, viem } = useReactiveClient(dynamicClient);
@@ -90,7 +92,12 @@ export const useEmbeddedAuth = () => {
 
   const waitForAuthentication = useCallback(async () => {
     return new Promise<Address>((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        reject(new Error('Authentication timed out, please try again.'));
+      }, SOCIAL_AUTH_TIMEOUT);
+
       wallets.on('primaryChanged', (data) => {
+        clearTimeout(timeout);
         if (data?.address) {
           resolve(data.address as Address);
         } else {
@@ -99,6 +106,7 @@ export const useEmbeddedAuth = () => {
       });
 
       auth.on('authFailed', (data) => {
+        clearTimeout(timeout);
         reject(data);
       });
     });

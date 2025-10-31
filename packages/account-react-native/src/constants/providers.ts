@@ -5,5 +5,6 @@ export const AVAILABLE_PROVIDERS = [
   AuthProvider.GOOGLE,
   AuthProvider.TWITTER,
   AuthProvider.DISCORD,
-  AuthProvider.TELEGRAM,
+  // TODO: enable telegram when dynamic labs supports it
+  // AuthProvider.TELEGRAM,
 ];

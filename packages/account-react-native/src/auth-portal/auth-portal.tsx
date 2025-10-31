@@ -224,11 +224,15 @@ export function AuthPortal(props: AuthPortalProps) {
           });
         }
         await actions.authenticate(ownerAddress);
-      } catch (err) {
-        console.error('Authentication failed', err);
+      } catch (error) {
+        console.error('Authentication failed', error);
         navigate('retry', {
           replace: true,
-          params: { ownerAddress, provider: navigationParams?.provider },
+          params: {
+            ownerAddress,
+            provider: navigationParams?.provider,
+            error: error as Error,
+          },
         });
       }
     },

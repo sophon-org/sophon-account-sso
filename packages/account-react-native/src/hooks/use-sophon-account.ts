@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import type { Address } from 'viem';
+import { sendUIMessage } from '../messaging';
 import { SophonAppStorage } from '../provider';
 import { useEmbeddedAuth } from './use-embedded-auth';
 import { useSophonContext } from './use-sophon-context';
@@ -31,6 +32,7 @@ export const useSophonAccount = () => {
     setConnectingAccount(undefined);
     setAccount(undefined);
     SophonAppStorage.clear();
+    sendUIMessage('onLogout', undefined);
   }, [
     logoutEmbedded,
     provider,
