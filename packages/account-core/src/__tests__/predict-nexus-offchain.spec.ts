@@ -2,7 +2,7 @@
 
 import type { Hex } from 'viem';
 import { describe, expect, it } from 'vitest';
-import { predictNexusOffchain } from '../predict-nexus-offchain';
+import { predictNexusOffchain } from '../predict-nexus';
 
 // ── Embedded constants (Sophon OS testnet)
 const FACTORY = '0x0000006648ED9B2B842552BE63Af870bC74af837' as `0x${string}`;

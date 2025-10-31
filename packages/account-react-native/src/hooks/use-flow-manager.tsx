@@ -2,6 +2,7 @@ import {
   AuthService,
   CHAIN_CONTRACTS,
   checkChainCapability,
+  predictNexusOffchainByChain,
   safeParseTypedData,
 } from '@sophon-labs/account-core';
 import { useCallback, useMemo } from 'react';
@@ -211,9 +212,11 @@ export const useFlowManager = () => {
           accounts = response.contracts;
         }
       } else if (offChainDeploy) {
-        // TODO: fetch the contract info from server, for now use owner as both @israel and @roman.h
-        // TODO: BEFORE PROD !!! IMPORTANT !!!
-        accounts = [owner];
+        const { address } = predictNexusOffchainByChain({
+          chainId: chainId,
+          owner,
+        });
+        accounts = [address];
       }
 
       if (!accounts?.length || !accounts[0]) {

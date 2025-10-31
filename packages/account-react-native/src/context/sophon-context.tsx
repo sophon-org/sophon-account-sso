@@ -120,8 +120,10 @@ export interface SophonAccount {
 }
 
 export type SophonContextEvents = {
-  onLoginSuccess?: (payload: SophonUIActions['onLoginSuccess']) => void;
-  onLogout?: (payload: SophonUIActions['onLogout']) => void;
+  onLoginSuccess?: (
+    payload: SophonUIActions['onLoginSuccess'],
+  ) => Promise<void>;
+  onLogout?: (payload: SophonUIActions['onLogout']) => Promise<void>;
 };
 
 interface SophonContextProviderProps {

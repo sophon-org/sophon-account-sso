@@ -1,5 +1,4 @@
 import { useCallback, useMemo, useState } from 'react';
-import type { Address } from 'viem';
 import { sendUIMessage } from '../messaging';
 import { SophonAppStorage } from '../provider';
 import { useEmbeddedAuth } from './use-embedded-auth';
@@ -55,14 +54,7 @@ export const useSophonAccount = () => {
         throw new Error('No addresses found');
       }
 
-      // TODO: get the owner address from the wallet client
-      const currentAccount = {
-        address: addresses[0] as Address,
-        owner: addresses[0] as Address,
-      };
-      setAccount(currentAccount);
-
-      return currentAccount;
+      return addresses;
       // biome-ignore lint/suspicious/noExplicitAny: Better typing is not possible at the moment
     } catch (error: any) {
       setAccount(undefined);

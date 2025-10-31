@@ -1,5 +1,13 @@
 # @sophon-labs/account-partner
 
+## 3.0.0-next.16
+
+### Patch Changes
+
+- Previewing sophon account address off chain
+- Updated dependencies
+  - @sophon-labs/account-core@3.0.0-next.16
+
 ## 3.0.0-next.15
 
 ### Patch Changes
