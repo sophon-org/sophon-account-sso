@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
 import { AVAILABLE_PROVIDERS } from '../../constants';
-import type { AuthProvider } from '../../hooks/use-embedded-auth';
+import { AuthProvider } from '../../hooks/use-embedded-auth';
 import {
   Container,
   Icon,
@@ -44,10 +44,21 @@ export const SocialProviderButtons = ({
     pointerEvents: opacity.value > 0 ? 'auto' : 'none',
   }));
 
+  const finalProviders =
+    Platform.OS === 'ios'
+      ? [
+          AuthProvider.APPLE,
+          ...AVAILABLE_PROVIDERS.filter((p) => p !== AuthProvider.APPLE),
+        ]
+      : [
+          AuthProvider.GOOGLE,
+          ...AVAILABLE_PROVIDERS.filter((p) => p !== AuthProvider.GOOGLE),
+        ];
+
   return (
     <React.Fragment>
       <View style={styles.container}>
-        {AVAILABLE_PROVIDERS.map((provider) => (
+        {finalProviders.map((provider) => (
           <TouchableOpacity
             key={provider}
             style={styles.socialButton}
