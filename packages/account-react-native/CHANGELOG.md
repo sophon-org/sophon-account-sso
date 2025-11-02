@@ -1,5 +1,17 @@
 # @sophon-labs/account-react-native
 
+## 3.0.0-next.18
+
+### Patch Changes
+
+- Allowing debug mode
+- Updated dependencies
+  - @sophon-labs/account-message-bridge@3.0.0-next.18
+  - @sophon-labs/account-communicator@3.0.0-next.18
+  - @sophon-labs/account-provider@3.0.0-next.18
+  - @sophon-labs/account-partner@3.0.0-next.18
+  - @sophon-labs/account-core@3.0.0-next.18
+
 ## 3.0.0-next.17
 
 ### Patch Changes

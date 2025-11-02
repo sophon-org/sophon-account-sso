@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 3.0.0-next.18
+
+### Patch Changes
+
+- Allowing debug mode
+
 ## 3.0.0-next.17
 
 ### Patch Changes
