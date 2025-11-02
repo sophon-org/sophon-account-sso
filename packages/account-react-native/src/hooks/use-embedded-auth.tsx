@@ -23,9 +23,13 @@ export const useEmbeddedAuth = () => {
 
   const signInWithEmail = useCallback(
     async (email: string) => {
+      if (auth.authenticatedUser) {
+        await auth.logout();
+      }
+
       return auth.email.sendOTP(email);
     },
-    [auth.email.sendOTP],
+    [auth.email.sendOTP, auth.authenticatedUser, auth.logout],
   );
 
   const verifyEmailOTP = useCallback(
@@ -45,9 +49,13 @@ export const useEmbeddedAuth = () => {
 
   const signInWithSocialProvider = useCallback(
     async (provider: AuthProvider) => {
+      if (auth.authenticatedUser) {
+        await auth.logout();
+      }
+
       return auth.social.connect({ provider });
     },
-    [auth.social.connect],
+    [auth.social.connect, auth.authenticatedUser, auth.logout],
   );
 
   const getLinkedAccounts = useCallback(async () => {

@@ -1,5 +1,13 @@
 # @sophon-labs/account-api-sdk
 
+## 3.0.0-next.19
+
+### Patch Changes
+
+- Trying to avoid authentication error
+- Updated dependencies
+  - @sophon-labs/account-core@3.0.0-next.19
+
 ## 3.0.0-next.18
 
 ### Patch Changes
