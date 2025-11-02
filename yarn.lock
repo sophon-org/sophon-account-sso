@@ -2353,40 +2353,40 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@dynamic-labs/assert-package-version@npm:4.41.0":
-  version: 4.41.0
-  resolution: "@dynamic-labs/assert-package-version@npm:4.41.0"
+"@dynamic-labs/assert-package-version@npm:4.41.1":
+  version: 4.41.1
+  resolution: "@dynamic-labs/assert-package-version@npm:4.41.1"
   dependencies:
-    "@dynamic-labs/logger": "npm:4.41.0"
-  checksum: 10c0/3d13af90b2c34d546a315ba4785c92afb0f3552321e9bc0e54580b416784cb2f7f9e899272791749aab19846121d0a734c27991316e84158a13bef73ac92fb96
+    "@dynamic-labs/logger": "npm:4.41.1"
+  checksum: 10c0/2512bf500af23e39201cdef9918c50d2c21cf8f77e2e57f7e934afcd7ed697c242a39fc030b046d0c0b2db22f182674c0af9b12bc333e6b2f813e2de078f7d4f
   languageName: node
   linkType: hard
 
-"@dynamic-labs/client@npm:4.41.0, @dynamic-labs/client@npm:^4.41.0":
-  version: 4.41.0
-  resolution: "@dynamic-labs/client@npm:4.41.0"
+"@dynamic-labs/client@npm:4.41.1, @dynamic-labs/client@npm:^4.41.1":
+  version: 4.41.1
+  resolution: "@dynamic-labs/client@npm:4.41.1"
   dependencies:
-    "@dynamic-labs/assert-package-version": "npm:4.41.0"
-    "@dynamic-labs/locale": "npm:4.41.0"
-    "@dynamic-labs/logger": "npm:4.41.0"
-    "@dynamic-labs/message-transport": "npm:4.41.0"
+    "@dynamic-labs/assert-package-version": "npm:4.41.1"
+    "@dynamic-labs/locale": "npm:4.41.1"
+    "@dynamic-labs/logger": "npm:4.41.1"
+    "@dynamic-labs/message-transport": "npm:4.41.1"
     "@dynamic-labs/sdk-api-core": "npm:0.0.813"
-    "@dynamic-labs/types": "npm:4.41.0"
-    "@dynamic-labs/webview-messages": "npm:4.41.0"
+    "@dynamic-labs/types": "npm:4.41.1"
+    "@dynamic-labs/webview-messages": "npm:4.41.1"
     "@vue/reactivity": "npm:^3.4.21"
     eventemitter3: "npm:5.0.1"
-  checksum: 10c0/b221a25e1ce49adbf177986d7ceeb8f508328dbf4f06fe440862efe6eb0ee9a24c4e48d0464f330e8c5747cfd110972a1fe452d27495da564fc3380a49aa416d
+  checksum: 10c0/49b3ad25b4cfcf466c82e686d894b0de50b8c8f8c8317712f85aa955e8ec757cad36ae9e8218301853e08829addd05ff331c25a93469a73847c3bf712707f334
   languageName: node
   linkType: hard
 
-"@dynamic-labs/locale@npm:4.41.0":
-  version: 4.41.0
-  resolution: "@dynamic-labs/locale@npm:4.41.0"
+"@dynamic-labs/locale@npm:4.41.1":
+  version: 4.41.1
+  resolution: "@dynamic-labs/locale@npm:4.41.1"
   dependencies:
-    "@dynamic-labs/assert-package-version": "npm:4.41.0"
+    "@dynamic-labs/assert-package-version": "npm:4.41.1"
     i18next: "npm:23.4.6"
     react-i18next: "npm:13.5.0"
-  checksum: 10c0/cc28948f7742e75303e2ee2c32549ec97cde81b4f3e4075fed95851e17a6c7ae17f00f67d6ae60fb6a12b6dea80f4b48cd29d036f70856062bff512d7069e1c8
+  checksum: 10c0/90c3f22df8df911a00003ed3515056e5d185434f5bb11a864caf17c1e31406e74b81c8f14d9224a81160c3a792f7cef470be6b1ad29b22526989bf0fb46df49c
   languageName: node
   linkType: hard
 
@@ -2399,25 +2399,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@dynamic-labs/logger@npm:4.41.0":
-  version: 4.41.0
-  resolution: "@dynamic-labs/logger@npm:4.41.0"
+"@dynamic-labs/logger@npm:4.41.1":
+  version: 4.41.1
+  resolution: "@dynamic-labs/logger@npm:4.41.1"
   dependencies:
     eventemitter3: "npm:5.0.1"
-  checksum: 10c0/f6680bc7d0093adf74c87e5dd72cdeacb70deb56ef769b4bc447e9cc19fb78d6a55c3d4de3837156d86ea7b94abbc579f477c9ab7c8cc2e3432f36ec9f01a9ad
+  checksum: 10c0/5be7306a3092227ba73a16fb44b42bc594cb828f24e44c8652f934c39c6d8513d60b4e7547094a79570c34e59a7ab0bcc88f4bab0a0cab34fc6697973bc1d763
   languageName: node
   linkType: hard
 
-"@dynamic-labs/message-transport@npm:4.41.0":
-  version: 4.41.0
-  resolution: "@dynamic-labs/message-transport@npm:4.41.0"
+"@dynamic-labs/message-transport@npm:4.41.1":
+  version: 4.41.1
+  resolution: "@dynamic-labs/message-transport@npm:4.41.1"
   dependencies:
-    "@dynamic-labs/assert-package-version": "npm:4.41.0"
-    "@dynamic-labs/logger": "npm:4.41.0"
-    "@dynamic-labs/utils": "npm:4.41.0"
+    "@dynamic-labs/assert-package-version": "npm:4.41.1"
+    "@dynamic-labs/logger": "npm:4.41.1"
+    "@dynamic-labs/utils": "npm:4.41.1"
     "@vue/reactivity": "npm:^3.4.21"
     eventemitter3: "npm:5.0.1"
-  checksum: 10c0/ee86b50d39509b2114fdb086eeafe32c31d130a54a9c44be0986af790bd7780df3430c9020e3910f7ad669284585a32d0153bacc27b5ae8e32bd66f39d33c30f
+  checksum: 10c0/43e738b9f1bd21d8f0dfae95eaae99215be7c40c30699466aec8cc609596c1839e467f710ad014c6b5e31f9bf87c9a4ee9f20ad5135f067867212eaff08bba00
   languageName: node
   linkType: hard
 
@@ -2434,27 +2434,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@dynamic-labs/react-hooks@npm:^4.41.0":
-  version: 4.41.0
-  resolution: "@dynamic-labs/react-hooks@npm:4.41.0"
+"@dynamic-labs/react-hooks@npm:^4.41.1":
+  version: 4.41.1
+  resolution: "@dynamic-labs/react-hooks@npm:4.41.1"
   dependencies:
-    "@dynamic-labs/assert-package-version": "npm:4.41.0"
+    "@dynamic-labs/assert-package-version": "npm:4.41.1"
     "@vue/reactivity": "npm:^3.4.21"
   peerDependencies:
     react: ">=18.0.0 <20.0.0"
-  checksum: 10c0/1d49c9e3269b2f366a606deb9176dd1b90ff8ba38481d1c9bb95000a0fb6485ad158d674abdcb24116dc3ded746b7119dfabd884ba8d813cc8c1a999f04dd6a5
+  checksum: 10c0/c4fb0b0b4e1bb2297479a5debe86e1ca26abde463d0e5fe7b30e5a220fde9cd3c4beee0686bb27b6c14b43c67833720aae779da4951ab59bbde05adcf1392b31
   languageName: node
   linkType: hard
 
-"@dynamic-labs/react-native-extension@npm:^4.41.0":
-  version: 4.41.0
-  resolution: "@dynamic-labs/react-native-extension@npm:4.41.0"
+"@dynamic-labs/react-native-extension@npm:^4.41.1":
+  version: 4.41.1
+  resolution: "@dynamic-labs/react-native-extension@npm:4.41.1"
   dependencies:
-    "@dynamic-labs/assert-package-version": "npm:4.41.0"
-    "@dynamic-labs/client": "npm:4.41.0"
-    "@dynamic-labs/logger": "npm:4.41.0"
-    "@dynamic-labs/message-transport": "npm:4.41.0"
-    "@dynamic-labs/webview-messages": "npm:4.41.0"
+    "@dynamic-labs/assert-package-version": "npm:4.41.1"
+    "@dynamic-labs/client": "npm:4.41.1"
+    "@dynamic-labs/logger": "npm:4.41.1"
+    "@dynamic-labs/message-transport": "npm:4.41.1"
+    "@dynamic-labs/webview-messages": "npm:4.41.1"
     "@turnkey/react-native-passkey-stamper": "npm:1.1.3"
     react-native-passkey: "npm:3.1.0"
   peerDependencies:
@@ -2464,7 +2464,7 @@ __metadata:
     react: ">=18.0.0 <20.0.0"
     react-native: ">=0.73.6"
     react-native-webview: ^13.6.4
-  checksum: 10c0/8407928967979ae1babf8765d6e5af2cff903c2b9942db888df4c3db2ef87a7a449fcf42f140a3c36631c09688ce4c2ea9e804f916a9b3ecf14fcd01904ad0e0
+  checksum: 10c0/bbbd20242d295c5689da5ca11856587597f7df7c8a4cbdc3b40035da7fa17f3e7fbba30c5d667212d1d1a59cb54f184be1db47191bdfd48e10d7824845b6d236
   languageName: node
   linkType: hard
 
@@ -2499,13 +2499,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@dynamic-labs/types@npm:4.41.0":
-  version: 4.41.0
-  resolution: "@dynamic-labs/types@npm:4.41.0"
+"@dynamic-labs/types@npm:4.41.1":
+  version: 4.41.1
+  resolution: "@dynamic-labs/types@npm:4.41.1"
   dependencies:
-    "@dynamic-labs/assert-package-version": "npm:4.41.0"
+    "@dynamic-labs/assert-package-version": "npm:4.41.1"
     "@dynamic-labs/sdk-api-core": "npm:0.0.813"
-  checksum: 10c0/881479287dec8db99287cdb0043ce58abaad0ddfeeb8721221fc8452ed224ef8c2ce6397d258d4eb5ba7d227a1281f26aeaabf51ed5fc383d9f5681bd13a576a
+  checksum: 10c0/1d3b8e4931af437c63189e1e8ce44d29691ff073b58e2541782aea72f13df4aa39207382b32078d6ba2728e78354ce3588aed5ebfb4abe408119998316614c47
   languageName: node
   linkType: hard
 
@@ -2524,61 +2524,61 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@dynamic-labs/utils@npm:4.41.0":
-  version: 4.41.0
-  resolution: "@dynamic-labs/utils@npm:4.41.0"
+"@dynamic-labs/utils@npm:4.41.1":
+  version: 4.41.1
+  resolution: "@dynamic-labs/utils@npm:4.41.1"
   dependencies:
-    "@dynamic-labs/assert-package-version": "npm:4.41.0"
-    "@dynamic-labs/logger": "npm:4.41.0"
+    "@dynamic-labs/assert-package-version": "npm:4.41.1"
+    "@dynamic-labs/logger": "npm:4.41.1"
     "@dynamic-labs/sdk-api-core": "npm:0.0.813"
-    "@dynamic-labs/types": "npm:4.41.0"
+    "@dynamic-labs/types": "npm:4.41.1"
     buffer: "npm:6.0.3"
     eventemitter3: "npm:5.0.1"
     tldts: "npm:6.0.16"
-  checksum: 10c0/903bb775dfa9dc58c4da5b7cba79b8db345c6bd9f25933c8e6af5a99b1d6402389cdf13ebd906a623a10f07c2956473f95d391ae68e6a0cc82c5cc985a8bc02f
+  checksum: 10c0/f36c366758549241b1bcfdf13018187b1219ab124394c9d6f7a96f46605d2e56dddbbfdf3e00a79856373c4689b9f53b19f4c7c712476ba1d84cf556f904c894
   languageName: node
   linkType: hard
 
-"@dynamic-labs/viem-extension@npm:^4.41.0":
-  version: 4.41.0
-  resolution: "@dynamic-labs/viem-extension@npm:4.41.0"
+"@dynamic-labs/viem-extension@npm:^4.41.1":
+  version: 4.41.1
+  resolution: "@dynamic-labs/viem-extension@npm:4.41.1"
   dependencies:
-    "@dynamic-labs/assert-package-version": "npm:4.41.0"
-    "@dynamic-labs/client": "npm:4.41.0"
-    "@dynamic-labs/message-transport": "npm:4.41.0"
-    "@dynamic-labs/types": "npm:4.41.0"
-    "@dynamic-labs/webview-messages": "npm:4.41.0"
+    "@dynamic-labs/assert-package-version": "npm:4.41.1"
+    "@dynamic-labs/client": "npm:4.41.1"
+    "@dynamic-labs/message-transport": "npm:4.41.1"
+    "@dynamic-labs/types": "npm:4.41.1"
+    "@dynamic-labs/webview-messages": "npm:4.41.1"
   peerDependencies:
     viem: ^2.28.4
-  checksum: 10c0/d2fff21623d9758ff55ed07e8db09b3130ca8c600cc377d116ad7507fc71e9d580b876ebb77662cf38934c63ff6a884e359302f3655552efbcc9e3eb19e34d9b
+  checksum: 10c0/33c9ae871e24178c79f65c84c4880bb7b83d31a9442a5aeb350a691281ba5bcb30982410e29506a5673880e003001f37b1dae16bd08cf58749c683ef468c0032
   languageName: node
   linkType: hard
 
-"@dynamic-labs/webauthn@npm:4.41.0":
-  version: 4.41.0
-  resolution: "@dynamic-labs/webauthn@npm:4.41.0"
+"@dynamic-labs/webauthn@npm:4.41.1":
+  version: 4.41.1
+  resolution: "@dynamic-labs/webauthn@npm:4.41.1"
   dependencies:
-    "@dynamic-labs/assert-package-version": "npm:4.41.0"
-    "@dynamic-labs/logger": "npm:4.41.0"
+    "@dynamic-labs/assert-package-version": "npm:4.41.1"
+    "@dynamic-labs/logger": "npm:4.41.1"
     "@simplewebauthn/browser": "npm:13.1.0"
     "@simplewebauthn/types": "npm:12.0.0"
-  checksum: 10c0/fc5b588d682d54229aef0ae2d4f771405b9bd71c0bceb286cdb56cb634816b916e680c198b2be119db7320eb861ec0170c46bff614759c8382b9e3be1faf6ffe
+  checksum: 10c0/b5e0f02ab1abf649b5ec8d42738df3059d84c47259c4a5e6fa780b2c7ca61d347b31ece71a1a3d9b6e3698c167d037dab7cee0ab028f7c1bc66bd849c21d2272
   languageName: node
   linkType: hard
 
-"@dynamic-labs/webview-messages@npm:4.41.0":
-  version: 4.41.0
-  resolution: "@dynamic-labs/webview-messages@npm:4.41.0"
+"@dynamic-labs/webview-messages@npm:4.41.1":
+  version: 4.41.1
+  resolution: "@dynamic-labs/webview-messages@npm:4.41.1"
   dependencies:
     "@dynamic-labs-sdk/client": "npm:0.1.0-alpha.23"
-    "@dynamic-labs/assert-package-version": "npm:4.41.0"
-    "@dynamic-labs/locale": "npm:4.41.0"
-    "@dynamic-labs/logger": "npm:4.41.0"
-    "@dynamic-labs/message-transport": "npm:4.41.0"
+    "@dynamic-labs/assert-package-version": "npm:4.41.1"
+    "@dynamic-labs/locale": "npm:4.41.1"
+    "@dynamic-labs/logger": "npm:4.41.1"
+    "@dynamic-labs/message-transport": "npm:4.41.1"
     "@dynamic-labs/sdk-api-core": "npm:0.0.813"
-    "@dynamic-labs/types": "npm:4.41.0"
-    "@dynamic-labs/webauthn": "npm:4.41.0"
-  checksum: 10c0/fa1675dc16890a7e2127c252ff9c30c2704e050891f0fd344c726e05f42e52c6d416a48d781838481847f671081ae90a5bd3ec6d8d3add8b4f801b9421da03cd
+    "@dynamic-labs/types": "npm:4.41.1"
+    "@dynamic-labs/webauthn": "npm:4.41.1"
+  checksum: 10c0/699dad3a47c2258fb7a4e3e0b6829255ce1f51168a8abb7938d99b1063768165223baf1c4e383e98e2ec37a21159a8a2d4ae4a91f59cd95450ac7fd76dbda278
   languageName: node
   linkType: hard
 
@@ -5178,10 +5178,10 @@ __metadata:
   resolution: "@sophon-labs/account-react-native@workspace:packages/account-react-native"
   dependencies:
     "@commitlint/config-conventional": "npm:^19.6.0"
-    "@dynamic-labs/client": "npm:^4.41.0"
-    "@dynamic-labs/react-hooks": "npm:^4.41.0"
-    "@dynamic-labs/react-native-extension": "npm:^4.41.0"
-    "@dynamic-labs/viem-extension": "npm:^4.41.0"
+    "@dynamic-labs/client": "npm:^4.41.1"
+    "@dynamic-labs/react-hooks": "npm:^4.41.1"
+    "@dynamic-labs/react-native-extension": "npm:^4.41.1"
+    "@dynamic-labs/viem-extension": "npm:^4.41.1"
     "@evilmartians/lefthook": "npm:^1.5.0"
     "@gorhom/bottom-sheet": "npm:5.2.6"
     "@react-native-async-storage/async-storage": "npm:^2.2.0"

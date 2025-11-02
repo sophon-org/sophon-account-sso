@@ -6,18 +6,17 @@ import {
   SophonDynamicEnvironmentID,
 } from '@sophon-labs/account-core';
 
-// export const dynamicClient = createClient({
-//   environmentId: '767555fd-deac-4852-bdf2-ec4442697ea7',
-//   appLogoUrl: 'https://demo.dynamic.xyz/favicon-32x32.png',
-//   appName: 'Sophon Account',
-// })
-//   .extend(ReactNativeExtension())
-//   .extend(ViemExtension());
-
-export const createDynamicClient = (chainId: ChainId) => {
+export const createDynamicClient = (
+  chainId: ChainId,
+  debugMode: boolean = false,
+) => {
   return createClient({
     environmentId: SophonDynamicEnvironmentID[chainId],
     appName: 'Sophon Account',
+    debug: {
+      messageTransport: debugMode,
+      webview: debugMode,
+    },
   })
     .extend(ReactNativeExtension())
     .extend(ViemExtension());

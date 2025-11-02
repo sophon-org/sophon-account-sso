@@ -90,6 +90,7 @@ export interface SophonContextConfig {
   setCurrentRequest: (request?: Message) => void;
   capabilities: Capabilities[];
   dynamicClient: DynamicClientType;
+  debugMode: boolean;
   requiresAuthorization: boolean;
 }
 
@@ -112,6 +113,7 @@ export const SophonContext = createContext<SophonContextConfig>({
   currentRequestId: { current: undefined } as MutableRefObject<
     Message['id'] | undefined
   >,
+  debugMode: false,
 });
 
 export interface SophonAccount {
@@ -150,6 +152,12 @@ interface SophonContextProviderProps {
   theme?: 'light' | 'dark';
 
   events?: SophonContextEvents;
+
+  /**
+   * Debug mode
+   * @default false
+   */
+  debugMode?: boolean;
 }
 
 export const SophonContextProvider = ({
@@ -163,6 +171,7 @@ export const SophonContextProvider = ({
   locale,
   theme,
   events,
+  debugMode = false,
 }: SophonContextProviderProps) => {
   const [error, setError] = useState<{ description: string; code: number }>();
   const serverUrl = useMemo(
@@ -208,8 +217,8 @@ export const SophonContextProvider = ({
   }, []);
 
   useEffect(() => {
-    setDynamicClient(createDynamicClient(chainId));
-  }, [chainId]);
+    setDynamicClient(createDynamicClient(chainId, debugMode));
+  }, [chainId, debugMode]);
 
   useEffect(() => {
     freshInstallActions();
@@ -310,6 +319,7 @@ export const SophonContextProvider = ({
       dynamicClient,
       requiresAuthorization,
       currentRequestId,
+      debugMode,
     }),
     [
       initialized,
@@ -331,6 +341,7 @@ export const SophonContextProvider = ({
       requiresAuthorization,
       setAccountWithEffect,
       setCurrentRequestWithEffect,
+      debugMode,
     ],
   );
 
