@@ -1,5 +1,16 @@
 # @sophon-labs/account-react-native
 
+## 2.3.6
+
+### Patch Changes
+
+- Allowing auth to use owner as signer for JWT and moving common code to account-core
+- Updated dependencies
+  - @sophon-labs/account-message-bridge@2.3.6
+  - @sophon-labs/account-communicator@2.3.6
+  - @sophon-labs/account-provider@2.3.6
+  - @sophon-labs/account-core@2.3.6
+
 ## 2.3.5
 
 ### Patch Changes

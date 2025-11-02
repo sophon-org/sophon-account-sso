@@ -35,7 +35,7 @@ describeLive("MeService (integration with DynamicAuth)", () => {
 
 	itLive("fetches user and returns scoped fields", async () => {
 		const secretsMock: Partial<SecretsService> = {
-			loadJwtSecrets: jest.fn().mockResolvedValue({ dynamicToken: API_TOKEN }),
+			loadAWSSecrets: jest.fn().mockResolvedValue({ dynamicToken: API_TOKEN }),
 		};
 		const svc = new MeService(secretsMock as SecretsService);
 
@@ -71,7 +71,7 @@ describeLive("MeService (integration with DynamicAuth)", () => {
 		process.env.DYNAMICAUTH_API_TOKEN = badToken;
 
 		const secretsMock: Partial<SecretsService> = {
-			loadJwtSecrets: jest.fn().mockResolvedValue({ dynamicToken: API_TOKEN }),
+			loadAWSSecrets: jest.fn().mockResolvedValue({ dynamicToken: API_TOKEN }),
 		};
 		const svc = new MeService(secretsMock as SecretsService);
 		const payload: JwtPayload & { userId: string; scope: string } = {
