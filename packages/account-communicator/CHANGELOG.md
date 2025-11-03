@@ -1,5 +1,11 @@
 # @sophon-labs/account-eip6963
 
+## 3.0.0-next.20
+
+### Patch Changes
+
+- Reactive webview
+
 ## 3.0.0-next.19
 
 ### Patch Changes
