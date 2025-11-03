@@ -45,6 +45,7 @@ import {
 import { freshInstallActions } from '../provider/fresh-install';
 import type { SophonJWTToken } from '../types';
 import { ThemeProvider } from '../ui/theme-provider';
+import { useReactiveClient } from '@dynamic-labs/react-hooks';
 
 export const createSophonWalletClient = (
   chain: Chain,
@@ -345,12 +346,12 @@ export const SophonContextProvider = ({
     ],
   );
 
+  const { reactNative } = useReactiveClient(dynamicClient);
+
   return (
     <SophonContext.Provider value={contextValue}>
       {children}
-      {!!dynamicClient?.reactNative?.WebView && (
-        <dynamicClient.reactNative.WebView />
-      )}
+      {!!reactNative?.WebView && <reactNative.WebView />}
       <ThemeProvider theme={theme}>
         <LocalizationProvider locale={locale}>
           <AuthPortal
