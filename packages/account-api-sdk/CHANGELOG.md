@@ -1,5 +1,13 @@
 # @sophon-labs/account-api-sdk
 
+## 3.0.0-next.21
+
+### Patch Changes
+
+- Updating dynamic libs
+- Updated dependencies
+  - @sophon-labs/account-core@3.0.0-next.21
+
 ## 3.0.0-next.20
 
 ### Patch Changes

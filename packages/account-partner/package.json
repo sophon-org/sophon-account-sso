@@ -1,6 +1,6 @@
 {
   "name": "@sophon-labs/account-partner",
-  "version": "3.0.0-next.20",
+  "version": "3.0.0-next.21",
   "description": "Handles partner related functionality for Sophon Account",
   "license": "MIT",
   "author": "Sophon Team",
@@ -34,7 +34,7 @@
     "test:ci": "vitest run --coverage --passWithNoTests --watch false"
   },
   "dependencies": {
-    "@sophon-labs/account-core": "3.0.0-next.20"
+    "@sophon-labs/account-core": "3.0.0-next.21"
   },
   "devDependencies": {
     "@faker-js/faker": "^10.0.0",

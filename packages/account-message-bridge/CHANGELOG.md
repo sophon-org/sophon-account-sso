@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 3.0.0-next.21
+
+### Patch Changes
+
+- Updating dynamic libs
+
 ## 3.0.0-next.20
 
 ### Patch Changes
