@@ -42,7 +42,7 @@
     "dev": "nodemon -e ts,tsx -w ./src -x 'yarn build'"
   },
   "dependencies": {
-    "@dynamic-labs/client": "4.41.1",
+    "@dynamic-labs/client": "4.42.0",
     "@dynamic-labs/react-hooks": "4.42.0",
     "@dynamic-labs/react-native-extension": "4.42.0",
     "@dynamic-labs/viem-extension": "4.42.0",
