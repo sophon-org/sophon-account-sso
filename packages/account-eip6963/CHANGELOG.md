@@ -1,5 +1,14 @@
 # @sophon-labs/account-eip6963
 
+## 3.0.0-next.21
+
+### Patch Changes
+
+- Updating dynamic libs
+- Updated dependencies
+  - @sophon-labs/account-provider@3.0.0-next.21
+  - @sophon-labs/account-core@3.0.0-next.21
+
 ## 3.0.0-next.20
 
 ### Patch Changes
