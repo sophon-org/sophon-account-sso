@@ -82,17 +82,17 @@ export const SophonChainCapabilities: Record<ChainId, ChainCapability> = {
  * sophon networks
  */
 export const AccountServerURL: Record<ChainId, string> = {
-  [sophon.id]: 'https://account.sophonapi.com',
-  [sophonTestnet.id]: 'https://account-stg.sophonapi.com',
-  [sophonOS.id]: 'https://account.sophonapi.com',
-  [sophonOSTestnet.id]: 'https://account-stg.sophonapi.com',
+  [sophon.id]: 'https://account.sophonauth.com',
+  [sophonTestnet.id]: 'https://account.staging.sophonauth.com',
+  [sophonOS.id]: 'https://account.sophonauth.com',
+  [sophonOSTestnet.id]: 'https://account.staging.sophonauth.com',
 };
 
 export const AccountAuthAPIURL: Record<ChainId, string> = {
-  [sophon.id]: 'https://api-prd-auth.sophonapi.com',
-  [sophonTestnet.id]: 'https://api-stg-auth.sophonapi.com',
-  [sophonOS.id]: 'https://api-prd-auth.sophonapi.com',
-  [sophonOSTestnet.id]: 'https://api-stg-auth.sophonapi.com',
+  [sophon.id]: 'https://auth.sophonauth.com',
+  [sophonTestnet.id]: 'https://auth.staging.sophonauth.com',
+  [sophonOS.id]: 'https://auth.sophonauth.com',
+  [sophonOSTestnet.id]: 'https://auth.staging.sophonauth.com',
 };
 
 /**
@@ -111,20 +111,20 @@ export const AvailableRPCURL: Record<ChainId, string> = {
  * sophon networks
  */
 export const AvailableCDNURL: Record<ChainId, string> = {
-  [sophon.id]: 'https://cdn.sophon.xyz',
-  [sophonTestnet.id]: 'https://cdn.staging.sophon.xyz',
-  [sophonOS.id]: 'https://cdn.sophon.xyz',
-  [sophonOSTestnet.id]: 'https://cdn.staging.sophon.xyz',
+  [sophon.id]: 'https://cdn.sophonauth.com',
+  [sophonTestnet.id]: 'https://cdn.staging.sophonauth.com',
+  [sophonOS.id]: 'https://cdn.sophonauth.com',
+  [sophonOSTestnet.id]: 'https://cdn.staging.sophonauth.com',
 };
 
 /**
  * Mapping of possivle swap urls
  */
 export const SwapAPIURL: Record<ChainId, string> = {
-  [sophon.id]: 'https://api.swap.sophon.xyz',
-  [sophonTestnet.id]: 'https://api.swap.staging.sophon.xyz',
-  [sophonOS.id]: 'https://api.swap.sophon.xyz',
-  [sophonOSTestnet.id]: 'https://api.swap.staging.sophon.xyz',
+  [sophon.id]: 'https://swap.sophonauth.com',
+  [sophonTestnet.id]: 'https://swap.staging.sophonauth.com',
+  [sophonOS.id]: 'https://swap.sophonauth.com',
+  [sophonOSTestnet.id]: 'https://swap.staging.sophonauth.com',
 };
 
 /**
