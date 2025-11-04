@@ -107,12 +107,11 @@ export class ContractService {
 		}
 
 		// deploy the contract
-		const deployerClient: WalletClient<Transport, Chain, Account> =
-			createWalletClient({
-				account: deployerAccount,
-				chain: chain,
-				transport: http(),
-			}).extend(eip712WalletActions());
+		const deployerClient = createWalletClient({
+			account: deployerAccount,
+			chain,
+			transport: http(),
+		}).extend(eip712WalletActions());
 
 		this.logger.log("Deploying contract");
 		const deployedAccount = await deployModularAccount(deployerClient, {

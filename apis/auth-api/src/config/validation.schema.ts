@@ -20,6 +20,9 @@ export const validationSchema = Joi.object({
 		.default("https://cdn.sophon.xyz/partners/sdk"),
 
 	DATABASE_URL: Joi.string().optional(),
+	REDIS_URL: Joi.string()
+		.uri({ scheme: ["redis", "rediss"] })
+		.default("redis://127.0.0.1:6379"),
 
 	NODE_ENV: Joi.string()
 		.valid("development", "test", "production")

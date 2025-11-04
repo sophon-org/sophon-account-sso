@@ -16,6 +16,7 @@ export const awsConfig = registerAs("aws", () => ({
 		process.env.SECRETS_CACHE_TTL_MS ?? "300000",
 		10,
 	),
+	redisUrl: process.env.REDIS_URL ?? "redis://127.0.0.1:6379",
 }));
 
 export type AwsConfig = ReturnType<typeof awsConfig>;

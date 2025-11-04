@@ -1,3 +1,4 @@
+// src/app.module.ts
 import * as crypto from "node:crypto";
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
@@ -16,6 +17,10 @@ import { ConsentsModule } from "./consents/consents.module";
 import { HyperindexModule } from "./hyperindex/hyperindex.module";
 import { JwksModule } from "./jwks/jwks.module";
 import { MeModule } from "./me/me.module";
+
+import { BullModule } from "@nestjs/bullmq";
+import { QueuesModule } from "./queues/queues.module";
+
 @Module({
 	imports: [
 		ConfigModule.forRoot({
@@ -75,6 +80,11 @@ import { MeModule } from "./me/me.module";
 				};
 			},
 		}),
+
+		BullModule.forRoot({
+			connection: { url: awsConfig().redisUrl },
+		}),
+		QueuesModule,
 		AwsModule,
 		AuthModule,
 		JwksModule,
