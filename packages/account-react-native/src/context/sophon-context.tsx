@@ -1,4 +1,5 @@
 import '../pollyfills';
+import { useReactiveClient } from '@dynamic-labs/react-hooks';
 import type { Message } from '@sophon-labs/account-communicator';
 import {
   AccountServerURL,
@@ -45,7 +46,6 @@ import {
 import { freshInstallActions } from '../provider/fresh-install';
 import type { SophonJWTToken } from '../types';
 import { ThemeProvider } from '../ui/theme-provider';
-import { useReactiveClient } from '@dynamic-labs/react-hooks';
 
 export const createSophonWalletClient = (
   chain: Chain,
