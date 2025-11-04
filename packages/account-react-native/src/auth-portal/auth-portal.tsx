@@ -7,6 +7,7 @@ import BottomSheet, {
 import type { DataScopes } from '@sophon-labs/account-core';
 import { useCallback, useEffect, useRef } from 'react';
 import { Keyboard, Platform } from 'react-native';
+import type { AuthFlowConfig } from '../constants';
 import { useBooleanState, useFlowManager } from '../hooks';
 import { useSophonPartner } from '../hooks/use-sophon-partner';
 import { useUIEventHandler } from '../messaging/ui';
@@ -33,6 +34,7 @@ export type AuthPortalProps = {
   authServerUrl?: string;
   partnerId: string;
   scopes: DataScopes[];
+  authConfig?: AuthFlowConfig; // Add this
 };
 
 export function AuthPortal(props: AuthPortalProps) {
@@ -77,7 +79,6 @@ export function AuthPortal(props: AuthPortalProps) {
     removeKeyboardListener();
     bottomSheetRef.current?.expand();
 
-    // Reset opening flag after expansion animation
     execTimeoutActionByPlatform(
       () => {
         isOpeningModalRef.current = false;
@@ -264,6 +265,7 @@ export function AuthPortal(props: AuthPortalProps) {
         handleProps,
         requestClose,
         hideModal,
+        authConfig: props.authConfig, // Add this to context
       }}
     >
       <AdaptiveBottomSheet
@@ -304,6 +306,7 @@ export function AuthPortal(props: AuthPortalProps) {
               onBackToSignIn={onBackToSignIn}
               scopes={dataScopes}
               partner={partner}
+              authConfig={props.authConfig}
             />
           </StepTransitionView>
           <FooterSheet hideTerms={hideTerms} />

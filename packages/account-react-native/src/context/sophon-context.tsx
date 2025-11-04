@@ -1,6 +1,5 @@
 import '../pollyfills';
 import type { Message } from '@sophon-labs/account-communicator';
-// everything else
 import {
   AccountServerURL,
   type ChainId,
@@ -29,6 +28,7 @@ import { sophon, sophonTestnet } from 'viem/chains';
 import { erc7846Actions } from 'viem/experimental';
 import { eip712WalletActions } from 'viem/zksync';
 import { AuthPortal, type AuthPortalProps } from '../auth-portal';
+import type { AuthFlowConfig } from '../constants';
 import { LocalizationProvider, type SupportedLocaleCode } from '../i18n';
 import type { Capabilities } from '../lib/capabilities';
 import {
@@ -139,6 +139,7 @@ interface SophonContextProviderProps {
    * @supported "light" | "dark"
    */
   theme?: 'light' | 'dark';
+  authConfig?: AuthFlowConfig;
 }
 
 export const SophonContextProvider = ({
@@ -151,6 +152,7 @@ export const SophonContextProvider = ({
   requestedCapabilities,
   locale,
   theme,
+  authConfig,
 }: SophonContextProviderProps) => {
   const [error, setError] = useState<{ description: string; code: number }>();
   const serverUrl = useMemo(
@@ -327,6 +329,7 @@ export const SophonContextProvider = ({
             scopes={dataScopes}
             authServerUrl={serverUrl}
             partnerId={partnerId}
+            authConfig={authConfig}
           />
         </LocalizationProvider>
       </ThemeProvider>

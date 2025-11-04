@@ -1,6 +1,7 @@
 import type { DataScopes } from '@sophon-labs/account-core';
 import type { PartnerConfigSchema } from '@sophon-labs/account-partner';
 import type { ViewStyle } from 'react-native';
+import type { AuthFlowConfig } from '../constants';
 
 export enum AuthPortalSteps {
   SignIn = 'signIn',
@@ -28,6 +29,7 @@ export type AuthPortalContextProps = {
     hideCloseButton: boolean;
     title: string;
   };
+  authConfig?: AuthFlowConfig;
 };
 
 interface OnAuthenticateOptions {
@@ -39,6 +41,7 @@ export interface BasicStepProps {
   style?: ViewStyle;
   scopes?: DataScopes[];
   partner?: PartnerConfigSchema | null;
+  authConfig?: AuthFlowConfig;
   onAuthenticate: (
     value: `0x${string}`,
     options?: OnAuthenticateOptions,

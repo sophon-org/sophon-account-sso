@@ -20,12 +20,14 @@ interface Props {
   providerRequest: string | null;
   onPressSocialSignIn: (provider: AuthProvider) => Promise<void>;
   isAuthenticating?: boolean;
+  providerOrder?: AuthProvider[];
 }
 
 export const SocialProviderButtons = ({
   providerRequest,
   onPressSocialSignIn,
   isAuthenticating,
+  providerOrder = AVAILABLE_PROVIDERS,
 }: Props) => {
   const opacity = useSharedValue(0);
   const colors = useThemeColors();
@@ -47,7 +49,7 @@ export const SocialProviderButtons = ({
   return (
     <React.Fragment>
       <View style={styles.container}>
-        {AVAILABLE_PROVIDERS.map((provider) => (
+        {providerOrder.map((provider) => (
           <TouchableOpacity
             key={provider}
             style={styles.socialButton}

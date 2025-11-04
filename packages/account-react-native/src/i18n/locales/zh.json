@@ -5,7 +5,10 @@
   "signInStep": {
     "alternatively": "或者",
     "signInWithWallet": "使用钱包登录",
-    "enterEmail": "输入您的电子邮件"
+    "enterEmail": "输入您的电子邮件",
+    "showMore": "显示更多选项",
+    "showLess": "显示更少选项",
+    "moreOptions": "更多选项"
   },
   "verifyEmailStep": {
     "insertCode": "输入6位数字代码",

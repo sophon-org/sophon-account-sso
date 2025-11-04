@@ -5,7 +5,10 @@
   "signInStep": {
     "alternatively": "または",
     "signInWithWallet": "ウォレットでサインイン",
-    "enterEmail": "メールアドレスを入力"
+    "enterEmail": "メールアドレスを入力",
+    "showMore": "その他のオプションを表示",
+    "showLess": "オプションを減らす",
+    "moreOptions": "その他のオプション"
   },
   "verifyEmailStep": {
     "insertCode": "6桁のコードを入力",

@@ -5,7 +5,10 @@
   "signInStep": {
     "alternatively": "Ou",
     "signInWithWallet": "Entrar com Carteira",
-    "enterEmail": "Digite seu e-mail"
+    "enterEmail": "Digite seu e-mail",
+    "showMore": "Mostrar mais opções",
+    "showLess": "Mostrar menos opções",
+    "moreOptions": "Mais opções"
   },
   "verifyEmailStep": {
     "insertCode": "Digite o código de 6 dígitos",
