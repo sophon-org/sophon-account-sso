@@ -14,6 +14,7 @@
     "@sophon-labs/account-react-native": "2.3.6"
   },
   "changesets": [
+    "deep-flowers-invite",
     "deep-rocks-thank",
     "easy-weeks-bet",
     "fancy-suns-joke",

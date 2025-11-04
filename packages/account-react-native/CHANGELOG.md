@@ -1,5 +1,17 @@
 # @sophon-labs/account-react-native
 
+## 3.0.0-next.23
+
+### Patch Changes
+
+- Changing dns to point to sophonauth.com
+- Updated dependencies
+  - @sophon-labs/account-communicator@3.0.0-next.23
+  - @sophon-labs/account-core@3.0.0-next.23
+  - @sophon-labs/account-message-bridge@3.0.0-next.23
+  - @sophon-labs/account-partner@3.0.0-next.23
+  - @sophon-labs/account-provider@3.0.0-next.23
+
 ## 3.0.0-next.22
 
 ### Patch Changes

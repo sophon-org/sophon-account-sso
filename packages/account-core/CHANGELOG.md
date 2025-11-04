@@ -1,5 +1,11 @@
 # @sophon-labs/account-core
 
+## 3.0.0-next.23
+
+### Patch Changes
+
+- Changing dns to point to sophonauth.com
+
 ## 3.0.0-next.22
 
 ### Patch Changes
