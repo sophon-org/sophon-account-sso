@@ -37,6 +37,7 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
       insets={insets}
       locale="en"
       authConfig={customAuthConfig}
+      // requestedCapabilities={[Capabilities.WALLET_CONNECT]}
     >
       {children}
     </SophonContextProvider>

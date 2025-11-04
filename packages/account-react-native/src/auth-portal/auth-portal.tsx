@@ -34,7 +34,7 @@ export type AuthPortalProps = {
   authServerUrl?: string;
   partnerId: string;
   scopes: DataScopes[];
-  authConfig?: AuthFlowConfig; // Add this
+  authConfig?: AuthFlowConfig;
 };
 
 export function AuthPortal(props: AuthPortalProps) {
@@ -265,7 +265,7 @@ export function AuthPortal(props: AuthPortalProps) {
         handleProps,
         requestClose,
         hideModal,
-        authConfig: props.authConfig, // Add this to context
+        authConfig: props.authConfig,
       }}
     >
       <AdaptiveBottomSheet
