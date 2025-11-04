@@ -1,0 +1,9 @@
+node_modules
+build
+.env
+.qodo
+.next
+src/
+tsup.config.ts
+tsconfig.json
+__tests__

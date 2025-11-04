@@ -2,6 +2,7 @@ import type { UUID } from 'node:crypto';
 import type { Message } from '@sophon-labs/account-communicator';
 import { EventEmitter } from 'eventemitter3';
 import { useEffect } from 'react';
+import type { Address } from 'viem';
 import type { SophonJWTToken } from '@/types';
 
 const SophonUIEvents = new EventEmitter();
@@ -15,7 +16,7 @@ interface SDKStatusResponse {
 
 export type SophonUIActions = {
   initialized: unknown;
-  showModal: unknown;
+  showModal: { requestId: UUID };
   hideModal: unknown;
   modalReady: unknown;
   incomingRpc: Message;
@@ -34,6 +35,10 @@ export type SophonUIActions = {
   // from server:
   sdkStatusResponse: SDKStatusResponse;
   sdkStatusRequest: unknown;
+
+  // callbacks
+  onLoginSuccess: { address: Address; owner: Address; accessToken: string };
+  onLogout: unknown;
 };
 
 export type SophonUIActionsName = keyof SophonUIActions;

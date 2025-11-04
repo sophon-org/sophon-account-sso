@@ -6,21 +6,18 @@ import {
   namehash,
   pad,
   toHex,
+  zeroAddress,
 } from 'viem';
-import { sophon, sophonTestnet } from 'viem/chains';
+import { sophonTestnet } from 'viem/chains';
 import { snsRegistryAbi } from '../abis/SNSRegistryAbi';
-import {
-  CHAIN_CONTRACTS,
-  MAINNET_CHAIN_ID,
-  TESTNET_CHAIN_ID,
-} from '../constants';
-import type { StorageLike } from '../types';
+import { CHAIN_CONTRACTS, type ChainId, SophonChains } from '../constants';
+import type { StorageLike } from '../types/storage';
 import { cachedSNS } from './cache';
 
-export type { SNSName } from './types';
+export type { SNSName } from '../types/sns';
 
 /**
- * Resolve a name to an address on sophon network
+ * Resolve a name to an address on sophon chainId
  *
  * @param name - The name to resolve
  * @param testnet - Whether to use the testnet or mainnet
@@ -30,11 +27,11 @@ export type { SNSName } from './types';
  */
 export const resolveName = async (
   name: string,
-  testnet: boolean = true,
+  chainId: ChainId = sophonTestnet.id,
   rpcUrl?: string,
 ): Promise<Address | null> => {
   const client = createPublicClient({
-    chain: testnet ? sophonTestnet : sophon,
+    chain: SophonChains[chainId],
     transport: http(rpcUrl),
   });
 
@@ -48,15 +45,13 @@ export const resolveName = async (
   const hash = namehash(_name);
 
   const resolved = await client.readContract({
-    address:
-      CHAIN_CONTRACTS[testnet ? TESTNET_CHAIN_ID : MAINNET_CHAIN_ID]
-        .snsRegistry,
+    address: CHAIN_CONTRACTS[chainId].snsRegistry,
     abi: snsRegistryAbi,
     functionName: 'addr',
     args: [hash],
   });
 
-  if (resolved === '0x0000000000000000000000000000000000000000') {
+  if (resolved === zeroAddress) {
     return null;
   }
 
@@ -64,7 +59,7 @@ export const resolveName = async (
 };
 
 /**
- * Resolve an address to a name on sophon network
+ * Resolve an address to a name on sophon chainId
  *
  * @param address - The address to resolve
  * @param testnet - Whether to use the testnet or mainnet
@@ -74,11 +69,11 @@ export const resolveName = async (
  */
 export const resolveAddress = async (
   address: string,
-  testnet: boolean = true,
+  chainId: ChainId = sophonTestnet.id,
   rpcUrl?: string,
 ): Promise<string | null> => {
   const client = createPublicClient({
-    chain: testnet ? sophonTestnet : sophon,
+    chain: SophonChains[chainId],
     transport: http(rpcUrl),
   });
 
@@ -87,9 +82,7 @@ export const resolveAddress = async (
   }
 
   const tokenId = await client.readContract({
-    address:
-      CHAIN_CONTRACTS[testnet ? TESTNET_CHAIN_ID : MAINNET_CHAIN_ID]
-        .snsRegistry,
+    address: CHAIN_CONTRACTS[chainId].snsRegistry,
     abi: snsRegistryAbi,
     functionName: 'tokenOfOwnerByIndex',
     args: [address, 0],
@@ -102,9 +95,7 @@ export const resolveAddress = async (
   const nameHash = pad(toHex(tokenId as bigint), { size: 32 });
 
   const name = await client.readContract({
-    address:
-      CHAIN_CONTRACTS[testnet ? TESTNET_CHAIN_ID : MAINNET_CHAIN_ID]
-        .snsRegistry,
+    address: CHAIN_CONTRACTS[chainId].snsRegistry,
     abi: snsRegistryAbi,
     functionName: 'name',
     args: [nameHash],
@@ -120,11 +111,13 @@ const NoopStorage: StorageLike = {
   clear: () => {},
 };
 
-export const snsManager = (testnet: boolean = false, storage?: StorageLike) => {
-  const networkId = testnet ? TESTNET_CHAIN_ID : MAINNET_CHAIN_ID;
+export const snsManager = (
+  chainId: ChainId = sophonTestnet.id,
+  storage?: StorageLike,
+) => {
   // make sure to not use localStorage if not in the browser context
   let currentStorage = NoopStorage;
-  if (typeof window !== 'undefined') {
+  if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
     currentStorage = localStorage;
   }
   const snsStorage = cachedSNS(storage ?? currentStorage);
@@ -138,7 +131,7 @@ export const snsManager = (testnet: boolean = false, storage?: StorageLike) => {
       return null;
     }
 
-    return await resolveName(name, testnet);
+    return await resolveName(name, chainId);
   };
 
   const getSNSName = async (address: Address): Promise<string | null> => {
@@ -146,7 +139,7 @@ export const snsManager = (testnet: boolean = false, storage?: StorageLike) => {
       return null;
     }
 
-    return await resolveAddress(address, testnet);
+    return await resolveAddress(address, chainId);
   };
 
   const getCachedSNSName = (address: Address): string | null => {
@@ -154,7 +147,7 @@ export const snsManager = (testnet: boolean = false, storage?: StorageLike) => {
       return null;
     }
 
-    const cachedEntry = snsStorage.getCacheEntry(address, networkId);
+    const cachedEntry = snsStorage.getCacheEntry(address, chainId);
 
     if (cachedEntry) {
       return cachedEntry.name;
@@ -174,7 +167,7 @@ export const snsManager = (testnet: boolean = false, storage?: StorageLike) => {
     if (!address) return null;
 
     // Check cache first
-    const cachedEntry = snsStorage.getCacheEntry(address, networkId);
+    const cachedEntry = snsStorage.getCacheEntry(address, chainId);
 
     if (cachedEntry) {
       return cachedEntry.name;
@@ -187,7 +180,7 @@ export const snsManager = (testnet: boolean = false, storage?: StorageLike) => {
     try {
       const result = await getSNSName(address);
       if (result) {
-        snsStorage.setCacheEntry(result, address, networkId);
+        snsStorage.setCacheEntry(result, address, chainId);
         return result;
       }
 
@@ -208,7 +201,7 @@ export const snsManager = (testnet: boolean = false, storage?: StorageLike) => {
     if (!name) return null;
 
     // Check cache first
-    const cachedEntry = snsStorage.getCacheEntry(name, networkId);
+    const cachedEntry = snsStorage.getCacheEntry(name, chainId);
     if (cachedEntry) {
       return cachedEntry.address;
     }
@@ -221,7 +214,7 @@ export const snsManager = (testnet: boolean = false, storage?: StorageLike) => {
       const result = await getSNSAddress(name);
 
       if (result) {
-        snsStorage.setCacheEntry(name, result, networkId);
+        snsStorage.setCacheEntry(name, result, chainId);
         return result;
       }
 

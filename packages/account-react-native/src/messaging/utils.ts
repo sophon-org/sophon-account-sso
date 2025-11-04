@@ -27,3 +27,17 @@ export const getOfflineRPC = (requestId?: UUID) => {
     },
   };
 };
+
+export const getRefusedRPC = (requestId: UUID) => {
+  return {
+    id: crypto.randomUUID(),
+    requestId,
+    content: {
+      result: null,
+      error: {
+        message: 'User refused the request.',
+        code: 4001,
+      },
+    },
+  };
+};

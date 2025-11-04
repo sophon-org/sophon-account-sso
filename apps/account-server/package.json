@@ -52,7 +52,7 @@
     "tailwind-merge": "^3.3.1",
     "text-encoding-polyfill": "^0.6.7",
     "vaul": "^1.1.2",
-    "viem": "^2.36.0",
+    "viem": "2.38.3",
     "wagmi": "^2.16.9",
     "xstate": "5.20.1",
     "zksync-sso": "github:sophon-org/zksync-sso-preview#20250901_1",

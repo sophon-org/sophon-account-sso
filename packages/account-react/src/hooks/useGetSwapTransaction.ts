@@ -77,7 +77,7 @@ export function useGetSwapTransactionWithDefaults(
   args: UseGetSwapTransactionArgs,
   baseUrl?: string,
 ) {
-  const { network } = useSophonContext();
-  const defaultBaseUrl = SwapAPIURL[network];
+  const { chainId } = useSophonContext();
+  const defaultBaseUrl = SwapAPIURL[chainId];
   return useGetSwapTransaction(args, { baseUrl: baseUrl ?? defaultBaseUrl });
 }
