@@ -13,4 +13,3 @@ export * from './use-sophon-consent';
 export * from './use-sophon-context';
 export * from './use-sophon-name';
 export * from './use-sophon-token';
-export * from './use-embedded-auth';

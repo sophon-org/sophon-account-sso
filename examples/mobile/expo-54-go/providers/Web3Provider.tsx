@@ -1,32 +1,10 @@
 import { DataScopes, sophonOSTestnet } from '@sophon-labs/account-core';
 import {
-  SophonContextProvider,
-  AuthProvider,
   type AuthFlowConfig,
+  AuthProvider,
+  SophonContextProvider,
 } from '@sophon-labs/account-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
-// Define your custom auth config
-const customAuthConfig: AuthFlowConfig = {
-  highlight: [
-    {
-      type: 'socials',
-      socialPriority: [
-        AuthProvider.GOOGLE,
-        AuthProvider.APPLE,
-        AuthProvider.DISCORD,
-      ],
-    },
-    { type: 'email' },
-  ],
-  showMore: [
-    {
-      type: 'socials',
-      socialPriority: [AuthProvider.TELEGRAM, AuthProvider.TWITTER],
-    },
-    { type: 'wallet' },
-  ],
-};
 
 // Define your custom auth config
 const customAuthConfig: AuthFlowConfig = {

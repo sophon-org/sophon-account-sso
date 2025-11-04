@@ -8,7 +8,6 @@ import type { DataScopes } from '@sophon-labs/account-core';
 import { useCallback, useEffect, useRef } from 'react';
 import { Keyboard, Platform } from 'react-native';
 import type { AuthFlowConfig } from '../constants';
-import type { AuthFlowConfig } from '../constants';
 import { useBooleanState, useFlowManager } from '../hooks';
 import { useSophonPartner } from '../hooks/use-sophon-partner';
 import { useUIEventHandler } from '../messaging/ui';
