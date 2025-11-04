@@ -1,4 +1,5 @@
 export * from './use-boolean-state';
+export * from './use-embedded-auth';
 export * from './use-erc20-approval';
 export * from './use-flow-manager';
 export * from './use-gas-estimation';
@@ -12,4 +13,3 @@ export * from './use-sophon-consent';
 export * from './use-sophon-context';
 export * from './use-sophon-name';
 export * from './use-sophon-token';
-export * from './use-embedded-auth';

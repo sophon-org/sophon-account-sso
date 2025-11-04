@@ -1,11 +1,19 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Keyboard, StyleSheet, View } from 'react-native';
 import {
+  type AuthFlowConfig,
+  DEFAULT_AUTH_CONFIG,
+  type LoginOption,
+} from '../../constants';
+import {
   useBooleanState,
   useFlowManager,
   useSophonCapabilities,
 } from '../../hooks';
-import { AuthProvider, useEmbeddedAuth } from '../../hooks/use-embedded-auth';
+import {
+  type AuthProvider,
+  useEmbeddedAuth,
+} from '../../hooks/use-embedded-auth';
 import { useTranslation } from '../../i18n';
 import {
   Button,
@@ -24,11 +32,6 @@ import {
   useNavigationPortal,
 } from '../hooks';
 import type { BasicStepProps, SignInParams } from '../types';
-import {
-  DEFAULT_AUTH_CONFIG,
-  type AuthFlowConfig,
-  type LoginOption,
-} from '../../constants';
 
 interface SignInStepProps extends BasicStepProps {
   authConfig?: AuthFlowConfig;

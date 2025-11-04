@@ -1,8 +1,8 @@
 import { DataScopes, sophonOSTestnet } from '@sophon-labs/account-core';
 import {
-  SophonContextProvider,
-  AuthProvider,
   type AuthFlowConfig,
+  AuthProvider,
+  SophonContextProvider,
 } from '@sophon-labs/account-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
