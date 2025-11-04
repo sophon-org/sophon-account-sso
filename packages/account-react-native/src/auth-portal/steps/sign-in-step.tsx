@@ -10,10 +10,7 @@ import {
   useFlowManager,
   useSophonCapabilities,
 } from '../../hooks';
-import {
-  type AuthProvider,
-  useEmbeddedAuth,
-} from '../../hooks/use-embedded-auth';
+import { AuthProvider, useEmbeddedAuth } from '../../hooks/use-embedded-auth';
 import { useTranslation } from '../../i18n';
 import {
   Button,
@@ -32,6 +29,15 @@ import {
   useNavigationPortal,
 } from '../hooks';
 import type { BasicStepProps, SignInParams } from '../types';
+import {
+  DEFAULT_AUTH_CONFIG,
+  type AuthFlowConfig,
+  type LoginOption,
+} from '../../constants';
+
+interface SignInStepProps extends BasicStepProps {
+  authConfig?: AuthFlowConfig;
+}
 
 interface SignInStepProps extends BasicStepProps {
   authConfig?: AuthFlowConfig;

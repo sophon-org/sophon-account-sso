@@ -2388,25 +2388,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@dynamic-labs/logger@npm:4.38.0, @dynamic-labs/logger@npm:^4.25.3":
-  version: 4.38.0
-  resolution: "@dynamic-labs/logger@npm:4.38.0"
-  dependencies:
-    eventemitter3: "npm:5.0.1"
-  checksum: 10c0/69cf75b952de6df23fdaa9ac8b8b6cdc5a4c72d1eb4e9dd822c41aeedf3bf7ca55efdb8b9c52cb25b111754c2615b67ba57265d81e8c64bb36fc4f83ae87873c
-  languageName: node
-  linkType: hard
-
-"@dynamic-labs/logger@npm:4.42.0":
-  version: 4.42.0
-  resolution: "@dynamic-labs/logger@npm:4.42.0"
+"@dynamic-labs/logger@npm:4.41.0, @dynamic-labs/logger@npm:^4.25.3":
+  version: 4.41.0
+  resolution: "@dynamic-labs/logger@npm:4.41.0"
   dependencies:
     eventemitter3: "npm:5.0.1"
   checksum: 10c0/87b361d6cdf44617f6c944b1280b11c171aebb34b615e2dce6e1aa57732c2de7b8b77cf8fe8a3782b7ab0d6a1c92e1730ee2038966a54c08f732958aa72a1fe7
   languageName: node
   linkType: hard
 
-"@dynamic-labs/message-transport@npm:4.42.0":
+"@dynamic-labs/message-transport@npm:4.42.0, @dynamic-labs/message-transport@npm:^4.25.3":
   version: 4.42.0
   resolution: "@dynamic-labs/message-transport@npm:4.42.0"
   dependencies:
@@ -2450,13 +2441,6 @@ __metadata:
     react-native: ">=0.73.6"
     react-native-webview: ^13.6.4
   checksum: 10c0/dfd8f368e9ec0c553bb6bff6a65d98172cef0e4a259a7aa9b87d03d60496c8c6eeec4234fe8690face84a4d2b46a11d2d7587ea2608ac36c4ca00cf6ec80f81a
-  languageName: node
-  linkType: hard
-
-"@dynamic-labs/sdk-api-core@npm:0.0.805":
-  version: 0.0.805
-  resolution: "@dynamic-labs/sdk-api-core@npm:0.0.805"
-  checksum: 10c0/db81b19de8b5c013d5c150f7dcc8d10d13bc19b4b0f54cb05bba6e6a495d7c3d609d14ae00175f0d0aa0bbb917d9e86dd4e60df340ca3a1e387ba2e5aec8f7d4
   languageName: node
   linkType: hard
 
