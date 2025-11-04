@@ -1,5 +1,16 @@
 # @sophon-labs/account-react-native
 
+## 2.3.7
+
+### Patch Changes
+
+- Changing base domain to sophonauth.com
+- Updated dependencies
+  - @sophon-labs/account-communicator@2.3.7
+  - @sophon-labs/account-core@2.3.7
+  - @sophon-labs/account-message-bridge@2.3.7
+  - @sophon-labs/account-provider@2.3.7
+
 ## 2.3.6
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 2.3.7
+
+### Patch Changes
+
+- Changing base domain to sophonauth.com
+
 ## 2.3.6
 
 ### Patch Changes
