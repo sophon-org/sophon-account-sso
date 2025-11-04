@@ -10,13 +10,13 @@ export type SophonNetworkType = 'mainnet' | 'testnet';
  * sophon networks
  */
 export const AccountServerURL: Record<SophonNetworkType, string> = {
-  mainnet: 'https://account.sophonapi.com',
-  testnet: 'https://account-stg.sophonapi.com',
+  mainnet: 'https://account.sophonauth.com',
+  testnet: 'https://account.staging.sophonauth.com',
 };
 
 export const AccountAuthAPIURL: Record<SophonNetworkType, string> = {
-  mainnet: 'https://api-prd-auth.sophonapi.com',
-  testnet: 'https://api-stg-auth.sophonapi.com',
+  mainnet: 'https://auth.sophonauth.com',
+  testnet: 'https://auth.staging.sophonauth.com',
 };
 
 /**
@@ -33,16 +33,16 @@ export const AvailableRPCURL: Record<SophonNetworkType, string> = {
  * sophon networks
  */
 export const AvailableCDNURL: Record<SophonNetworkType, string> = {
-  mainnet: 'https://cdn.sophon.xyz',
-  testnet: 'https://cdn.staging.sophon.xyz',
+  mainnet: 'https://cdn.sophonauth.com',
+  testnet: 'https://cdn.staging.sophonauth.com',
 };
 
 /**
  * Mapping of possivle swap urls
  */
 export const SwapAPIURL: Record<SophonNetworkType, string> = {
-  mainnet: 'https://api.swap.sophon.xyz',
-  testnet: 'https://api.swap.staging.sophon.xyz',
+  mainnet: 'https://swap.sophonauth.com',
+  testnet: 'https://swap.staging.sophonauth.com',
 };
 
 /**
