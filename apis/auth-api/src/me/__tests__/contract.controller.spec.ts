@@ -1,8 +1,8 @@
 import { Test, TestingModule } from "@nestjs/testing";
+import { ContractDeployQueue } from "src/queues/workers/contract-deploy.queue";
+import type { Address } from "viem";
 import { ContractController } from "../contract.controller";
 import { ContractService } from "../contract.service";
-import type { Address } from "viem";
-import { ContractDeployQueue } from "src/queues/workers/contract-deploy.queue";
 
 describe("ContractController", () => {
 	let controller: ContractController;

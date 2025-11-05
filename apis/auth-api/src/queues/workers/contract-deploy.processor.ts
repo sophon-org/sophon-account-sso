@@ -1,10 +1,10 @@
 import { Processor, WorkerHost } from "@nestjs/bullmq";
-import { Injectable, Logger, Inject, forwardRef } from "@nestjs/common";
+import { forwardRef, Inject, Injectable, Logger } from "@nestjs/common";
 import type { Job } from "bullmq";
-import { CONTRACT_DEPLOY_QUEUE } from "../queue.constants";
-import type { DeployJobData, DeployJobResult } from "../types";
 import { ContractService } from "src/me/contract.service";
 import { Address } from "viem";
+import { CONTRACT_DEPLOY_QUEUE } from "../queue.constants";
+import type { DeployJobData, DeployJobResult } from "../types";
 
 @Injectable()
 @Processor(CONTRACT_DEPLOY_QUEUE)
@@ -28,7 +28,9 @@ export class ContractDeployProcessor extends WorkerHost {
 			owner,
 		});
 
-		const res = await this.contractService.deployContractForOwner(owner as Address);
+		const res = await this.contractService.deployContractForOwner(
+			owner as Address,
+		);
 
 		this.logger.log({
 			evt: "queue.contract.deploy.success",

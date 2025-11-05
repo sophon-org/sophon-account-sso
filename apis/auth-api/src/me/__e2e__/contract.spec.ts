@@ -1,16 +1,15 @@
+import { BullModule, getQueueToken } from "@nestjs/bullmq";
 import { INestApplication, Logger } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
-import request from "supertest";
-import { BullModule, getQueueToken } from "@nestjs/bullmq";
 import type { Queue } from "bullmq";
-
+import { SecretsService } from "src/aws/secrets.service";
+import { HyperindexService } from "src/hyperindex/hyperindex.service";
+import { ContractController } from "src/me/contract.controller";
+import { ContractService } from "src/me/contract.service";
 import { CONTRACT_DEPLOY_QUEUE } from "src/queues/queue.constants";
 import { ContractDeployProcessor } from "src/queues/workers/contract-deploy.processor";
 import { ContractDeployQueue } from "src/queues/workers/contract-deploy.queue";
-import { ContractController } from "src/me/contract.controller";
-import { ContractService } from "src/me/contract.service";
-import { SecretsService } from "src/aws/secrets.service";
-import { HyperindexService } from "src/hyperindex/hyperindex.service";
+import request from "supertest";
 
 // ---- env needed by your config ----
 beforeAll(() => {
@@ -67,7 +66,6 @@ jest.mock("viem/accounts", () => ({
 		address: "0xDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
 	}),
 }));
-
 
 jest.mock("viem/zksync", () => {
 	const passthrough = <T>(c: T) => c;
@@ -175,7 +173,9 @@ describe("Contract E2E (BullMQ + local Redis, no TypeORM)", () => {
 
 			status = String(res.body.status ?? res.body.state ?? "waiting");
 			if (status === "failed") {
-				error = String(res.body.error ?? res.body.failedReason ?? "unknown error");
+				error = String(
+					res.body.error ?? res.body.failedReason ?? "unknown error",
+				);
 				break;
 			}
 			if (status === "completed") {

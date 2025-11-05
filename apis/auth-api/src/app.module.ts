@@ -1,10 +1,10 @@
 // src/app.module.ts
 import * as crypto from "node:crypto";
+import { BullModule } from "@nestjs/bullmq";
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { LoggerModule } from "nestjs-pino";
-
 import { AppController } from "./app.controller";
 import { AuthModule } from "./auth/auth.module";
 import { AwsModule } from "./aws/aws.module";
@@ -17,8 +17,6 @@ import { ConsentsModule } from "./consents/consents.module";
 import { HyperindexModule } from "./hyperindex/hyperindex.module";
 import { JwksModule } from "./jwks/jwks.module";
 import { MeModule } from "./me/me.module";
-
-import { BullModule } from "@nestjs/bullmq";
 import { QueuesModule } from "./queues/queues.module";
 
 @Module({

@@ -1,9 +1,9 @@
-import { Injectable } from "@nestjs/common";
 import { InjectQueue } from "@nestjs/bullmq";
-import type { Queue, JobsOptions, Job } from "bullmq";
+import { Injectable } from "@nestjs/common";
+import type { Job, JobsOptions, Queue } from "bullmq";
+import type { Address } from "viem";
 import { CONTRACT_DEPLOY_QUEUE } from "../queue.constants";
 import type { DeployJobData, DeployJobResult } from "../types";
-import type { Address } from "viem";
 
 function makeJobId(chainId: number, owner: string) {
 	return `deploy_${chainId}_${owner.toLowerCase()}`;

@@ -1,19 +1,13 @@
+import { Controller, Get, HttpCode, Param, Post } from "@nestjs/common";
 import {
-	Controller,
-	Get,
-	Param,
-	Post,
-	HttpCode,
-} from "@nestjs/common";
-import {
+	ApiAcceptedResponse,
 	ApiOkResponse,
 	ApiParam,
 	ApiTags,
-	ApiAcceptedResponse,
 } from "@nestjs/swagger";
+import { ContractDeployQueue } from "src/queues/workers/contract-deploy.queue";
 import type { Address } from "viem";
 import { ContractService } from "./contract.service";
-import { ContractDeployQueue } from "src/queues/workers/contract-deploy.queue";
 
 @ApiTags("Smart Contract")
 @Controller("contract")
