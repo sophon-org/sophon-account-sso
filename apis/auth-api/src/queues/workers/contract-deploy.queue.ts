@@ -1,4 +1,3 @@
-// src/queues/workers/contract-deploy.queue.ts
 import { Injectable } from "@nestjs/common";
 import { InjectQueue } from "@nestjs/bullmq";
 import type { Queue, JobsOptions, Job } from "bullmq";
