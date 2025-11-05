@@ -4,7 +4,6 @@ import {
 	Param,
 	Post,
 	HttpCode,
-	NotFoundException,
 } from "@nestjs/common";
 import {
 	ApiOkResponse,
@@ -14,7 +13,6 @@ import {
 } from "@nestjs/swagger";
 import type { Address } from "viem";
 import { ContractService } from "./contract.service";
-import { ContractDeployResponse } from "./dto/contract-deploy-response.dto";
 import { ContractDeployQueue } from "src/queues/workers/contract-deploy.queue";
 
 @ApiTags("Smart Contract")

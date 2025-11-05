@@ -1,4 +1,4 @@
-import { INestApplication } from "@nestjs/common";
+import { INestApplication, Logger } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import request from "supertest";
 import { BullModule, getQueueToken } from "@nestjs/bullmq";
@@ -68,13 +68,19 @@ jest.mock("viem/accounts", () => ({
 	}),
 }));
 
-jest.mock("viem/zksync", () => ({
-	eip712WalletActions: jest.fn().mockReturnValue((c: any) => c),
-}));
+
+jest.mock("viem/zksync", () => {
+	const passthrough = <T>(c: T) => c;
+	return {
+		eip712WalletActions: jest.fn().mockReturnValue(passthrough),
+	};
+});
 
 // Minimal chain + address utilities
 jest.mock("src/utils/chain", () => ({
-	getChainById: (id: any) => ({ id: Number(id) }),
+	getChainById: (id: string | number) => ({
+		id: typeof id === "string" ? Number(id) : id,
+	}),
 }));
 jest.mock("src/utils/address", () => ({
 	normalizeAndValidateAddress: (a: string) => a.toLowerCase(),
@@ -93,13 +99,14 @@ describe("Contract E2E (BullMQ + local Redis, no TypeORM)", () => {
 	jest.setTimeout(60_000);
 
 	beforeAll(async () => {
-		const redisUrl = process.env.REDIS_URL!;
+		const { REDIS_URL } = process.env;
+		if (!REDIS_URL) throw new Error("REDIS_URL is required for E2E tests");
 
 		const mod = await Test.createTestingModule({
 			imports: [
 				// real Redis connection, unique prefix to isolate test runs
 				BullModule.forRoot({
-					connection: { url: redisUrl },
+					connection: { url: REDIS_URL },
 					prefix: `authapi-e2e-${Date.now()}`,
 				}),
 				// register just the queue we need
@@ -132,6 +139,7 @@ describe("Contract E2E (BullMQ + local Redis, no TypeORM)", () => {
 		}).compile();
 
 		app = mod.createNestApplication();
+		app.useLogger(new Logger(false as unknown as string)); // no-op logger
 		await app.init();
 	});
 
@@ -151,36 +159,41 @@ describe("Contract E2E (BullMQ + local Redis, no TypeORM)", () => {
 			.post(`/contract/${owner}`)
 			.expect(202);
 
-		const jobId = body.jobId as string;
-		expect(jobId).toBeTruthy();
+		const jobId = String(body.jobId ?? "");
+		expect(jobId.length).toBeGreaterThan(0);
 
 		// poll until completed
 		const started = Date.now();
-		let state = "waiting";
-		let result: any;
+		let status = "waiting";
+		let result: { owner: string; contracts: string[] } | undefined;
+		let error: string | undefined;
 
 		while (Date.now() - started < 20_000) {
 			const res = await request(app.getHttpServer())
 				.get(`/contract/jobs/${encodeURIComponent(jobId)}`)
 				.expect(200);
 
-			state = res.body.state;
-			if (state === "failed") {
-				// if something goes wrong you'll see it in the CI logs
-				// eslint-disable-next-line no-console
-				console.error("Job failedReason:", res.body.failedReason);
+			status = String(res.body.status ?? res.body.state ?? "waiting");
+			if (status === "failed") {
+				error = String(res.body.error ?? res.body.failedReason ?? "unknown error");
 				break;
 			}
-			if (state === "completed") {
-				result = res.body.result;
+			if (status === "completed") {
+				result = res.body.result as { owner: string; contracts: string[] };
 				break;
 			}
+			// eslint-disable-next-line no-await-in-loop
 			await new Promise((r) => setTimeout(r, 250));
 		}
 
-		expect(state).toBe("completed");
-		expect(result.owner.toLowerCase()).toBe(owner.toLowerCase());
-		expect(result.contracts).toEqual([
+		if (status === "failed") {
+			console.error("Job failed:", error);
+		}
+
+		expect(status).toBe("completed");
+		expect(result).toBeDefined();
+		expect(result?.owner.toLowerCase()).toBe(owner.toLowerCase());
+		expect(result?.contracts).toEqual([
 			"0xB0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0",
 		]);
 	});

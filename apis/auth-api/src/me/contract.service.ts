@@ -9,14 +9,10 @@ import { HyperindexService } from "src/hyperindex/hyperindex.service";
 import { normalizeAndValidateAddress } from "src/utils/address";
 import { getChainById, SupportedChainId } from "src/utils/chain";
 import {
-	Account,
 	Address,
-	Chain,
 	createWalletClient,
 	http,
 	isAddress,
-	Transport,
-	WalletClient,
 	zeroAddress,
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
