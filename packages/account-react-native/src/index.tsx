@@ -9,3 +9,4 @@ export * from './hooks';
 export * from './messaging';
 export * from './provider';
 export * from './types';
+export * from './token/index';

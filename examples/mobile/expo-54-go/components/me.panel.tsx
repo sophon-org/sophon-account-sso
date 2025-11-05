@@ -1,5 +1,7 @@
 import { shortenAddress } from '@sophon-labs/account-core';
 import {
+  getAccessToken,
+  getMe,
   type SophonJWTToken,
   useSophonToken,
 } from '@sophon-labs/account-react-native';
@@ -8,7 +10,6 @@ import { Text, View } from 'react-native';
 import { Button } from './ui/button';
 
 export default function JWTPanel() {
-  const { getAccessToken, getMe } = useSophonToken();
   const [me, setMe] = useState<`0x${string}` | null>(null);
   const [token, setToken] = useState<SophonJWTToken | null>(null);
   const [loading, setLoading] = useState(false);
@@ -16,32 +17,35 @@ export default function JWTPanel() {
 
   const updateAccessToken = useCallback(async () => {
     setLoading(true);
-    const newToken = await getAccessToken();
+    const newToken = await getAccessToken('mainnet');
     setToken(newToken);
     setLoading(false);
-  }, [getAccessToken]);
+  }, []);
 
   useEffect(() => {
     updateAccessToken();
-  }, []);
+  }, [updateAccessToken]);
 
   const fetchMe = async () => {
     setLoadingMe(true);
-    const me = await getMe();
+    const me = await getMe('mainnet');
+    console.log('me', me);
     setMe(me.sub as `0x${string}`);
     setLoadingMe(false);
   };
 
   const getToken = async () => {
     setLoading(true);
-    const accessToken = await getAccessToken();
+    const accessToken = await getAccessToken('mainnet');
+    console.log('accessToken', accessToken);
     setToken(accessToken);
     setLoading(false);
   };
 
   const refreshMe = async () => {
     setLoading(true);
-    const newToken = await getAccessToken(true);
+    const newToken = await getAccessToken('mainnet', true);
+    console.log('newToken', newToken);
     setToken(newToken);
     setLoading(false);
   };

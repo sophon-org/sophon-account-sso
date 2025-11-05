@@ -18,14 +18,13 @@
     "ci": "biome ci ."
   },
   "dependencies": {
-    "@dynamic-labs/client": "^4.32.0",
-    "@dynamic-labs/react-native-extension": "^4.32.0",
     "@expo/metro-runtime": "~6.1.2",
     "@expo/vector-icons": "^15.0.3",
     "@react-navigation/bottom-tabs": "^7.3.10",
     "@react-navigation/elements": "^2.3.8",
     "@react-navigation/native": "^7.1.6",
-    "@sophon-labs/account-react-native": "2.3.1",
+    "@sophon-labs/account-react-native": "link:../../../packages/account-react-native",
+    "axios": "^1.13.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "expo": "54.0.22",

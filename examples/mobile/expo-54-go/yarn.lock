@@ -1272,186 +1272,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@dynamic-labs-sdk/assert-package-version@npm:0.1.0-alpha.3":
-  version: 0.1.0-alpha.3
-  resolution: "@dynamic-labs-sdk/assert-package-version@npm:0.1.0-alpha.3"
-  checksum: 10c0/02af942ef4c6867fbe10033debf331289fcb2435a9e8eb0e0be99100e5758a6fb4443c2dfa65a5946810a3efa4db932f657b17402c75bdb14313f9f3e1d52be5
-  languageName: node
-  linkType: hard
-
-"@dynamic-labs-sdk/client@npm:0.1.0-alpha.3":
-  version: 0.1.0-alpha.3
-  resolution: "@dynamic-labs-sdk/client@npm:0.1.0-alpha.3"
-  dependencies:
-    "@dynamic-labs-sdk/assert-package-version": "npm:0.1.0-alpha.3"
-    "@dynamic-labs-wallet/browser-wallet-client": "npm:0.0.144"
-    "@dynamic-labs/sdk-api-core": "npm:0.0.762"
-    "@simplewebauthn/browser": "npm:^13.1.0"
-    buffer: "npm:6.0.3"
-    eventemitter3: "npm:^5.0.1"
-    zod: "npm:4.0.5"
-  checksum: 10c0/da917142e46964c6ec2e85e50b9c30101ffc9dd0051c9025cd37ff2c7472f42b2bccc61aebad39c17c6948fe59af17ae178ae2d55ecc534bdfb90c2240ae437e
-  languageName: node
-  linkType: hard
-
-"@dynamic-labs-wallet/browser-wallet-client@npm:0.0.144":
-  version: 0.0.144
-  resolution: "@dynamic-labs-wallet/browser-wallet-client@npm:0.0.144"
-  dependencies:
-    "@dynamic-labs-wallet/core": "npm:0.0.144"
-    "@dynamic-labs/logger": "npm:^4.25.3"
-    "@dynamic-labs/message-transport": "npm:^4.25.3"
-    uuid: "npm:11.1.0"
-  checksum: 10c0/346f1dbc01d15617ae2df4e6a66b6d5fc8cd473e5c13c53205a3729a621dfd00048899585205eeb49bc22d834e4e4f7941cadbe68aacd54415c592ed6c390073
-  languageName: node
-  linkType: hard
-
-"@dynamic-labs-wallet/core@npm:0.0.144":
-  version: 0.0.144
-  resolution: "@dynamic-labs-wallet/core@npm:0.0.144"
-  dependencies:
-    "@dynamic-labs/sdk-api-core": "npm:^0.0.764"
-    axios: "npm:1.9.0"
-    uuid: "npm:11.1.0"
-  checksum: 10c0/0d3e4bcb6e5f6b485454ba803d926058fb5a518d0e053c530cd86e690ecd2c329da4d9ebf63cef2f8313abc5dc47f7f714ef2a2c7cf032ecc21707c70dc06abc
-  languageName: node
-  linkType: hard
-
-"@dynamic-labs/assert-package-version@npm:4.32.0":
-  version: 4.32.0
-  resolution: "@dynamic-labs/assert-package-version@npm:4.32.0"
-  dependencies:
-    "@dynamic-labs/logger": "npm:4.32.0"
-  checksum: 10c0/e7596bd0aefd54bc880a8209018a25a391abf0dc4affeda9d18bfdc665c51dc95485e1e7da73df1b757e4ecbcd58fdcddf1c1cf1231630b7d74f710df7a1a538
-  languageName: node
-  linkType: hard
-
-"@dynamic-labs/client@npm:4.32.0, @dynamic-labs/client@npm:^4.32.0":
-  version: 4.32.0
-  resolution: "@dynamic-labs/client@npm:4.32.0"
-  dependencies:
-    "@dynamic-labs/assert-package-version": "npm:4.32.0"
-    "@dynamic-labs/logger": "npm:4.32.0"
-    "@dynamic-labs/message-transport": "npm:4.32.0"
-    "@dynamic-labs/sdk-api-core": "npm:0.0.762"
-    "@dynamic-labs/types": "npm:4.32.0"
-    "@dynamic-labs/webview-messages": "npm:4.32.0"
-    "@vue/reactivity": "npm:^3.4.21"
-    eventemitter3: "npm:5.0.1"
-  checksum: 10c0/ec94894134efe3d32291867132f90c085089e2683ec9a2f7134877f3e81654bae64d8be3fe1c2cdc623dc130252a08e88c883d1ac3444e90ceeb9777fca3e0a0
-  languageName: node
-  linkType: hard
-
-"@dynamic-labs/logger@npm:4.32.0, @dynamic-labs/logger@npm:^4.25.3":
-  version: 4.32.0
-  resolution: "@dynamic-labs/logger@npm:4.32.0"
-  dependencies:
-    eventemitter3: "npm:5.0.1"
-  checksum: 10c0/109c4afc904e5a0ee3426a652c4f7b3a3ef0da8db720c3c9fb73d52d2bf9c35e742a6bbda675be4fbff4d6ba4233f1c070c4b6ee6b9f2ed68b28837b77ad0383
-  languageName: node
-  linkType: hard
-
-"@dynamic-labs/message-transport@npm:4.32.0, @dynamic-labs/message-transport@npm:^4.25.3":
-  version: 4.32.0
-  resolution: "@dynamic-labs/message-transport@npm:4.32.0"
-  dependencies:
-    "@dynamic-labs/assert-package-version": "npm:4.32.0"
-    "@dynamic-labs/logger": "npm:4.32.0"
-    "@dynamic-labs/utils": "npm:4.32.0"
-    "@vue/reactivity": "npm:^3.4.21"
-    eventemitter3: "npm:5.0.1"
-  checksum: 10c0/0c48c85aea9e3c276de1224b425eebeadebf1ff3e6bb6bd28c2766e629fc2eb8c97b14d5bbfce0634da3138efe29913b7a523369d71274283bf0c2fa2f9c0599
-  languageName: node
-  linkType: hard
-
-"@dynamic-labs/react-native-extension@npm:^4.32.0":
-  version: 4.32.0
-  resolution: "@dynamic-labs/react-native-extension@npm:4.32.0"
-  dependencies:
-    "@dynamic-labs/assert-package-version": "npm:4.32.0"
-    "@dynamic-labs/client": "npm:4.32.0"
-    "@dynamic-labs/logger": "npm:4.32.0"
-    "@dynamic-labs/message-transport": "npm:4.32.0"
-    "@dynamic-labs/webview-messages": "npm:4.32.0"
-    "@turnkey/react-native-passkey-stamper": "npm:1.1.3"
-    react-native-passkey: "npm:3.1.0"
-  peerDependencies:
-    expo-linking: ">=6.2.2"
-    expo-secure-store: ">=12.0.0"
-    expo-web-browser: ">=12.0.0"
-    react: ">=18.0.0 <20.0.0"
-    react-native: ">=0.73.6"
-    react-native-webview: ^13.6.4
-  checksum: 10c0/33326f0a48e4e16f9a43fb8f9306d480dbf3aeacf9eadb257f1cdb91e258ccf7d87513dfb67f8891a4e984ea5daf99a74675bba18a78d12f24cc8a31be954132
-  languageName: node
-  linkType: hard
-
-"@dynamic-labs/sdk-api-core@npm:0.0.762":
-  version: 0.0.762
-  resolution: "@dynamic-labs/sdk-api-core@npm:0.0.762"
-  checksum: 10c0/a542fd043d5e0707f3428ecd93be8bf83a367571399a41de794c9255ac35080be1c45f1dc3085680fa43793fcaba09cb17b25543ec07baefd45d86d214da6244
-  languageName: node
-  linkType: hard
-
-"@dynamic-labs/sdk-api-core@npm:^0.0.764":
-  version: 0.0.764
-  resolution: "@dynamic-labs/sdk-api-core@npm:0.0.764"
-  checksum: 10c0/25deca4f6436c7d473504ea49e8bebca40670ad6a351a16212a24193878ff33d27239ead2098ad1bccbd02b7e996124c88d3bdddac7bba409d52b1b46e564613
-  languageName: node
-  linkType: hard
-
-"@dynamic-labs/types@npm:4.32.0":
-  version: 4.32.0
-  resolution: "@dynamic-labs/types@npm:4.32.0"
-  dependencies:
-    "@dynamic-labs/assert-package-version": "npm:4.32.0"
-    "@dynamic-labs/sdk-api-core": "npm:0.0.762"
-  checksum: 10c0/9e5d845ee2f052c92d7cf522c05b3f9b51ffc59b95da38b8afe2a6f66240db760546b33f229c4cbd2e5c0e1e874c8ac9aaea75e73bff07792db36848c9c1e5c6
-  languageName: node
-  linkType: hard
-
-"@dynamic-labs/utils@npm:4.32.0":
-  version: 4.32.0
-  resolution: "@dynamic-labs/utils@npm:4.32.0"
-  dependencies:
-    "@dynamic-labs/assert-package-version": "npm:4.32.0"
-    "@dynamic-labs/logger": "npm:4.32.0"
-    "@dynamic-labs/sdk-api-core": "npm:0.0.762"
-    "@dynamic-labs/types": "npm:4.32.0"
-    buffer: "npm:6.0.3"
-    eventemitter3: "npm:5.0.1"
-    tldts: "npm:6.0.16"
-  checksum: 10c0/bd92185db0668a5f100ee67f98744ed2ef72e4ec506f66027ec96802eeaa9187e4f40789077f44af0e5f1b4ff777992c9dc93886a12d33b327446490862f8538
-  languageName: node
-  linkType: hard
-
-"@dynamic-labs/webauthn@npm:4.32.0":
-  version: 4.32.0
-  resolution: "@dynamic-labs/webauthn@npm:4.32.0"
-  dependencies:
-    "@dynamic-labs/assert-package-version": "npm:4.32.0"
-    "@dynamic-labs/logger": "npm:4.32.0"
-    "@simplewebauthn/browser": "npm:13.1.0"
-    "@simplewebauthn/types": "npm:12.0.0"
-  checksum: 10c0/5499f230ef7b128846822f8f9427b6aef98618958064b341e384f894578447154f7e0c8087b8dd0a4231e01bae81c01b059bdc8dd235fd52039748c0deccab35
-  languageName: node
-  linkType: hard
-
-"@dynamic-labs/webview-messages@npm:4.32.0":
-  version: 4.32.0
-  resolution: "@dynamic-labs/webview-messages@npm:4.32.0"
-  dependencies:
-    "@dynamic-labs-sdk/client": "npm:0.1.0-alpha.3"
-    "@dynamic-labs/assert-package-version": "npm:4.32.0"
-    "@dynamic-labs/logger": "npm:4.32.0"
-    "@dynamic-labs/message-transport": "npm:4.32.0"
-    "@dynamic-labs/sdk-api-core": "npm:0.0.762"
-    "@dynamic-labs/types": "npm:4.32.0"
-    "@dynamic-labs/webauthn": "npm:4.32.0"
-  checksum: 10c0/646b9d3a3a8df4ebb04127a70718fcf39f49fdbb13ae8a7daec98b64837e1904c79d196e1ebb591519b0b13196f1a62f07b64752dc015286e0a4e2e0f533ce35
-  languageName: node
-  linkType: hard
-
 "@egjs/hammerjs@npm:^2.0.17":
   version: 2.0.17
   resolution: "@egjs/hammerjs@npm:2.0.17"
@@ -2311,7 +2131,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@noble/curves@npm:^1.3.0, @noble/curves@npm:~1.9.0":
+"@noble/curves@npm:~1.9.0":
   version: 1.9.7
   resolution: "@noble/curves@npm:1.9.7"
   dependencies:
@@ -2776,7 +2596,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-async-storage/async-storage@npm:2.2.0, @react-native-async-storage/async-storage@npm:^2.2.0":
+"@react-native-async-storage/async-storage@npm:2.2.0":
   version: 2.2.0
   resolution: "@react-native-async-storage/async-storage@npm:2.2.0"
   dependencies:
@@ -3106,27 +2926,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@simplewebauthn/browser@npm:13.1.0":
-  version: 13.1.0
-  resolution: "@simplewebauthn/browser@npm:13.1.0"
-  checksum: 10c0/a330149fb216ed327ebb8d1687d3fa8c066600a64f22ff2fff6a3ce06a1101d72317950302229bfe0fca9a0f31008d4da2a311585ec2962c5e219297f15aea89
-  languageName: node
-  linkType: hard
-
-"@simplewebauthn/browser@npm:^13.1.0":
-  version: 13.2.0
-  resolution: "@simplewebauthn/browser@npm:13.2.0"
-  checksum: 10c0/e3b34ce5d9ddf16aa41f9f5025731e1009e951ba16b4fa0b4df3796535a58f15ecf7ad8b00c1d1a594f52bf0ca4044023654195def609f6446a2c185b6ae5c0b
-  languageName: node
-  linkType: hard
-
-"@simplewebauthn/types@npm:12.0.0":
-  version: 12.0.0
-  resolution: "@simplewebauthn/types@npm:12.0.0"
-  checksum: 10c0/b7ce0ae692ea1e069ad9cb028fc1ccfe3f37e0f197825ba9e468e60194f463e88f5db254ddea296019b470a465ffaffa96fe27bb5e1e5d5d14bfcd068b04abed
-  languageName: node
-  linkType: hard
-
 "@sinclair/typebox@npm:^0.27.8":
   version: 0.27.8
   resolution: "@sinclair/typebox@npm:0.27.8"
@@ -3152,76 +2951,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-communicator@npm:2.3.1":
-  version: 2.3.1
-  resolution: "@sophon-labs/account-communicator@npm:2.3.1"
-  peerDependencies:
-    typescript: ^5.0.0
-  checksum: 10c0/d84a83b88c53394e59bf0a650a0678b4d931039ed4c03e6b41c8968e0ca597bd5399b9aedc813ac4070393e6f63ef4ead02f42ae4f2f5a791cac8d27ef257da3
+"@sophon-labs/account-react-native@link:../../../packages/account-react-native::locator=%40sophon-labs%2Fexamples-mobile-expo-web%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@sophon-labs/account-react-native@link:../../../packages/account-react-native::locator=%40sophon-labs%2Fexamples-mobile-expo-web%40workspace%3A."
   languageName: node
-  linkType: hard
-
-"@sophon-labs/account-core@npm:2.3.1":
-  version: 2.3.1
-  resolution: "@sophon-labs/account-core@npm:2.3.1"
-  dependencies:
-    text-encoding-polyfill: "npm:^0.6.7"
-  peerDependencies:
-    viem: ">=2.21.0"
-  checksum: 10c0/a3bdee446d885cf1d8782b5bce443d0e3a7535e5595ee99037da138f01195bdef545892152a375285347eb95989623c80c8aad6c31694ef19df3d3c69b61020d
-  languageName: node
-  linkType: hard
-
-"@sophon-labs/account-message-bridge@npm:2.3.1":
-  version: 2.3.1
-  resolution: "@sophon-labs/account-message-bridge@npm:2.3.1"
-  dependencies:
-    eventemitter3: "npm:5.0.1"
-  peerDependencies:
-    react-native-webview: ">=13.12.5"
-  checksum: 10c0/833abe431ce2498a83aa61ce2e3551b2f96358eddccfe40174edc0ea9a03103932f4c70f1270443449108b169d22a581aa3739aaa25d0f1a0e16bd101bf5eea3
-  languageName: node
-  linkType: hard
-
-"@sophon-labs/account-provider@npm:2.3.1":
-  version: 2.3.1
-  resolution: "@sophon-labs/account-provider@npm:2.3.1"
-  dependencies:
-    "@sophon-labs/account-communicator": "npm:2.3.1"
-    "@sophon-labs/account-core": "npm:2.3.1"
-    eventemitter3: "npm:^5.0.1"
-    json-rpc-2.0: "npm:^1.7.1"
-  peerDependencies:
-    typescript: ^5.0.0
-    viem: ">=2.21.0"
-  checksum: 10c0/b489486e3d8fc60650c44cd0dc2429c544621b4c65678bef062c199df4267895420dfce4812f55a8beb36ecc75adec3327324879d40fe8aea7a3d8003bbb9c6e
-  languageName: node
-  linkType: hard
-
-"@sophon-labs/account-react-native@npm:2.3.1":
-  version: 2.3.1
-  resolution: "@sophon-labs/account-react-native@npm:2.3.1"
-  dependencies:
-    "@react-native-async-storage/async-storage": "npm:^2.2.0"
-    "@sophon-labs/account-communicator": "npm:2.3.1"
-    "@sophon-labs/account-core": "npm:2.3.1"
-    "@sophon-labs/account-message-bridge": "npm:2.3.1"
-    "@sophon-labs/account-provider": "npm:2.3.1"
-    axios: "npm:^1.11.0"
-    eventemitter3: "npm:5.0.1"
-    text-encoding-polyfill: "npm:^0.6.7"
-  peerDependencies:
-    expo-linking: "*"
-    expo-network: "*"
-    expo-secure-store: "*"
-    expo-standard-web-crypto: "*"
-    expo-web-browser: "*"
-    react-native: ">=0.76.6"
-    react-native-webview: ">=13.12.5"
-    viem: ">=2.21.0"
-  checksum: 10c0/dfe8ff73772406ca6dad584bf48b6bc2ca609b7312060e5f1ab8818bfe22f676289c255a142819c1ef740d2de6e5394f875c5f07a0320cf18641036524a54573
-  languageName: node
-  linkType: hard
+  linkType: soft
 
 "@sophon-labs/examples-mobile-expo-web@workspace:.":
   version: 0.0.0-use.local
@@ -3229,16 +2963,15 @@ __metadata:
   dependencies:
     "@babel/core": "npm:^7.25.2"
     "@biomejs/biome": "npm:2.1.2"
-    "@dynamic-labs/client": "npm:^4.32.0"
-    "@dynamic-labs/react-native-extension": "npm:^4.32.0"
     "@expo/metro-runtime": "npm:~6.1.2"
     "@expo/vector-icons": "npm:^15.0.3"
     "@react-native-async-storage/async-storage": "npm:2.2.0"
     "@react-navigation/bottom-tabs": "npm:^7.3.10"
     "@react-navigation/elements": "npm:^2.3.8"
     "@react-navigation/native": "npm:^7.1.6"
-    "@sophon-labs/account-react-native": "npm:2.3.1"
+    "@sophon-labs/account-react-native": "link:../../../packages/account-react-native"
     "@types/react": "npm:~19.1.10"
+    axios: "npm:^1.13.2"
     class-variance-authority: "npm:^0.7.1"
     clsx: "npm:^2.1.1"
     eslint: "npm:^9.25.0"
@@ -3429,58 +3162,6 @@ __metadata:
   version: 0.2.0
   resolution: "@trysound/sax@npm:0.2.0"
   checksum: 10c0/44907308549ce775a41c38a815f747009ac45929a45d642b836aa6b0a536e4978d30b8d7d680bbd116e9dd73b7dbe2ef0d1369dcfc2d09e83ba381e485ecbe12
-  languageName: node
-  linkType: hard
-
-"@turnkey/api-key-stamper@npm:0.4.7":
-  version: 0.4.7
-  resolution: "@turnkey/api-key-stamper@npm:0.4.7"
-  dependencies:
-    "@noble/curves": "npm:^1.3.0"
-    "@turnkey/encoding": "npm:0.5.0"
-    sha256-uint8array: "npm:^0.10.7"
-  checksum: 10c0/5212b8fb02c50b1b7855e281da45c662cd17bfa3900b2fbd6e838e4cb874cb20ab236172c6463649770c6838c4dad7a669e1308940450f8ef12ca7e3627926d6
-  languageName: node
-  linkType: hard
-
-"@turnkey/encoding@npm:0.5.0":
-  version: 0.5.0
-  resolution: "@turnkey/encoding@npm:0.5.0"
-  checksum: 10c0/eb9b36c4d72f23974d58c10269ddfa27c74be265d6bf6b5b7483eb3af6c2bf42f9f10e7681eaeea950fd3d4a666cf2f19159ac964333a5ca93b8f3f498519aea
-  languageName: node
-  linkType: hard
-
-"@turnkey/http@npm:3.10.0":
-  version: 3.10.0
-  resolution: "@turnkey/http@npm:3.10.0"
-  dependencies:
-    "@turnkey/api-key-stamper": "npm:0.4.7"
-    "@turnkey/encoding": "npm:0.5.0"
-    "@turnkey/webauthn-stamper": "npm:0.5.1"
-    cross-fetch: "npm:^3.1.5"
-  checksum: 10c0/e0f345a9f4c686292e9bf9931b0101d5cf5743c67fcf11485f84ba0c8bd03477957a439aba5a339f49d56ec8526c323a84571493f130b4adf6a5daa05910e90b
-  languageName: node
-  linkType: hard
-
-"@turnkey/react-native-passkey-stamper@npm:1.1.3":
-  version: 1.1.3
-  resolution: "@turnkey/react-native-passkey-stamper@npm:1.1.3"
-  dependencies:
-    "@turnkey/encoding": "npm:0.5.0"
-    "@turnkey/http": "npm:3.10.0"
-    buffer: "npm:6.0.3"
-    react-native-passkey: "npm:3.0.0"
-    sha256-uint8array: "npm:0.10.7"
-  checksum: 10c0/ff5e56cad0735f6e6ca9f91e0cc74260227a5cc4604140b41f950b09445f7700996d6ba1da58a5132209d6b3795294ef53706ae9aa8fa24d86ca127219801f43
-  languageName: node
-  linkType: hard
-
-"@turnkey/webauthn-stamper@npm:0.5.1":
-  version: 0.5.1
-  resolution: "@turnkey/webauthn-stamper@npm:0.5.1"
-  dependencies:
-    sha256-uint8array: "npm:^0.10.7"
-  checksum: 10c0/1cc57190ffb4b9db1035f0e41c1aa85800eba0ec9d019ed2469d159a717c47a870ef7a7f039599701c74dee8f6c00ecc252bdc5cfbce42c9b5db01193c9426a0
   languageName: node
   linkType: hard
 
@@ -3938,22 +3619,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/reactivity@npm:^3.4.21":
-  version: 3.5.22
-  resolution: "@vue/reactivity@npm:3.5.22"
-  dependencies:
-    "@vue/shared": "npm:3.5.22"
-  checksum: 10c0/1fecb06885110203f50574fff9e126844ebfd09d180aa16896782af29d1c30466d6ba290983e40ca977042482b493215afadf6b75ef1d86bb7f7919f0129f5c7
-  languageName: node
-  linkType: hard
-
-"@vue/shared@npm:3.5.22":
-  version: 3.5.22
-  resolution: "@vue/shared@npm:3.5.22"
-  checksum: 10c0/5866eab1dd6caa949f4ae2da2a7bac69612b35e316a298785279fb4de101bfe89a3572db56448aa35023b01d069b80a664be4fe22847ce5e5fbc1990e5970ec5
-  languageName: node
-  linkType: hard
-
 "@xmldom/xmldom@npm:^0.8.8":
   version: 0.8.11
   resolution: "@xmldom/xmldom@npm:0.8.11"
@@ -4308,25 +3973,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:1.9.0":
-  version: 1.9.0
-  resolution: "axios@npm:1.9.0"
-  dependencies:
-    follow-redirects: "npm:^1.15.6"
-    form-data: "npm:^4.0.0"
-    proxy-from-env: "npm:^1.1.0"
-  checksum: 10c0/9371a56886c2e43e4ff5647b5c2c3c046ed0a3d13482ef1d0135b994a628c41fbad459796f101c655e62f0c161d03883454474d2e435b2e021b1924d9f24994c
-  languageName: node
-  linkType: hard
-
-"axios@npm:^1.11.0":
-  version: 1.12.2
-  resolution: "axios@npm:1.12.2"
+"axios@npm:^1.13.2":
+  version: 1.13.2
+  resolution: "axios@npm:1.13.2"
   dependencies:
     follow-redirects: "npm:^1.15.6"
     form-data: "npm:^4.0.4"
     proxy-from-env: "npm:^1.1.0"
-  checksum: 10c0/80b063e318cf05cd33a4d991cea0162f3573481946f9129efb7766f38fde4c061c34f41a93a9f9521f02b7c9565ccbc197c099b0186543ac84a24580017adfed
+  checksum: 10c0/e8a42e37e5568ae9c7a28c348db0e8cf3e43d06fcbef73f0048669edfe4f71219664da7b6cc991b0c0f01c28a48f037c515263cb79be1f1ae8ff034cd813867b
   languageName: node
   linkType: hard
 
@@ -4668,16 +4322,6 @@ __metadata:
   version: 1.1.2
   resolution: "buffer-from@npm:1.1.2"
   checksum: 10c0/124fff9d66d691a86d3b062eff4663fe437a9d9ee4b47b1b9e97f5a5d14f6d5399345db80f796827be7c95e70a8e765dd404b7c3ff3b3324f98e9b0c8826cc34
-  languageName: node
-  linkType: hard
-
-"buffer@npm:6.0.3":
-  version: 6.0.3
-  resolution: "buffer@npm:6.0.3"
-  dependencies:
-    base64-js: "npm:^1.3.1"
-    ieee754: "npm:^1.2.1"
-  checksum: 10c0/2a905fbbcde73cc5d8bd18d1caa23715d5f83a5935867c2329f0ac06104204ba7947be098fe1317fbd8830e26090ff8e764f08cd14fefc977bb248c3487bcbd0
   languageName: node
   linkType: hard
 
@@ -6112,7 +5756,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eventemitter3@npm:5.0.1, eventemitter3@npm:^5.0.1":
+"eventemitter3@npm:5.0.1":
   version: 5.0.1
   resolution: "eventemitter3@npm:5.0.1"
   checksum: 10c0/4ba5c00c506e6c786b4d6262cfbce90ddc14c10d4667e5c83ae993c9de88aa856033994dd2b35b83e8dc1170e224e66a319fa80adc4c32adcd2379bbc75da814
@@ -6727,7 +6371,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"form-data@npm:^4.0.0, form-data@npm:^4.0.4":
+"form-data@npm:^4.0.4":
   version: 4.0.4
   resolution: "form-data@npm:4.0.4"
   dependencies:
@@ -7179,7 +6823,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ieee754@npm:^1.1.13, ieee754@npm:^1.2.1":
+"ieee754@npm:^1.1.13":
   version: 1.2.1
   resolution: "ieee754@npm:1.2.1"
   checksum: 10c0/b0782ef5e0935b9f12883a2e2aa37baa75da6e66ce6515c168697b42160807d9330de9a32ec1ed73149aea02e0d822e572bca6f1e22bdcbd2149e13b050b17bb
@@ -9948,26 +9592,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-passkey@npm:3.0.0":
-  version: 3.0.0
-  resolution: "react-native-passkey@npm:3.0.0"
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-  checksum: 10c0/0b1ec8a31b1d3d7de059c7218451da405aa60f5c4e69ef89e7c3a136168c658e1b2ad4b0a98a5a62741ee5fbf92075673d4218c8b8e22b87b8ecf79121d5365a
-  languageName: node
-  linkType: hard
-
-"react-native-passkey@npm:3.1.0":
-  version: 3.1.0
-  resolution: "react-native-passkey@npm:3.1.0"
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-  checksum: 10c0/8ee9a4a63546f92fabd513d38ad0aa02f1e20f3dddfdcafd9356331c0ea77b39e2abe4ca5a26fd5140958e50c10248578930ca21f7169ce702b0693f612eb6c4
-  languageName: node
-  linkType: hard
-
 "react-native-reanimated@npm:~4.1.1":
   version: 4.1.2
   resolution: "react-native-reanimated@npm:4.1.2"
@@ -10721,13 +10345,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sha256-uint8array@npm:0.10.7, sha256-uint8array@npm:^0.10.7":
-  version: 0.10.7
-  resolution: "sha256-uint8array@npm:0.10.7"
-  checksum: 10c0/b48dd49be908906d8a148ce023994e567977795f489a22a7837eede2ebab59399c8ba37d65a2b65fc43704a435e0c4add74661d4fbff31f4a07b81a35c5343ea
-  languageName: node
-  linkType: hard
-
 "shallowequal@npm:^1.1.0":
   version: 1.1.0
   resolution: "shallowequal@npm:1.1.0"
@@ -11400,24 +11017,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tldts-core@npm:^6.0.16":
-  version: 6.1.86
-  resolution: "tldts-core@npm:6.1.86"
-  checksum: 10c0/8133c29375f3f99f88fce5f4d62f6ecb9532b106f31e5423b27c1eb1b6e711bd41875184a456819ceaed5c8b94f43911b1ad57e25c6eb86e1fc201228ff7e2af
-  languageName: node
-  linkType: hard
-
-"tldts@npm:6.0.16":
-  version: 6.0.16
-  resolution: "tldts@npm:6.0.16"
-  dependencies:
-    tldts-core: "npm:^6.0.16"
-  bin:
-    tldts: bin/cli.js
-  checksum: 10c0/3ad86c59d5b684e494d601207115852d592f0e8fe191505cda6a6c7a78767490eb7890c02b1f09b883f940a88ecef39cf1d2a721d65a55a8ada25af63ba958c5
-  languageName: node
-  linkType: hard
-
 "tmpl@npm:1.0.5":
   version: 1.0.5
   resolution: "tmpl@npm:1.0.5"
@@ -11839,15 +11438,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uuid@npm:11.1.0":
-  version: 11.1.0
-  resolution: "uuid@npm:11.1.0"
-  bin:
-    uuid: dist/esm/bin/uuid
-  checksum: 10c0/34aa51b9874ae398c2b799c88a127701408cd581ee89ec3baa53509dd8728cbb25826f2a038f9465f8b7be446f0fbf11558862965b18d21c993684297628d4d3
-  languageName: node
-  linkType: hard
-
 "uuid@npm:^7.0.3":
   version: 7.0.3
   resolution: "uuid@npm:7.0.3"
@@ -12259,13 +11849,6 @@ __metadata:
   peerDependencies:
     zod: ^3.24.1
   checksum: 10c0/b907ab6d057100bd25a37e5545bf5f0efa5902cd84d3c3ec05c2e51541431a47bd9bf1e5e151a244273409b45f5986d55b26e5d207f98abc5200702f733eb368
-  languageName: node
-  linkType: hard
-
-"zod@npm:4.0.5":
-  version: 4.0.5
-  resolution: "zod@npm:4.0.5"
-  checksum: 10c0/59449d731ca63849b6bcb14300aa6e2f042d440b3ed294b45c248519aec78780f85a5d1939a62c2ce82e9dc60afca77c8005e0a98d7517b0c2586d6c76940424
   languageName: node
   linkType: hard
 
