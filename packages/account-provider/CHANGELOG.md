@@ -1,5 +1,14 @@
 # @sophon-labs/account-eip6963
 
+## 2.3.8
+
+### Patch Changes
+
+- Refresh token without react context
+- Updated dependencies
+  - @sophon-labs/account-communicator@2.3.8
+  - @sophon-labs/account-core@2.3.8
+
 ## 2.3.7
 
 ### Patch Changes

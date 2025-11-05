@@ -16,7 +16,7 @@ export class AccessTokenGuard implements CanActivate {
 		const cookieToken = req.cookies?.access_token as string | undefined;
 		const rawAuthz = req.headers.authorization;
 		const authz = Array.isArray(rawAuthz) ? rawAuthz[0] : rawAuthz;
-		const bearer = authz?.startsWith("Bearer ") ? authz.slice(7) : undefined;
+		const bearer = authz?.toLowerCase().startsWith("bearer ") ? authz.slice(7) : undefined;
 
 		const token = cookieToken ?? bearer;
 		if (!token) throw new UnauthorizedException("missing access token");

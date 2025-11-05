@@ -38,6 +38,8 @@ export const useSophonAccount = () => {
       setAccount({
         address: addresses[0] as Address,
       });
+
+      await new Promise((resolve) => setTimeout(resolve, 300));
       // biome-ignore lint/suspicious/noExplicitAny: Better typing is not possible at the moment
     } catch (error: any) {
       setAccount(undefined);

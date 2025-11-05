@@ -1,5 +1,11 @@
 # @sophon-labs/account-core
 
+## 2.3.8
+
+### Patch Changes
+
+- Refresh token without react context
+
 ## 2.3.7
 
 ### Patch Changes
