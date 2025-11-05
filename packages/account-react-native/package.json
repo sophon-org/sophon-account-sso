@@ -1,6 +1,6 @@
 {
   "name": "@sophon-labs/account-react-native",
-  "version": "2.3.7",
+  "version": "2.3.8",
   "description": "Library to handle sophon account on react native environments",
   "main": "./dist/module/index.js",
   "types": "./dist/typescript/src/index.d.ts",
@@ -42,10 +42,10 @@
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^2.2.0",
-    "@sophon-labs/account-communicator": "2.3.7",
-    "@sophon-labs/account-core": "2.3.7",
-    "@sophon-labs/account-message-bridge": "2.3.7",
-    "@sophon-labs/account-provider": "2.3.7",
+    "@sophon-labs/account-communicator": "2.3.8",
+    "@sophon-labs/account-core": "2.3.8",
+    "@sophon-labs/account-message-bridge": "2.3.8",
+    "@sophon-labs/account-provider": "2.3.8",
     "axios": "^1.11.0",
     "eventemitter3": "5.0.1",
     "text-encoding-polyfill": "^0.6.7"
