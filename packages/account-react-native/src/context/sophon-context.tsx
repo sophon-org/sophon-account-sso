@@ -9,6 +9,11 @@ import {
   sophonActions,
 } from '@sophon-labs/account-core';
 import type { EIP1193Provider } from '@sophon-labs/account-provider';
+import UniversalProvider from '@walletconnect/universal-provider';
+import {
+  WALLETCONNECT_PROJECT_ID,
+  WALLETCONNECT_METADATA,
+} from '../lib/walletconnect-config';
 import {
   createContext,
   type MutableRefObject,
@@ -93,6 +98,7 @@ export interface SophonContextConfig {
   dynamicClient: DynamicClientType;
   debugMode: boolean;
   requiresAuthorization: boolean;
+  wcProvider: UniversalProvider | null;
 }
 
 export const SophonContext = createContext<SophonContextConfig>({
@@ -115,6 +121,7 @@ export const SophonContext = createContext<SophonContextConfig>({
     Message['id'] | undefined
   >,
   debugMode: false,
+  wcProvider: null,
 });
 
 export interface SophonAccount {
@@ -192,6 +199,8 @@ export const SophonContextProvider = ({
   const [connectingAccount, setConnectingAccount] = useState<
     SophonAccount | undefined
   >();
+  const [wcProvider, setWcProvider] = useState<UniversalProvider | null>(null); // Added
+
   const chain = useMemo(() => SophonChains[chainId], [chainId]);
   const provider = useMemo(() => {
     const provider = createMobileProvider(serverUrl, chainId);
@@ -225,6 +234,29 @@ export const SophonContextProvider = ({
 
   useEffect(() => {
     freshInstallActions();
+  }, []);
+
+  useEffect(() => {
+    const initWalletConnect = async () => {
+      try {
+        const provider = await UniversalProvider.init({
+          projectId: WALLETCONNECT_PROJECT_ID,
+          metadata: WALLETCONNECT_METADATA,
+          relayUrl: 'wss://relay.walletconnect.com',
+        });
+
+        provider.on('display_uri', (uri: string) => {
+          console.log('🔗 WalletConnect URI generated:', uri);
+        });
+
+        setWcProvider(provider);
+        console.log('✅ WalletConnect initialized');
+      } catch (error) {
+        console.error('❌ Failed to initialize WalletConnect:', error);
+      }
+    };
+
+    initWalletConnect();
   }, []);
 
   useUIEventHandler('initialized', () => {
@@ -323,6 +355,7 @@ export const SophonContextProvider = ({
       requiresAuthorization,
       currentRequestId,
       debugMode,
+      wcProvider,
     }),
     [
       initialized,
@@ -345,6 +378,7 @@ export const SophonContextProvider = ({
       setAccountWithEffect,
       setCurrentRequestWithEffect,
       debugMode,
+      wcProvider,
     ],
   );
 

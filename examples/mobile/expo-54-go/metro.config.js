@@ -48,6 +48,7 @@ const watchFolders = [
 const developConfig = {
   watchFolders: watchFolders,
   resolver: {
+    unstable_enablePackageExports: true, // Add this line
     extraNodeModules: new Proxy(extraNodeModules, {
       get: (target, name) => {
         // if its one of the local packages, return the mapped path

@@ -2,6 +2,7 @@ import { DataScopes, sophonOSTestnet } from '@sophon-labs/account-core';
 import {
   type AuthFlowConfig,
   AuthProvider,
+  Capabilities,
   SophonContextProvider,
 } from '@sophon-labs/account-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -20,11 +21,11 @@ const customAuthConfig: AuthFlowConfig = {
     { type: 'email' },
   ],
   showMore: [
+    { type: 'wallet' },
     {
       type: 'socials',
       socialPriority: [AuthProvider.TELEGRAM, AuthProvider.TWITTER],
     },
-    { type: 'wallet' },
   ],
 };
 
@@ -37,7 +38,7 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
       insets={insets}
       locale="en"
       authConfig={customAuthConfig}
-      // requestedCapabilities={[Capabilities.WALLET_CONNECT]}
+      requestedCapabilities={[Capabilities.WALLET_CONNECT]}
     >
       {children}
     </SophonContextProvider>

@@ -1,8 +1,7 @@
-// import { useReactiveClient } from '@dynamic-labs/react-hooks';
-
 import { useReactiveClient } from '@dynamic-labs/react-hooks';
 import { DataScopes } from '@sophon-labs/account-core';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { AppState } from 'react-native';
 import type { Address } from 'viem';
 import { eip712WalletActions } from 'viem/zksync';
 import { useSophonContext } from '.';
@@ -15,52 +14,163 @@ export enum AuthProvider {
   TELEGRAM = 'telegram',
 }
 
-const SOCIAL_AUTH_TIMEOUT = 2 * 60 * 1000;
-
 export const useEmbeddedAuth = () => {
-  const { dynamicClient } = useSophonContext();
+  const { dynamicClient, wcProvider } = useSophonContext();
   const { auth, wallets, viem } = useReactiveClient(dynamicClient);
+
+  const [isWalletModalVisible, setIsWalletModalVisible] = useState(false);
+  const connectAbortController = useRef<AbortController | null>(null);
+
+  // Listen for app state changes
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (nextAppState) => {
+      // If user comes back to app and modal is visible but still connecting
+      if (nextAppState === 'active' && isWalletModalVisible) {
+        console.log('🔄 App became active while wallet modal open');
+        // Don't close modal, user might want to try again or choose different wallet
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, [isWalletModalVisible]);
 
   const signInWithEmail = useCallback(
     async (email: string) => {
-      if (auth.authenticatedUser) {
-        await auth.logout();
-      }
-
       return auth.email.sendOTP(email);
     },
-    [auth.email.sendOTP, auth.authenticatedUser, auth.logout],
+    [auth.email],
   );
 
   const verifyEmailOTP = useCallback(
     async (token: string) => {
       return auth.email.verifyOTP(token);
     },
-    [auth.email.verifyOTP],
+    [auth.email],
   );
 
   const resendEmailOTP = useCallback(async () => {
     return auth.email.resendOTP();
-  }, [auth.email.resendOTP]);
+  }, [auth.email]);
 
   const logout = useCallback(async () => {
+    if (wcProvider?.session) {
+      await wcProvider.disconnect();
+    }
     return auth.logout();
-  }, [auth]);
+  }, [auth, wcProvider]);
 
   const signInWithSocialProvider = useCallback(
     async (provider: AuthProvider) => {
-      if (auth.authenticatedUser) {
-        await auth.logout();
-      }
-
       return auth.social.connect({ provider });
     },
-    [auth.social.connect, auth.authenticatedUser, auth.logout],
+    [auth.social],
   );
 
   const getLinkedAccounts = useCallback(async () => {
     return auth.social.getAllLinkedAccounts();
-  }, [auth.social.getAllLinkedAccounts]);
+  }, [auth.social]);
+
+  const connectExternalWallet = useCallback(async () => {
+    console.log('🔵 connectExternalWallet called');
+
+    if (!wcProvider) {
+      throw new Error('WalletConnect not initialized');
+    }
+
+    try {
+      console.log('🟡 Opening wallet selection modal...');
+
+      setIsWalletModalVisible(true);
+
+      // Create abort controller for this connection attempt
+      connectAbortController.current = new AbortController();
+      const { signal } = connectAbortController.current;
+
+      // Start the connection process with timeout
+      const connectPromise = wcProvider.connect({
+        namespaces: {
+          eip155: {
+            methods: [
+              'eth_sendTransaction',
+              'eth_signTransaction',
+              'eth_sign',
+              'personal_sign',
+              'eth_signTypedData',
+            ],
+            chains: ['eip155:531050204'],
+            events: ['chainChanged', 'accountsChanged'],
+            rpcMap: {},
+          },
+        },
+      });
+
+      // Add timeout of 5 minutes (user might take time in wallet app)
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        const timeout = setTimeout(
+          () => {
+            reject(new Error('Connection timeout'));
+          },
+          5 * 60 * 1000,
+        );
+
+        // Clear timeout if aborted
+        signal.addEventListener('abort', () => {
+          clearTimeout(timeout);
+          reject(new Error('Connection cancelled'));
+        });
+      });
+
+      const session = await Promise.race([connectPromise, timeoutPromise]);
+
+      // Close modal on success
+      setIsWalletModalVisible(false);
+
+      console.log('🟢 Session created:', session);
+
+      if (!session) {
+        throw new Error('Failed to establish WalletConnect session');
+      }
+
+      const accounts = (session as any).namespaces?.eip155?.accounts || [];
+      if (accounts.length === 0) {
+        throw new Error('No accounts connected');
+      }
+
+      const addressParts = accounts[0]?.split(':');
+      if (!addressParts || addressParts.length < 3) {
+        throw new Error('Invalid account format');
+      }
+
+      const address = addressParts[2] as Address;
+      console.log('✅ Connected wallet address:', address);
+
+      return address;
+    } catch (error: any) {
+      setIsWalletModalVisible(false);
+
+      // Don't throw error if user cancelled
+      if (error.message === 'Connection cancelled') {
+        console.log('🔵 User cancelled wallet connection');
+        throw new Error('Connection cancelled');
+      }
+
+      console.error('❌ WalletConnect connection failed:', error);
+      throw error;
+    } finally {
+      connectAbortController.current = null;
+    }
+  }, [wcProvider]);
+
+  // Add method to cancel connection
+  const cancelWalletConnection = useCallback(() => {
+    if (connectAbortController.current) {
+      console.log('🛑 Cancelling wallet connection');
+      connectAbortController.current.abort();
+      setIsWalletModalVisible(false);
+    }
+  }, []);
 
   const isConnected = useMemo(() => {
     return auth.authenticatedUser !== null;
@@ -71,7 +181,6 @@ export const useEmbeddedAuth = () => {
     if (auth.authenticatedUser?.email) {
       available.push(DataScopes.email);
     }
-
     const socials = await auth.social.getAllLinkedAccounts();
     for (const social of socials ?? []) {
       switch (social.provider) {
@@ -91,30 +200,21 @@ export const useEmbeddedAuth = () => {
           available.push(DataScopes.apple);
           break;
         default:
-        // do nothing on unmapped providers
       }
     }
-
     return available;
-  }, [auth.social.getAllLinkedAccounts, auth.authenticatedUser]);
+  }, [auth.social, auth.authenticatedUser]);
 
   const waitForAuthentication = useCallback(async () => {
     return new Promise<Address>((resolve, reject) => {
-      const timeout = setTimeout(() => {
-        reject(new Error('Authentication timed out, please try again.'));
-      }, SOCIAL_AUTH_TIMEOUT);
-
       wallets.on('primaryChanged', (data) => {
-        clearTimeout(timeout);
         if (data?.address) {
           resolve(data.address as Address);
         } else {
           reject(new Error('No primary wallet found'));
         }
       });
-
       auth.on('authFailed', (data) => {
-        clearTimeout(timeout);
         reject(data);
       });
     });
@@ -132,12 +232,6 @@ export const useEmbeddedAuth = () => {
     ).extend(eip712WalletActions());
   }, [viem, wallets.primary]);
 
-  useEffect(() => {
-    dynamicClient.auth.on('authFailed', (data) => {
-      console.log('🚨 authFailed:', data);
-    });
-  }, [dynamicClient]);
-
   return {
     signInWithSocialProvider,
     getLinkedAccounts,
@@ -150,5 +244,9 @@ export const useEmbeddedAuth = () => {
     waitForAuthentication,
     embeddedUserId,
     createEmbeddedWalletClient,
+    connectExternalWallet,
+    cancelWalletConnection,
+    isWalletModalVisible,
+    setIsWalletModalVisible,
   };
 };

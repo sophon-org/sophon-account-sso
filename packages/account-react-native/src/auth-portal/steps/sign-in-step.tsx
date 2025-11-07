@@ -32,6 +32,7 @@ import {
   useNavigationPortal,
 } from '../hooks';
 import type { BasicStepProps, SignInParams } from '../types';
+import { WalletConnectModal } from '../../components/wallet-connect-modal';
 
 interface SignInStepProps extends BasicStepProps {
   authConfig?: AuthFlowConfig;
@@ -54,7 +55,14 @@ export const SignInStep = ({
     string | null
   >(null);
   const [email, setEmail] = useState(params?.email || '');
-  const { signInWithSocialProvider, signInWithEmail } = useEmbeddedAuth();
+  const {
+    signInWithSocialProvider,
+    signInWithEmail,
+    connectExternalWallet,
+    cancelWalletConnection,
+    isWalletModalVisible,
+    setIsWalletModalVisible,
+  } = useEmbeddedAuth();
   const {
     actions: { waitForAuthentication },
   } = useFlowManager();
@@ -86,6 +94,30 @@ export const SignInStep = ({
       loadingState,
     ],
   );
+
+  const handleConnectWallet = useCallback(async () => {
+    try {
+      Keyboard.dismiss();
+      loadingState.setOn();
+      console.log('🔵 handleConnectWallet called');
+
+      const walletAddress = await connectExternalWallet();
+      console.log('✅ Wallet connected:', walletAddress);
+
+      onAuthenticate(walletAddress, { provider: 'wallet' });
+    } catch (error: any) {
+      // Don't log or show error if user cancelled
+      if (error?.message === 'Connection cancelled') {
+        console.log('ℹ️ User closed wallet selection');
+        return;
+      }
+
+      console.error('🔴 Wallet connection failed:', error);
+      onError(error as Error);
+    } finally {
+      loadingState.setOff();
+    }
+  }, [connectExternalWallet, onAuthenticate, onError, loadingState]);
 
   const isEmailValid = useMemo(() => validateEmail(email), [email]);
 
@@ -160,11 +192,12 @@ export const SignInStep = ({
 
         case 'wallet':
           return isWalletConnectEnabled ? (
-            <Container key={`wallet-${index}`} marginVertical={16}>
+            <Container key={`wallet-${index}`} marginTop={0} marginBottom={16}>
               <Button
                 variant="secondary"
                 text={t('signInStep.signInWithWallet')}
-                onPress={() => navigate('loading')}
+                onPress={handleConnectWallet} // Changed from navigate('loading')
+                loading={loadingState.state}
               />
             </Container>
           ) : null;
@@ -187,7 +220,7 @@ export const SignInStep = ({
       handleSignInWithEmail,
       error,
       isWalletConnectEnabled,
-      navigate,
+      handleConnectWallet,
     ],
   );
 
@@ -212,6 +245,14 @@ export const SignInStep = ({
           {showMore && <>{authConfig.showMore!.map(renderLoginOption)}</>}
         </>
       )}
+
+      <WalletConnectModal
+        visible={isWalletModalVisible}
+        onClose={() => {
+          cancelWalletConnection();
+          setIsWalletModalVisible(false);
+        }}
+      />
     </View>
   );
 };
