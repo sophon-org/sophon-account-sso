@@ -68,7 +68,7 @@ describe("ContractController", () => {
 		expect(res).toEqual({
 			jobId: "300:0x19e7e376e7c213b7e7e46cc70a5dd086daff2a",
 			statusUrl:
-				"/contract/jobs/300%3A0x19e7e376e7c213b7e7e46cc70a5dd086daff2a",
+				"/contract/jobs/300:0x19e7e376e7c213b7e7e46cc70a5dd086daff2a",
 		});
 
 		expect(service.deployContractForOwner).not.toHaveBeenCalled();

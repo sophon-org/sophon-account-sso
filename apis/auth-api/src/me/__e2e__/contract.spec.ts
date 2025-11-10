@@ -168,7 +168,7 @@ describe("Contract E2E (BullMQ + local Redis, no TypeORM)", () => {
 
 		while (Date.now() - started < 20_000) {
 			const res = await request(app.getHttpServer())
-				.get(`/contract/jobs/${encodeURIComponent(jobId)}`)
+				.get(`/contract/jobs/${jobId}`)
 				.expect(200);
 
 			status = String(res.body.status ?? res.body.state ?? "waiting");

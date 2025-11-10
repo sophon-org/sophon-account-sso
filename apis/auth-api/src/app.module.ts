@@ -80,7 +80,7 @@ import { QueuesModule } from "./queues/queues.module";
 		}),
 
 		BullModule.forRoot({
-			connection: { url: awsConfig().redisUrl },
+			connection: { url: dbConfig().redisUrl },
 		}),
 		QueuesModule,
 		AwsModule,

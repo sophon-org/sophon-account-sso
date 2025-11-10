@@ -53,14 +53,14 @@ export class ContractController {
 		if (existing) {
 			return {
 				jobId,
-				statusUrl: `/contract/jobs/${encodeURIComponent(jobId)}`,
+				statusUrl: `/contract/jobs/${jobId}`,
 			};
 		}
 
 		const enqueued = await this.deployQueue.enqueue(owner, chainId);
 		return {
 			jobId: enqueued,
-			statusUrl: `/contract/jobs/${encodeURIComponent(enqueued)}`,
+			statusUrl: `/contract/jobs/${enqueued}`,
 		};
 	}
 	@Get("jobs/:id")
