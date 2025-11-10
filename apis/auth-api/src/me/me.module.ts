@@ -1,15 +1,14 @@
-import { Module } from "@nestjs/common";
-import { AuthModule } from "src/auth/auth.module";
+import { forwardRef, Module } from "@nestjs/common";
 import { AwsModule } from "src/aws/aws.module";
-import { ConsentsModule } from "src/consents/consents.module";
 import { HyperindexModule } from "src/hyperindex/hyperindex.module";
-import { ConsentController } from "./consent.controller";
+import { QueuesModule } from "src/queues/queues.module";
 import { ContractController } from "./contract.controller";
 import { ContractService } from "./contract.service";
 
 @Module({
-	imports: [ConsentsModule, HyperindexModule, AuthModule, AwsModule],
-	controllers: [ConsentController, ContractController],
+	imports: [AwsModule, HyperindexModule, forwardRef(() => QueuesModule)],
+	controllers: [ContractController],
 	providers: [ContractService],
+	exports: [ContractService],
 })
 export class MeModule {}
