@@ -30,6 +30,7 @@ export const useAuthPortalController = (props: Props) => {
   const { isConnected, account, isConnecting } = useSophonAccount();
   const { connectingAccount } = useSophonContext();
   const { requiresAuthorization } = useSophonContext();
+  const { setAccount } = useSophonContext();
   const { getAvailableDataScopes } = useEmbeddedAuth();
   const [dataScopes, setDataScopes] = useState<DataScopes[]>([]);
 
@@ -144,6 +145,7 @@ export const useAuthPortalController = (props: Props) => {
     isConnectedAndAuthorizationComplete,
     dataScopes,
     hideTerms,
+    setAccount,
     ...navigation,
   };
 };

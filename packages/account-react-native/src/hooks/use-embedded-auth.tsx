@@ -207,18 +207,44 @@ export const useEmbeddedAuth = () => {
 
   const waitForAuthentication = useCallback(async () => {
     return new Promise<Address>((resolve, reject) => {
-      wallets.on('primaryChanged', (data) => {
+      wallets.on('primaryChanged', async (data) => {
         if (data?.address) {
-          resolve(data.address as Address);
+          // Poll for wallet client readiness
+          let attempts = 0;
+          const maxAttempts = 10;
+
+          while (attempts < maxAttempts) {
+            try {
+              // Try to get wallet client
+              const client = await viem.createWalletClient({
+                wallet: wallets.primary!,
+              });
+
+              if (client) {
+                console.log('✅ Wallet client ready');
+                resolve(data.address as Address);
+                return;
+              }
+            } catch (e) {
+              console.log(
+                `⏳ Waiting for wallet client... (${attempts + 1}/${maxAttempts})`,
+              );
+              await new Promise((r) => setTimeout(r, 500));
+              attempts++;
+            }
+          }
+
+          reject(new Error('Wallet client initialization timeout'));
         } else {
           reject(new Error('No primary wallet found'));
         }
       });
+
       auth.on('authFailed', (data) => {
         reject(data);
       });
     });
-  }, [wallets, auth]);
+  }, [wallets, auth, viem]);
 
   const embeddedUserId = useMemo(() => {
     return auth.authenticatedUser?.userId;

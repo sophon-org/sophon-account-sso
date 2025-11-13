@@ -12,7 +12,7 @@ export const SUPPORTED_WALLETS: WalletOption[] = [
     id: 'metamask',
     name: 'MetaMask',
     deepLink: 'metamask://wc',
-    universalLink: 'https://metamask.app.link/wc',
+    // universalLink: 'https://metamask.app.link/wc',
     icon: '🦊',
     appStoreUrl: 'https://apps.apple.com/app/metamask/id1438144202',
   },
@@ -22,6 +22,15 @@ export const SUPPORTED_WALLETS: WalletOption[] = [
     deepLink: 'cbwallet://wc',
     icon: '🔵',
     appStoreUrl: 'https://apps.apple.com/app/coinbase-wallet/id1278383455',
+  },
+  {
+    id: 'uniswap',
+    name: 'Uniswap Wallet',
+    deepLink: 'uniswap://wc',
+    // universalLink: 'https://wallet.uniswap.org/wc', // Common WalletConnect universal link format for Uniswap
+    icon: '🦄',
+    appStoreUrl:
+      'https://apps.apple.com/app/uniswap-crypto-nft-wallet/id6443944476',
   },
   {
     id: 'trust',

@@ -66,6 +66,7 @@ export function AuthPortal(props: AuthPortalProps) {
     setParams,
     dataScopes,
     isConnectedAndAuthorizationComplete,
+    setAccount,
   } = useAuthPortalController({ scopes: props.scopes });
 
   const showModal = useCallback(() => {
@@ -218,12 +219,31 @@ export function AuthPortal(props: AuthPortalProps) {
   const onAuthenticate = useCallback<BasicStepProps['onAuthenticate']>(
     async (ownerAddress, navigationParams) => {
       try {
+        // Check if this is an external wallet connection
+        if (navigationParams?.provider === 'wallet') {
+          console.log('🔗 External wallet connected:', ownerAddress);
+          console.log('⚠️ Bypassing Dynamic auth for external wallet');
+
+          // Set the account directly for external wallets
+          setAccount({
+            address: ownerAddress,
+            owner: ownerAddress,
+            // Add any other properties your SophonAccount type requires
+          });
+
+          clearCurrentRequest();
+          hideModal();
+
+          return;
+        }
+
         if (!navigationParams || navigationParams?.from === 'retry') {
           navigate('loading', {
             replace: true,
             params: { provider: navigationParams?.provider },
           });
         }
+
         await actions.authenticate(ownerAddress);
       } catch (error) {
         console.error('Authentication failed', error);
@@ -237,7 +257,7 @@ export function AuthPortal(props: AuthPortalProps) {
         });
       }
     },
-    [actions, navigate],
+    [actions, navigate, clearCurrentRequest, hideModal, setAccount],
   );
 
   const onBackToSignIn = useCallback(async () => {
