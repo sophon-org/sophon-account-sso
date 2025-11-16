@@ -22,7 +22,7 @@ const getGlobalProperties = () => {
 };
 
 /**
- * Automatically include partner_id in all events and group them for analytics 
+ * Automatically include partner_id in all events and group them for analytics
  */
 export const registerPostHogPartnerId = (partnerId: string) => {
   if (!partnerId || typeof window === 'undefined') {
@@ -289,4 +289,3 @@ export const trackAccountCreated = (
     ...getGlobalProperties(),
   });
 };
-
