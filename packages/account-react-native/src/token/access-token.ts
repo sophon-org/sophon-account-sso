@@ -1,14 +1,11 @@
-import {
-  AccountAuthAPIURL,
-  type SophonNetworkType,
-} from '@sophon-labs/account-core';
+import { AccountAuthAPIURL, type ChainId } from '@sophon-labs/account-core';
 import { sendUIMessage } from '../messaging';
 import { SophonAppStorage, StorageKeys } from '../provider';
 
 const ACCESS_TOKEN_EXPIRATION_THRESHOLD = 1000 * 60 * 5; // 5 mins before
 
 export const getAccessToken = async (
-  network: SophonNetworkType,
+  chainId: ChainId,
   forceRefresh: boolean = false,
 ) => {
   const accessTokenSerialized = SophonAppStorage.getItem(
@@ -27,7 +24,7 @@ export const getAccessToken = async (
     expiresAt.getTime() - ACCESS_TOKEN_EXPIRATION_THRESHOLD,
   );
 
-  console.log('[Sophon Account] Getting access token for network', network);
+  console.log('[Sophon Account] Getting access token for chain', chainId);
   console.log('[Sophon Account] Force refresh', forceRefresh);
   console.log(
     '[Sophon Account] Existing token expires at',
@@ -52,12 +49,12 @@ export const getAccessToken = async (
     const refreshToken = JSON.parse(refreshTokenSerialized);
 
     console.log(
-      '[Sophon Account] Refreshing access token for network',
-      network,
+      '[Sophon Account] Refreshing access token for chain',
+      chainId,
       '[Sophon Account] url',
-      `${AccountAuthAPIURL[network]}/auth/refresh`,
+      `${AccountAuthAPIURL[chainId]}/auth/refresh`,
     );
-    const response = await fetch(`${AccountAuthAPIURL[network]}/auth/refresh`, {
+    const response = await fetch(`${AccountAuthAPIURL[chainId]}/auth/refresh`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -74,8 +71,8 @@ export const getAccessToken = async (
 
     const data = await response.json();
     console.log(
-      '[Sophon Account] Refreshed access tokens for network',
-      network,
+      '[Sophon Account] Refreshed access tokens for chain',
+      chainId,
       'data',
       data,
     );
