@@ -36,10 +36,14 @@ export class ContractService {
 	/**
 	 * Fetch the deployed contract address for a given owner, if deployed.
 	 *
-	 * @param owner the wallet addres that's signer of the contract
+	 * @param owner the wallet address that's signer of the contract
+	 * @param chainId the chain ID to query contracts on
 	 * @returns the deployed contract address, if available
 	 */
-	async getContractByOwner(owner: Address): Promise<Address[]> {
+	async getContractByOwner(
+		owner: Address,
+		chainId: number,
+	): Promise<Address[]> {
 		if (!owner?.trim() || !isAddress(owner.toLowerCase())) {
 			throw new BadRequestException(`Invalid address provided: ${owner}`);
 		}
@@ -67,7 +71,12 @@ export class ContractService {
 		const rows = await this.hyperindex.getK1OwnerStateByOwner(owner);
 
 		this.logger.log(
-			{ evt: "contract.by-owner.success", owner, total: rows.length },
+			{
+				evt: "contract.by-owner.success",
+				owner,
+				chainId,
+				total: rows.length,
+			},
 			"contract-by-owner",
 		);
 
@@ -97,14 +106,21 @@ export class ContractService {
 	/**
 	 * Deploy contract for owner
 	 *
-	 * @param owner the wallet addres that's signer of the contract
+	 * @param owner the wallet address that's signer of the contract
+	 * @param chainId the chain ID to deploy contract on
 	 * @returns the deployed contract address, if available
 	 */
 	async deployContractForOwner(
 		owner: Address,
+		chainId: number,
 	): Promise<ContractDeployResponse> {
 		if (!owner?.trim() || !isAddress(owner.toLowerCase())) {
 			throw new BadRequestException(`Invalid address provided: ${owner}`);
+		}
+
+		const chain = getChainById(chainId);
+		if (chain == null) {
+			throw new BadRequestException(`Invalid chainId provided: ${chainId}`);
 		}
 
 		const ownerAddress = normalizeAndValidateAddress(owner);
@@ -120,7 +136,7 @@ export class ContractService {
 			return this.deployContractForOwnerBiconomy(ownerAddress);
 		}
 
-		return this.deployContractForOwnerZkSync(ownerAddress);
+		return this.deployContractForOwnerZkSync(ownerAddress, chainId);
 	}
 
 	/**

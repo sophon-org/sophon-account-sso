@@ -6,7 +6,13 @@ import { Session } from "./session.entity";
 
 export type CreateSessionParams = Pick<
 	SessionRecord,
-	"sid" | "userId" | "sub" | "aud" | "currentRefreshJti" | "refreshExpiresAt"
+	| "sid"
+	| "userId"
+	| "sub"
+	| "aud"
+	| "currentRefreshJti"
+	| "refreshExpiresAt"
+	| "chainId"
 > &
 	Partial<Pick<SessionRecord, "createdIp" | "createdUserAgent">>;
 
@@ -27,6 +33,8 @@ const toDomain = (e: Session): SessionRecord => ({
 
 	createdIp: e.createdIp ?? null,
 	createdUserAgent: e.createdUserAgent ?? null,
+
+	chainId: e.chainId,
 });
 
 const norm = (s: string) => s.toLowerCase();

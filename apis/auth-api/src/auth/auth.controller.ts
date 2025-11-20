@@ -95,6 +95,7 @@ export class AuthController {
 			{
 				evt: "auth.verify.attempt",
 				address: body.address,
+				chainId: body.chainId,
 				hasTypedData: Boolean(body.typedData),
 				hasSignature: Boolean(body.signature),
 				hasNonce: Boolean(body.nonceToken),
@@ -115,6 +116,7 @@ export class AuthController {
 				body.typedData,
 				body.signature,
 				body.nonceToken,
+				body.chainId,
 				ci,
 				body.ownerAddress,
 				body.audience,
@@ -125,6 +127,7 @@ export class AuthController {
 				{
 					evt: "auth.verify.success",
 					address: body.address,
+					chainId: body.chainId,
 					sid,
 					accessTokenExp: accessTokenExpiresAt,
 					refreshTokenExp: refreshTokenExpiresAt,

@@ -66,6 +66,7 @@ describe("AuthService (sessions + refresh)", () => {
 		createdIp?: string | null;
 		createdUserAgent?: string | null;
 		createdAt?: Date | null;
+		chainId?: number;
 	};
 
 	const sessionsMock: {
@@ -170,6 +171,7 @@ describe("AuthService (sessions + refresh)", () => {
 				typedData,
 				"0xsignature",
 				"nonce.jwt",
+				300,
 			);
 
 		// returns
@@ -209,6 +211,7 @@ describe("AuthService (sessions + refresh)", () => {
 				aud: "sophon-web",
 				currentRefreshJti: refreshPayload.jti,
 				refreshExpiresAt: new Date(expSecs * 1000),
+				chainId: 300,
 			}),
 		);
 	});
@@ -235,6 +238,7 @@ describe("AuthService (sessions + refresh)", () => {
 			iat: Math.floor(FIXED_NOW_MS / 1000),
 			sid: "sid-1",
 			scope: "email",
+			chainId: "300",
 		});
 
 		const row: SessionRow = {
@@ -243,6 +247,7 @@ describe("AuthService (sessions + refresh)", () => {
 			revokedAt: new Date(FIXED_NOW_MS), // inactive
 			invalidateBefore: null,
 			sub: null,
+			chainId: 300,
 		};
 		sessionsMock.getBySid.mockResolvedValueOnce(row);
 		sessionsMock.isActive.mockReturnValueOnce(false);
@@ -261,6 +266,7 @@ describe("AuthService (sessions + refresh)", () => {
 			iat,
 			sid: "sid-2",
 			scope: "email",
+			chainId: "300",
 		});
 
 		const row: SessionRow = {
@@ -269,6 +275,7 @@ describe("AuthService (sessions + refresh)", () => {
 			revokedAt: null,
 			invalidateBefore: new Date(FIXED_NOW_MS - 10_000), // 10s earlier than now, but 90s after iat
 			sub: null,
+			chainId: 300,
 		};
 		sessionsMock.getBySid.mockResolvedValueOnce(row);
 		sessionsMock.isActive.mockReturnValueOnce(true);
@@ -290,6 +297,7 @@ describe("AuthService (sessions + refresh)", () => {
 			scope: "email",
 			userId: "u1",
 			typ: "refresh",
+			chainId: "300",
 		});
 
 		// session row (active, current jti matches)
@@ -299,6 +307,7 @@ describe("AuthService (sessions + refresh)", () => {
 			revokedAt: null,
 			invalidateBefore: null,
 			sub: null,
+			chainId: 300,
 		};
 		sessionsMock.getBySid.mockResolvedValueOnce(row);
 		sessionsMock.isActive.mockReturnValueOnce(true);
@@ -342,6 +351,7 @@ describe("AuthService (sessions + refresh)", () => {
 			scope: "email",
 			userId: "u1",
 			typ: "refresh",
+			chainId: "300",
 		});
 
 		const row: SessionRow = {
@@ -350,6 +360,7 @@ describe("AuthService (sessions + refresh)", () => {
 			revokedAt: null,
 			invalidateBefore: null,
 			sub: null,
+			chainId: 300,
 		};
 		sessionsMock.getBySid.mockResolvedValueOnce(row);
 		sessionsMock.isActive.mockReturnValueOnce(true);
@@ -454,6 +465,7 @@ describe("AuthService (sessions + refresh)", () => {
 			typedData,
 			"0xsignature",
 			"nonce.jwt",
+			300,
 			{ ip: "203.0.113.9", userAgent: "Jest UA/1.0" },
 		);
 
@@ -465,6 +477,7 @@ describe("AuthService (sessions + refresh)", () => {
 				refreshExpiresAt: new Date(expSecs * 1000),
 				createdIp: "203.0.113.9",
 				createdUserAgent: "Jest UA/1.0",
+				chainId: 300,
 			}),
 		);
 	});
@@ -483,6 +496,7 @@ describe("AuthService (sessions + refresh)", () => {
 				createdIp: "10.0.0.1",
 				createdUserAgent: "UA",
 				createdAt: new Date(FIXED_NOW_MS - 1_000),
+				chainId: 300,
 				...over,
 			}) as SessionRow;
 
@@ -519,6 +533,7 @@ describe("AuthService (sessions + refresh)", () => {
 			invalidateBefore: null,
 			createdIp: "1.2.3.4",
 			createdUserAgent: "UA",
+			chainId: 300,
 		});
 
 		await service.revokeSessionForSub(
@@ -548,6 +563,7 @@ describe("AuthService (sessions + refresh)", () => {
 			invalidateBefore: null,
 			createdIp: "9.9.9.9",
 			createdUserAgent: "UA",
+			chainId: 300,
 		});
 
 		await expect(
