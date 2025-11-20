@@ -9,3 +9,4 @@ export * from './messaging';
 export * from './provider';
 export * from './lib/capabilities';
 export * from './types';
+export * from './token/index';
