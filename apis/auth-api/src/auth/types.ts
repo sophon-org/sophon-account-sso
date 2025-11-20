@@ -11,6 +11,7 @@ export type AccessTokenPayload = JwtPayload & {
 	scope: string; // space-separated
 	c?: ConsentClaims;
 	typ?: "access";
+	chainId: number;
 };
 
 export type RefreshTokenPayload = JwtPayload & {
@@ -21,6 +22,7 @@ export type RefreshTokenPayload = JwtPayload & {
 	sid: string;
 	jti: string;
 	typ?: "refresh";
+	chainId: number;
 };
 
 export interface AuthenticatedRequest extends Request {

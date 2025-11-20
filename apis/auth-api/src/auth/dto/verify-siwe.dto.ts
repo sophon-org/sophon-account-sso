@@ -2,6 +2,8 @@ import { ApiProperty } from "@nestjs/swagger";
 import {
 	IsBoolean,
 	IsEthereumAddress,
+	IsInt,
+	IsNotEmpty,
 	IsObject,
 	IsOptional,
 	IsString,
@@ -38,4 +40,13 @@ export class VerifySiweDto {
 	@IsOptional()
 	@IsBoolean()
 	rememberMe?: boolean;
+
+	@ApiProperty({
+		description: "Chain ID for the authentication request",
+		example: 50104,
+		examples: [50104, 531050104],
+	})
+	@IsInt()
+	@IsNotEmpty()
+	chainId!: number;
 }

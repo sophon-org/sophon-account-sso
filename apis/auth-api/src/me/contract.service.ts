@@ -7,16 +7,12 @@ import {
 import { SecretsService } from "src/aws/secrets.service";
 import { HyperindexService } from "src/hyperindex/hyperindex.service";
 import { normalizeAndValidateAddress } from "src/utils/address";
-import { getChainById, SupportedChainId } from "src/utils/chain";
+import { getChainById } from "src/utils/chain";
 import {
-	Account,
 	Address,
-	Chain,
 	createWalletClient,
 	http,
 	isAddress,
-	Transport,
-	WalletClient,
 	zeroAddress,
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
@@ -36,23 +32,32 @@ export class ContractService {
 	/**
 	 * Fetch the deployed contract address for a given owner, if deployed.
 	 *
-	 * @param owner the wallet addres that's signer of the contract
+	 * @param owner the wallet address that's signer of the contract
+	 * @param chainId the chain ID to query contracts on
 	 * @returns the deployed contract address, if available
 	 */
-	async getContractByOwner(owner: Address): Promise<Address[]> {
+	async getContractByOwner(
+		owner: Address,
+		chainId: number,
+	): Promise<Address[]> {
 		if (!owner?.trim() || !isAddress(owner.toLowerCase())) {
 			throw new BadRequestException(`Invalid address provided: ${owner}`);
 		}
 
 		const address = normalizeAndValidateAddress(owner);
 		this.logger.log(
-			{ evt: "contract.by-owner.request", owner: address },
+			{ evt: "contract.by-owner.request", owner: address, chainId },
 			"contract-by-owner",
 		);
 		const rows = await this.hyperindex.getK1OwnerStateByOwner(address);
 
 		this.logger.log(
-			{ evt: "contract.by-owner.success", owner: address, total: rows.length },
+			{
+				evt: "contract.by-owner.success",
+				owner: address,
+				chainId,
+				total: rows.length,
+			},
 			"contract-by-owner",
 		);
 
@@ -62,14 +67,21 @@ export class ContractService {
 	/**
 	 * Deploy contract for owner
 	 *
-	 * @param owner the wallet addres that's signer of the contract
+	 * @param owner the wallet address that's signer of the contract
+	 * @param chainId the chain ID to deploy contract on
 	 * @returns the deployed contract address, if available
 	 */
 	async deployContractForOwner(
 		owner: Address,
+		chainId: number,
 	): Promise<ContractDeployResponse> {
 		if (!owner?.trim() || !isAddress(owner.toLowerCase())) {
 			throw new BadRequestException(`Invalid address provided: ${owner}`);
+		}
+
+		const chain = getChainById(chainId);
+		if (chain == null) {
+			throw new BadRequestException(`Invalid chainId provided: ${chainId}`);
 		}
 
 		const ownerAddress = normalizeAndValidateAddress(owner);
@@ -79,7 +91,10 @@ export class ContractService {
 			{ evt: "me.contract.deploy.request", owner: ownerAddress },
 			"contract-deploy",
 		);
-		const existingContracts = await this.getContractByOwner(ownerAddress);
+		const existingContracts = await this.getContractByOwner(
+			ownerAddress,
+			chainId,
+		);
 		if (existingContracts.length > 0) {
 			this.logger.log("Contract already exists on index");
 			return {
@@ -88,7 +103,6 @@ export class ContractService {
 			};
 		}
 
-		const chain = getChainById(process.env.CHAIN_ID as SupportedChainId);
 		const secrets = await this.secretsService.loadAWSSecrets();
 		const deployerAccount = privateKeyToAccount(secrets.deployer.privateKey);
 
@@ -107,12 +121,11 @@ export class ContractService {
 		}
 
 		// deploy the contract
-		const deployerClient: WalletClient<Transport, Chain, Account> =
-			createWalletClient({
-				account: deployerAccount,
-				chain: chain,
-				transport: http(),
-			}).extend(eip712WalletActions());
+		const deployerClient = createWalletClient({
+			account: deployerAccount,
+			chain: chain,
+			transport: http(),
+		}).extend(eip712WalletActions());
 
 		this.logger.log("Deploying contract");
 		const deployedAccount = await deployModularAccount(deployerClient, {

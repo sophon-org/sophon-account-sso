@@ -230,6 +230,7 @@ describe("AuthController (new flows)", () => {
 			userId: "u1",
 			scope: "email x",
 			sub: "0xabc",
+			chainId: 300,
 		};
 
 		const req = { user: userPayload } as unknown as Request & {

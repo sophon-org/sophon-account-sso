@@ -124,6 +124,7 @@ export class AuthService {
 		typedData: TypedDataDefinition,
 		signature: `0x${string}`,
 		nonceToken: string,
+		chainId: number,
 		client?: ClientInfo,
 		ownerAddress?: Address,
 	): Promise<{
@@ -136,6 +137,21 @@ export class AuthService {
 		const expectedAud = String(typedData.message.audience);
 		await this.partnerRegistry.assertExists(expectedAud);
 		const expectedIss = this.auth.nonceIssuer;
+
+		const typedDataChainId = typedData.domain?.chainId;
+		if (typedDataChainId && typedDataChainId !== chainId) {
+			this.logger.info(
+				{
+					evt: "auth.verify.chain_mismatch",
+					providedChainId: chainId,
+					typedDataChainId,
+				},
+				"chain ID mismatch between parameter and typedData",
+			);
+			throw new BadRequestException(
+				`Chain ID mismatch: provided ${chainId} but typedData has ${typedDataChainId}`,
+			);
+		}
 
 		let payload!: NoncePayload;
 		try {
@@ -225,6 +241,7 @@ export class AuthService {
 				sid,
 				typ: "access",
 				c,
+				chainId,
 			},
 			await this.keys.getAccessPrivateKey(),
 			{
@@ -246,6 +263,7 @@ export class AuthService {
 				sid,
 				jti: refreshJti,
 				typ: "refresh",
+				chainId,
 			},
 			await this.keys.getRefreshPrivateKey(),
 			{
@@ -270,6 +288,7 @@ export class AuthService {
 					: new Date(Date.now() + refreshExp * 1000),
 			createdIp: client?.ip ?? null,
 			createdUserAgent: client?.userAgent ?? null,
+			chainId,
 		});
 
 		this.logger.info(
@@ -343,6 +362,23 @@ export class AuthService {
 				);
 				throw new UnauthorizedException("session revoked or expired");
 			}
+
+			const tokenChainId = (payload as AccessTokenPayload).chainId;
+			if (tokenChainId && row.chainId !== tokenChainId) {
+				this.logger.info(
+					{
+						evt: "auth.access.chain_mismatch",
+						sid: rowSid,
+						sessionChainId: row.chainId,
+						tokenChainId,
+					},
+					"chain ID mismatch",
+				);
+				throw new UnauthorizedException(
+					"token chain ID does not match session",
+				);
+			}
+
 			if (row.invalidateBefore) {
 				const iatSec = payload.iat ?? 0;
 				const cut = Math.floor(new Date(row.invalidateBefore).getTime() / 1000);
@@ -445,6 +481,7 @@ export class AuthService {
 				sid: r.sid,
 				typ: "access",
 				c,
+				chainId: r.chainId,
 			},
 			await this.keys.getAccessPrivateKey(),
 			{
@@ -467,6 +504,7 @@ export class AuthService {
 				sid: r.sid,
 				jti: newJti,
 				typ: "refresh",
+				chainId: r.chainId,
 			},
 			await this.keys.getRefreshPrivateKey(),
 			{
