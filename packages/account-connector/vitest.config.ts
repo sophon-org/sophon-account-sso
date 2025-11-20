@@ -1,9 +1,6 @@
-import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
-  // @ts-expect-error
-  plugins: [react()],
   test: {
     globals: true, // https://vitest.dev/guide/cli.html
     environment: 'jsdom',
@@ -26,6 +23,8 @@ export default defineConfig({
         '**/*.config.mjs',
         '.next',
         '*.js',
+        // no need to consider these on coverage
+        'src/constants.ts',
       ],
       provider: 'v8',
       reporter: ['text', 'json'],

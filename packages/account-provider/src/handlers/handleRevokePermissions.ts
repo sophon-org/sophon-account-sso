@@ -1,4 +1,4 @@
-import type { SophonNetworkType, StorageLike } from '@sophon-labs/account-core';
+import type { ChainId, StorageLike } from '@sophon-labs/account-core';
 import type EventEmitter from 'eventemitter3';
 import { setAccounts } from '../lib/accounts';
 import type { RequestSender } from '../types';
@@ -12,19 +12,19 @@ interface RequestAccountsResponse {
 /**
  * Handle the wallet_revokePermissions request.
  *
- * @param network - The network to use.
+ * @param chainId - The chainId to use.
  * @param sender - The sender to use.
  * @param eventEmitter - The event emitter to use.
- * @returns The accounts available for the user on the given network.
+ * @returns The accounts available for the user on the given chainId.
  */
 export const handleRevokePermissions = async (
   storage: StorageLike,
-  network: SophonNetworkType,
+  chainId: ChainId,
   sender: RequestSender<RequestAccountsResponse>,
   eventEmitter: EventEmitter,
 ) => {
   const currentAccounts: string[] = [];
-  setAccounts(storage, network, currentAccounts);
+  setAccounts(storage, chainId, currentAccounts);
 
   try {
     // Send logout request to the account server popup

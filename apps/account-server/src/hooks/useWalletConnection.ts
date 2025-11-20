@@ -56,7 +56,6 @@ export const useWalletConnection = () => {
   const handleCheckChainId = useCallback(async (connector: Connector) => {
     try {
       const chainId = await connector.getChainId();
-      console.log('chainId', chainId);
       if (chainId !== env.NEXT_PUBLIC_CHAIN_ID) {
         if (connector.switchChain) {
           await connector.switchChain({ chainId: env.NEXT_PUBLIC_CHAIN_ID });

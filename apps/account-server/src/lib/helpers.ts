@@ -11,9 +11,7 @@ import type { TypedDataSigningRequest } from '@/types/auth';
 export const safeParseTypedData = (
   typedData: TypedDataDefinition | TypedDataSigningRequest,
 ) => {
-  console.log('safeParseTypedData', typedData);
   if (!typedData.domain?.chainId) {
-    console.log('returning typedData');
     return typedData;
   }
 
@@ -22,21 +20,12 @@ export const safeParseTypedData = (
   let chainId = typedData.domain.chainId;
   if (typeof chainId === 'string') {
     const typedChainId = chainId as string;
-    console.log('typedChainId', typedChainId);
     if (typedChainId.startsWith('0x')) {
       chainId = Number.parseInt(typedChainId.slice(2), 16);
     } else {
       chainId = Number.parseInt(typedChainId, 10);
     }
   }
-
-  console.log('returning typedData', {
-    ...typedData,
-    domain: {
-      ...typedData.domain,
-      chainId,
-    },
-  });
 
   return {
     ...typedData,

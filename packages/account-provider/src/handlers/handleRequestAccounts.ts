@@ -1,4 +1,4 @@
-import type { SophonNetworkType, StorageLike } from '@sophon-labs/account-core';
+import type { ChainId, StorageLike } from '@sophon-labs/account-core';
 import type EventEmitter from 'eventemitter3';
 import { RpcError } from 'viem';
 import { getAccounts, setAccounts } from '../lib/accounts';
@@ -13,20 +13,20 @@ interface RequestAccountsResponse {
 /**
  * Handle the eth_requestAccounts request.
  *
- * @param network - The network to use.
+ * @param chainId - The chainId to use.
  * @param sender - The sender to use.
  * @param eventEmitter - The event emitter to use.
- * @returns The accounts available for the user on the given network.
+ * @returns The accounts available for the user on the given chainId.
  */
 export const handleRequestAccounts = async (
   storage: StorageLike,
-  network: SophonNetworkType,
+  chainId: ChainId,
   sender: RequestSender<RequestAccountsResponse>,
   eventEmitter: EventEmitter,
 ) => {
   // If there are already accounts cached, return them, no need to ask for the
   // account server again
-  const accounts = getAccounts(storage, network);
+  const accounts = getAccounts(storage, chainId);
   if (accounts.length > 0) {
     return accounts;
   }
@@ -43,7 +43,7 @@ export const handleRequestAccounts = async (
   const currentAccounts = address ? [address] : [];
 
   eventEmitter.emit('accountsChanged', currentAccounts);
-  setAccounts(storage, network, currentAccounts);
+  setAccounts(storage, chainId, currentAccounts);
 
   return currentAccounts;
 };

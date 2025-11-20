@@ -12,6 +12,7 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 import './global.css';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { ThemeProvider } from '@/lib/theme-context';
 import { Web3Provider } from '@/providers/Web3Provider';
@@ -27,14 +28,16 @@ export default function RootLayout() {
   }
 
   return (
-    <Web3Provider>
-      <ThemeProvider defaultTheme="system">
-        <Stack>
-          <Stack.Screen name="(screens)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-        <StatusBar style="auto" />
-      </ThemeProvider>
-    </Web3Provider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <Web3Provider>
+        <ThemeProvider defaultTheme="system">
+          <Stack>
+            <Stack.Screen name="(screens)" options={{ headerShown: false }} />
+            <Stack.Screen name="+not-found" />
+          </Stack>
+          <StatusBar style="auto" />
+        </ThemeProvider>
+      </Web3Provider>
+    </GestureHandlerRootView>
   );
 }

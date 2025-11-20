@@ -1,7 +1,8 @@
 import type { Address } from 'viem';
+import type { ChainId } from '../constants';
+import { SNS_CACHE_DURATION, SNS_STORAGE_KEY } from '../constants';
 import type { StorageLike } from '../types';
-import { SNS_CACHE_DURATION, SNS_STORAGE_KEY } from './constants';
-import type { SNSCache, SNSCacheEntry } from './types';
+import type { SNSCache, SNSCacheEntry } from '../types/sns';
 
 export const cachedSNS = (storage: StorageLike) => {
   /**
@@ -57,7 +58,7 @@ export const cachedSNS = (storage: StorageLike) => {
    */
   const getCacheEntry = (
     key: string,
-    networkId: number,
+    networkId: ChainId,
   ): SNSCacheEntry | null => {
     const _key = `${key}:${networkId}`;
     const entry = _snsCache[_key];
@@ -80,7 +81,7 @@ export const cachedSNS = (storage: StorageLike) => {
   const setCacheEntry = (
     name: string,
     address: Address,
-    networkId: number,
+    networkId: ChainId,
   ): void => {
     const timestamp = Date.now();
     const expiresAt = timestamp + SNS_CACHE_DURATION;
@@ -139,7 +140,7 @@ export const cachedSNS = (storage: StorageLike) => {
   /**
    * Check if a specific entry exists in cache
    */
-  const isCached = (key: string, networkId: number): boolean => {
+  const isCached = (key: string, networkId: ChainId): boolean => {
     return getCacheEntry(key, networkId) !== null;
   };
 

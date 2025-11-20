@@ -1,2 +1,2 @@
+export * from './mobile-provider';
 export * from './storage';
-export * from './wallet-provider';

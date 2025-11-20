@@ -1,0 +1,770 @@
+---
+description: Provide clear and readable test structure
+globs: ["**/*.spec.ts", "**/*.test.ts"]
+alwaysApply: false
+---
+
+# Test Standards and Patterns
+
+## Overview
+
+This document outlines the testing standards for the Sophon Account SSO project. We use **Vitest** as our testing framework and follow the **Given/When/Then** pattern for test structure to ensure clarity and maintainability.
+
+## Test Framework
+
+- **Framework**: Vitest
+- **File naming**: `*.spec.ts` or `*.test.ts`
+- **Location**: Tests should be placed in `__tests__` directories alongside the source code
+
+## Test Structure: Given/When/Then Pattern
+
+All tests MUST follow the **Given/When/Then** pattern to maintain clarity and readability:
+
+```typescript
+it('should do something when condition is met', () => {
+  // given - Setup: arrange your test data and preconditions
+  const input = 'test value';
+  const expectedOutput = 'expected result';
+
+  // when - Action: execute the function or behavior being tested
+  const result = functionUnderTest(input);
+
+  // then - Assertion: verify the expected outcome
+  expect(result).toBe(expectedOutput);
+});
+```
+
+### Pattern Breakdown
+
+1. **Given** (Arrange):
+   - Set up test data
+   - Create mocks/stubs
+   - Define initial state
+   - Prepare inputs
+
+2. **When** (Act):
+   - Execute the function/method under test
+   - Trigger the behavior
+   - Perform the action
+
+3. **Then** (Assert):
+   - Verify the expected outcome
+   - Check return values
+   - Validate state changes
+   - Confirm side effects
+
+## Test Organization
+
+### 1. Nested Describe Blocks
+
+Group related tests using nested `describe` blocks:
+
+```typescript
+describe('Module Name', () => {
+  describe('functionName', () => {
+    it('should handle specific case', () => {
+      // test implementation
+    });
+  });
+});
+```
+
+Example:
+```typescript
+describe('Core > Formatters', () => {
+  describe('shortenAddress', () => {
+    it('should return undefined when address is undefined', () => {
+      // given
+      const address = undefined;
+
+      // when
+      const result = shortenAddress(address);
+
+      // then
+      expect(result).toBeUndefined();
+    });
+  });
+});
+```
+
+### 2. Using `it.each()` for Similar Tests
+
+When testing multiple similar scenarios, use `it.each()` to reduce duplication and improve readability:
+
+```typescript
+it.each([
+  { input: 'value1', expected: 'result1', description: 'case 1' },
+  { input: 'value2', expected: 'result2', description: 'case 2' },
+  { input: 'value3', expected: 'result3', description: 'case 3' },
+])('should handle $description', ({ input, expected }) => {
+  // given
+  const testInput = input;
+
+  // when
+  const result = functionUnderTest(testInput);
+
+  // then
+  expect(result).toBe(expected);
+});
+```
+
+**Real-world example:**
+```typescript
+it.each([
+  { address: undefined, expected: undefined, description: 'undefined address' },
+  { address: '' as `0x${string}`, expected: undefined, description: 'empty string' },
+  { address: '0x123' as `0x${string}`, expected: '0x123', description: 'short address' },
+])('should return $expected when given $description', ({ address, expected }) => {
+  // given
+  const input = address;
+
+  // when
+  const result = shortenAddress(input);
+
+  // then
+  expect(result).toBe(expected);
+});
+```
+
+### 3. Using `it.each()` for Parameterized Tests
+
+For conversion tests or tests with multiple input/output pairs:
+
+```typescript
+it.each([
+  { chainId: '0x1', expected: 1, description: 'hexadecimal string "0x1"' },
+  { chainId: '0x89', expected: 137, description: 'hexadecimal string "0x89" (Polygon)' },
+  { chainId: '0xa4b1', expected: 42161, description: 'hexadecimal string "0xa4b1" (Arbitrum)' },
+])('should convert $description to number $expected', ({ chainId, expected }) => {
+  // given
+  const typedData = createTypedData(chainId);
+
+  // when
+  const result = safeParseTypedData(typedData);
+
+  // then
+  expect(result.domain?.chainId).toBe(expected);
+  expect(typeof result.domain?.chainId).toBe('number');
+});
+```
+
+## Test Naming Conventions
+
+### Test Descriptions
+
+Use clear, descriptive test names that explain:
+1. What is being tested
+2. Under what conditions
+3. What the expected outcome is
+
+**Pattern**: `should [expected behavior] when [condition]`
+
+**Good examples:**
+```typescript
+✅ 'should return undefined when address is undefined'
+✅ 'should convert hexadecimal string to number'
+✅ 'should preserve other domain properties when converting chainId'
+✅ 'should handle checksummed addresses without changing case'
+```
+
+**Bad examples:**
+```typescript
+❌ 'test address'
+❌ 'it works'
+❌ 'returns true'
+❌ 'edge case'
+```
+
+### When using `it.each()`
+
+Use template literals with `$` to reference test data:
+
+```typescript
+✅ 'should return $expected when given $description'
+✅ 'should convert $description to number $expected'
+✅ 'should handle $input and return $output'
+```
+
+## Test Coverage Guidelines
+
+### What to Test
+
+1. **Happy Path**: Normal, expected use cases
+2. **Edge Cases**: Boundary conditions, empty values, null/undefined
+3. **Error Cases**: Invalid inputs, exceptions
+4. **Type Conversions**: String to number, different formats
+5. **Property Preservation**: Ensure unrelated data isn't modified
+6. **Integration Points**: How functions interact with dependencies
+
+### Example Test Scenarios
+
+For a function like `shortenAddress()`:
+
+```typescript
+// Edge cases - invalid inputs
+✅ undefined input
+✅ empty string
+✅ too-short addresses
+
+// Happy path - valid inputs
+✅ standard Ethereum address
+✅ with custom parameters
+✅ different parameter values
+
+// Special cases
+✅ checksummed addresses
+✅ property preservation
+```
+
+For a function like `safeParseTypedData()`:
+
+```typescript
+// Edge cases
+✅ no domain provided
+✅ no chainId provided
+
+// Type conversions
+✅ hexadecimal string → number
+✅ decimal string → number
+✅ number → number (pass-through)
+
+// Property preservation
+✅ other domain properties preserved
+```
+
+## Best Practices
+
+### 1. Keep Tests Simple and Focused
+
+Each test should verify ONE specific behavior:
+
+```typescript
+✅ Good - tests one thing
+it('should return undefined when address is undefined', () => {
+  const result = shortenAddress(undefined);
+  expect(result).toBeUndefined();
+});
+
+❌ Bad - tests multiple things
+it('should handle invalid inputs', () => {
+  expect(shortenAddress(undefined)).toBeUndefined();
+  expect(shortenAddress('')).toBeUndefined();
+  expect(shortenAddress('0x123')).toBe('0x123');
+  // Too many assertions in one test
+});
+```
+
+### 2. Use Descriptive Variable Names
+
+```typescript
+✅ Good
+const address = '0x1234567890123456789012345678901234567890';
+const expectedShortened = '0x123...67890';
+
+❌ Bad
+const a = '0x1234567890123456789012345678901234567890';
+const res = '0x123...67890';
+```
+
+### 3. Avoid Test Interdependence
+
+Tests should be independent and runnable in any order:
+
+```typescript
+✅ Good - each test is self-contained
+it('should convert hex string', () => {
+  const input = { chainId: '0x1' };
+  const result = parse(input);
+  expect(result.chainId).toBe(1);
+});
+
+it('should convert decimal string', () => {
+  const input = { chainId: '1' };
+  const result = parse(input);
+  expect(result.chainId).toBe(1);
+});
+
+❌ Bad - tests depend on shared state
+let sharedData;
+
+it('should setup data', () => {
+  sharedData = { chainId: '0x1' };
+});
+
+it('should use shared data', () => {
+  const result = parse(sharedData); // Depends on previous test
+  expect(result.chainId).toBe(1);
+});
+```
+
+### 4. Use Type Assertions When Necessary
+
+When testing with TypeScript, use type assertions to simulate different input types:
+
+```typescript
+const typedData = {
+  domain: {
+    chainId: '0x1' as unknown as number, // String passed as number
+  },
+  // ... rest of data
+} as unknown as TypedDataSigningRequest;
+```
+
+### 5. Test Real-World Scenarios
+
+Use realistic data in tests, preferably using viem's chain constants:
+
+```typescript
+import { mainnet, polygon, arbitrum, sophon } from 'viem/chains';
+
+✅ Good - use viem chain objects
+{ chain: mainnet, description: `${mainnet.name}` },
+{ chain: polygon, description: `${polygon.name}` },
+{ chain: arbitrum, description: `${arbitrum.name}` },
+{ chain: sophon, description: `${sophon.name}` },
+
+✅ Also acceptable - real chain IDs with comments
+{ chainId: 1, description: 'Ethereum' },
+{ chainId: 137, description: 'Polygon' },
+{ chainId: 42161, description: 'Arbitrum' },
+
+✅ Good - real addresses (use viem constants when available)
+import { zeroAddress } from 'viem';
+const emptyWallet = zeroAddress;
+const address = '0x5aAeb6053F3E94C9b9A09f33669435E7Ef1BeAed';
+
+❌ Bad - unrealistic or hardcoded data
+{ chainId: 999999999, description: 'fake chain' }
+const emptyWallet = '0x0000000000000000000000000000000000000000';
+```
+
+### 6. Group Related Assertions
+
+When testing multiple related properties, group them logically:
+
+```typescript
+it('should preserve other domain properties when converting chainId', () => {
+  // given
+  const typedData = createTypedData('0x1');
+
+  // when
+  const result = safeParseTypedData(typedData);
+
+  // then - group related domain properties
+  expect(result.domain?.name).toBe('Example Dapp');
+  expect(result.domain?.version).toBe('1');
+  expect(result.domain?.verifyingContract).toBe('0x1234...');
+  expect(result.domain?.chainId).toBe(1);
+});
+```
+
+### 7. Handle Edge Cases Explicitly
+
+Don't assume edge cases won't happen - test them:
+
+```typescript
+✅ Test edge cases explicitly
+it.each([
+  { address: undefined, expected: undefined },
+  { address: '', expected: undefined },
+  { address: '0x1', expected: '0x1' },
+])('should handle $description', ({ address, expected }) => {
+  expect(shortenAddress(address)).toBe(expected);
+});
+```
+
+### 8. Use Viem Constants Instead of Hardcoded Values
+
+Always prefer viem's built-in constants and chain definitions over hardcoded values for better readability and maintainability:
+
+**Addresses:**
+```typescript
+import { zeroAddress } from 'viem';
+
+✅ Good - use viem constants
+const emptyAddress = zeroAddress;  // '0x0000000000000000000000000000000000000000'
+
+❌ Bad - hardcoded values
+const emptyAddress = '0x0000000000000000000000000000000000000000';
+```
+
+**Chain IDs:**
+```typescript
+import { mainnet, polygon, arbitrum, sophon, sophonTestnet } from 'viem/chains';
+
+✅ Good - use chain objects
+const chainId = sophon.id;                    // Get chain ID from chain object
+const testChainId = sophonTestnet.id;         // For testnet
+const ethereumChainId = mainnet.id;           // For Ethereum mainnet
+
+❌ Bad - hardcoded chain IDs
+const chainId = 50104;                         // Sophon mainnet
+const testChainId = 531050104;                 // Sophon testnet
+const ethereumChainId = 1;                     // Ethereum
+```
+
+**Other Viem Constants:**
+```typescript
+import { zeroHash, maxUint256, parseEther, formatEther } from 'viem';
+
+✅ Good - use viem utilities
+const emptyHash = zeroHash;                    // '0x0000...0000' (32 bytes)
+const maxAmount = maxUint256;                  // 2^256 - 1
+const oneEther = parseEther('1');              // 1000000000000000000n
+const formatted = formatEther(balance);        // Human-readable format
+
+❌ Bad - hardcoded values
+const emptyHash = '0x0000000000000000000000000000000000000000000000000000000000000000';
+const maxAmount = BigInt('115792089237316195423570985008687907853269984665640564039457584007913129639935');
+const oneEther = BigInt('1000000000000000000');
+```
+
+**Complete Example:**
+```typescript
+import { describe, expect, it } from 'vitest';
+import { zeroAddress, parseEther } from 'viem';
+import { sophon, sophonTestnet } from 'viem/chains';
+import { transferFunds } from '../transfers';
+
+describe('Core > Transfers', () => {
+  it('should reject transfer to zero address', () => {
+    // given - use viem constants
+    const recipient = zeroAddress;
+    const amount = parseEther('1');
+
+    // when
+    const result = () => transferFunds(recipient, amount);
+
+    // then
+    expect(result).toThrow('Cannot transfer to zero address');
+  });
+
+  it.each([
+    { chain: sophon, description: 'Sophon mainnet' },
+    { chain: sophonTestnet, description: 'Sophon testnet' },
+  ])('should support transfers on $description', ({ chain }) => {
+    // given - use chain objects
+    const config = {
+      chainId: chain.id,
+      rpcUrl: chain.rpcUrls.default.http[0],
+    };
+
+    // when
+    const isSupported = isSupportedChain(config);
+
+    // then
+    expect(isSupported).toBe(true);
+  });
+});
+```
+
+**Benefits:**
+- 🔍 **Readability**: `sophon.id` is clearer than `50104`
+- 🛡️ **Type Safety**: Constants are properly typed
+- 🔧 **Maintainability**: Updates to chain configs happen in one place
+- 📚 **Documentation**: Constants are self-documenting
+- ✅ **Correctness**: Reduces risk of typos in long hex strings
+
+## Common Patterns
+
+### Pattern 1: Testing Conversions
+
+```typescript
+it.each([
+  { input: 'source1', expected: 'target1' },
+  { input: 'source2', expected: 'target2' },
+])('should convert $input to $expected', ({ input, expected }) => {
+  // given
+  const sourceValue = input;
+
+  // when
+  const result = converter(sourceValue);
+
+  // then
+  expect(result).toBe(expected);
+  expect(typeof result).toBe('expectedType');
+});
+```
+
+### Pattern 2: Testing Type Safety
+
+```typescript
+it('should return correct type', () => {
+  // given
+  const input = 'value';
+
+  // when
+  const result = functionUnderTest(input);
+
+  // then
+  expect(result).toBe('expected');
+  expect(typeof result).toBe('string'); // Verify type
+});
+```
+
+### Pattern 3: Testing Property Preservation
+
+```typescript
+it('should preserve unmodified properties', () => {
+  // given
+  const originalObject = {
+    modifiedProp: 'old',
+    unchangedProp1: 'value1',
+    unchangedProp2: 'value2',
+  };
+
+  // when
+  const result = transformer(originalObject);
+
+  // then
+  expect(result.modifiedProp).toBe('new');
+  expect(result.unchangedProp1).toBe('value1');
+  expect(result.unchangedProp2).toBe('value2');
+});
+```
+
+### Pattern 4: Testing Error Handling
+
+```typescript
+it('should throw error when invalid input provided', () => {
+  // given
+  const invalidInput = null;
+
+  // when/then
+  expect(() => functionUnderTest(invalidInput)).toThrow('Expected error message');
+});
+```
+
+## What to Avoid
+
+### ❌ Don't: Test Implementation Details
+
+Test behavior, not implementation:
+
+```typescript
+❌ Bad
+it('should call internal helper function', () => {
+  const spy = vi.spyOn(module, 'internalHelper');
+  publicFunction();
+  expect(spy).toHaveBeenCalled();
+});
+
+✅ Good
+it('should return correct result', () => {
+  const result = publicFunction();
+  expect(result).toBe(expectedValue);
+});
+```
+
+### ❌ Don't: Write Brittle Tests
+
+Avoid tests that break with minor, non-breaking changes:
+
+```typescript
+❌ Bad - tests exact object structure
+expect(result).toEqual({
+  prop1: value1,
+  prop2: value2,
+  internalProp: internalValue, // Breaks if internal prop changes
+});
+
+✅ Good - tests public API
+expect(result.prop1).toBe(value1);
+expect(result.prop2).toBe(value2);
+```
+
+### ❌ Don't: Use Magic Numbers/Strings
+
+Always use descriptive constants or viem's built-in constants:
+
+```typescript
+❌ Bad - magic numbers and hardcoded addresses
+expect(result.length).toBe(42);
+expect(recipient).toBe('0x0000000000000000000000000000000000000000');
+expect(chainId).toBe(50104);
+
+✅ Good - use constants and viem utilities
+import { zeroAddress } from 'viem';
+import { sophon } from 'viem/chains';
+
+const ETHEREUM_ADDRESS_LENGTH = 42;
+expect(result.length).toBe(ETHEREUM_ADDRESS_LENGTH);
+expect(recipient).toBe(zeroAddress);
+expect(chainId).toBe(sophon.id);
+```
+
+### ❌ Don't: Duplicate Test Logic
+
+Use `it.each()` instead of copying tests:
+
+```typescript
+❌ Bad - duplicated tests
+it('should handle case 1', () => {
+  expect(fn('input1')).toBe('output1');
+});
+
+it('should handle case 2', () => {
+  expect(fn('input2')).toBe('output2');
+});
+
+it('should handle case 3', () => {
+  expect(fn('input3')).toBe('output3');
+});
+
+✅ Good - parameterized test
+it.each([
+  { input: 'input1', expected: 'output1' },
+  { input: 'input2', expected: 'output2' },
+  { input: 'input3', expected: 'output3' },
+])('should handle $input', ({ input, expected }) => {
+  expect(fn(input)).toBe(expected);
+});
+```
+
+## Vitest-Specific Features
+
+### 1. Assertions
+
+Common Vitest assertions:
+
+```typescript
+expect(value).toBe(expected);              // Strict equality (===)
+expect(value).toEqual(expected);           // Deep equality
+expect(value).toBeUndefined();             // Check undefined
+expect(value).toBeNull();                  // Check null
+expect(value).toBeTruthy();                // Check truthy
+expect(value).toBeFalsy();                 // Check falsy
+expect(array).toHaveLength(3);             // Check array length
+expect(string).toContain('substring');     // Check substring
+expect(fn).toThrow('error message');       // Check thrown error
+expect(number).toBeGreaterThan(5);         // Numeric comparison
+expect(number).toBeLessThanOrEqual(10);    // Numeric comparison
+```
+
+### 2. Test Organization
+
+```typescript
+describe('Suite Name', () => {
+  // Runs before all tests in this suite
+  beforeAll(() => {
+    // One-time setup
+  });
+
+  // Runs before each test
+  beforeEach(() => {
+    // Per-test setup
+  });
+
+  // Runs after each test
+  afterEach(() => {
+    // Per-test cleanup
+  });
+
+  // Runs after all tests in this suite
+  afterAll(() => {
+    // One-time cleanup
+  });
+
+  it('test case', () => {
+    // test implementation
+  });
+});
+```
+
+### 3. Test Filtering
+
+```typescript
+it.only('runs only this test', () => {});     // Run only this test
+it.skip('skips this test', () => {});         // Skip this test
+it.todo('implement this test');                // Mark as TODO
+```
+
+## Complete Example
+
+Here's a complete example following all standards:
+
+```typescript
+import { describe, expect, it } from 'vitest';
+import { shortenAddress } from '../formatters';
+
+describe('Core > Formatters', () => {
+  describe('shortenAddress', () => {
+    // Edge cases - use it.each for similar scenarios
+    it.each([
+      { address: undefined, expected: undefined, description: 'undefined address' },
+      { address: '' as `0x${string}`, expected: undefined, description: 'empty string' },
+      { address: '0x123' as `0x${string}`, expected: '0x123', description: 'short address' },
+    ])('should return $expected when given $description', ({ address, expected }) => {
+      // given
+      const input = address;
+
+      // when
+      const result = shortenAddress(input);
+
+      // then
+      expect(result).toBe(expected);
+    });
+
+    // Happy path - standard use case
+    it('should shorten a valid Ethereum address with default length', () => {
+      // given
+      const address = '0x1234567890123456789012345678901234567890' as `0x${string}`;
+
+      // when
+      const result = shortenAddress(address);
+
+      // then
+      expect(result).toBe('0x123...67890');
+    });
+
+    // Custom parameters
+    it('should shorten a valid Ethereum address with custom length', () => {
+      // given
+      const address = '0x1234567890123456789012345678901234567890' as `0x${string}`;
+      const length = 5;
+
+      // when
+      const result = shortenAddress(address, length);
+
+      // then
+      expect(result).toBe('0x12345...67890');
+    });
+
+    // Special case - checksummed addresses
+    it('should handle checksummed addresses without changing case', () => {
+      // given
+      const address = '0x5aAeb6053F3E94C9b9A09f33669435E7Ef1BeAed' as `0x${string}`;
+
+      // when
+      const result = shortenAddress(address);
+
+      // then
+      expect(result).toBe('0x5aA...BeAed');
+    });
+  });
+});
+```
+
+## Summary Checklist
+
+Before submitting tests, ensure:
+
+- [ ] All tests follow Given/When/Then pattern
+- [ ] Test descriptions are clear and descriptive
+- [ ] Similar test cases use `it.each()`
+- [ ] Tests are independent and can run in any order
+- [ ] Edge cases are covered (null, undefined, empty, invalid)
+- [ ] Happy path is tested
+- [ ] Real-world data is used where applicable
+- [ ] Type safety is verified where relevant
+- [ ] No magic numbers or strings - use viem constants instead
+- [ ] Viem constants used for addresses (e.g., `zeroAddress`)
+- [ ] Chain IDs use chain objects (e.g., `sophon.id`, `mainnet.id`)
+- [ ] Viem utilities used for parsing/formatting (e.g., `parseEther`, `formatEther`)
+- [ ] Tests focus on behavior, not implementation
+- [ ] No test duplication
+- [ ] Proper use of nested `describe` blocks
+
+---
+
+**Remember**: Good tests are documentation. They should clearly communicate what the code does and how it should behave.

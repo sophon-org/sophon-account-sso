@@ -7,8 +7,9 @@ import {
 import {
   AccountAuthAPIURL,
   AccountServerURL,
+  type ChainId,
   type DataScopes,
-  type SophonNetworkType,
+  SophonChains,
 } from '@sophon-labs/account-core';
 import type { EIP1193Provider } from '@sophon-labs/account-provider';
 import {
@@ -47,7 +48,7 @@ export interface SophonContextConfig {
   updateRefreshToken: (data: SophonJWTToken) => void;
   connect: () => Promise<readonly Address[]>;
   disconnect: () => Promise<void>;
-  network: SophonNetworkType;
+  chainId: ChainId;
   connector: Connector;
   updateConnector: (connector: Connector) => void;
   communicator: Communicator;
@@ -63,7 +64,7 @@ export const SophonContext = createContext<SophonContextConfig>({
     return [];
   },
   disconnect: async () => {},
-  network: 'testnet',
+  chainId: sophonTestnet.id,
   connector: null,
   updateConnector: () => {},
   communicator: undefined,
@@ -75,22 +76,22 @@ export interface SophonAccount {
 
 export const SophonContextProvider = ({
   children,
-  network = 'testnet',
+  chainId = sophonTestnet.id,
   authServerUrl,
   partnerId,
   // biome-ignore lint/correctness/noUnusedFunctionParameters: placeholder for future implementation
   dataScopes = [],
 }: {
   children: React.ReactNode;
-  network: SophonNetworkType;
+  chainId: ChainId;
   authServerUrl?: string;
   partnerId: string;
   dataScopes?: DataScopes[];
 }) => {
   const serverUrl = useMemo(() => {
-    const baseUrl = authServerUrl ?? AccountServerURL[network];
+    const baseUrl = authServerUrl ?? AccountServerURL[chainId];
     return `${baseUrl}/${partnerId}`;
-  }, [authServerUrl, network, partnerId]);
+  }, [authServerUrl, chainId, partnerId]);
 
   const communicator = useMemo(() => {
     return new PopupCommunicator(serverUrl, {
@@ -130,10 +131,7 @@ export const SophonContextProvider = ({
     }
   }, []);
 
-  const chain = useMemo(
-    () => (network === 'mainnet' ? sophon : sophonTestnet),
-    [network],
-  );
+  const chain = useMemo(() => SophonChains[chainId], [chainId]);
 
   const updateAccessToken = useCallback((newToken: SophonJWTToken) => {
     setCookieAuthToken(newToken.value);
@@ -205,7 +203,7 @@ export const SophonContextProvider = ({
 
     // API logout in background
     try {
-      const baseAuthAPIURL = AccountAuthAPIURL[network];
+      const baseAuthAPIURL = AccountAuthAPIURL[chainId];
 
       if (refreshTokenSerialized) {
         const refreshToken = JSON.parse(refreshTokenSerialized);
@@ -221,11 +219,11 @@ export const SophonContextProvider = ({
       // Don't block disconnect for any errors
       console.warn('Background logout API call failed:', error);
     }
-  }, [connector, network]);
+  }, [connector, chainId]);
 
   const contextValue = useMemo<SophonContextConfig>(
     () => ({
-      mainnet: network === 'mainnet',
+      mainnet: chainId === sophon.id,
       chain,
       authServerUrl: serverUrl,
       account,
@@ -233,7 +231,7 @@ export const SophonContextProvider = ({
       accessToken: accessToken,
       disconnect,
       partnerId,
-      network,
+      chainId,
       updateAccessToken,
       connector,
       connect,
@@ -244,7 +242,7 @@ export const SophonContextProvider = ({
       updateRefreshToken,
     }),
     [
-      network,
+      chainId,
       serverUrl,
       account,
       chain,

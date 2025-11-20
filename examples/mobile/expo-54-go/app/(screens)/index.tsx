@@ -1,16 +1,14 @@
 import { shortenAddress } from '@sophon-labs/account-core';
 import {
+  ConnectButton,
   useSophonAccount,
   useSophonClient,
+  useSophonConsent,
 } from '@sophon-labs/account-react-native';
+import * as ScreenOrientation from 'expo-screen-orientation';
 import { useEffect, useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
-import {
-  erc20Abi,
-  parseEther,
-  parseUnits,
-  UserRejectedRequestError,
-} from 'viem';
+import { erc20Abi, parseEther, parseUnits } from 'viem';
 import { sophonTestnet } from 'viem/chains';
 import { nftAbi } from '@/abis/nft';
 import { unverifiedAbi } from '@/abis/unverified';
@@ -21,13 +19,16 @@ import { TestDashboard } from '@/components/test-dashboard';
 import { Button } from '@/components/ui/button';
 
 export default function HomeScreen() {
-  const { initialized, connect, isConnected, account, logout, isConnecting } =
-    useSophonAccount();
+  const { initialized, isConnected, account, logout } = useSophonAccount();
+
+  useEffect(() => {}, [isConnected, initialized]);
 
   useEffect(() => {
-    console.log('is connected', isConnected);
-    console.log('is initialized', initialized);
-  }, [isConnected, initialized]);
+    const unlockScreenOerientation = async () => {
+      await ScreenOrientation.unlockAsync();
+    };
+    unlockScreenOerientation();
+  }, []);
 
   const { walletClient } = useSophonClient();
   const [signature, setSignature] = useState<string>();
@@ -35,21 +36,7 @@ export default function HomeScreen() {
   const [transaction, setTransaction] = useState<string>();
   const [error, setError] = useState<string>('');
   const [showTestDashboard, setShowTestDashboard] = useState(false);
-
-  useEffect(() => {
-    console.log('accountError', error);
-  }, [error]);
-
-  const handleAuthenticate = async () => {
-    setError('');
-    await connect().catch((e) => {
-      console.log(e);
-      if (e.code !== UserRejectedRequestError.code) {
-        // non user rejected errors
-        setError(e.details ?? e.message);
-      }
-    });
-  };
+  const { requestConsent, hasConsent } = useSophonConsent();
 
   if (!initialized) {
     return (
@@ -80,15 +67,17 @@ export default function HomeScreen() {
   }
 
   return (
-    <ScrollView>
-      <View className="flex-1 items-center justify-center bg-white py-8 h-screen">
-        {!isConnected && (
-          <Button onPress={handleAuthenticate} disabled={isConnecting}>
-            <Text className="text-xl font-bold text-white">
-              {isConnecting ? 'Connecting...' : 'Authenticate'}
-            </Text>
-          </Button>
-        )}
+    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: 4,
+          backgroundColor: 'white',
+        }}
+      >
+        {!isConnected && <ConnectButton />}
         {error && (
           <Text className="text-xl mt-2 font-bold text-red-500 p-2 mb-4 w-2/3 text-center">
             {error}
@@ -100,7 +89,10 @@ export default function HomeScreen() {
               {shortenAddress(account?.address)}
             </Text>
             <Button
-              onPress={logout}
+              onPress={async () => {
+                console.log('logging out', account?.address);
+                await logout();
+              }}
               className="mt-4 bg-red-500/90 w-full max-w-[80%]"
             >
               <Text className="text-white font-bold">Logout</Text>
@@ -119,6 +111,27 @@ export default function HomeScreen() {
           <View className="mt-4 w-full max-w-[80%]">
             <JWTPanel />
           </View>
+        )}
+        {isConnected && (
+          <Button
+            className="mt-4 bg-purple-500/90 w-full max-w-[80%]"
+            onPress={async () => {
+              try {
+                setError('');
+                const response = await requestConsent();
+                console.log('consent', response);
+              } catch (e: any) {
+                setError(e.details ?? e.message);
+              }
+            }}
+          >
+            <Text className="text-xl font-bold text-white">📝 Consent</Text>
+          </Button>
+        )}
+        {isConnected && (
+          <Text className="text-xs my-4 text-black max-w-[80%]">
+            {hasConsent ? 'Consent granted' : 'Consent denied'}
+          </Text>
         )}
         {isConnected && (
           <>

@@ -1,8 +1,5 @@
 import type { Communicator } from '@sophon-labs/account-communicator';
-import {
-  AccountServerURL,
-  type SophonNetworkType,
-} from '@sophon-labs/account-core';
+import { AccountServerURL, type ChainId } from '@sophon-labs/account-core';
 import {
   createSophonEIP1193Provider,
   type EIP1193Provider,
@@ -26,14 +23,19 @@ import {
 } from 'viem';
 import { sophon, sophonTestnet } from 'viem/chains';
 import { eip712WalletActions } from 'viem/zksync';
+import { SophonConnectorMetadata } from './constants';
+
+export type SophonConnectorConfigType = Parameters<
+  ReturnType<typeof createSophonConnector>
+>[0];
 
 export const createSophonConnector = (
-  network: SophonNetworkType = 'testnet',
+  chainId: ChainId = sophonTestnet.id,
   partnerId?: string,
   customAuthServerUrl?: string,
   communicator?: Communicator,
 ) => {
-  const authServerUrl = customAuthServerUrl ?? AccountServerURL[network];
+  const authServerUrl = customAuthServerUrl ?? AccountServerURL[chainId];
   let walletProvider: EIP1193Provider | undefined;
 
   let accountsChanged: Connector['onAccountsChanged'] | undefined;
@@ -59,13 +61,10 @@ export const createSophonConnector = (
   };
 
   return createConnector<EIP1193Provider>((config) => ({
-    id:
-      network === 'mainnet'
-        ? 'xyz.sophon.account'
-        : 'xyz.sophon.staging.account',
-    name: network === 'mainnet' ? 'Sophon Account' : 'Sophon Account Test',
-    icon: 'https://sophon.xyz/favicon.ico',
-    type: 'zksync-sso',
+    id: SophonConnectorMetadata[chainId].id,
+    name: SophonConnectorMetadata[chainId].name,
+    icon: SophonConnectorMetadata[chainId].icon,
+    type: SophonConnectorMetadata[chainId].type,
 
     async connect({ chainId } = {}) {
       try {
@@ -146,7 +145,7 @@ export const createSophonConnector = (
 
       const walletClient = createWalletClient({
         account: accounts[0] as Address,
-        chain: network === 'mainnet' ? sophon : sophonTestnet,
+        chain: chainId === sophon.id ? sophon : sophonTestnet,
         transport: custom(walletProvider),
       })
         .extend(publicActions)
@@ -158,7 +157,7 @@ export const createSophonConnector = (
     async getProvider() {
       if (!walletProvider) {
         walletProvider = createSophonEIP1193Provider(
-          network,
+          chainId,
           partnerId,
           authServerUrl,
           communicator,
@@ -200,7 +199,6 @@ export const createSophonConnector = (
     },
     async onDisconnect(error) {
       config.emitter.emit('disconnect');
-      // if (error instanceof EthereumProviderError && error.code === 4900) return; // User initiated
       console.error('Account disconnected', error);
     },
   }));

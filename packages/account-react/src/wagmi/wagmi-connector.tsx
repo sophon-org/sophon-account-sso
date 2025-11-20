@@ -10,16 +10,16 @@ export const SophonWagmiConnector = ({
   children: React.ReactNode;
 }) => {
   const config = useConfig();
-  const { partnerId, authServerUrl, network, updateConnector, communicator } =
+  const { partnerId, authServerUrl, chainId, updateConnector, communicator } =
     useSophonContext();
   const connector = useMemo(() => {
     return createSophonConnector(
-      network,
+      chainId,
       partnerId,
       authServerUrl,
       communicator,
     );
-  }, [partnerId, network, authServerUrl, communicator]);
+  }, [partnerId, chainId, authServerUrl, communicator]);
 
   const internalConnector = useMemo(() => {
     return config._internal.connectors.setup(connector);
