@@ -6,6 +6,7 @@ import { eip712WalletActions } from 'viem/zksync';
 import { useWalletClient } from 'wagmi';
 import { deployModularAccount } from 'zksync-sso/client';
 import { registerNewPasskey } from 'zksync-sso/client/passkey';
+import { trackAccountCreated } from '@/lib/analytics';
 import { CONTRACTS, SOPHON_VIEM_CHAIN } from '@/lib/constants';
 import { deployAccount } from '@/service/account.service';
 import { getsSmartAccounts } from '@/service/smart-account.server';
@@ -77,6 +78,7 @@ export const useAccountCreate = () => {
             },
           });
 
+          trackAccountCreated(deployedAccount.address, 'passkey', 'passkey');
           setSuccess(true);
         } catch (deployError: unknown) {
           console.error('deployModularAccount failed:', deployError);
@@ -138,6 +140,7 @@ export const useAccountCreate = () => {
               privateKey: null,
             },
           });
+          trackAccountCreated(smartAccountAddress, 'eoa', 'wallet');
           setSuccess(true);
         }
       } catch (checkError) {

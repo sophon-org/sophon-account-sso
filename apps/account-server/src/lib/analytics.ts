@@ -21,6 +21,22 @@ const getGlobalProperties = () => {
   return properties;
 };
 
+/**
+ * Automatically include partner_id in all events and group them for analytics
+ */
+export const registerPostHogPartnerId = (partnerId: string) => {
+  if (!partnerId || typeof window === 'undefined') {
+    return;
+  }
+
+  try {
+    posthog.register({ partner_id: partnerId });
+    posthog.group('partner', partnerId);
+  } catch (error) {
+    console.warn('Failed to register partner_id with PostHog:', error);
+  }
+};
+
 export const identifyUser = (
   smartContractAddress: string,
   properties?: {
@@ -249,6 +265,27 @@ export const trackConsentDismissed = (
   posthog.capture('consent_dismissed', {
     options_selected: optionsSelected,
     dismiss_reason: dismissReason,
+    ...getGlobalProperties(),
+  });
+};
+
+export const trackPageReady = () => {
+  posthog.capture('page_ready', {
+    timestamp: new Date().toISOString(),
+    ...getGlobalProperties(),
+  });
+};
+
+export const trackAccountCreated = (
+  accountAddress: string,
+  accountType: 'passkey' | 'eoa',
+  authMethod?: 'wallet' | 'passkey' | 'social',
+) => {
+  posthog.capture('account_created', {
+    account_address: accountAddress,
+    account_type: accountType,
+    auth_method: authMethod,
+    timestamp: new Date().toISOString(),
     ...getGlobalProperties(),
   });
 };

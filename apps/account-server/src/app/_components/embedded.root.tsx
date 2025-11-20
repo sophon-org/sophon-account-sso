@@ -12,6 +12,7 @@ import { logWithUser } from '@/debug/log';
 import { env } from '@/env';
 import { useEventHandler } from '@/events/hooks';
 import { useAccountContext } from '@/hooks/useAccountContext';
+import { usePostHogPartnerRegistration } from '@/hooks/usePostHogPartnerRegistration';
 import { useRequestDrawer } from '@/hooks/useRequestDrawer';
 import { useUserIdentification } from '@/hooks/useUserIdentification';
 import { getSocialProviderFromURL } from '@/lib/social-provider';
@@ -32,6 +33,7 @@ interface EmbeddedRootProps {
 }
 
 export default function EmbeddedRoot({ partnerId, scopes }: EmbeddedRootProps) {
+  usePostHogPartnerRegistration(partnerId);
   const [open, setOpen] = useState(!!getSocialProviderFromURL());
   const state = MainStateMachineContext.useSelector((state) => state);
   const actorRef = MainStateMachineContext.useActorRef();

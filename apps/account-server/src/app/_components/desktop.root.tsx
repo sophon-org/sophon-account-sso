@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { MainStateMachineContext } from '@/context/state-machine-context';
 import { sendMessage } from '@/events';
 import { useAccountContext } from '@/hooks/useAccountContext';
+import { usePostHogPartnerRegistration } from '@/hooks/usePostHogPartnerRegistration';
 import { useRequestDrawer } from '@/hooks/useRequestDrawer';
 import { useUserIdentification } from '@/hooks/useUserIdentification';
 import { useWalletConnection } from '@/hooks/useWalletConnection';
@@ -29,6 +30,7 @@ interface DesktopRootProps {
 }
 
 export default function DesktopRoot({ partnerId, scopes }: DesktopRootProps) {
+  usePostHogPartnerRegistration(partnerId);
   const state = MainStateMachineContext.useSelector((state) => state);
   const actorRef = MainStateMachineContext.useActorRef();
 
