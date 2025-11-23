@@ -6,16 +6,22 @@ import type { Address } from "viem";
 import { zeroAddress } from "viem";
 import { ContractService } from "../contract.service";
 
-jest.mock("@sophon-labs/account-core", () => ({
-	CHAIN_CONTRACTS: {
-		531050104: {
-			accountFactory: "0xFactoryAddress" as Address,
-			accountPaymaster: "0xPaymasterAddress" as Address,
+jest.mock("@sophon-labs/account-core", () => {
+	const { sophonTestnet } = jest.requireActual("viem/chains");
+	return {
+		CHAIN_CONTRACTS: {
+			531050104: {
+				accountFactory: "0xFactoryAddress" as Address,
+				accountPaymaster: "0xPaymasterAddress" as Address,
+			},
 		},
-	},
-	getDeployedSmartContractAddress: jest.fn(),
-	SOPHON_SALT_PREFIX: "sophon-salt",
-}));
+		getDeployedSmartContractAddress: jest.fn(),
+		SOPHON_SALT_PREFIX: "sophon-salt",
+		SophonChains: {
+			531050104: sophonTestnet,
+		},
+	};
+});
 
 jest.mock("zksync-sso/client", () => ({
 	deployModularAccount: jest.fn(),
@@ -83,7 +89,10 @@ describe("ContractService", () => {
 			const invalidAddress = "" as Address;
 
 			// when
-			const promise = contractService.getContractByOwner(invalidAddress);
+			const promise = contractService.getContractByOwner(
+				invalidAddress,
+				531050104,
+			);
 
 			// then
 			await expect(promise).rejects.toThrow(BadRequestException);
@@ -95,7 +104,10 @@ describe("ContractService", () => {
 			const invalidAddress = "not-an-address" as Address;
 
 			// when
-			const promise = contractService.getContractByOwner(invalidAddress);
+			const promise = contractService.getContractByOwner(
+				invalidAddress,
+				531050104,
+			);
 
 			// then
 			await expect(promise).rejects.toThrow(BadRequestException);
@@ -114,11 +126,15 @@ describe("ContractService", () => {
 			);
 
 			// when
-			const result = await contractService.getContractByOwner(validAddress);
+			const result = await contractService.getContractByOwner(
+				validAddress,
+				531050104,
+			);
 
 			// then
 			expect(hyperindexServiceMock.getK1OwnerStateByOwner).toHaveBeenCalledWith(
 				validAddress,
+				531050104,
 			);
 			expect(
 				hyperindexServiceMock.getK1OwnerStateByOwner,
@@ -131,11 +147,15 @@ describe("ContractService", () => {
 			hyperindexServiceMock.getK1OwnerStateByOwner.mockResolvedValue([]);
 
 			// when
-			const result = await contractService.getContractByOwner(validAddress);
+			const result = await contractService.getContractByOwner(
+				validAddress,
+				531050104,
+			);
 
 			// then
 			expect(hyperindexServiceMock.getK1OwnerStateByOwner).toHaveBeenCalledWith(
 				validAddress,
+				531050104,
 			);
 			expect(
 				hyperindexServiceMock.getK1OwnerStateByOwner,
@@ -150,7 +170,10 @@ describe("ContractService", () => {
 			const invalidAddress = "" as Address;
 
 			// when
-			const promise = contractService.deployContractForOwner(invalidAddress);
+			const promise = contractService.deployContractForOwner(
+				invalidAddress,
+				531050104,
+			);
 
 			// then
 			await expect(promise).rejects.toThrow(BadRequestException);
@@ -162,7 +185,10 @@ describe("ContractService", () => {
 			const invalidAddress = "invalid" as Address;
 
 			// when
-			const promise = contractService.deployContractForOwner(invalidAddress);
+			const promise = contractService.deployContractForOwner(
+				invalidAddress,
+				531050104,
+			);
 
 			// then
 			await expect(promise).rejects.toThrow(BadRequestException);
@@ -181,11 +207,15 @@ describe("ContractService", () => {
 			);
 
 			// when
-			const result = await contractService.deployContractForOwner(validAddress);
+			const result = await contractService.deployContractForOwner(
+				validAddress,
+				531050104,
+			);
 
 			// then
 			expect(hyperindexServiceMock.getK1OwnerStateByOwner).toHaveBeenCalledWith(
 				validAddress,
+				531050104,
 			);
 			expect(result).toEqual({
 				contracts: [deployedAddress],
@@ -210,11 +240,15 @@ describe("ContractService", () => {
 			});
 
 			// when
-			const result = await contractService.deployContractForOwner(validAddress);
+			const result = await contractService.deployContractForOwner(
+				validAddress,
+				531050104,
+			);
 
 			// then
 			expect(hyperindexServiceMock.getK1OwnerStateByOwner).toHaveBeenCalledWith(
 				validAddress,
+				531050104,
 			);
 			expect(getDeployedSmartContractAddress).toHaveBeenCalledWith(
 				expect.objectContaining({ id: sophonTestnet.id }),
@@ -249,11 +283,15 @@ describe("ContractService", () => {
 			});
 
 			// when
-			const result = await contractService.deployContractForOwner(validAddress);
+			const result = await contractService.deployContractForOwner(
+				validAddress,
+				531050104,
+			);
 
 			// then
 			expect(hyperindexServiceMock.getK1OwnerStateByOwner).toHaveBeenCalledWith(
 				validAddress,
+				531050104,
 			);
 			expect(getDeployedSmartContractAddress).toHaveBeenCalledWith(
 				expect.objectContaining({ id: sophonTestnet.id }),

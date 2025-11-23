@@ -24,16 +24,18 @@ export class ContractController {
 	})
 	@ApiQuery({
 		name: "chainId",
-		description: "Chain ID to query contracts on",
-		example: "50104",
-		required: true,
+		description:
+			"Chain ID to query contracts on (defaults to CHAIN_ID env var if not provided)",
+		example: 50104,
+		required: false, // Optional for backward compatibility
 	})
 	@ApiOkResponse({ type: String, isArray: true })
 	async byOwner(
 		@Param("owner") owner: Address,
-		@Query("chainId", ParseIntPipe) chainId: number,
+		@Query("chainId", ParseIntPipe) chainId?: number,
 	): Promise<Address[]> {
-		return this.contractService.getContractByOwner(owner, chainId);
+		const effectiveChainId = chainId ?? Number(process.env.CHAIN_ID ?? 50104);
+		return this.contractService.getContractByOwner(owner, effectiveChainId);
 	}
 
 	@Post(":owner")
@@ -44,15 +46,17 @@ export class ContractController {
 	})
 	@ApiQuery({
 		name: "chainId",
-		description: "Chain ID to deploy contract on",
+		description:
+			"Chain ID to deploy contract on (defaults to CHAIN_ID env var if not provided)",
 		example: 50104,
-		required: true,
+		required: false, // Optional for backward compatibility
 	})
 	@ApiOkResponse({ type: ContractDeployResponse })
 	async deploy(
 		@Param("owner") owner: Address,
-		@Query("chainId", ParseIntPipe) chainId: number,
+		@Query("chainId", ParseIntPipe) chainId?: number,
 	) {
-		return this.contractService.deployContractForOwner(owner, chainId);
+		const effectiveChainId = chainId ?? Number(process.env.CHAIN_ID ?? 50104);
+		return this.contractService.deployContractForOwner(owner, effectiveChainId);
 	}
 }

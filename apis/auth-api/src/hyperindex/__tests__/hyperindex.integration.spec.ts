@@ -1,6 +1,5 @@
 import { Test } from "@nestjs/testing";
 import { LoggerModule } from "nestjs-pino";
-import { hyperindexConfig } from "src/config/hyperindex.config";
 import { HyperindexService } from "src/hyperindex/hyperindex.service";
 
 const loggerModule = LoggerModule.forRoot({ pinoHttp: { enabled: false } });
@@ -35,17 +34,7 @@ describe("HyperindexService (integration)", () => {
 
 		const moduleRef = await Test.createTestingModule({
 			imports: [loggerModule],
-			providers: [
-				HyperindexService,
-				{
-					provide: hyperindexConfig.KEY,
-					useValue: {
-						graphqlUrl: url,
-						apiKey,
-						timeoutMs: svcTimeoutMs,
-					},
-				},
-			],
+			providers: [HyperindexService],
 		}).compile();
 
 		service = moduleRef.get(HyperindexService);
@@ -127,7 +116,7 @@ describe("HyperindexService (integration)", () => {
 		async () => {
 			console.time("[hyperindex:test] total");
 
-			const rows = await service.getK1OwnerStateByOwner(TEST_OWNER);
+			const rows = await service.getK1OwnerStateByOwner(TEST_OWNER, 531050104);
 
 			console.log("[hyperindex:test] rows.length =", rows.length);
 

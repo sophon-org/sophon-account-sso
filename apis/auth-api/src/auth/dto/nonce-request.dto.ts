@@ -50,12 +50,13 @@ export class NonceRequestDto {
 	@IsNotEmpty()
 	userId?: string; // ← optional
 
-	@ApiProperty({
-		description: "Chain ID for the authentication request",
+	@ApiPropertyOptional({
+		description: "Chain ID for the authentication request (defaults to CHAIN_ID env var if not provided)",
 		example: 531050104,
 		examples: [50104, 531050104],
 	})
+	@IsOptional()
 	@IsInt()
-	@IsNotEmpty()
-	chainId!: number;
+	// @IsNotEmpty() // Temporarily commented for backward compatibility
+	chainId?: number;
 }

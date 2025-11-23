@@ -61,14 +61,14 @@ export class ContractService {
 			return this.getContractByOwnerBiconomy(address);
 		}
 
-		return this.getContractByOwnerZkSync(address);
+		return this.getContractByOwnerZkSync(address, chainId);
 	}
 
 	/**
 	 * Fetch the deployed contract address for zkSync chains using Hyperindex
 	 */
-	private async getContractByOwnerZkSync(owner: Address): Promise<Address[]> {
-		const rows = await this.hyperindex.getK1OwnerStateByOwner(owner);
+	private async getContractByOwnerZkSync(owner: Address, chainId: number): Promise<Address[]> {
+		const rows = await this.hyperindex.getK1OwnerStateByOwner(owner, chainId);
 
 		this.logger.log(
 			{

@@ -90,12 +90,14 @@ export class AuthController {
 		@Res() res: Response,
 		@Req() req: Request,
 	) {
+		const effectiveChainId =
+			body.chainId ?? Number(process.env.CHAIN_ID ?? 50104);
 		const ci = clientInfo(req);
 		this.logger.info(
 			{
 				evt: "auth.verify.attempt",
 				address: body.address,
-				chainId: body.chainId,
+				chainId: effectiveChainId,
 				hasTypedData: Boolean(body.typedData),
 				hasSignature: Boolean(body.signature),
 				hasNonce: Boolean(body.nonceToken),
@@ -116,7 +118,7 @@ export class AuthController {
 				body.typedData,
 				body.signature,
 				body.nonceToken,
-				body.chainId,
+				effectiveChainId,
 				ci,
 				body.ownerAddress,
 				body.audience,
@@ -127,7 +129,7 @@ export class AuthController {
 				{
 					evt: "auth.verify.success",
 					address: body.address,
-					chainId: body.chainId,
+					chainId: effectiveChainId,
 					sid,
 					accessTokenExp: accessTokenExpiresAt,
 					refreshTokenExp: refreshTokenExpiresAt,
