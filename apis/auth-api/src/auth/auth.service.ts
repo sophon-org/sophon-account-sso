@@ -8,6 +8,7 @@ import {
 	UnauthorizedException,
 } from "@nestjs/common";
 import { ConfigType } from "@nestjs/config";
+import { parseChainId, SophonChains } from "@sophon-labs/account-core";
 import jwt, {
 	JsonWebTokenError,
 	type JwtPayload,
@@ -17,9 +18,7 @@ import jwt, {
 import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
 import { toConsentClaims } from "src/consents/consent-claims.util";
 import { ConsentsService } from "src/consents/consents.service";
-import { getChainById, SupportedChainId } from "src/utils/chain";
 import { Address, type TypedDataDefinition, verifyTypedData } from "viem";
-import { sophon, sophonTestnet } from "viem/chains";
 import { JwtKeysService } from "../aws/jwt-keys.service";
 import { authConfig } from "../config/auth.config";
 import {
@@ -169,7 +168,7 @@ export class AuthService {
 			throw new ForbiddenException("audience mismatch");
 		}
 
-		const network = getChainById(process.env.CHAIN_ID as SupportedChainId);
+		const network = SophonChains[parseChainId(process.env.CHAIN_ID)];
 
 		let isValid = false;
 		// with the new blockchain comming, for now, if we receive an owner address,

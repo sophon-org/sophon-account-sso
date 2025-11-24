@@ -4,16 +4,14 @@ import {
 	deployBiconomyAccount,
 	getBiconomyAccountsByOwner,
 	getDeployedSmartContractAddress,
+	isOsChainId,
+	parseChainId,
 	SOPHON_SALT_PREFIX,
+	SophonChains,
 } from "@sophon-labs/account-core";
 import { SecretsService } from "src/aws/secrets.service";
 import { HyperindexService } from "src/hyperindex/hyperindex.service";
 import { normalizeAndValidateAddress } from "src/utils/address";
-import {
-	getChainById,
-	isBiconomyChain,
-	type SupportedChainId,
-} from "src/utils/chain";
 import {
 	Address,
 	createWalletClient,
@@ -47,7 +45,7 @@ export class ContractService {
 		}
 
 		const address = normalizeAndValidateAddress(owner);
-		const chainId = process.env.CHAIN_ID as SupportedChainId;
+		const chainId = parseChainId(process.env.CHAIN_ID);
 
 		this.logger.log(
 			{ evt: "contract.by-owner.request", owner: address, chainId },
@@ -55,7 +53,7 @@ export class ContractService {
 		);
 
 		// Route to appropriate implementation based on chain
-		if (isBiconomyChain(chainId)) {
+		if (isOsChainId(chainId)) {
 			return this.getContractByOwnerBiconomy(address);
 		}
 
@@ -80,10 +78,9 @@ export class ContractService {
 	 * Fetch the deployed contract address for Biconomy chains (no Hyperindex)
 	 */
 	private async getContractByOwnerBiconomy(owner: Address): Promise<Address[]> {
-		const chainId = process.env.CHAIN_ID as SupportedChainId;
-		const chain = getChainById(chainId);
+		const chainId = parseChainId(process.env.CHAIN_ID);
 
-		const accounts = await getBiconomyAccountsByOwner(chain.id, owner);
+		const accounts = await getBiconomyAccountsByOwner(chainId, owner);
 
 		this.logger.log(
 			{
@@ -111,7 +108,7 @@ export class ContractService {
 		}
 
 		const ownerAddress = normalizeAndValidateAddress(owner);
-		const chainId = process.env.CHAIN_ID as SupportedChainId;
+		const chainId = parseChainId(process.env.CHAIN_ID);
 
 		this.logger.log(
 			{ evt: "me.contract.deploy.request", owner: ownerAddress, chainId },
@@ -119,7 +116,7 @@ export class ContractService {
 		);
 
 		// Route to appropriate implementation based on chain
-		if (isBiconomyChain(chainId)) {
+		if (isOsChainId(chainId)) {
 			return this.deployContractForOwnerBiconomy(ownerAddress);
 		}
 
@@ -132,7 +129,7 @@ export class ContractService {
 	private async deployContractForOwnerZkSync(
 		owner: Address,
 	): Promise<ContractDeployResponse> {
-		const chainId = process.env.CHAIN_ID as SupportedChainId;
+		const chainId = parseChainId(process.env.CHAIN_ID);
 
 		// sanity check
 		const existingContracts = await this.getContractByOwnerZkSync(owner);
@@ -144,7 +141,7 @@ export class ContractService {
 			};
 		}
 
-		const chain = getChainById(chainId);
+		const chain = SophonChains[chainId];
 		const secrets = await this.secretsService.loadAWSSecrets();
 		const deployerAccount = privateKeyToAccount(secrets.deployer.privateKey);
 
@@ -192,8 +189,7 @@ export class ContractService {
 	private async deployContractForOwnerBiconomy(
 		owner: Address,
 	): Promise<ContractDeployResponse> {
-		const chainId = process.env.CHAIN_ID as SupportedChainId;
-		const chain = getChainById(chainId);
+		const chainId = parseChainId(process.env.CHAIN_ID);
 
 		// Check if already deployed (no Hyperindex, go straight to on-chain check)
 		const existingContracts = await this.getContractByOwnerBiconomy(owner);
@@ -210,7 +206,7 @@ export class ContractService {
 		this.logger.log("Deploying contract with Biconomy Nexus");
 
 		const result = await deployBiconomyAccount(
-			chain.id,
+			chainId,
 			owner,
 			"0x0a64c2dbb70fb9059a354312467af1a5a6d4e041b67bcbebc11b1d7492d19142",
 			"", // Empty string for sophonName (SNS not implemented yet)
