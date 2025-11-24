@@ -49,11 +49,6 @@ export const useFlowManager = () => {
         throw new Error('No account address found');
       }
 
-      const { onChain: onChainDeploy } = checkChainCapability(
-        chainId,
-        'deployContract',
-      );
-
       // request nonce
       const nonce = await AuthService.requestNonce(
         chainId,
@@ -105,17 +100,13 @@ export const useFlowManager = () => {
 
       const embeddedWalletClient = await createEmbeddedWalletClient();
 
+      // For authentication, always sign with the owner's EOA.
       const signature = await embeddedWalletClient.signTypedData({
         domain: safePayload.domain,
         types: safePayload.types,
         primaryType: safePayload.primaryType,
         message: safePayload.message,
-        // if the contract deployment is disabled, then we use the owner address as signer,
-        // so we can actually issue the JWT token that can be verified on the server
-        account: (onChainDeploy
-          ? account.address
-          : account.owner
-        ).toLowerCase() as Address,
+        account: account.owner.toLowerCase() as Address,
       });
 
       // exchange tokens
@@ -125,9 +116,7 @@ export const useFlowManager = () => {
         signAuth,
         signature,
         nonce,
-        // if the contract deployment is disabled, we don't send the owner, its only
-        // required in the server if there's no contract deployment
-        onChainDeploy ? undefined : (account.owner.toLowerCase() as Address),
+        account.owner.toLowerCase() as Address,
       );
 
       // save tokens
@@ -208,7 +197,7 @@ export const useFlowManager = () => {
 
       if (onChainDeploy && !accounts.length) {
         const response = await AuthService.deploySmartAccount(chainId, owner);
-        if (response.contracts.length) {
+        if (response?.contracts.length) {
           accounts = response.contracts;
         }
       } else if (offChainDeploy) {

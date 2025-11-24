@@ -17,6 +17,7 @@ import jwt, {
 import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
 import { toConsentClaims } from "src/consents/consent-claims.util";
 import { ConsentsService } from "src/consents/consents.service";
+import { getChainById, SupportedChainId } from "src/utils/chain";
 import { Address, type TypedDataDefinition, verifyTypedData } from "viem";
 import { sophon, sophonTestnet } from "viem/chains";
 import { JwtKeysService } from "../aws/jwt-keys.service";
@@ -168,7 +169,7 @@ export class AuthService {
 			throw new ForbiddenException("audience mismatch");
 		}
 
-		const network = process.env.CHAIN_ID === "50104" ? sophon : sophonTestnet;
+		const network = getChainById(process.env.CHAIN_ID as SupportedChainId);
 
 		let isValid = false;
 		// with the new blockchain comming, for now, if we receive an owner address,
