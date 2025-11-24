@@ -12,6 +12,7 @@ import { useEffect } from 'react';
 import { getAddress } from 'viem';
 import { createZksyncSessionClient } from 'zksync-sso/client';
 import { Button } from '@/components/ui/button';
+import { env } from '@/env';
 import { useAccountContext } from '@/hooks/useAccountContext';
 import { useTransaction } from '@/hooks/useTransaction';
 import { SOPHON_VIEM_CHAIN } from '@/lib/constants';
@@ -56,14 +57,17 @@ export default function TestSessionView() {
   const handleCreateSession = async () => {
     console.log('create session');
 
-    const installed = await isSessionKeyModuleInstalled(account!.address, true);
+    const installed = await isSessionKeyModuleInstalled(
+      account!.address,
+      env.NEXT_PUBLIC_CHAIN_ID,
+    );
 
     if (!installed) {
       const installTx = getInstallSessionKeyModuleTxForViem(
         {
           accountAddress: account!.address,
         },
-        true,
+        env.NEXT_PUBLIC_CHAIN_ID,
       );
 
       await sendTransaction(installTx);
@@ -89,7 +93,6 @@ export default function TestSessionView() {
       account!.address,
       signerPrivateKey as `0x${string}`,
       SOPHON_VIEM_CHAIN,
-      true,
     );
 
     const sessionClient = createZksyncSessionClient(sessionClientParams);

@@ -1,7 +1,18 @@
+import {
+  type ChainId,
+  sophonOS,
+  sophonOSTestnet,
+} from '@sophon-labs/account-core';
 import { createEnv } from '@t3-oss/env-nextjs';
+import { sophon, sophonTestnet } from 'viem/chains';
 import { z } from 'zod';
 
-export const VALID_CHAIN_IDS = ['531050104', '50104'] as const;
+export const VALID_CHAIN_IDS = [
+  `${sophonOS.id}`,
+  `${sophonOSTestnet.id}`,
+  `${sophon.id}`,
+  `${sophonTestnet.id}`,
+] as const;
 
 export const env = createEnv({
   /**
@@ -24,7 +35,7 @@ export const env = createEnv({
     NEXT_PUBLIC_DEPLOYER_ADDRESS: z.string(),
     NEXT_PUBLIC_CHAIN_ID: z
       .enum(VALID_CHAIN_IDS)
-      .transform((val) => Number.parseInt(val.toString(), 10)),
+      .transform((val) => Number.parseInt(val.toString(), 10) as ChainId),
 
     NEXT_PUBLIC_AUTH_SERVER_ENDPOINT: z.string().url(),
     NEXT_PUBLIC_SERVER_LOGS_ENABLED: z

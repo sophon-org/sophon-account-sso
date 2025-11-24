@@ -7,8 +7,7 @@ import {
 } from '@sophon-labs/account-core';
 import { useCallback, useEffect, useState } from 'react';
 import type { Address } from 'viem';
-import { sophonTestnet } from 'viem/chains';
-import { SOPHON_VIEM_CHAIN } from '@/lib/constants';
+import { env } from '@/env';
 
 export const useAddressWithSns = (
   address?: Address,
@@ -20,7 +19,7 @@ export const useAddressWithSns = (
     undefined,
   );
 
-  const sns = snsManager(SOPHON_VIEM_CHAIN.id === sophonTestnet.id);
+  const sns = snsManager(env.NEXT_PUBLIC_CHAIN_ID);
 
   const tryToResolveAddress = async () => {
     setIsChecking(true);
