@@ -1,5 +1,6 @@
 import {
 	BadGatewayException,
+	BadRequestException,
 	GatewayTimeoutException,
 	Injectable,
 } from "@nestjs/common";
@@ -23,8 +24,13 @@ export class HyperindexService {
 	): Promise<T> {
 		const config = hyperIndexerByChain[chainId];
 		if (!config) {
-			throw new BadGatewayException(
+			throw new BadRequestException(
 				`HyperIndex config not found for chainId ${chainId}`,
+			);
+		}
+		if (config.graphqlUrl == null) {
+			throw new BadRequestException(
+				`HyperIndex GraphQL URL not configured for chainId ${chainId}`,
 			);
 		}
 
