@@ -51,7 +51,8 @@ export class NonceRequestDto {
 	userId?: string; // ← optional
 
 	@ApiPropertyOptional({
-		description: "Chain ID for the authentication request (defaults to CHAIN_ID env var if not provided)",
+		description:
+			"Chain ID for the authentication request (defaults to CHAIN_ID env var if not provided)",
 		example: 531050104,
 		examples: [50104, 531050104],
 	})

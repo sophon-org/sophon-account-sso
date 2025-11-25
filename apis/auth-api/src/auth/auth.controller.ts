@@ -60,6 +60,23 @@ export class AuthController {
 	@ApiBody({ type: NonceRequestDto, required: true })
 	@ApiOkResponse({ description: "Returns signed nonce JWT" })
 	async getNonce(@Body() body: NonceRequestDto, @Res() res: Response) {
+		const effectiveChainId = body.chainId ?? Number(process.env.CHAIN_ID);
+		if (
+			effectiveChainId == null ||
+			Number.isNaN(effectiveChainId) ||
+			getChainById(effectiveChainId) == null
+		) {
+			this.logger.warn(
+				{
+					evt: "auth.nonce.invalid_chain_id",
+					address: body.address,
+					partnerId: body.partnerId,
+					chainId: effectiveChainId,
+				},
+				"invalid chain ID",
+			);
+			throw new BadRequestException({ error: "invalid chain ID" });
+		}
 		this.logger.info(
 			{
 				evt: "auth.nonce.request",
@@ -67,6 +84,7 @@ export class AuthController {
 				partnerId: body.partnerId,
 				fieldsCount: body.fields?.length ?? 0,
 				hasUserId: Boolean(body.userId),
+				chainId: effectiveChainId,
 			},
 			"nonce requested",
 		);
@@ -76,6 +94,7 @@ export class AuthController {
 			body.partnerId,
 			body.fields,
 			body.userId,
+			effectiveChainId,
 		);
 
 		this.logger.debug({ evt: "auth.nonce.issued" }, "nonce issued");

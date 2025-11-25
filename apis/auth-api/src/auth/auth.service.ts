@@ -82,6 +82,7 @@ export class AuthService {
 		audience: string,
 		fields: PermissionAllowedField[],
 		userId?: string,
+		chainId?: number,
 	): Promise<string> {
 		await this.partnerRegistry.assertExists(audience);
 		try {
@@ -92,6 +93,7 @@ export class AuthService {
 					address,
 					scope: packScope(fields),
 					...(userId?.trim() ? { userId: userId.trim() } : {}),
+					...(chainId != null ? { chainId } : {}),
 				},
 				await this.keys.getAccessPrivateKey(),
 				{
