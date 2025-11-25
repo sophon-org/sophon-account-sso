@@ -126,6 +126,8 @@ export class AuthService {
 		nonceToken: string,
 		client?: ClientInfo,
 		ownerAddress?: Address,
+		audience?: string,
+		contentsHash?: string,
 	): Promise<{
 		accessToken: string;
 		accessTokenExpiresAt: number;
@@ -133,7 +135,7 @@ export class AuthService {
 		refreshTokenExpiresAt: number;
 		sid: string;
 	}> {
-		const expectedAud = String(typedData.message.audience);
+		const expectedAud = audience || String(typedData.message.audience);
 		await this.partnerRegistry.assertExists(expectedAud);
 		const expectedIss = this.auth.nonceIssuer;
 
@@ -148,24 +150,28 @@ export class AuthService {
 			this.mapJwtError(e, "nonce");
 		}
 
-		if (
-			nonceToken !== typedData.message.nonce ||
-			payload.address.toLowerCase() !==
-				(typedData.message.from as string).toLowerCase()
-		) {
-			this.logger.info(
-				{ evt: "auth.verify.mismatch", address, aud: expectedAud },
-				"nonce or address mismatch",
-			);
-			throw new UnauthorizedException("Nonce or address mismatch");
-		}
+		// For Biconomy flow (when audience is explicitly passed), skip message field checks
+		// as the message only contains a hash. For zkSync flow, validate message fields.
+		if (!audience) {
+			if (
+				nonceToken !== typedData.message.nonce ||
+				payload.address.toLowerCase() !==
+					(typedData.message.from as string).toLowerCase()
+			) {
+				this.logger.info(
+					{ evt: "auth.verify.mismatch", address, aud: expectedAud },
+					"nonce or address mismatch",
+				);
+				throw new UnauthorizedException("Nonce or address mismatch");
+			}
 
-		if (String(typedData.message.audience) !== payload.aud) {
-			this.logger.info(
-				{ evt: "auth.verify.aud_mismatch", expected: payload.aud },
-				"audience mismatch",
-			);
-			throw new ForbiddenException("audience mismatch");
+			if (String(typedData.message.audience) !== payload.aud) {
+				this.logger.info(
+					{ evt: "auth.verify.aud_mismatch", expected: payload.aud },
+					"audience mismatch",
+				);
+				throw new ForbiddenException("audience mismatch");
+			}
 		}
 
 		const network = SophonChains[parseChainId(process.env.CHAIN_ID)];
@@ -194,6 +200,7 @@ export class AuthService {
 				message: typedData.message,
 				chain: network,
 				logger: this.logger,
+				contentsHash,
 			});
 		}
 

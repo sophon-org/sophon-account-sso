@@ -5250,6 +5250,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@sophon-labs/account-react-native@workspace:packages/account-react-native"
   dependencies:
+    "@biconomy/abstractjs": "npm:^1.1.14"
     "@commitlint/config-conventional": "npm:^19.6.0"
     "@dynamic-labs/client": "npm:4.42.0"
     "@dynamic-labs/react-hooks": "npm:4.42.0"

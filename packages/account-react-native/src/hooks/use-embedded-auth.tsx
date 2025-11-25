@@ -4,6 +4,7 @@ import { useReactiveClient } from '@dynamic-labs/react-hooks';
 import { DataScopes } from '@sophon-labs/account-core';
 import { useCallback, useEffect, useMemo } from 'react';
 import type { Address } from 'viem';
+import { toAccount } from 'viem/accounts';
 import { eip712WalletActions } from 'viem/zksync';
 import { useSophonContext } from '.';
 
@@ -138,6 +139,41 @@ export const useEmbeddedAuth = () => {
     });
   }, [dynamicClient]);
 
+  const createEmbeddedAccountSigner = useCallback(async () => {
+    const walletClient = await viem.createWalletClient({
+      wallet: wallets.primary!,
+    });
+
+    // Wrap it as a viem account (signer interface)
+    return toAccount({
+      address: wallets.primary!.address as Address,
+      async signMessage({ message }) {
+        const result = await walletClient.signMessage({
+          message,
+          account: wallets.primary!.address as Address,
+        });
+        return result;
+      },
+      async signTransaction(transaction) {
+        // @ts-expect-error - Type mismatch between viem account interface and wallet client
+        const result = await walletClient.signTransaction(transaction);
+        return result;
+      },
+      async signTypedData(typedData) {
+        try {
+          // @ts-expect-error - Type mismatch between viem account interface and wallet client
+          const result = await walletClient.signTypedData(...typedData, {
+            account: wallets.primary!.address as Address,
+          });
+          return result;
+        } catch (error) {
+          console.error('Failed to sign typed data', error);
+          throw error;
+        }
+      },
+    });
+  }, [viem, wallets.primary]);
+
   return {
     signInWithSocialProvider,
     getLinkedAccounts,
@@ -150,5 +186,6 @@ export const useEmbeddedAuth = () => {
     waitForAuthentication,
     embeddedUserId,
     createEmbeddedWalletClient,
+    createEmbeddedAccountSigner,
   };
 };

@@ -1120,14 +1120,14 @@ __metadata:
   linkType: hard
 
 "@biconomy/abstractjs@npm:^1.1.14":
-  version: 1.1.17
-  resolution: "@biconomy/abstractjs@npm:1.1.17"
+  version: 1.1.18
+  resolution: "@biconomy/abstractjs@npm:1.1.18"
   peerDependencies:
     "@metamask/delegation-toolkit": ^0.11.0
     "@rhinestone/module-sdk": 0.4.0
     typescript: ^5.8.2
     viem: ^2.26.2
-  checksum: 10c0/c0abc661a0075ac67be19fd68c0d2490bb7b7fac4ce33356b63a7ab2daf759886d33ff01b68dad5062dcd0af2d4ad1a937c84f8cb38b48f241ce13d6534a6483
+  checksum: 10c0/1023c26d383b61332a21f9d610217346590c9b44d07754c693570051695dc04b05d649cb0cea53d1bcbf4bb4eba783824fdd8d8c186cc0621c6b2d46ee248e59
   languageName: node
   linkType: hard
 

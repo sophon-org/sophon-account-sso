@@ -6012,7 +6012,7 @@ __metadata:
 
 "@sophon-labs/account-core@file:../../packages/account-core::locator=%40sophon-labs%2Fauth-api%40workspace%3A.":
   version: 3.0.0-next.23
-  resolution: "@sophon-labs/account-core@file:../../packages/account-core#../../packages/account-core::hash=2cfc45&locator=%40sophon-labs%2Fauth-api%40workspace%3A."
+  resolution: "@sophon-labs/account-core@file:../../packages/account-core#../../packages/account-core::hash=511c38&locator=%40sophon-labs%2Fauth-api%40workspace%3A."
   dependencies:
     "@biconomy/abstractjs": "npm:^1.1.14"
     "@metamask/delegation-toolkit": "npm:~0.11.0"
@@ -6020,7 +6020,7 @@ __metadata:
     text-encoding-polyfill: "npm:^0.6.7"
   peerDependencies:
     viem: ">=2.21.0"
-  checksum: 10c0/9601794f5208134fc053373929b6a221c3c85613d20caf21390db26c4ce7e20d72e9b8b30728ee54b2779a96d9682615696da8f5947a406f9100b3a1d9957dec
+  checksum: 10c0/be25afb851db788a7f3cfd73cac869226ee2ababee337e0f1f6ab0c4d7a1f6314f793c205369dfdba970111ba2aaffa57b1f185397f7184b8422e6d1315c2c68
   languageName: node
   linkType: hard
 
