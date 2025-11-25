@@ -1,3 +1,6 @@
+process.env.HYPERINDEX_API_URL_SOPHON_TESTNET =
+	"https://indexer.hyperindex.xyz/0789a2f/v1/graphql";
+
 import { Test } from "@nestjs/testing";
 import { LoggerModule } from "nestjs-pino";
 import { HyperindexService } from "src/hyperindex/hyperindex.service";
@@ -6,9 +9,6 @@ const loggerModule = LoggerModule.forRoot({ pinoHttp: { enabled: false } });
 const TEST_OWNER = "0xe749b7469a9911e451600cb31b5ca180743183ce";
 const EXPECTED_ACCOUNT = "0x53baecdbe5e418cf7c55f7421c3a687e617e21b8";
 
-const url = "https://indexer.hyperindex.xyz/0789a2f/v1/graphql";
-
-const apiKey = process.env.HYPERINDEX_API_KEY ?? "";
 const svcTimeoutMs = Number(process.env.HYPERINDEX_TIMEOUT_MS ?? 8000);
 const jestTimeoutMs = Number(
 	process.env.HYPERINDEX_TEST_TIMEOUT_MS ??
@@ -22,12 +22,7 @@ describe("HyperindexService (integration)", () => {
 	let realFetch: typeof fetch;
 
 	beforeAll(async () => {
-		if (!url) throw new Error("Set HYPERINDEX_GRAPHQL_URL");
-		if (!apiKey) throw new Error("Set HYPERINDEX_API_KEY");
-
 		console.log("[hyperindex:test] cfg", {
-			url,
-			hasApiKey: Boolean(apiKey),
 			svcTimeoutMs,
 			jestTimeoutMs,
 		});

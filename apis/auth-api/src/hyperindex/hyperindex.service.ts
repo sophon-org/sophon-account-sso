@@ -33,9 +33,6 @@ export class HyperindexService {
 				method: "POST",
 				headers: {
 					"content-type": "application/json",
-					...(config.apiKey
-						? { authorization: `Bearer ${config.apiKey}` }
-						: {}),
 				},
 				body: JSON.stringify({ query, variables }),
 

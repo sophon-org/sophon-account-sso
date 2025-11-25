@@ -1,4 +1,5 @@
 import {
+	BadRequestException,
 	Controller,
 	Get,
 	Param,
@@ -7,6 +8,7 @@ import {
 	Query,
 } from "@nestjs/common";
 import { ApiOkResponse, ApiParam, ApiQuery, ApiTags } from "@nestjs/swagger";
+import { getChainById } from "src/utils/chain";
 import type { Address } from "viem";
 import { ContractService } from "./contract.service";
 import { ContractDeployResponse } from "./dto/contract-deploy-response.dto";
@@ -34,7 +36,14 @@ export class ContractController {
 		@Param("owner") owner: Address,
 		@Query("chainId", ParseIntPipe) chainId?: number,
 	): Promise<Address[]> {
-		const effectiveChainId = chainId ?? Number(process.env.CHAIN_ID ?? 50104);
+		const effectiveChainId = chainId ?? Number(process.env.CHAIN_ID);
+		if (
+			effectiveChainId == null ||
+			Number.isNaN(effectiveChainId) ||
+			getChainById(effectiveChainId) == null
+		) {
+			throw new BadRequestException({ error: "invalid chain ID" });
+		}
 		return this.contractService.getContractByOwner(owner, effectiveChainId);
 	}
 
@@ -56,7 +65,14 @@ export class ContractController {
 		@Param("owner") owner: Address,
 		@Query("chainId", ParseIntPipe) chainId?: number,
 	) {
-		const effectiveChainId = chainId ?? Number(process.env.CHAIN_ID ?? 50104);
+		const effectiveChainId = chainId ?? Number(process.env.CHAIN_ID);
+		if (
+			effectiveChainId == null ||
+			Number.isNaN(effectiveChainId) ||
+			getChainById(effectiveChainId) == null
+		) {
+			throw new BadRequestException({ error: "invalid chain ID" });
+		}
 		return this.contractService.deployContractForOwner(owner, effectiveChainId);
 	}
 }

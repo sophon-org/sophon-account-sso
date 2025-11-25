@@ -1,4 +1,5 @@
 import {
+	BadRequestException,
 	Body,
 	Controller,
 	Delete,
@@ -19,6 +20,7 @@ import {
 } from "@nestjs/swagger";
 import type { Request, Response } from "express";
 import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
+import { getChainById } from "src/utils/chain";
 import { extractRefreshToken } from "../utils/token-extractor";
 import { AuthService } from "./auth.service";
 import { NonceRequestDto } from "./dto/nonce-request.dto";
@@ -90,8 +92,24 @@ export class AuthController {
 		@Res() res: Response,
 		@Req() req: Request,
 	) {
-		const effectiveChainId =
-			body.chainId ?? Number(process.env.CHAIN_ID ?? 50104);
+		const effectiveChainId = body.chainId ?? Number(process.env.CHAIN_ID);
+
+		if (
+			effectiveChainId == null ||
+			Number.isNaN(effectiveChainId) ||
+			getChainById(effectiveChainId) == null
+		) {
+			this.logger.warn(
+				{
+					evt: "auth.verify.invalid_chain_id",
+					address: body.address,
+					chainId: effectiveChainId,
+				},
+				"invalid chain ID",
+			);
+			throw new BadRequestException({ error: "invalid chain ID" });
+		}
+
 		const ci = clientInfo(req);
 		this.logger.info(
 			{
