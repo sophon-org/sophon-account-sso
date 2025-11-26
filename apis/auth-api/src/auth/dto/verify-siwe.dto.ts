@@ -36,6 +36,16 @@ export class VerifySiweDto {
 
 	@ApiProperty({ required: false })
 	@IsOptional()
+	@IsString()
+	audience?: string;
+
+	@ApiProperty({ required: false })
+	@IsOptional()
+	@IsString()
+	contentsHash?: string;
+
+	@ApiProperty({ required: false })
+	@IsOptional()
 	@IsBoolean()
 	rememberMe?: boolean;
 }

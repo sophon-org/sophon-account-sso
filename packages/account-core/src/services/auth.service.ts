@@ -51,6 +51,8 @@ export const AuthService = {
     signature: string,
     nonceToken: string,
     ownerAddress?: Address, // for now, when we have the blockchain this is not required
+    audience?: string, // partnerId for Biconomy flow, optional for backward compatibility
+    contentsHash?: string, // pre-computed hash for Biconomy flow (EIP-1271)
   ) => {
     const response = await fetch(`${AccountAuthAPIURL[chainId]}/auth/verify`, {
       method: 'POST',
@@ -63,6 +65,8 @@ export const AuthService = {
         nonceToken,
         address,
         ownerAddress,
+        audience,
+        contentsHash,
       }),
     });
 

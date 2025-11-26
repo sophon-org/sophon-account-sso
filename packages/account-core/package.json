@@ -50,6 +50,9 @@
     "vitest": "^3.2.4"
   },
   "dependencies": {
+    "@biconomy/abstractjs": "^1.1.14",
+    "@metamask/delegation-toolkit": "~0.11.0",
+    "@rhinestone/module-sdk": "0.4.0",
     "text-encoding-polyfill": "^0.6.7"
   }
 }

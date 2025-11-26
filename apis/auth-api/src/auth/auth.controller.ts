@@ -117,6 +117,8 @@ export class AuthController {
 				body.nonceToken,
 				ci,
 				body.ownerAddress,
+				body.audience,
+				body.contentsHash,
 			);
 
 			this.logger.info(

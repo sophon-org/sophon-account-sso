@@ -8,6 +8,7 @@ import {
 	UnauthorizedException,
 } from "@nestjs/common";
 import { ConfigType } from "@nestjs/config";
+import { parseChainId, SophonChains } from "@sophon-labs/account-core";
 import jwt, {
 	JsonWebTokenError,
 	type JwtPayload,
@@ -18,7 +19,6 @@ import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
 import { toConsentClaims } from "src/consents/consent-claims.util";
 import { ConsentsService } from "src/consents/consents.service";
 import { Address, type TypedDataDefinition, verifyTypedData } from "viem";
-import { sophon, sophonTestnet } from "viem/chains";
 import { JwtKeysService } from "../aws/jwt-keys.service";
 import { authConfig } from "../config/auth.config";
 import {
@@ -126,6 +126,8 @@ export class AuthService {
 		nonceToken: string,
 		client?: ClientInfo,
 		ownerAddress?: Address,
+		audience?: string,
+		contentsHash?: string,
 	): Promise<{
 		accessToken: string;
 		accessTokenExpiresAt: number;
@@ -133,7 +135,7 @@ export class AuthService {
 		refreshTokenExpiresAt: number;
 		sid: string;
 	}> {
-		const expectedAud = String(typedData.message.audience);
+		const expectedAud = audience || String(typedData.message.audience);
 		await this.partnerRegistry.assertExists(expectedAud);
 		const expectedIss = this.auth.nonceIssuer;
 
@@ -148,27 +150,47 @@ export class AuthService {
 			this.mapJwtError(e, "nonce");
 		}
 
-		if (
-			nonceToken !== typedData.message.nonce ||
-			payload.address.toLowerCase() !==
-				(typedData.message.from as string).toLowerCase()
-		) {
-			this.logger.info(
-				{ evt: "auth.verify.mismatch", address, aud: expectedAud },
-				"nonce or address mismatch",
+		// For Biconomy flow, we verify that the client-provided audience
+		// matches the nonce JWT's audience claim to prevent tampering.
+		// The nonce JWT is cryptographically signed and contains the true audience.
+		if (audience && audience !== payload.aud) {
+			this.logger.warn(
+				{
+					evt: "auth.verify.aud_tampering_attempt",
+					claimed: audience,
+					actual: payload.aud,
+					address,
+				},
+				"audience parameter doesn't match nonce JWT",
 			);
-			throw new UnauthorizedException("Nonce or address mismatch");
+			throw new ForbiddenException("audience mismatch with nonce");
 		}
 
-		if (String(typedData.message.audience) !== payload.aud) {
-			this.logger.info(
-				{ evt: "auth.verify.aud_mismatch", expected: payload.aud },
-				"audience mismatch",
-			);
-			throw new ForbiddenException("audience mismatch");
+		// For Biconomy flow (when audience is explicitly passed), skip message field checks
+		// as the message only contains a hash. For zkSync flow, validate message fields.
+		if (!audience) {
+			if (
+				nonceToken !== typedData.message.nonce ||
+				payload.address.toLowerCase() !==
+					(typedData.message.from as string).toLowerCase()
+			) {
+				this.logger.info(
+					{ evt: "auth.verify.mismatch", address, aud: expectedAud },
+					"nonce or address mismatch",
+				);
+				throw new UnauthorizedException("Nonce or address mismatch");
+			}
+
+			if (String(typedData.message.audience) !== payload.aud) {
+				this.logger.info(
+					{ evt: "auth.verify.aud_mismatch", expected: payload.aud },
+					"audience mismatch",
+				);
+				throw new ForbiddenException("audience mismatch");
+			}
 		}
 
-		const network = process.env.CHAIN_ID === "50104" ? sophon : sophonTestnet;
+		const network = SophonChains[parseChainId(process.env.CHAIN_ID)];
 
 		let isValid = false;
 		// with the new blockchain comming, for now, if we receive an owner address,
@@ -194,6 +216,7 @@ export class AuthService {
 				message: typedData.message,
 				chain: network,
 				logger: this.logger,
+				contentsHash,
 			});
 		}
 

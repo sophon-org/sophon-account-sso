@@ -70,8 +70,8 @@ export const SophonChainCapabilities: Record<ChainId, ChainCapability> = {
     transactions: ChainCapabilityValue.DISABLED,
   },
   [sophonOSTestnet.id]: {
-    signature: ChainCapabilityValue.DISABLED,
-    deployContract: ChainCapabilityValue.OFF_CHAIN,
+    signature: ChainCapabilityValue.ENABLED,
+    deployContract: ChainCapabilityValue.ENABLED,
     sns: ChainCapabilityValue.DISABLED,
     transactions: ChainCapabilityValue.DISABLED,
   },
@@ -92,7 +92,7 @@ export const AccountAuthAPIURL: Record<ChainId, string> = {
   [sophon.id]: 'https://auth.sophonauth.com',
   [sophonTestnet.id]: 'https://auth.staging.sophonauth.com',
   [sophonOS.id]: 'https://auth.sophonauth.com',
-  [sophonOSTestnet.id]: 'https://auth.staging.sophonauth.com',
+  [sophonOSTestnet.id]: 'http://localhost:4001',
 };
 
 /**
@@ -195,7 +195,7 @@ export const CHAIN_CONTRACTS: Record<ChainId, ContractAddresses> = {
   [sophonOSTestnet.id]: {
     session: zeroAddress,
     passkey: zeroAddress,
-    accountFactory: '0x0000006648ED9B2B842552BE63Af870bC74af837',
+    accountFactory: '0x5457Ce09A36cCd2b976497670979b90dC9465852',
     accountImplementation: '0x00000000383e8cBe298514674Ea60Ee1d1de50ac',
     bootstrap: '0x0000003eDf18913c01cBc482C978bBD3D6E8ffA3',
     accountPaymaster: zeroAddress,

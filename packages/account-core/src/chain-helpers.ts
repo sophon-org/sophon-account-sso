@@ -1,4 +1,8 @@
 import type { TypedDataDefinition } from 'viem';
+import { sophon, sophonTestnet } from 'viem/chains';
+import type { ChainId } from './constants';
+import { sophonOS } from './os/osMainnet';
+import { sophonOSTestnet } from './os/osTestnet';
 import type { TypedDataSigningRequest } from './types';
 
 /**
@@ -34,4 +38,37 @@ export const safeParseTypedData = (
       chainId,
     },
   };
+};
+
+/**
+ * Parses a chain ID from environment variable string to ChainId type
+ * @param envChainId - The chain ID from environment variable (string)
+ * @returns Validated ChainId number
+ */
+export const parseChainId = (id: string | undefined): ChainId => {
+  if (!id) {
+    throw new Error('CHAIN_ID environment variable is not set');
+  }
+
+  const chainId = Number(id);
+
+  if (Number.isNaN(chainId)) {
+    throw new Error(`Invalid CHAIN_ID: ${id}`);
+  }
+
+  return chainId as ChainId;
+};
+
+/**
+ * Checks if chain is a Sophon OS chain
+ */
+export const isOsChainId = (id: ChainId): boolean => {
+  return id === sophonOS.id || id === sophonOSTestnet.id;
+};
+
+/**
+ * Checks if chain is a legacy chain
+ */
+export const isLegacyChainId = (id: ChainId): boolean => {
+  return id === sophon.id || id === sophonTestnet.id;
 };
