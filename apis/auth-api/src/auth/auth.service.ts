@@ -150,6 +150,22 @@ export class AuthService {
 			this.mapJwtError(e, "nonce");
 		}
 
+		// For Biconomy flow, we verify that the client-provided audience
+		// matches the nonce JWT's audience claim to prevent tampering.
+		// The nonce JWT is cryptographically signed and contains the true audience.
+		if (audience && audience !== payload.aud) {
+			this.logger.warn(
+				{
+					evt: "auth.verify.aud_tampering_attempt",
+					claimed: audience,
+					actual: payload.aud,
+					address,
+				},
+				"audience parameter doesn't match nonce JWT",
+			);
+			throw new ForbiddenException("audience mismatch with nonce");
+		}
+
 		// For Biconomy flow (when audience is explicitly passed), skip message field checks
 		// as the message only contains a hash. For zkSync flow, validate message fields.
 		if (!audience) {
