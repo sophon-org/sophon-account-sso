@@ -150,7 +150,6 @@ describe("AuthService (new token features)", () => {
 			typedData,
 			"0xsignature",
 			"expected-nonce",
-			300,
 		);
 
 		expect(result).toEqual({

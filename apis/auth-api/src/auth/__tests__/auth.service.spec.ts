@@ -162,7 +162,6 @@ describe("AuthService", () => {
 			typedData,
 			"0xsignature",
 			"expected-nonce",
-			300,
 		);
 
 		expect(tokens).toMatchObject({
@@ -201,7 +200,6 @@ describe("AuthService", () => {
 				typedData,
 				"0xsignature",
 				"mocked-nonce-token",
-				300,
 			),
 		).rejects.toThrow(/nonce or address mismatch/i);
 	});

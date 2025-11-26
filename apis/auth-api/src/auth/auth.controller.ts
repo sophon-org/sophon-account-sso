@@ -111,23 +111,26 @@ export class AuthController {
 		@Res() res: Response,
 		@Req() req: Request,
 	) {
-		const effectiveChainId = body.chainId ?? Number(process.env.CHAIN_ID);
-
+		const typedDataChainId = body.typedData.domain?.chainId;
 		if (
-			effectiveChainId == null ||
-			Number.isNaN(effectiveChainId) ||
-			getChainById(effectiveChainId) == null
+			typedDataChainId == null ||
+			Number.isNaN(Number(typedDataChainId)) ||
+			getChainById(Number(typedDataChainId)) == null
 		) {
 			this.logger.warn(
 				{
 					evt: "auth.verify.invalid_chain_id",
 					address: body.address,
-					chainId: effectiveChainId,
+					typedDataChainId,
 				},
-				"invalid chain ID",
+				"invalid or missing chain ID in typedData.domain",
 			);
-			throw new BadRequestException({ error: "invalid chain ID" });
+			throw new BadRequestException({
+				error:
+					"chainId is required in typedData.domain and must be a valid chain ID",
+			});
 		}
+		const effectiveChainId = Number(typedDataChainId);
 
 		const ci = clientInfo(req);
 		this.logger.info(
@@ -155,7 +158,6 @@ export class AuthController {
 				body.typedData,
 				body.signature,
 				body.nonceToken,
-				effectiveChainId,
 				ci,
 				body.ownerAddress,
 				body.audience,

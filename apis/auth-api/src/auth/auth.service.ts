@@ -28,6 +28,7 @@ import {
 } from "../config/permission-allowed-fields";
 import { PartnerRegistryService } from "../partners/partner-registry.service";
 import { SessionsRepository } from "../sessions/sessions.repository";
+import { getChainById } from "../utils/chain";
 import { verifyEIP1271Signature } from "../utils/signature";
 import type { AccessTokenPayload, RefreshTokenPayload } from "./types";
 
@@ -126,7 +127,6 @@ export class AuthService {
 		typedData: TypedDataDefinition,
 		signature: `0x${string}`,
 		nonceToken: string,
-		chainId: number,
 		client?: ClientInfo,
 		ownerAddress?: Address,
 		audience?: string,
@@ -143,19 +143,10 @@ export class AuthService {
 		const expectedIss = this.auth.nonceIssuer;
 
 		const typedDataChainId = typedData.domain?.chainId;
-		if (typedDataChainId && typedDataChainId !== chainId) {
-			this.logger.info(
-				{
-					evt: "auth.verify.chain_mismatch",
-					providedChainId: chainId,
-					typedDataChainId,
-				},
-				"chain ID mismatch between parameter and typedData",
-			);
-			throw new BadRequestException(
-				`Chain ID mismatch: provided ${chainId} but typedData has ${typedDataChainId}`,
-			);
+		if (typedDataChainId == null) {
+			throw new BadRequestException("chainId is required in typedData.domain");
 		}
+		const effectiveChainId = Number(typedDataChainId);
 
 		let payload!: NoncePayload;
 		try {
@@ -208,7 +199,12 @@ export class AuthService {
 			}
 		}
 
-		const network = SophonChains[parseChainId(process.env.CHAIN_ID)];
+		const network = SophonChains[effectiveChainId];
+		if (!network) {
+			throw new BadRequestException(
+				`Invalid chain ID: ${effectiveChainId}. Chain not supported.`,
+			);
+		}
 
 		let isValid = false;
 		// with the new blockchain comming, for now, if we receive an owner address,
@@ -266,7 +262,7 @@ export class AuthService {
 				sid,
 				typ: "access",
 				c,
-				chainId,
+				chainId: effectiveChainId,
 			},
 			await this.keys.getAccessPrivateKey(),
 			{
@@ -288,7 +284,7 @@ export class AuthService {
 				sid,
 				jti: refreshJti,
 				typ: "refresh",
-				chainId,
+				chainId: effectiveChainId,
 			},
 			await this.keys.getRefreshPrivateKey(),
 			{
@@ -313,7 +309,7 @@ export class AuthService {
 					: new Date(Date.now() + refreshExp * 1000),
 			createdIp: client?.ip ?? null,
 			createdUserAgent: client?.userAgent ?? null,
-			chainId,
+			chainId: effectiveChainId,
 		});
 
 		this.logger.info(
