@@ -20,6 +20,7 @@ jest.mock("@sophon-labs/account-core", () => {
 		SophonChains: {
 			531050104: sophonTestnet,
 		},
+		isOsChainId: jest.fn(() => false),
 	};
 });
 
