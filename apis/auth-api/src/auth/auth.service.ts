@@ -39,6 +39,7 @@ type NoncePayload = JwtPayload & {
 	scope?: string;
 	sub: string;
 	userId?: string;
+	chainId?: number;
 };
 
 type ClientInfo = { ip?: string | null; userAgent?: string | null };
@@ -156,6 +157,21 @@ export class AuthService {
 			}) as NoncePayload;
 		} catch (e) {
 			this.mapJwtError(e, "nonce");
+		}
+
+		if (payload.chainId !== effectiveChainId) {
+			this.logger.warn(
+				{
+					evt: "auth.verify.chain_id_mismatch",
+					nonceChainId: payload.chainId,
+					typedDataChainId: effectiveChainId,
+					address,
+				},
+				"chain ID mismatch between nonce and typed data",
+			);
+			throw new ForbiddenException(
+				"chain ID in typed data does not match the chain ID used when requesting the nonce",
+			);
 		}
 
 		// For Biconomy flow, we verify that the client-provided audience

@@ -141,6 +141,7 @@ describe("AuthService (sessions + refresh)", () => {
 			iss: MOCK_AUTH.nonceIssuer,
 			scope: "email x",
 			userId: "u1",
+			chainId: 531050104,
 		});
 
 		// access + refresh token signatures
@@ -437,6 +438,7 @@ describe("AuthService (sessions + refresh)", () => {
 			iss: MOCK_AUTH.nonceIssuer,
 			scope: "email x",
 			userId: "u1",
+			chainId: 531050104,
 		});
 
 		(jwt.sign as jest.Mock)

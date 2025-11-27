@@ -125,6 +125,7 @@ describe("AuthService (new token features)", () => {
 			iss: "https://auth.example.com",
 			scope: "email x",
 			userId: "u1",
+			chainId: 531050104,
 		});
 
 		(jwt.sign as jest.Mock)
