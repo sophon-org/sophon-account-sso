@@ -18,9 +18,9 @@ import {
 	ApiOkResponse,
 	ApiTags,
 } from "@nestjs/swagger";
+import { isChainId } from "@sophon-labs/account-core";
 import type { Request, Response } from "express";
 import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
-import { getChainById } from "src/utils/chain";
 import { extractRefreshToken } from "../utils/token-extractor";
 import { AuthService } from "./auth.service";
 import { NonceRequestDto } from "./dto/nonce-request.dto";
@@ -61,11 +61,7 @@ export class AuthController {
 	@ApiOkResponse({ description: "Returns signed nonce JWT" })
 	async getNonce(@Body() body: NonceRequestDto, @Res() res: Response) {
 		const effectiveChainId = body.chainId ?? Number(process.env.CHAIN_ID);
-		if (
-			effectiveChainId == null ||
-			Number.isNaN(effectiveChainId) ||
-			getChainById(effectiveChainId) == null
-		) {
+		if (!isChainId(effectiveChainId)) {
 			this.logger.warn(
 				{
 					evt: "auth.nonce.invalid_chain_id",
@@ -111,12 +107,8 @@ export class AuthController {
 		@Res() res: Response,
 		@Req() req: Request,
 	) {
-		const typedDataChainId = body.typedData.domain?.chainId;
-		if (
-			typedDataChainId == null ||
-			Number.isNaN(Number(typedDataChainId)) ||
-			getChainById(Number(typedDataChainId)) == null
-		) {
+		const typedDataChainId = Number(body.typedData.domain?.chainId);
+		if (!isChainId(typedDataChainId)) {
 			this.logger.warn(
 				{
 					evt: "auth.verify.invalid_chain_id",
@@ -130,14 +122,13 @@ export class AuthController {
 					"chainId is required in typedData.domain and must be a valid chain ID",
 			});
 		}
-		const effectiveChainId = Number(typedDataChainId);
 
 		const ci = clientInfo(req);
 		this.logger.info(
 			{
 				evt: "auth.verify.attempt",
 				address: body.address,
-				chainId: effectiveChainId,
+				chainId: typedDataChainId,
 				hasTypedData: Boolean(body.typedData),
 				hasSignature: Boolean(body.signature),
 				hasNonce: Boolean(body.nonceToken),
@@ -168,7 +159,7 @@ export class AuthController {
 				{
 					evt: "auth.verify.success",
 					address: body.address,
-					chainId: effectiveChainId,
+					chainId: typedDataChainId,
 					sid,
 					accessTokenExp: accessTokenExpiresAt,
 					refreshTokenExp: refreshTokenExpiresAt,

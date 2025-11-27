@@ -8,7 +8,7 @@ import {
 	UnauthorizedException,
 } from "@nestjs/common";
 import { ConfigType } from "@nestjs/config";
-import { parseChainId, SophonChains } from "@sophon-labs/account-core";
+import { isChainId, SophonChains } from "@sophon-labs/account-core";
 import jwt, {
 	JsonWebTokenError,
 	type JwtPayload,
@@ -28,7 +28,6 @@ import {
 } from "../config/permission-allowed-fields";
 import { PartnerRegistryService } from "../partners/partner-registry.service";
 import { SessionsRepository } from "../sessions/sessions.repository";
-import { getChainById } from "../utils/chain";
 import { verifyEIP1271Signature } from "../utils/signature";
 import type { AccessTokenPayload, RefreshTokenPayload } from "./types";
 
@@ -143,7 +142,7 @@ export class AuthService {
 		const expectedIss = this.auth.nonceIssuer;
 
 		const typedDataChainId = typedData.domain?.chainId;
-		if (typedDataChainId == null) {
+		if (!typedDataChainId || !isChainId(Number(typedDataChainId))) {
 			throw new BadRequestException("chainId is required in typedData.domain");
 		}
 		const effectiveChainId = Number(typedDataChainId);
