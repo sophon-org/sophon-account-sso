@@ -1,8 +1,14 @@
 'use client';
 
+import {
+  getMEEVersion,
+  MEEVersion,
+  toNexusAccount,
+} from '@biconomy/abstractjs';
 import { useDynamicContext } from '@dynamic-labs/sdk-react-core';
+import { type ChainId, isOsChainId } from '@sophon-labs/account-core';
 import { useState } from 'react';
-import type { SignableMessage } from 'viem';
+import type { Address, SignableMessage } from 'viem';
 import { toAccount } from 'viem/accounts';
 import { http, useAccount, useWalletClient } from 'wagmi';
 import { createZksyncEcdsaClient } from 'zksync-sso/client/ecdsa';
@@ -42,7 +48,65 @@ export const useSignature = () => {
 
       const { isEthereumWallet } = await import('@dynamic-labs/ethereum');
 
-      if (primaryWallet && isEthereumWallet(primaryWallet)) {
+      const isOsChain = isOsChainId(SOPHON_VIEM_CHAIN.id as ChainId);
+
+      if (isOsChain) {
+        console.log('isOsChain', isOsChain);
+        if (!primaryWallet || !isEthereumWallet(primaryWallet)) {
+          throw new Error('No wallet available for OS signing');
+        }
+
+        const walletClient = await primaryWallet.getWalletClient();
+        if (!walletClient?.account?.address) {
+          throw new Error('Wallet client missing account address');
+        }
+
+        const ownerAccount = toAccount({
+          address: walletClient.account.address as Address,
+          async signMessage({ message }) {
+            const result = await walletClient.signMessage({
+              message,
+              account: walletClient.account!.address as Address,
+            });
+            if (!result) throw new Error('Failed to sign message');
+            return result;
+          },
+          async signTransaction(transaction) {
+            // @ts-expect-error - Type mismatch between viem account interface and wallet client
+            const result = await walletClient.signTransaction(transaction);
+            if (!result) throw new Error('Failed to sign transaction');
+            return result;
+          },
+          async signTypedData(typedData) {
+            // @ts-expect-error - Type mismatch between viem account interface and wallet client
+            const result = await walletClient.signTypedData({
+              ...typedData,
+              account: walletClient.account!.address as Address,
+            });
+            if (!result) throw new Error('Failed to sign typed data');
+            return result;
+          },
+        });
+
+        const smartAccount = await toNexusAccount({
+          signer: ownerAccount,
+          chainConfiguration: {
+            chain: SOPHON_VIEM_CHAIN,
+            transport: http(),
+            version: getMEEVersion(MEEVersion.V2_1_0),
+            versionCheck: false,
+          },
+        });
+
+        const safePayload = safeParseTypedData(payload);
+
+        signature = await smartAccount.signTypedData({
+          domain: safePayload.domain,
+          types: safePayload.types,
+          primaryType: safePayload.primaryType,
+          message: safePayload.message,
+        });
+      } else if (primaryWallet && isEthereumWallet(primaryWallet)) {
         try {
           const client = await primaryWallet.getWalletClient();
           const safePayload = safeParseTypedData(payload);

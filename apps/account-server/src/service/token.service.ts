@@ -35,6 +35,9 @@ export const verifyAuthorization = async (
   signature: string,
   nonceToken: string,
   rememberMe: boolean,
+  ownerAddress?: Address,
+  audience?: string,
+  contentsHash?: string,
 ) => {
   const response = await fetch(
     `${env.NEXT_PUBLIC_AUTH_SERVER_ENDPOINT}/auth/verify`,
@@ -49,6 +52,9 @@ export const verifyAuthorization = async (
         nonceToken,
         rememberMe,
         address,
+        ownerAddress,
+        audience,
+        contentsHash,
       }),
     },
   );

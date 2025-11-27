@@ -13,6 +13,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@sophon-labs/account-core": "file:../../../packages/account-core",
     "@sophon-labs/account-react": "file:../../../packages/account-react",
     "@tanstack/react-query": "^5.83.0",
     "next": "15.4.3",

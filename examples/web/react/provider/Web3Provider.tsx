@@ -1,6 +1,6 @@
 'use client';
 
-import { DataScopes } from '@sophon-labs/account-core';
+import { DataScopes, sophonOSTestnet } from '@sophon-labs/account-core';
 import {
   SophonContextProvider,
   SophonWagmiConnector,
@@ -21,7 +21,7 @@ export default function Web3ModalProvider({
   const [queryClient] = useState(() => new QueryClient());
   return (
     <SophonContextProvider
-      network="testnet"
+      chainId={sophonOSTestnet.id}
       authServerUrl="http://localhost:3000"
       partnerId="123b216c-678e-4611-af9a-2d5b7b061258"
       dataScopes={[DataScopes.email]}
