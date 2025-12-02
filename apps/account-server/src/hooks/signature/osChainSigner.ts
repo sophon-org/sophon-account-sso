@@ -80,10 +80,49 @@ export const signMessageOnOsChain = async (
   deps: SignerDeps,
   payload: MessageSigningRequest,
 ) => {
-  console.log(deps, payload);
+  const { isEthereumWallet } = await import('@dynamic-labs/ethereum');
 
-  // TODO: Implement OS chain message signing
-  return await `0x${Array.from({ length: 64 }, () => '0').join('')}`;
+  if (deps.primaryWallet && isEthereumWallet(deps.primaryWallet)) {
+    const ownerAccount = await createPrimaryWalletAccount(deps.primaryWallet);
+
+    const smartAccount = await toNexusAccount({
+      signer: ownerAccount,
+      chainConfiguration: {
+        chain: SOPHON_VIEM_CHAIN,
+        transport: http(),
+        version: getMEEVersion(MEEVersion.V2_1_0),
+        versionCheck: false,
+      },
+    });
+
+    return await smartAccount.signMessage({
+      message: payload.message,
+    });
+  }
+
+  if (deps.isEOAAccount) {
+    if (!deps.connectedAddress) {
+      throw new Error('Wallet not connected for EOA signing!');
+    }
+    const ownerAccount = createWalletAccount(
+      deps.connectedAddress as Address,
+      deps.walletClient,
+    );
+
+    const nexusAccount = await toNexusAccount({
+      signer: ownerAccount,
+      chainConfiguration: {
+        chain: SOPHON_VIEM_CHAIN,
+        transport: http(),
+        version: getMEEVersion(MEEVersion.V2_1_0),
+        versionCheck: false,
+      },
+    });
+
+    return await nexusAccount.signMessage({
+      message: payload.message,
+    });
+  }
 };
 
 export const createOsChainSigner = (deps: SignerDeps) => ({
