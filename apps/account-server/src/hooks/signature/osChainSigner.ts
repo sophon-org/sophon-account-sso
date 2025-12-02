@@ -50,6 +50,9 @@ export const signTypedDataOnOsChain = async (
     if (!deps.connectedAddress) {
       throw new Error('Wallet not connected for EOA signing!');
     }
+    if (!deps.walletClient) {
+      throw new Error('Wallet client not found for EOA signing');
+    }
     const ownerAccount = createWalletAccount(
       deps.connectedAddress as Address,
       deps.walletClient,
@@ -103,6 +106,9 @@ export const signMessageOnOsChain = async (
   if (deps.isEOAAccount) {
     if (!deps.connectedAddress) {
       throw new Error('Wallet not connected for EOA signing!');
+    }
+    if (!deps.walletClient) {
+      throw new Error('Wallet client not found for EOA signing');
     }
     const ownerAccount = createWalletAccount(
       deps.connectedAddress as Address,

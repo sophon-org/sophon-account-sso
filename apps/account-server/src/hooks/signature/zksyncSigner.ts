@@ -59,6 +59,10 @@ export const signTypedDataOnZksync = async (
   if (deps.isEOAAccount) {
     ensureEOAConnected(deps.connectedAddress);
 
+    if (!deps.walletClient) {
+      throw new Error('Wallet client not found for EOA signing');
+    }
+
     const localAccount = createWalletAccount(
       deps.connectedAddress as Address,
       deps.walletClient,
@@ -167,6 +171,10 @@ export const signMessageOnZksync = async (
 
   if (deps.isEOAAccount) {
     ensureEOAConnected(deps.connectedAddress);
+
+    if (!deps.walletClient) {
+      throw new Error('Wallet client not found for EOA signing');
+    }
 
     const localAccount = createWalletAccount(
       deps.connectedAddress as Address,
