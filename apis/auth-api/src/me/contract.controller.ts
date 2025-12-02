@@ -38,7 +38,10 @@ export class ContractController {
 	): Promise<Address[]> {
 		const effectiveChainId = chainId ?? Number(process.env.CHAIN_ID);
 		if (!isChainId(effectiveChainId)) {
-			throw new BadRequestException({ error: "invalid chain ID" });
+			throw new BadRequestException({
+				error: "invalid chain ID",
+				chainId: effectiveChainId,
+			});
 		}
 		return this.contractService.getContractByOwner(owner, effectiveChainId);
 	}
@@ -63,7 +66,10 @@ export class ContractController {
 	) {
 		const effectiveChainId = chainId ?? Number(process.env.CHAIN_ID);
 		if (!isChainId(effectiveChainId)) {
-			throw new BadRequestException({ error: "invalid chain ID" });
+			throw new BadRequestException({
+				error: "invalid chain ID",
+				chainId: effectiveChainId,
+			});
 		}
 		return this.contractService.deployContractForOwner(owner, effectiveChainId);
 	}

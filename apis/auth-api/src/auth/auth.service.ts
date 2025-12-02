@@ -169,9 +169,12 @@ export class AuthService {
 				},
 				"chain ID mismatch between nonce and typed data",
 			);
-			throw new ForbiddenException(
-				"chain ID in typed data does not match the chain ID used when requesting the nonce",
-			);
+			throw new ForbiddenException({
+				error:
+					"chain ID in typed data does not match the chain ID used when requesting the nonce",
+				typedDataChainId: effectiveChainId,
+				nonceChainId: payload.chainId,
+			});
 		}
 
 		// For Biconomy flow, we verify that the client-provided audience
@@ -410,9 +413,11 @@ export class AuthService {
 					},
 					"chain ID mismatch",
 				);
-				throw new UnauthorizedException(
-					"token chain ID does not match session",
-				);
+				throw new UnauthorizedException({
+					error: "token chain ID does not match session",
+					tokenChainId,
+					sessionChainId: row.chainId,
+				});
 			}
 
 			if (row.invalidateBefore) {

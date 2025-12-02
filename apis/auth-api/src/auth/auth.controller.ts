@@ -71,7 +71,10 @@ export class AuthController {
 				},
 				"invalid chain ID",
 			);
-			throw new BadRequestException({ error: "invalid chain ID" });
+			throw new BadRequestException({
+				error: "invalid chain ID",
+				chainId: effectiveChainId,
+			});
 		}
 		this.logger.info(
 			{
@@ -120,6 +123,7 @@ export class AuthController {
 			throw new BadRequestException({
 				error:
 					"chainId is required in typedData.domain and must be a valid chain ID",
+				chainId: typedDataChainId,
 			});
 		}
 

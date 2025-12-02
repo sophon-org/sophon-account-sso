@@ -28,7 +28,7 @@ export class HyperindexService {
 				`HyperIndex config not found for chainId ${chainId}`,
 			);
 		}
-		if (config.graphqlUrl == null) {
+		if (config.graphqlUrl == null || config.graphqlUrl.trim() === "") {
 			throw new BadRequestException(
 				`HyperIndex GraphQL URL not configured for chainId ${chainId}`,
 			);
