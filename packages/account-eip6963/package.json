@@ -29,6 +29,26 @@
         "require": "./dist/mainnet.cjs"
       }
     },
+    "./os-mainnet": {
+      "import": {
+        "types": "./dist/os-mainnet.d.ts",
+        "import": "./dist/os-mainnet.js"
+      },
+      "require": {
+        "types": "./dist/os-mainnet.d.cts",
+        "require": "./dist/os-mainnet.cjs"
+      }
+    },
+    "./os-testnet": {
+      "import": {
+        "types": "./dist/os-testnet.d.ts",
+        "import": "./dist/os-testnet.js"
+      },
+      "require": {
+        "types": "./dist/os-testnet.d.cts",
+        "require": "./dist/os-testnet.cjs"
+      }
+    },
     "./testnet": {
       "import": {
         "types": "./dist/testnet.d.ts",
@@ -61,7 +81,7 @@
     "vitest": "^3.2.4"
   },
   "dependencies": {
-    "@sophon-labs/account-core": "3.0.0-next.23",
+    "@sophon-labs/account-core": "file:../account-core",
     "@sophon-labs/account-provider": "3.0.0-next.23",
     "eventemitter3": "^5.0.1",
     "json-rpc-2.0": "^1.7.1"
