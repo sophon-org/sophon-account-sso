@@ -5148,6 +5148,20 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@sophon-labs/account-core@file:../account-core::locator=%40sophon-labs%2Faccount-eip6963%40workspace%3Apackages%2Faccount-eip6963":
+  version: 3.0.0-next.23
+  resolution: "@sophon-labs/account-core@file:../account-core#../account-core::hash=cca4e0&locator=%40sophon-labs%2Faccount-eip6963%40workspace%3Apackages%2Faccount-eip6963"
+  dependencies:
+    "@biconomy/abstractjs": "npm:^1.1.14"
+    "@metamask/delegation-toolkit": "npm:~0.11.0"
+    "@rhinestone/module-sdk": "npm:0.4.0"
+    text-encoding-polyfill: "npm:^0.6.7"
+  peerDependencies:
+    viem: ">=2.21.0"
+  checksum: 10c0/313d39fd732515662ad58122eed2150717e815e7c937ac741e7ff29441f184d461b810deded8bcf253f4cfed6dc67c90604ebaaa49e86b800ea497a0e378f656
+  languageName: node
+  linkType: hard
+
 "@sophon-labs/account-core@npm:3.0.0-next.23, @sophon-labs/account-core@workspace:packages/account-core":
   version: 0.0.0-use.local
   resolution: "@sophon-labs/account-core@workspace:packages/account-core"
@@ -5176,7 +5190,7 @@ __metadata:
   resolution: "@sophon-labs/account-eip6963@workspace:packages/account-eip6963"
   dependencies:
     "@faker-js/faker": "npm:^10.0.0"
-    "@sophon-labs/account-core": "npm:3.0.0-next.23"
+    "@sophon-labs/account-core": "file:../account-core"
     "@sophon-labs/account-provider": "npm:3.0.0-next.23"
     "@types/node": "npm:^20.0.0"
     eventemitter3: "npm:^5.0.1"
