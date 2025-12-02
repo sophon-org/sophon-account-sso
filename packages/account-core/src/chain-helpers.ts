@@ -1,6 +1,6 @@
 import type { TypedDataDefinition } from 'viem';
 import { sophon, sophonTestnet } from 'viem/chains';
-import type { ChainId } from './constants';
+import type { ChainId, LegacyChainId, OSChainId } from './constants';
 import { sophonOS } from './os/osMainnet';
 import { sophonOSTestnet } from './os/osTestnet';
 import type { TypedDataSigningRequest } from './types';
@@ -59,16 +59,20 @@ export const parseChainId = (id: string | undefined): ChainId => {
   return chainId as ChainId;
 };
 
+export const isChainId = (id: number): id is ChainId => {
+  return isOsChainId(id) || isLegacyChainId(id);
+};
+
 /**
  * Checks if chain is a Sophon OS chain
  */
-export const isOsChainId = (id: ChainId): boolean => {
+export const isOsChainId = (id: number): id is OSChainId => {
   return id === sophonOS.id || id === sophonOSTestnet.id;
 };
 
 /**
  * Checks if chain is a legacy chain
  */
-export const isLegacyChainId = (id: ChainId): boolean => {
+export const isLegacyChainId = (id: number): id is LegacyChainId => {
   return id === sophon.id || id === sophonTestnet.id;
 };

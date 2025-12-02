@@ -8,7 +8,7 @@ import {
 	UnauthorizedException,
 } from "@nestjs/common";
 import { ConfigType } from "@nestjs/config";
-import { parseChainId, SophonChains } from "@sophon-labs/account-core";
+import { isChainId, SophonChains } from "@sophon-labs/account-core";
 import jwt, {
 	JsonWebTokenError,
 	type JwtPayload,
@@ -39,6 +39,7 @@ type NoncePayload = JwtPayload & {
 	scope?: string;
 	sub: string;
 	userId?: string;
+	chainId?: number;
 };
 
 type ClientInfo = { ip?: string | null; userAgent?: string | null };
@@ -82,6 +83,7 @@ export class AuthService {
 		audience: string,
 		fields: PermissionAllowedField[],
 		userId?: string,
+		chainId?: number,
 	): Promise<string> {
 		await this.partnerRegistry.assertExists(audience);
 		try {
@@ -92,6 +94,7 @@ export class AuthService {
 					address,
 					scope: packScope(fields),
 					...(userId?.trim() ? { userId: userId.trim() } : {}),
+					...(chainId != null ? { chainId } : {}),
 				},
 				await this.keys.getAccessPrivateKey(),
 				{
@@ -139,6 +142,12 @@ export class AuthService {
 		await this.partnerRegistry.assertExists(expectedAud);
 		const expectedIss = this.auth.nonceIssuer;
 
+		const typedDataChainId = typedData.domain?.chainId;
+		if (!typedDataChainId || !isChainId(Number(typedDataChainId))) {
+			throw new BadRequestException("chainId is required in typedData.domain");
+		}
+		const effectiveChainId = Number(typedDataChainId);
+
 		let payload!: NoncePayload;
 		try {
 			payload = jwt.verify(nonceToken, await this.keys.getAccessPublicKey(), {
@@ -148,6 +157,24 @@ export class AuthService {
 			}) as NoncePayload;
 		} catch (e) {
 			this.mapJwtError(e, "nonce");
+		}
+
+		if (payload.chainId !== effectiveChainId) {
+			this.logger.warn(
+				{
+					evt: "auth.verify.chain_id_mismatch",
+					nonceChainId: payload.chainId,
+					typedDataChainId: effectiveChainId,
+					address,
+				},
+				"chain ID mismatch between nonce and typed data",
+			);
+			throw new ForbiddenException({
+				error:
+					"chain ID in typed data does not match the chain ID used when requesting the nonce",
+				typedDataChainId: effectiveChainId,
+				nonceChainId: payload.chainId,
+			});
 		}
 
 		// For Biconomy flow, we verify that the client-provided audience
@@ -190,7 +217,12 @@ export class AuthService {
 			}
 		}
 
-		const network = SophonChains[parseChainId(process.env.CHAIN_ID)];
+		const network = SophonChains[effectiveChainId];
+		if (!network) {
+			throw new BadRequestException(
+				`Invalid chain ID: ${effectiveChainId}. Chain not supported.`,
+			);
+		}
 
 		let isValid = false;
 		// with the new blockchain comming, for now, if we receive an owner address,
@@ -248,6 +280,7 @@ export class AuthService {
 				sid,
 				typ: "access",
 				c,
+				chainId: effectiveChainId,
 			},
 			await this.keys.getAccessPrivateKey(),
 			{
@@ -269,6 +302,7 @@ export class AuthService {
 				sid,
 				jti: refreshJti,
 				typ: "refresh",
+				chainId: effectiveChainId,
 			},
 			await this.keys.getRefreshPrivateKey(),
 			{
@@ -293,6 +327,7 @@ export class AuthService {
 					: new Date(Date.now() + refreshExp * 1000),
 			createdIp: client?.ip ?? null,
 			createdUserAgent: client?.userAgent ?? null,
+			chainId: effectiveChainId,
 		});
 
 		this.logger.info(
@@ -366,6 +401,25 @@ export class AuthService {
 				);
 				throw new UnauthorizedException("session revoked or expired");
 			}
+
+			const tokenChainId = (payload as AccessTokenPayload).chainId;
+			if (tokenChainId && row.chainId !== tokenChainId) {
+				this.logger.info(
+					{
+						evt: "auth.access.chain_mismatch",
+						sid: rowSid,
+						sessionChainId: row.chainId,
+						tokenChainId,
+					},
+					"chain ID mismatch",
+				);
+				throw new UnauthorizedException({
+					error: "token chain ID does not match session",
+					tokenChainId,
+					sessionChainId: row.chainId,
+				});
+			}
+
 			if (row.invalidateBefore) {
 				const iatSec = payload.iat ?? 0;
 				const cut = Math.floor(new Date(row.invalidateBefore).getTime() / 1000);
@@ -468,6 +522,7 @@ export class AuthService {
 				sid: r.sid,
 				typ: "access",
 				c,
+				chainId: r.chainId,
 			},
 			await this.keys.getAccessPrivateKey(),
 			{
@@ -490,6 +545,7 @@ export class AuthService {
 				sid: r.sid,
 				jti: newJti,
 				typ: "refresh",
+				chainId: r.chainId,
 			},
 			await this.keys.getRefreshPrivateKey(),
 			{

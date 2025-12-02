@@ -1,11 +1,11 @@
 import { BadRequestException, Injectable, Logger } from "@nestjs/common";
 import {
 	CHAIN_CONTRACTS,
+	ChainId,
 	deployBiconomyAccount,
 	getBiconomyAccountsByOwner,
 	getDeployedSmartContractAddress,
 	isOsChainId,
-	parseChainId,
 	SOPHON_SALT_PREFIX,
 	SophonChains,
 } from "@sophon-labs/account-core";
@@ -14,6 +14,7 @@ import { HyperindexService } from "src/hyperindex/hyperindex.service";
 import { normalizeAndValidateAddress } from "src/utils/address";
 import {
 	Address,
+	Chain,
 	createWalletClient,
 	http,
 	isAddress,
@@ -36,16 +37,19 @@ export class ContractService {
 	/**
 	 * Fetch the deployed contract address for a given owner, if deployed.
 	 *
-	 * @param owner the wallet addres that's signer of the contract
+	 * @param owner the wallet address that's signer of the contract
+	 * @param chainId the chain ID to query contracts on
 	 * @returns the deployed contract address, if available
 	 */
-	async getContractByOwner(owner: Address): Promise<Address[]> {
+	async getContractByOwner(
+		owner: Address,
+		chainId: ChainId,
+	): Promise<Address[]> {
 		if (!owner?.trim() || !isAddress(owner.toLowerCase())) {
 			throw new BadRequestException(`Invalid address provided: ${owner}`);
 		}
 
 		const address = normalizeAndValidateAddress(owner);
-		const chainId = parseChainId(process.env.CHAIN_ID);
 
 		this.logger.log(
 			{ evt: "contract.by-owner.request", owner: address, chainId },
@@ -54,20 +58,28 @@ export class ContractService {
 
 		// Route to appropriate implementation based on chain
 		if (isOsChainId(chainId)) {
-			return this.getContractByOwnerBiconomy(address);
+			return this.getContractByOwnerBiconomy(address, chainId);
 		}
 
-		return this.getContractByOwnerZkSync(address);
+		return this.getContractByOwnerZkSync(address, chainId);
 	}
 
 	/**
 	 * Fetch the deployed contract address for zkSync chains using Hyperindex
 	 */
-	private async getContractByOwnerZkSync(owner: Address): Promise<Address[]> {
-		const rows = await this.hyperindex.getK1OwnerStateByOwner(owner);
+	private async getContractByOwnerZkSync(
+		owner: Address,
+		chainId: ChainId,
+	): Promise<Address[]> {
+		const rows = await this.hyperindex.getK1OwnerStateByOwner(owner, chainId);
 
 		this.logger.log(
-			{ evt: "contract.by-owner.success", owner, total: rows.length },
+			{
+				evt: "contract.by-owner.success",
+				owner,
+				chainId,
+				total: rows.length,
+			},
 			"contract-by-owner",
 		);
 
@@ -77,9 +89,10 @@ export class ContractService {
 	/**
 	 * Fetch the deployed contract address for Biconomy chains (no Hyperindex)
 	 */
-	private async getContractByOwnerBiconomy(owner: Address): Promise<Address[]> {
-		const chainId = parseChainId(process.env.CHAIN_ID);
-
+	private async getContractByOwnerBiconomy(
+		owner: Address,
+		chainId: ChainId,
+	): Promise<Address[]> {
 		const accounts = await getBiconomyAccountsByOwner(chainId, owner);
 
 		this.logger.log(
@@ -97,18 +110,24 @@ export class ContractService {
 	/**
 	 * Deploy contract for owner
 	 *
-	 * @param owner the wallet addres that's signer of the contract
+	 * @param owner the wallet address that's signer of the contract
+	 * @param chainId the chain ID to deploy contract on
 	 * @returns the deployed contract address, if available
 	 */
 	async deployContractForOwner(
 		owner: Address,
+		chainId: ChainId,
 	): Promise<ContractDeployResponse> {
 		if (!owner?.trim() || !isAddress(owner.toLowerCase())) {
 			throw new BadRequestException(`Invalid address provided: ${owner}`);
 		}
 
+		const chain = SophonChains[chainId];
+		if (chain == null) {
+			throw new BadRequestException(`Invalid chainId provided: ${chainId}`);
+		}
+
 		const ownerAddress = normalizeAndValidateAddress(owner);
-		const chainId = parseChainId(process.env.CHAIN_ID);
 
 		this.logger.log(
 			{ evt: "me.contract.deploy.request", owner: ownerAddress, chainId },
@@ -117,10 +136,10 @@ export class ContractService {
 
 		// Route to appropriate implementation based on chain
 		if (isOsChainId(chainId)) {
-			return this.deployContractForOwnerBiconomy(ownerAddress);
+			return this.deployContractForOwnerBiconomy(ownerAddress, chainId);
 		}
 
-		return this.deployContractForOwnerZkSync(ownerAddress);
+		return this.deployContractForOwnerZkSync(ownerAddress, chainId);
 	}
 
 	/**
@@ -128,11 +147,13 @@ export class ContractService {
 	 */
 	private async deployContractForOwnerZkSync(
 		owner: Address,
+		chainId: ChainId,
 	): Promise<ContractDeployResponse> {
-		const chainId = parseChainId(process.env.CHAIN_ID);
-
 		// sanity check
-		const existingContracts = await this.getContractByOwnerZkSync(owner);
+		const existingContracts = await this.getContractByOwnerZkSync(
+			owner,
+			chainId,
+		);
 		if (existingContracts.length > 0) {
 			this.logger.log("Contract already exists on index");
 			return {
@@ -142,6 +163,9 @@ export class ContractService {
 		}
 
 		const chain = SophonChains[chainId];
+		if (chain == null) {
+			throw new BadRequestException(`Invalid chainId provided: ${chainId}`);
+		}
 		const secrets = await this.secretsService.loadAWSSecrets();
 		const deployerAccount = privateKeyToAccount(secrets.deployer.privateKey);
 
@@ -162,7 +186,7 @@ export class ContractService {
 		// deploy the contract
 		const deployerClient = createWalletClient({
 			account: deployerAccount,
-			chain: chain,
+			chain: chain as Chain,
 			transport: http(),
 		}).extend(eip712WalletActions());
 
@@ -188,11 +212,13 @@ export class ContractService {
 	 */
 	private async deployContractForOwnerBiconomy(
 		owner: Address,
+		chainId: ChainId,
 	): Promise<ContractDeployResponse> {
-		const chainId = parseChainId(process.env.CHAIN_ID);
-
 		// Check if already deployed (no Hyperindex, go straight to on-chain check)
-		const existingContracts = await this.getContractByOwnerBiconomy(owner);
+		const existingContracts = await this.getContractByOwnerBiconomy(
+			owner,
+			chainId,
+		);
 		if (existingContracts.length > 0) {
 			this.logger.log("Contract already exists on chain");
 			return {

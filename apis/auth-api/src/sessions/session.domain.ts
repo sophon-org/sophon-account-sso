@@ -15,4 +15,6 @@ export type SessionRecord = {
 
 	createdIp: string | null;
 	createdUserAgent: string | null;
+
+	chainId: number;
 };

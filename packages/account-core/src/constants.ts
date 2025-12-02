@@ -13,11 +13,9 @@ import {
  * Chain IDs for the supported chains, only add chains here that are supported by the app on the basic level.
  * For mechanics like bridging, this is not the place to add them.
  */
-export type ChainId =
-  | typeof sophon.id
-  | typeof sophonTestnet.id
-  | typeof sophonOS.id
-  | typeof sophonOSTestnet.id;
+export type LegacyChainId = typeof sophon.id | typeof sophonTestnet.id;
+export type OSChainId = typeof sophonOS.id | typeof sophonOSTestnet.id;
+export type ChainId = LegacyChainId | OSChainId;
 
 export const SophonChains: Record<ChainId, Chain> = {
   [sophon.id]: sophon,

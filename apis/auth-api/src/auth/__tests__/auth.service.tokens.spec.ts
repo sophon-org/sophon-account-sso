@@ -125,6 +125,7 @@ describe("AuthService (new token features)", () => {
 			iss: "https://auth.example.com",
 			scope: "email x",
 			userId: "u1",
+			chainId: 531050104,
 		});
 
 		(jwt.sign as jest.Mock)
@@ -135,7 +136,7 @@ describe("AuthService (new token features)", () => {
 		(jwt.decode as jest.Mock).mockReturnValue({ exp });
 
 		const typedData: TypedDataDefinition = {
-			domain: { name: "Sophon SSO", version: "1", chainId: 300 },
+			domain: { name: "Sophon SSO", version: "1", chainId: 531050104 },
 			types: {},
 			primaryType: "Login",
 			message: {
@@ -168,6 +169,7 @@ describe("AuthService (new token features)", () => {
 				scope: "email x",
 				userId: "u1",
 				sub: "0xabc0000000000000000000000000000000000001",
+				chainId: 531050104,
 			}),
 		);
 		expect((jwt.sign as jest.Mock).mock.calls[0][1]).toBe("PRIVATE_KEY");
@@ -189,6 +191,7 @@ describe("AuthService (new token features)", () => {
 				sid: accessPayload.sid,
 				scope: "email x",
 				userId: "u1",
+				chainId: 531050104,
 			}),
 		);
 		expect((jwt.sign as jest.Mock).mock.calls[1][1]).toBe(
@@ -210,6 +213,7 @@ describe("AuthService (new token features)", () => {
 				aud: "sophon-web",
 				currentRefreshJti: refreshPayload.jti,
 				refreshExpiresAt: expect.any(Date),
+				chainId: 531050104,
 			}),
 		);
 	});
@@ -223,6 +227,7 @@ describe("AuthService (new token features)", () => {
 			userId: "u123",
 			sid: "session-1",
 			jti: "jti-old",
+			chainId: 531050104,
 		});
 
 		sessionsRepositoryMock.getBySid.mockResolvedValueOnce({
@@ -231,6 +236,7 @@ describe("AuthService (new token features)", () => {
 			revokedAt: null,
 			refreshExpiresAt: new Date(Date.now() + 60_000),
 			invalidatedBefore: null,
+			chainId: 531050104,
 		});
 		sessionsRepositoryMock.isActive.mockReturnValue(true);
 
@@ -262,6 +268,7 @@ describe("AuthService (new token features)", () => {
 				sid: "session-1",
 				scope: "email x",
 				userId: "u123",
+				chainId: 531050104,
 			}),
 		);
 
@@ -274,6 +281,7 @@ describe("AuthService (new token features)", () => {
 				scope: "email x",
 				userId: "u123",
 				jti: expect.any(String),
+				chainId: 531050104,
 			}),
 		);
 

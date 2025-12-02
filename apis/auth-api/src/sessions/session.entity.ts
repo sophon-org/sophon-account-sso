@@ -49,4 +49,7 @@ export class Session {
 
 	@Column({ name: "last_refresh_at", type: "timestamptz", nullable: true })
 	lastRefreshAt!: Date | null;
+
+	@Column({ name: "chain_id", type: "int" })
+	chainId!: number;
 }
