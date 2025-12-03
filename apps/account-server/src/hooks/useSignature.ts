@@ -102,7 +102,7 @@ export const useSignature = () => {
   };
 
   return {
-    signTypeData: signTypedData,
+    signTypedData,
     signMessage,
     isSigning,
     signingError: error,

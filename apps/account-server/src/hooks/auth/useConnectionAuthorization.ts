@@ -33,7 +33,7 @@ export function useConnectionAuthorization() {
   );
   const { account } = useAccountContext();
   const actorRef = MainStateMachineContext.useActorRef();
-  const { isSigning, signTypeData, signingError } = useSignature();
+  const { isSigning, signTypedData, signingError } = useSignature();
   const [authorizing, setAuthorizing] = useState(false);
   const [authorizationError, setAuthorizationError] = useState<string | null>(
     null,
@@ -149,7 +149,7 @@ export function useConnectionAuthorization() {
           contentsHash,
         };
 
-        const authSignature = await signTypeData(signAuth);
+        const authSignature = await signTypedData(signAuth);
         if (isCanceled()) {
           return;
         }
@@ -199,7 +199,7 @@ export function useConnectionAuthorization() {
           return;
         }
 
-        const authSignature = await signTypeData(signAuth);
+        const authSignature = await signTypedData(signAuth);
         if (isCanceled()) {
           return;
         }
