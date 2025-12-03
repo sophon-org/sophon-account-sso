@@ -1,11 +1,5 @@
-// import { polyfillWebCrypto } from 'expo-standard-web-crypto';
-// import 'text-encoding-polyfill';
-// import { randomUUID } from 'expo-crypto';
-
-// polyfillWebCrypto();
-// // @ts-ignore
-// crypto.randomUUID = randomUUID;
-// //
+// Import polyfills FIRST before any other imports
+import '@sophon-labs/account-react-native/src/pollyfills';
 
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';

@@ -202,9 +202,7 @@ export const ERC20Approval = () => {
                 Approval Status:
               </Text>
               <Text
-                className={`ml-2 ${
-                  isApproved ? 'text-green-600' : 'text-orange-600'
-                }`}
+                className={`ml-2 ${isApproved ? 'text-green-600' : 'text-orange-600'}`}
               >
                 {isApproved ? '✅ Approved' : '⚠️ Insufficient Allowance'}
               </Text>
@@ -255,9 +253,7 @@ export const ERC20Approval = () => {
                   {approvalTxHash}
                 </Text>
                 <Text
-                  className={`ml-2 text-sm ${
-                    isConfirmed ? 'text-green-600' : 'text-orange-600'
-                  }`}
+                  className={`ml-2 text-sm ${isConfirmed ? 'text-green-600' : 'text-orange-600'}`}
                 >
                   {isConfirmed ? '✅ Confirmed' : '⏳ Pending'}
                 </Text>
