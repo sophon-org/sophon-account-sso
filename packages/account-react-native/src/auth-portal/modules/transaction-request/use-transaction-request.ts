@@ -72,13 +72,10 @@ export function useTransactionRequest() {
       setError(null);
 
       try {
-        // Get SOPH token details for fee calculation
         const sophTokenDetails = await getTokenFromAddress(undefined, signal);
 
-        // Calculate fee if not using paymaster
         const fee = await calculateFee(sophTokenDetails, signal);
 
-        // Check if it's a simple SOPH transfer
         const isSophTransfer = transactionRequest?.data === '0x';
 
         if (isSophTransfer) {
@@ -106,7 +103,6 @@ export function useTransactionRequest() {
         const enrichmentError = handleEnrichmentError(err);
         setError(enrichmentError);
 
-        // Fallback to basic transaction data
         try {
           const fallbackTransaction = await enrichFallbackTransaction(
             transactionRequest,
@@ -114,7 +110,6 @@ export function useTransactionRequest() {
           );
           setEnrichedTransactionRequest(fallbackTransaction);
         } catch (fallbackErr) {
-          // Last resort - set error
           console.error('Failed to create fallback transaction:', fallbackErr);
         }
       } finally {

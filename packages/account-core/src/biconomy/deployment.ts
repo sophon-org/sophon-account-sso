@@ -10,7 +10,6 @@ import {
   createWalletClient,
   encodeAbiParameters,
   encodeFunctionData,
-  formatEther,
   type Hex,
   http,
   pad,

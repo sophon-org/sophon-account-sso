@@ -42,12 +42,12 @@
     "dev": "nodemon -e ts,tsx -w ./src -x 'yarn build'"
   },
   "dependencies": {
+    "@biconomy/abstractjs": "^1.1.14",
     "@dynamic-labs/client": "4.47.3",
     "@dynamic-labs/ethereum": "4.47.3",
     "@dynamic-labs/react-hooks": "4.47.3",
     "@dynamic-labs/react-native-extension": "4.47.3",
     "@dynamic-labs/viem-extension": "4.47.3",
-    "@biconomy/abstractjs": "^1.1.14",
     "@react-native-async-storage/async-storage": "^2.2.0",
     "@sophon-labs/account-communicator": "3.0.0-next.23",
     "@sophon-labs/account-connector": "3.0.0-next.23",

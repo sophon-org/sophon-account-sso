@@ -150,7 +150,6 @@ export function useTransactionUtils(
           isVerified: false,
         };
       } catch {
-        // Contract info is not critical, return unverified
         return {
           abi: null,
           name: null,
@@ -161,7 +160,6 @@ export function useTransactionUtils(
     [apiClient, chain],
   );
 
-  // Extracted enrichment logic
   const calculateFee = useCallback(
     async (
       sophTokenDetails: TokenInfo,
@@ -271,13 +269,10 @@ export function useTransactionUtils(
         return enrichSOPHTransfer(request, sophTokenDetails, fee);
       }
 
-      // First, check if it's a contract by getting contract info
       const contractInfo = await getContractInfo(request.to, signal);
 
-      // If contract has ABI or is verified, decode the data
       const decodedData = await decodeTransactionData(request, contractInfo);
 
-      // Check if it's an ERC20 token (only if needed)
       const isERC20Function =
         decodedData?.functionName === ERC20FunctionName.TRANSFER ||
         decodedData?.functionName === ERC20FunctionName.APPROVE;
@@ -298,7 +293,7 @@ export function useTransactionUtils(
         decodedData,
         isERC20Function,
       );
-      // Route to appropriate enricher based on decoded data
+
       if (
         token &&
         (!decodedData ||

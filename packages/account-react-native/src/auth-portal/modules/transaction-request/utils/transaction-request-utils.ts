@@ -1,30 +1,14 @@
 import { shortenAddress } from '@sophon-labs/account-core';
-import type {
-  DecodedArgsContractTransaction,
-  TransactionCurrentRequest,
-} from '../../../../types/transaction-request';
+import type { DecodedArgsContractTransaction } from '../../../../types/transaction-request';
 
 // Constants
 const API_TIMEOUT = 30000; // 30 seconds
-const MAX_RETRIES = 3;
-const RETRY_DELAY = 1000; // 1 second
 
 // Types
 export interface EnrichmentError {
   message: string;
   code: string;
   retry?: boolean;
-}
-
-// Helper functions
-export function validateTransactionRequest(
-  request: TransactionCurrentRequest | null | undefined,
-): request is TransactionCurrentRequest {
-  if (!request) return false;
-  if (!request.to) return false;
-  if (!request.from) return false;
-  if (!request.data) return false;
-  return true;
 }
 
 export async function withTimeout<T>(
@@ -53,20 +37,6 @@ export async function withTimeout<T>(
         reject(error);
       });
   });
-}
-
-export async function retryWithBackoff<T>(
-  fn: () => Promise<T>,
-  retries: number = MAX_RETRIES,
-  delay: number = RETRY_DELAY,
-): Promise<T> {
-  try {
-    return await fn();
-  } catch (error) {
-    if (retries <= 0) throw error;
-    await new Promise((resolve) => setTimeout(resolve, delay));
-    return retryWithBackoff(fn, retries - 1, delay * 2);
-  }
 }
 
 export function handleEnrichmentError(error: unknown): EnrichmentError {
