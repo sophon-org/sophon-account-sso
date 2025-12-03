@@ -80,29 +80,48 @@ export class ApiClient {
     return data;
   }
 
-  async get<T>(endpoint: string, params?: Record<string, unknown>): Promise<T> {
+  async get<T>(
+    endpoint: string,
+    params?: Record<string, unknown>,
+    signal?: AbortSignal,
+  ): Promise<T> {
     const config: AxiosRequestConfig = {};
 
     if (params) {
       config.params = params;
     }
 
-    const response = await this.axiosInstance.get<T>(endpoint, config);
+    const response = await this.axiosInstance.get<T>(endpoint, {
+      ...config,
+      signal,
+    });
     return response.data;
   }
 
-  async post<T>(endpoint: string, data?: unknown): Promise<T> {
-    const response = await this.axiosInstance.post<T>(endpoint, data);
+  async post<T>(
+    endpoint: string,
+    data?: unknown,
+    signal?: AbortSignal,
+  ): Promise<T> {
+    const response = await this.axiosInstance.post<T>(endpoint, data, {
+      signal,
+    });
     return response.data;
   }
 
-  async put<T>(endpoint: string, data?: unknown): Promise<T> {
-    const response = await this.axiosInstance.put<T>(endpoint, data);
+  async put<T>(
+    endpoint: string,
+    data?: unknown,
+    signal?: AbortSignal,
+  ): Promise<T> {
+    const response = await this.axiosInstance.put<T>(endpoint, data, {
+      signal,
+    });
     return response.data;
   }
 
-  async delete<T>(endpoint: string): Promise<T> {
-    const response = await this.axiosInstance.delete<T>(endpoint);
+  async delete<T>(endpoint: string, signal?: AbortSignal): Promise<T> {
+    const response = await this.axiosInstance.delete<T>(endpoint, { signal });
     return response.data;
   }
 }
