@@ -60,8 +60,6 @@ export function useBottomSheetKeyboardFix() {
       if (isBottomSheetTooLow && !isFixingRef.current) {
         isFixingRef.current = true;
 
-        console.log('📏 Fixing height: sheet too low than keyboard');
-
         animatedKeyboardState.set((state) => ({
           ...state,
           status: KEYBOARD_STATUS.HIDDEN,

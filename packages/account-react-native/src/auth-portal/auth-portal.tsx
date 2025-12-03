@@ -292,7 +292,10 @@ export function AuthPortal(props: AuthPortalProps) {
         handleIndicatorStyle={{ backgroundColor: colors.gray[600] }}
         backgroundStyle={{ backgroundColor: colors.background.primary }}
       >
-        <Container margin={24} backgroundColor={colors.background.primary}>
+        <Container
+          marginVertical={24}
+          backgroundColor={colors.background.primary}
+        >
           <StepTransitionView
             keyProp={currentStep}
             isBackAvailable={showBackButton}

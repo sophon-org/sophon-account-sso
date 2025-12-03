@@ -1,7 +1,8 @@
 import { StyleSheet, View } from 'react-native';
 import { useTranslation } from '../../i18n';
 import { Button, CardError, Container, Text } from '../../ui';
-import { useNavigationParams } from '../hooks';
+import { StepContainer } from '../components/step-container';
+import { useNavigationParams } from '../navigation';
 import type { BasicStepProps, RetryParams } from '../types';
 
 export const RetryStep = ({
@@ -16,7 +17,7 @@ export const RetryStep = ({
   };
 
   return (
-    <Container>
+    <StepContainer>
       <Container marginBottom={16}>
         <Text size="large" textAlign="center">
           {t('retryStep.thatDidWork')}
@@ -41,7 +42,7 @@ export const RetryStep = ({
           onPress={handleOnRetry}
         />
       </View>
-    </Container>
+    </StepContainer>
   );
 };
 

@@ -1,14 +1,15 @@
-import { Image, StyleSheet, View } from 'react-native';
+import { Image, StyleSheet } from 'react-native';
 import { Container, Icon, useThemeColors } from '../../ui';
 import { AuthenticatingSpinner } from '../components/authenticating-spinner';
-import { useNavigationParams } from '../hooks';
+import { StepContainer } from '../components/step-container';
+import { useNavigationParams } from '../navigation';
 import type { LoadingParams } from '../types';
 
 export const LoadingStep = () => {
   const { provider } = useNavigationParams<LoadingParams>();
   const colors = useThemeColors();
   return (
-    <View style={[styles.container]}>
+    <StepContainer style={[styles.container]}>
       <AuthenticatingSpinner isAuthenticating>
         {provider ? (
           <Container
@@ -26,7 +27,7 @@ export const LoadingStep = () => {
           />
         )}
       </AuthenticatingSpinner>
-    </View>
+    </StepContainer>
   );
 };
 

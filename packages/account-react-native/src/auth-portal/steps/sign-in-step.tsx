@@ -21,11 +21,9 @@ import {
 import { validateEmail } from '../../utils/validations';
 import { AdaptiveTextInput } from '../components/adaptive-text-input';
 import { SocialProviderButtons } from '../components/social-provider-buttons';
-import {
-  useBottomSheetKeyboardFix,
-  useNavigationParams,
-  useNavigationPortal,
-} from '../hooks';
+import { StepContainer } from '../components/step-container';
+import { useBottomSheetKeyboardFix } from '../hooks';
+import { useNavigationParams, useNavigationPortal } from '../navigation';
 import type { BasicStepProps, SignInParams } from '../types';
 
 export const SignInStep = ({ onError, onAuthenticate }: BasicStepProps) => {
@@ -97,7 +95,7 @@ export const SignInStep = ({ onError, onAuthenticate }: BasicStepProps) => {
   const { isWalletConnectEnabled } = useSophonCapabilities();
 
   return (
-    <View>
+    <StepContainer>
       <SocialProviderButtons
         isAuthenticating={loadingState.state}
         providerRequest={providerRequest}
@@ -141,7 +139,7 @@ export const SignInStep = ({ onError, onAuthenticate }: BasicStepProps) => {
           onPress={() => navigate('loading')}
         />
       </Container>
-    </View>
+    </StepContainer>
   );
 };
 

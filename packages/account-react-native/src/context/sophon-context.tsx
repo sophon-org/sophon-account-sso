@@ -190,6 +190,7 @@ export const SophonContextProvider = ({
   const [connectingAccount, setConnectingAccount] = useState<
     SophonAccount | undefined
   >();
+
   const chain = useMemo(() => SophonChains[chainId], [chainId]);
   const provider = useMemo(() => {
     const provider = createMobileProvider(serverUrl, chainId);
@@ -321,6 +322,7 @@ export const SophonContextProvider = ({
       requiresAuthorization,
       currentRequestId,
       debugMode,
+      provider,
     }),
     [
       initialized,
@@ -343,6 +345,7 @@ export const SophonContextProvider = ({
       setAccountWithEffect,
       setCurrentRequestWithEffect,
       debugMode,
+      provider,
     ],
   );
 

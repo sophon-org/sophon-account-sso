@@ -4,6 +4,7 @@ import { useBooleanState, useFlowManager, useSophonAccount } from '../../hooks';
 import { useTranslation } from '../../i18n';
 import { Button, Card, CardError, CheckBox, Container, Text } from '../../ui';
 import { sentenceCase } from '../../utils/string-utils';
+import { StepContainer } from '../components/step-container';
 import type { BaseAuthError, BasicStepProps } from '../types';
 
 export const AuthorizationStep = ({
@@ -57,7 +58,7 @@ export const AuthorizationStep = ({
   }, [logout, onCancel]);
 
   return (
-    <Container>
+    <StepContainer>
       <Container style={styles.content}>
         <Text size="large" textAlign="center">
           {t('authorizationStep.connectWith', {
@@ -114,7 +115,7 @@ export const AuthorizationStep = ({
           loading={isLoadingState.state}
         />
       </View>
-    </Container>
+    </StepContainer>
   );
 };
 

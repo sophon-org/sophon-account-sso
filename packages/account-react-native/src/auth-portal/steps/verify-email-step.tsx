@@ -28,7 +28,8 @@ import {
 } from '../../ui';
 import { scaleWithBoxInput } from '../../utils/platform-utils';
 import { AdaptiveTextInput } from '../components/adaptive-text-input';
-import { useNavigationParams } from '../hooks';
+import { StepContainer } from '../components/step-container';
+import { useNavigationParams } from '../navigation';
 import type { BasicStepProps, VerifyCodeParams } from '../types';
 
 const defaultCodeArray = Array(OTP_CODE_LENGTH).fill('');
@@ -327,7 +328,7 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
   }, [focusIndex]);
 
   return (
-    <Container>
+    <StepContainer>
       <Container gap={8} marginBottom={8}>
         <Text size="large" textAlign="center">
           {t('verifyEmailStep.insertCode')}
@@ -373,7 +374,7 @@ export function VerifyEmailStep({ onAuthenticate, onError }: BasicStepProps) {
           text={error?.message}
         />
       </Container>
-    </Container>
+    </StepContainer>
   );
 }
 
