@@ -17,6 +17,7 @@ export const verifyEIP1271Signature = async ({
 	message,
 	chain,
 	logger,
+	contentsHash,
 }: {
 	accountAddress: Address;
 	signature: Hash;
@@ -32,16 +33,19 @@ export const verifyEIP1271Signature = async ({
 	message: Record<string, unknown>;
 	chain: Chain;
 	logger: PinoLogger;
+	contentsHash?: string;
 }): Promise<boolean> => {
 	try {
 		const publicClient = createPublicClient({ chain, transport: http() });
-		const messageHash = hashTypedData({ domain, types, primaryType, message });
+		const messageHash =
+			contentsHash || hashTypedData({ domain, types, primaryType, message });
 
 		logger.debug({
 			evt: "eip1271.hash",
 			accountAddress,
 			chainId: chain?.id,
 			messageHash,
+			usedContentsHash: Boolean(contentsHash),
 		});
 
 		const result = await publicClient.readContract({
@@ -59,7 +63,7 @@ export const verifyEIP1271Signature = async ({
 				},
 			],
 			functionName: "isValidSignature",
-			args: [messageHash, signature],
+			args: [messageHash as `0x${string}`, signature as `0x${string}`],
 		});
 
 		const EIP1271_MAGIC_VALUE = "0x1626ba7e";

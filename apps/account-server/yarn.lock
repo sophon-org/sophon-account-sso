@@ -315,6 +315,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@biconomy/abstractjs@npm:^1.1.14":
+  version: 1.1.18
+  resolution: "@biconomy/abstractjs@npm:1.1.18"
+  peerDependencies:
+    "@metamask/delegation-toolkit": ^0.11.0
+    "@rhinestone/module-sdk": 0.4.0
+    typescript: ^5.8.2
+    viem: ^2.26.2
+  checksum: 10c0/1023c26d383b61332a21f9d610217346590c9b44d07754c693570051695dc04b05d649cb0cea53d1bcbf4bb4eba783824fdd8d8c186cc0621c6b2d46ee248e59
+  languageName: node
+  linkType: hard
+
 "@coinbase/wallet-sdk@npm:4.3.6":
   version: 4.3.6
   resolution: "@coinbase/wallet-sdk@npm:4.3.6"
@@ -1871,6 +1883,45 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@metamask/delegation-abis@npm:^0.11.0":
+  version: 0.11.0
+  resolution: "@metamask/delegation-abis@npm:0.11.0"
+  checksum: 10c0/92a240ddc5c89fe6d128e6f54884cc443c260ac59fba27c3717ed2e2715ddf128e54659a4a10384d4aa6ab8f83153fefa72e2e3205b94f696995d870041fc2eb
+  languageName: node
+  linkType: hard
+
+"@metamask/delegation-deployments@npm:^0.11.0":
+  version: 0.11.0
+  resolution: "@metamask/delegation-deployments@npm:0.11.0"
+  checksum: 10c0/254c1334b9d4cb84e6eb8179c219082a8295cff9d444331409c327cc4a6f7af3d58d9d095668e16e963c398f3dfe484164771e170302128a48dc639834526fe3
+  languageName: node
+  linkType: hard
+
+"@metamask/delegation-toolkit@npm:~0.11.0":
+  version: 0.11.0
+  resolution: "@metamask/delegation-toolkit@npm:0.11.0"
+  dependencies:
+    "@metamask/delegation-utils": "npm:^0.11.0"
+    webauthn-p256: "npm:^0.0.5"
+  peerDependencies:
+    viem: ">=2.18.2 <3.0.0"
+  checksum: 10c0/4aa7a5ae512a7340cd3e40af3b70a019db268774a05f47dafaff2d19a2f89180c9e73bdfe3057c782f301c3826596fb2a7681a5b6e0ae081fae2a2d08b6f2df4
+  languageName: node
+  linkType: hard
+
+"@metamask/delegation-utils@npm:^0.11.0":
+  version: 0.11.0
+  resolution: "@metamask/delegation-utils@npm:0.11.0"
+  dependencies:
+    "@metamask/delegation-abis": "npm:^0.11.0"
+    "@metamask/delegation-deployments": "npm:^0.11.0"
+    buffer: "npm:^6.0.3"
+  peerDependencies:
+    viem: ">=2.18.2 <3.0.0"
+  checksum: 10c0/ef04565c9e383dae8b29f8d39491a49d31b14b7cf8d945d4719d7aeb9f0a9e46d686262de2cffa9e00bb7c5faf674c9b0f3fa3df8b307a199b021514dc9c0ccc
+  languageName: node
+  linkType: hard
+
 "@metamask/eth-json-rpc-provider@npm:^1.0.0":
   version: 1.0.1
   resolution: "@metamask/eth-json-rpc-provider@npm:1.0.1"
@@ -2397,7 +2448,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@noble/curves@npm:^1.3.0, @noble/curves@npm:^1.4.2, @noble/curves@npm:^1.6.0, @noble/curves@npm:^1.9.1, @noble/curves@npm:~1.9.0":
+"@noble/curves@npm:^1.3.0, @noble/curves@npm:^1.4.0, @noble/curves@npm:^1.4.2, @noble/curves@npm:^1.6.0, @noble/curves@npm:^1.9.1, @noble/curves@npm:~1.9.0":
   version: 1.9.7
   resolution: "@noble/curves@npm:1.9.7"
   dependencies:
@@ -3787,6 +3838,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@rhinestone/module-sdk@npm:0.4.0":
+  version: 0.4.0
+  resolution: "@rhinestone/module-sdk@npm:0.4.0"
+  dependencies:
+    solady: "npm:^0.0.235"
+    tslib: "npm:^2.7.0"
+  peerDependencies:
+    viem: ^2.0.0
+  checksum: 10c0/82a45cc964d1bbbe913951f650cc7b7a93601917dca9b0fca373e3511e360d10678a6e7d1a891d0cf5aaf334f9b80414242f956667a65c0c15b43cc251f291ee
+  languageName: node
+  linkType: hard
+
 "@rolldown/pluginutils@npm:1.0.0-beta.27":
   version: 1.0.0-beta.27
   resolution: "@rolldown/pluginutils@npm:1.0.0-beta.27"
@@ -4674,25 +4737,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-core@npm:2.3.1":
-  version: 2.3.1
-  resolution: "@sophon-labs/account-core@npm:2.3.1"
+"@sophon-labs/account-core@file:../../packages/account-core::locator=%40sophon-labs%2Faccount-server%40workspace%3A.":
+  version: 3.0.0-next.23
+  resolution: "@sophon-labs/account-core@file:../../packages/account-core#../../packages/account-core::hash=83c484&locator=%40sophon-labs%2Faccount-server%40workspace%3A."
   dependencies:
+    "@biconomy/abstractjs": "npm:^1.1.14"
+    "@metamask/delegation-toolkit": "npm:~0.11.0"
+    "@rhinestone/module-sdk": "npm:0.4.0"
     text-encoding-polyfill: "npm:^0.6.7"
   peerDependencies:
     viem: ">=2.21.0"
-  checksum: 10c0/a3bdee446d885cf1d8782b5bce443d0e3a7535e5595ee99037da138f01195bdef545892152a375285347eb95989623c80c8aad6c31694ef19df3d3c69b61020d
+  checksum: 10c0/8ea4323acf1226a3c1a581d765243d6f959bc3e144c2ca9427f2b2d444610b32cd37f62ea1900f20bc91037c0c13a44aa3a587b4f63af38e0942f5f9fd8fe7da
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-message-bridge@npm:2.3.5":
-  version: 2.3.5
-  resolution: "@sophon-labs/account-message-bridge@npm:2.3.5"
+"@sophon-labs/account-message-bridge@file:../../packages/account-message-bridge::locator=%40sophon-labs%2Faccount-server%40workspace%3A.":
+  version: 3.0.0-next.23
+  resolution: "@sophon-labs/account-message-bridge@file:../../packages/account-message-bridge#../../packages/account-message-bridge::hash=85aa76&locator=%40sophon-labs%2Faccount-server%40workspace%3A."
   dependencies:
     eventemitter3: "npm:5.0.1"
   peerDependencies:
     react-native-webview: ">=13.12.5"
-  checksum: 10c0/5fdab4723109ea35e58388de0d143776e43d53a22d07a662eef7a9187d01ee2ae2b37193c6647aa61e58411647c1e00b1783a4eacfd521078c76a657a4e08573
+  checksum: 10c0/b894708327f3de294895412b334170a76fbb2004981645a36e1b556d1de7a6624d4623374fb8f9622006a5d6cb372689c321153490da4fbba63600c34898218b
   languageName: node
   linkType: hard
 
@@ -4716,8 +4782,8 @@ __metadata:
     "@radix-ui/react-tooltip": "npm:^1.2.7"
     "@sentry/nextjs": "npm:^10"
     "@simplewebauthn/server": "npm:^13.1.2"
-    "@sophon-labs/account-core": "npm:2.3.1"
-    "@sophon-labs/account-message-bridge": "npm:2.3.5"
+    "@sophon-labs/account-core": "file:../../packages/account-core"
+    "@sophon-labs/account-message-bridge": "file:../../packages/account-message-bridge"
     "@t3-oss/env-nextjs": "npm:^0.13.8"
     "@tailwindcss/postcss": "npm:^4"
     "@tanstack/react-query": "npm:^5.81.2"
@@ -4751,7 +4817,7 @@ __metadata:
     tw-animate-css: "npm:^1.3.5"
     typescript: "npm:^5"
     vaul: "npm:^1.1.2"
-    viem: "npm:^2.36.0"
+    viem: "npm:2.38.3"
     vite: "npm:^7.0.5"
     vite-tsconfig-paths: "npm:^5.1.4"
     vitest: "npm:^3.2.4"
@@ -9827,6 +9893,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ox@npm:0.9.6":
+  version: 0.9.6
+  resolution: "ox@npm:0.9.6"
+  dependencies:
+    "@adraffy/ens-normalize": "npm:^1.11.0"
+    "@noble/ciphers": "npm:^1.3.0"
+    "@noble/curves": "npm:1.9.1"
+    "@noble/hashes": "npm:^1.8.0"
+    "@scure/bip32": "npm:^1.7.0"
+    "@scure/bip39": "npm:^1.6.0"
+    abitype: "npm:^1.0.9"
+    eventemitter3: "npm:5.0.1"
+  peerDependencies:
+    typescript: ">=5.4.0"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 10c0/559b39051f80a25352e1ca6e7aba6e04f60c4e29f98e4ef3ec0c8d2b0432d400004ce09d2991200eaf21745179af47367dc28c553da43403dd0b69c2453ebabe
+  languageName: node
+  linkType: hard
+
 "p-limit@npm:^2.2.0":
   version: 2.3.0
   resolution: "p-limit@npm:2.3.0"
@@ -11212,6 +11299,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"solady@npm:^0.0.235":
+  version: 0.0.235
+  resolution: "solady@npm:0.0.235"
+  checksum: 10c0/3380ef3ba885ada70c1d4d8ef1be5fed61d6851ad15dbba7525626deec9cc33a839b461e2b3c51448149603aedb2282f1a0ddf1a676068ca5546ade49d66c484
+  languageName: node
+  linkType: hard
+
 "sonic-boom@npm:^2.2.1":
   version: 2.8.0
   resolution: "sonic-boom@npm:2.8.0"
@@ -11714,7 +11808,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.0.0, tslib@npm:^2.0.3, tslib@npm:^2.1.0, tslib@npm:^2.4.0, tslib@npm:^2.6.0, tslib@npm:^2.8.0, tslib@npm:^2.8.1":
+"tslib@npm:^2.0.0, tslib@npm:^2.0.3, tslib@npm:^2.1.0, tslib@npm:^2.4.0, tslib@npm:^2.6.0, tslib@npm:^2.7.0, tslib@npm:^2.8.0, tslib@npm:^2.8.1":
   version: 2.8.1
   resolution: "tslib@npm:2.8.1"
   checksum: 10c0/9c4759110a19c53f992d9aae23aac5ced636e99887b51b9e61def52611732872ff7668757d4e4c61f19691e36f4da981cd9485e869b4a7408d689f6bf1f14e62
@@ -12145,7 +12239,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"viem@npm:>=2.29.0, viem@npm:^2.1.1, viem@npm:^2.27.2, viem@npm:^2.28.4, viem@npm:^2.31.7, viem@npm:^2.36.0":
+"viem@npm:2.38.3":
+  version: 2.38.3
+  resolution: "viem@npm:2.38.3"
+  dependencies:
+    "@noble/curves": "npm:1.9.1"
+    "@noble/hashes": "npm:1.8.0"
+    "@scure/bip32": "npm:1.7.0"
+    "@scure/bip39": "npm:1.6.0"
+    abitype: "npm:1.1.0"
+    isows: "npm:1.0.7"
+    ox: "npm:0.9.6"
+    ws: "npm:8.18.3"
+  peerDependencies:
+    typescript: ">=5.0.4"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 10c0/ec69d641d26e64e793883021618ca0d5c833d4807c53201ff0441c1e8369cbc12079fc08edfb4e69c8e75ec47ff80058b989916cbc257770dc8c430e320e1428
+  languageName: node
+  linkType: hard
+
+"viem@npm:>=2.29.0, viem@npm:^2.1.1, viem@npm:^2.27.2, viem@npm:^2.28.4, viem@npm:^2.31.7":
   version: 2.36.0
   resolution: "viem@npm:2.36.0"
   dependencies:
@@ -12368,6 +12483,16 @@ __metadata:
   version: 4.2.4
   resolution: "web-vitals@npm:4.2.4"
   checksum: 10c0/383c9281d5b556bcd190fde3c823aeb005bb8cf82e62c75b47beb411014a4ed13fa5c5e0489ed0f1b8d501cd66b0bebcb8624c1a75750bd5df13e2a3b1b2d194
+  languageName: node
+  linkType: hard
+
+"webauthn-p256@npm:^0.0.5":
+  version: 0.0.5
+  resolution: "webauthn-p256@npm:0.0.5"
+  dependencies:
+    "@noble/curves": "npm:^1.4.0"
+    "@noble/hashes": "npm:^1.4.0"
+  checksum: 10c0/8a445dddaf0e699363a0a7bca51742f672dbbec427c1a97618465bfc418df0eff10d3f1cf5e43bcd0cd0dc5abcdaad7914916c06c84107eaf226f5a1d0690c13
   languageName: node
   linkType: hard
 

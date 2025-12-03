@@ -212,7 +212,7 @@ export const getZKSyncSessionClientCreationParams = (
   accountAddress: Address,
   signerPrivateKey: Hex,
   chain: Chain,
-  chainId = sophonTestnet.id,
+  chainId: ChainId = sophonTestnet.id,
 ) => {
   return {
     chain,
@@ -228,7 +228,7 @@ export const getZKSyncSessionClientCreationParams = (
 
 export const isSessionKeyModuleInstalled = async (
   address: Address,
-  chainId = sophonTestnet.id,
+  chainId: ChainId = sophonTestnet.id,
 ): Promise<boolean> => {
   const client = createPublicClient({
     chain: SophonChains[chainId],
@@ -251,7 +251,7 @@ export const isSessionKeyModuleInstalled = async (
 
 export const getInstallSessionKeyModuleTxForViem = (
   args: InstallSessionKeyModuleArgs,
-  chainId = sophonTestnet.id,
+  chainId: ChainId = sophonTestnet.id,
 ) => {
   const callData = encodeFunctionData({
     abi: SophonAccountAbi,
@@ -276,7 +276,7 @@ export const getInstallSessionKeyModuleTxForViem = (
 export const getCreateSessionTxForViem = (
   args: Omit<CreateSessionArgs, 'contracts'>,
   accountAddress: Address,
-  chainId = sophonTestnet.id,
+  chainId: ChainId = sophonTestnet.id,
 ) => {
   const _args = {
     ...args,
@@ -308,7 +308,7 @@ export const getCreateSessionTxForViem = (
 export const getRevokeSessionTxForViem = (
   args: RevokeSessionArgs,
   accountAddress: Address,
-  chainId = sophonTestnet.id,
+  chainId: ChainId = sophonTestnet.id,
 ) => {
   const callData = encodeFunctionData({
     abi: SessionKeyValidatorAbi,

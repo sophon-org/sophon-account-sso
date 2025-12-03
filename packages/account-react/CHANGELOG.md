@@ -219,6 +219,24 @@
   - @sophon-labs/account-connector@3.0.0-next.0
   - @sophon-labs/account-core@3.0.0-next.0
 
+## 2.3.8
+
+### Patch Changes
+
+- Refresh token without react context
+- Updated dependencies
+  - @sophon-labs/account-connector@2.3.8
+  - @sophon-labs/account-core@2.3.8
+
+## 2.3.7
+
+### Patch Changes
+
+- Changing base domain to sophonauth.com
+- Updated dependencies
+  - @sophon-labs/account-connector@2.3.7
+  - @sophon-labs/account-core@2.3.7
+
 ## 2.3.6
 
 ### Patch Changes

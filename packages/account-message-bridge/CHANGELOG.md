@@ -144,6 +144,18 @@
 
 - Initial release of the new sophon account v3 for testing purposes only
 
+## 2.3.8
+
+### Patch Changes
+
+- Refresh token without react context
+
+## 2.3.7
+
+### Patch Changes
+
+- Changing base domain to sophonauth.com
+
 ## 2.3.6
 
 ### Patch Changes

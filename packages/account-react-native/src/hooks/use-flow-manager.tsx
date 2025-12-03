@@ -1,12 +1,26 @@
 import {
+  getMEEVersion,
+  MEEVersion,
+  toNexusAccount,
+} from '@biconomy/abstractjs';
+import {
   AuthService,
   CHAIN_CONTRACTS,
   checkChainCapability,
+  isOsChainId,
   predictNexusOffchainByChain,
   safeParseTypedData,
 } from '@sophon-labs/account-core';
 import { useCallback, useMemo } from 'react';
-import type { Address } from 'viem';
+import {
+  type Address,
+  concat,
+  domainSeparator,
+  encodeAbiParameters,
+  http,
+  keccak256,
+  parseAbiParameters,
+} from 'viem';
 import type { SophonAccount } from '../context/sophon-context';
 import { sendUIMessage } from '../messaging';
 import { getRefusedRPC } from '../messaging/utils';
@@ -30,8 +44,12 @@ export const useFlowManager = () => {
     currentRequestId,
   } = useSophonContext();
   const { getAccessToken } = useSophonToken();
-  const { waitForAuthentication, embeddedUserId, createEmbeddedWalletClient } =
-    useEmbeddedAuth();
+  const {
+    waitForAuthentication,
+    embeddedUserId,
+    createEmbeddedWalletClient,
+    createEmbeddedAccountSigner,
+  } = useEmbeddedAuth();
   const method = useMemo(() => {
     // biome-ignore lint/suspicious/noExplicitAny: to type better later
     const content: any = currentRequest?.content;
@@ -49,11 +67,6 @@ export const useFlowManager = () => {
         throw new Error('No account address found');
       }
 
-      const { onChain: onChainDeploy } = checkChainCapability(
-        chainId,
-        'deployContract',
-      );
-
       // request nonce
       const nonce = await AuthService.requestNonce(
         chainId,
@@ -63,72 +76,171 @@ export const useFlowManager = () => {
         embeddedUserId,
       );
 
-      // request signature
-      const messageFields = [
-        { name: 'content', type: 'string' },
-        { name: 'from', type: 'address' },
-        { name: 'nonce', type: 'string' },
-        { name: 'audience', type: 'string' },
-      ];
-
-      const message = {
-        content: `Do you authorize this website to connect?!\n\nThis message confirms you control this wallet.`,
-        from: account.address.toLowerCase(),
-        nonce,
-        audience: partnerId,
+      let tokens: {
+        accessToken: string;
+        accessTokenExpiresAt: number;
+        refreshToken: string;
+        refreshTokenExpiresAt: number;
       };
 
-      const signAuth = {
-        domain: {
-          name: 'Sophon SSO',
-          version: '1',
-          chainId: chain.id,
-        },
-        types: {
-          Message: embeddedUserId
-            ? [...messageFields, { name: 'userId', type: 'string' }]
-            : messageFields,
-          EIP712Domain: [
-            { name: 'name', type: 'string' },
-            { name: 'version', type: 'string' },
-            { name: 'chainId', type: 'uint256' },
-          ],
-        },
-        primaryType: 'Message',
-        address: account.address.toLowerCase(),
-        message: embeddedUserId
-          ? { ...message, userId: embeddedUserId }
-          : message,
-      };
+      if (isOsChainId(chainId)) {
+        try {
+          const appDomain = {
+            chainId: chainId,
+            name: 'Sophon SSO',
+            verifyingContract: account.address as Address,
+            version: '1',
+          };
 
-      const safePayload = safeParseTypedData(signAuth);
+          const content = `Do you authorize this website to connect?!\n\nThis message confirms you control this wallet.`;
+          const primaryType = 'Contents';
+          const types = {
+            Contents: [
+              {
+                name: 'stuff',
+                type: 'bytes32',
+              },
+            ],
+          } as const;
 
-      const embeddedWalletClient = await createEmbeddedWalletClient();
+          const abiParameters = embeddedUserId
+            ? 'string,address,string,string,string'
+            : 'string,address,string,string';
+          const abiValues = embeddedUserId
+            ? [content, account.address, nonce, partnerId, embeddedUserId]
+            : [content, account.address, nonce, partnerId];
 
-      const signature = await embeddedWalletClient.signTypedData({
-        domain: safePayload.domain,
-        types: safePayload.types,
-        primaryType: safePayload.primaryType,
-        message: safePayload.message,
-        // if the contract deployment is disabled, then we use the owner address as signer,
-        // so we can actually issue the JWT token that can be verified on the server
-        account: (onChainDeploy
-          ? account.address
-          : account.owner
-        ).toLowerCase() as Address,
-      });
+          const message = {
+            stuff: keccak256(
+              encodeAbiParameters(
+                parseAbiParameters(abiParameters),
+                abiValues as [string, `0x${string}`, string, string],
+              ),
+            ),
+          };
 
-      // exchange tokens
-      const tokens = await AuthService.requestToken(
-        chainId,
-        account.address.toLowerCase() as Address,
-        signAuth,
-        signature,
-        nonce,
-        // if the contract deployment is disabled, we don't send the owner, its only
-        // required in the server if there's no contract deployment
-        onChainDeploy ? undefined : (account.owner.toLowerCase() as Address),
-      );
+          const appDomainSeparator = domainSeparator({ domain: appDomain });
+
+          const contentsHash = keccak256(
+            concat(['0x1901', appDomainSeparator, message.stuff]),
+          );
+
+          const signAuth = {
+            domain: appDomain,
+            types,
+            primaryType,
+            address: account.address,
+            message,
+            contentsHash,
+          };
+
+          const safePayload = safeParseTypedData(signAuth);
+          const ownerAccount = await createEmbeddedAccountSigner();
+          const smartAccount = await toNexusAccount({
+            signer: ownerAccount,
+            chainConfiguration: {
+              chain: chain,
+              transport: http(),
+              version: getMEEVersion(MEEVersion.V2_1_0),
+              versionCheck: false,
+            },
+          });
+
+          const signature = await smartAccount.signTypedData({
+            domain: safePayload.domain,
+            primaryType: safePayload.primaryType,
+            types: safePayload.types,
+            message: safePayload.message,
+          });
+
+          tokens = await AuthService.requestToken(
+            chainId,
+            account.address.toLowerCase() as Address,
+            signAuth,
+            signature,
+            nonce,
+            undefined,
+            partnerId,
+            signAuth.contentsHash,
+          );
+        } catch (error) {
+          console.error('Failed to authorize', error);
+          throw error;
+        }
+      } else {
+        // request signature
+        const messageFields = [
+          { name: 'content', type: 'string' },
+          { name: 'from', type: 'address' },
+          { name: 'nonce', type: 'string' },
+          { name: 'audience', type: 'string' },
+        ];
+
+        const message = {
+          content: `Do you authorize this website to connect?!\n\nThis message confirms you control this wallet.`,
+          from: account.address.toLowerCase(),
+          nonce,
+          audience: partnerId,
+        };
+
+        const signAuth = {
+          domain: {
+            name: 'Sophon SSO',
+            version: '1',
+            chainId: chain.id,
+          },
+          types: {
+            Message: embeddedUserId
+              ? [...messageFields, { name: 'userId', type: 'string' }]
+              : messageFields,
+            EIP712Domain: [
+              { name: 'name', type: 'string' },
+              { name: 'version', type: 'string' },
+              { name: 'chainId', type: 'uint256' },
+            ],
+          },
+          primaryType: 'Message',
+          address: account.address.toLowerCase(),
+          message: embeddedUserId
+            ? { ...message, userId: embeddedUserId }
+            : message,
+        };
+
+        const safePayload = safeParseTypedData(signAuth);
+
+        const embeddedWalletClient = await createEmbeddedWalletClient();
+
+        const { onChain: onChainDeploy } = checkChainCapability(
+          chainId,
+          'deployContract',
+        );
+
+        const signature = await embeddedWalletClient.signTypedData({
+          domain: safePayload.domain,
+          types: safePayload.types,
+          primaryType: safePayload.primaryType,
+          message: safePayload.message,
+          // if the contract deployment is disabled, then we use the owner address as signer,
+          // so we can actually issue the JWT token that can be verified on the server
+          account: (onChainDeploy
+            ? account.address
+            : account.owner
+          ).toLowerCase() as Address,
+        });
+
+        // exchange tokens
+        tokens = await AuthService.requestToken(
+          chainId,
+          account.address.toLowerCase() as Address,
+          signAuth,
+          signature,
+          nonce,
+          // if the contract deployment is disabled, we don't send the owner, its only
+          // required in the server if there's no contract deployment
+          onChainDeploy ? undefined : (account.owner.toLowerCase() as Address),
+          partnerId,
+        );
+      }
 
       // save tokens
       setCurrentRequest(undefined);
@@ -195,6 +307,7 @@ export const useFlowManager = () => {
       embeddedUserId,
       setConnectingAccount,
       setCurrentRequest,
+      createEmbeddedAccountSigner,
     ],
   );
 
@@ -208,7 +321,7 @@ export const useFlowManager = () => {
 
       if (onChainDeploy && !accounts.length) {
         const response = await AuthService.deploySmartAccount(chainId, owner);
-        if (response.contracts.length) {
+        if (response?.contracts.length) {
           accounts = response.contracts;
         }
       } else if (offChainDeploy) {

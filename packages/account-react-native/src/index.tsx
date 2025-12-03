@@ -10,3 +10,4 @@ export * from './provider';
 export * from './lib/capabilities';
 export * from './types';
 export * from './wagmi';
+export * from './token/index';

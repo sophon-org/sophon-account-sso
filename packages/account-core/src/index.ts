@@ -3,6 +3,7 @@ import 'text-encoding-polyfill';
 // everything below is public
 export * from './abis';
 export * from './avatar';
+export * from './biconomy';
 export * from './constants';
 export * from './formatters';
 export * from './session-helper';
