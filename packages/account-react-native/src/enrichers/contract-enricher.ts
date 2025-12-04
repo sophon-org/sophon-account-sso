@@ -1,16 +1,16 @@
 import type { ExplorerContractInfo } from '@sophon-labs/account-core';
 import { formatEther } from 'viem';
 import {
+  type DecodedTransactionData,
   type EnrichedContractTransaction,
   type TransactionCurrentRequest,
   TransactionType,
 } from '../types/transaction-request';
-import type { DecodedTransactionData } from './enrichment-utils';
 
 export const enrichContractTransaction = async (
   transactionRequest: TransactionCurrentRequest,
   contractInfo: ExplorerContractInfo,
-  decodedData?: DecodedTransactionData,
+  decodedData?: DecodedTransactionData | null,
   fee?: { SOPH: string; USD?: string },
 ): Promise<EnrichedContractTransaction> => {
   return {

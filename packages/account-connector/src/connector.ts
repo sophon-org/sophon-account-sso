@@ -1,7 +1,14 @@
-import type { Communicator } from "@sophon-labs/account-communicator";
-import { AccountServerURL, type ChainId } from "@sophon-labs/account-core";
-import { createSophonEIP1193Provider, type EIP1193Provider } from "@sophon-labs/account-provider";
-import { ChainNotConfiguredError, type Connector, createConnector } from "@wagmi/core";
+import type { Communicator } from '@sophon-labs/account-communicator';
+import { AccountServerURL, type ChainId } from '@sophon-labs/account-core';
+import {
+  createSophonEIP1193Provider,
+  type EIP1193Provider,
+} from '@sophon-labs/account-provider';
+import {
+  ChainNotConfiguredError,
+  type Connector,
+  createConnector,
+} from '@wagmi/core';
 import {
   type Address,
   type Client,
@@ -13,12 +20,14 @@ import {
   toHex,
   UserRejectedRequestError,
   walletActions,
-} from "viem";
-import { sophon, sophonTestnet } from "viem/chains";
-import { eip712WalletActions } from "viem/zksync";
-import { SophonConnectorMetadata } from "./constants";
+} from 'viem';
+import { sophon, sophonTestnet } from 'viem/chains';
+import { eip712WalletActions } from 'viem/zksync';
+import { SophonConnectorMetadata } from './constants';
 
-export type SophonConnectorConfigType = Parameters<ReturnType<typeof createSophonConnector>>[0];
+export type SophonConnectorConfigType = Parameters<
+  ReturnType<typeof createSophonConnector>
+>[0];
 
 export const createSophonConnector = (
   chainId: ChainId = sophonTestnet.id,
@@ -34,22 +43,22 @@ export const createSophonConnector = (
   }
   let walletProvider: EIP1193Provider | undefined = provider;
 
-  let accountsChanged: Connector["onAccountsChanged"] | undefined;
-  let chainChanged: Connector["onChainChanged"] | undefined;
-  let disconnect: Connector["onDisconnect"] | undefined;
+  let accountsChanged: Connector['onAccountsChanged'] | undefined;
+  let chainChanged: Connector['onChainChanged'] | undefined;
+  let disconnect: Connector['onDisconnect'] | undefined;
 
   const destroyWallet = () => {
     if (walletProvider) {
       if (accountsChanged) {
-        walletProvider.removeListener("accountsChanged", accountsChanged);
+        walletProvider.removeListener('accountsChanged', accountsChanged);
         accountsChanged = undefined;
       }
       if (chainChanged) {
-        walletProvider.removeListener("chainChanged", chainChanged);
+        walletProvider.removeListener('chainChanged', chainChanged);
         chainChanged = undefined;
       }
       if (disconnect) {
-        walletProvider.removeListener("disconnect", disconnect);
+        walletProvider.removeListener('disconnect', disconnect);
         disconnect = undefined;
       }
     }
@@ -67,21 +76,21 @@ export const createSophonConnector = (
         const provider = await this.getProvider();
         const accounts = (
           (await provider.request({
-            method: "eth_requestAccounts",
+            method: 'eth_requestAccounts',
           })) as string[]
         ).map((x) => getAddress(x));
 
         if (!accountsChanged) {
           accountsChanged = this.onAccountsChanged.bind(this);
-          provider.on("accountsChanged", accountsChanged);
+          provider.on('accountsChanged', accountsChanged);
         }
         if (!chainChanged) {
           chainChanged = this.onChainChanged.bind(this);
-          provider.on("chainChanged", chainChanged);
+          provider.on('chainChanged', chainChanged);
         }
         if (!disconnect) {
           disconnect = this.onDisconnect.bind(this);
-          provider.on("disconnect", disconnect);
+          provider.on('disconnect', disconnect);
         }
 
         // Switch to chain if provided
@@ -114,22 +123,25 @@ export const createSophonConnector = (
     async getAccounts() {
       const provider = await this.getProvider();
       const addresses = (await provider.request({
-        method: "eth_accounts",
+        method: 'eth_accounts',
       })) as string[];
       return addresses.map((x: string) => getAddress(x));
     },
     async getChainId() {
       const provider = await this.getProvider();
       const chainId = await provider.request({
-        method: "eth_chainId",
+        method: 'eth_chainId',
       });
       if (!chainId) return config.chains[0].id;
       return Number(chainId);
     },
     async getClient(parameters): Promise<Client> {
-      if (!walletProvider) throw new Error("Wallet provider not initialized");
+      if (!walletProvider) throw new Error('Wallet provider not initialized');
       const supportedChains: number[] = [sophon.id, sophonTestnet.id];
-      if (parameters?.chainId && !supportedChains.includes(parameters.chainId)) {
+      if (
+        parameters?.chainId &&
+        !supportedChains.includes(parameters.chainId)
+      ) {
         throw new Error(`Chain with id ${parameters.chainId} is not supported`);
       }
 
@@ -173,7 +185,7 @@ export const createSophonConnector = (
       try {
         const provider = await this.getProvider();
         await provider.request({
-          method: "wallet_switchEthereumChain",
+          method: 'wallet_switchEthereumChain',
           params: [{ chainId: toHex(chainId) }],
         });
         return chain;
@@ -183,16 +195,16 @@ export const createSophonConnector = (
     },
     onAccountsChanged(accounts) {
       if (!accounts.length) return;
-      config.emitter.emit("change", {
+      config.emitter.emit('change', {
         accounts: accounts.map((x) => getAddress(x)),
       });
     },
     onChainChanged(chain) {
-      config.emitter.emit("change", { chainId: Number(chain) });
+      config.emitter.emit('change', { chainId: Number(chain) });
     },
     async onDisconnect(error) {
-      config.emitter.emit("disconnect");
-      console.error("Account disconnected", error);
+      config.emitter.emit('disconnect');
+      console.error('Account disconnected', error);
     },
   }));
 };
