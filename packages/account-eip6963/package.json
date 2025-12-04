@@ -29,6 +29,26 @@
         "require": "./dist/mainnet.cjs"
       }
     },
+    "./os-mainnet": {
+      "import": {
+        "types": "./dist/os-mainnet.d.ts",
+        "import": "./dist/os-mainnet.js"
+      },
+      "require": {
+        "types": "./dist/os-mainnet.d.cts",
+        "require": "./dist/os-mainnet.cjs"
+      }
+    },
+    "./os-testnet": {
+      "import": {
+        "types": "./dist/os-testnet.d.ts",
+        "import": "./dist/os-testnet.js"
+      },
+      "require": {
+        "types": "./dist/os-testnet.d.cts",
+        "require": "./dist/os-testnet.cjs"
+      }
+    },
     "./testnet": {
       "import": {
         "types": "./dist/testnet.d.ts",

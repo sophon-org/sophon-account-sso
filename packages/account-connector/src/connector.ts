@@ -36,6 +36,10 @@ export const createSophonConnector = (
   communicator?: Communicator,
 ) => {
   const authServerUrl = customAuthServerUrl ?? AccountServerURL[chainId];
+  const connectorMetadata = SophonConnectorMetadata[chainId];
+  if (!connectorMetadata) {
+    throw new ChainNotConfiguredError();
+  }
   let walletProvider: EIP1193Provider | undefined;
 
   let accountsChanged: Connector['onAccountsChanged'] | undefined;
@@ -61,10 +65,10 @@ export const createSophonConnector = (
   };
 
   return createConnector<EIP1193Provider>((config) => ({
-    id: SophonConnectorMetadata[chainId].id,
-    name: SophonConnectorMetadata[chainId].name,
-    icon: SophonConnectorMetadata[chainId].icon,
-    type: SophonConnectorMetadata[chainId].type,
+    id: connectorMetadata.id,
+    name: connectorMetadata.name,
+    icon: connectorMetadata.icon,
+    type: connectorMetadata.type,
 
     async connect({ chainId } = {}) {
       try {

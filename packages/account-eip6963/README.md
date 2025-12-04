@@ -34,6 +34,12 @@ import "@sophon-labs/account-eip6963/testnet";
 
 import "@sophon-labs/account-eip6963/mainnet";
 
+// or for Sophon OS
+
+import "@sophon-labs/account-eip6963/os-testnet";
+
+import "@sophon-labs/account-eip6963/os-mainnet";
+
 // The Sophon Account will now announce itself via the EIP-6963 protocol
 // No additional setup is required
 ```

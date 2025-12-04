@@ -4,7 +4,7 @@ import { useSophonAccount } from '../hooks';
 
 export interface WagmiSophonSyncProps {
   children: React.ReactNode;
-  connector: Connector;
+  connector?: Connector;
 }
 
 export const WagmiSophonSync = ({
@@ -14,7 +14,7 @@ export const WagmiSophonSync = ({
   const { account } = useSophonAccount();
   const { connect } = useConnect();
   const { disconnect } = useDisconnect();
-  const lastConnectedAddress = useRef(undefined);
+  const lastConnectedAddress = useRef<string | null | undefined>(undefined);
 
   const wagmiDisconnect = useCallback(() => {
     disconnect();
@@ -30,7 +30,10 @@ export const WagmiSophonSync = ({
   );
 
   const sync = useCallback(() => {
-    if (!account?.address || !connector) {
+    // Wait until the connector is initialized
+    if (!connector) return;
+
+    if (!account?.address) {
       wagmiDisconnect();
       return;
     }
