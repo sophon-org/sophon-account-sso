@@ -14,6 +14,7 @@ import {
   Switch,
   Text,
 } from '../../ui';
+import { StepContainer } from '../components/step-container';
 import type { BaseAuthError, BasicStepProps } from '../types';
 
 const DATA_SHARING_EMAIL = 'data@sophon.xyz';
@@ -104,7 +105,7 @@ export const ConsentStep: React.FC<BasicStepProps> = ({
   }, []);
 
   return (
-    <Container>
+    <StepContainer>
       <Container marginBottom={16}>
         <Text textAlign="center">{t('consentStep.title')}</Text>
       </Container>
@@ -168,6 +169,6 @@ export const ConsentStep: React.FC<BasicStepProps> = ({
           loading={isLoadingState.state}
         />
       </Container>
-    </Container>
+    </StepContainer>
   );
 };

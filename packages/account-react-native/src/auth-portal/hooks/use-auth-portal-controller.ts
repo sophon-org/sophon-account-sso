@@ -5,8 +5,8 @@ import { useEmbeddedAuth } from '../../hooks/use-embedded-auth';
 import { useFlowManager } from '../../hooks/use-flow-manager';
 import { useSophonContext } from '../../hooks/use-sophon-context';
 import { useTranslation } from '../../i18n';
-import type { AuthPortalStep, CurrentParams } from '../types';
-import { useNavigationController } from './use-navigation-controller';
+import { useNavigationController } from '../navigation';
+import type { AuthPortalStep, CurrentParams, NavigateParams } from '../types';
 
 const STEPS_ALLOW_BACK_BUTTON: AuthPortalStep[] = ['verifyEmail'];
 const STEPS_FORCE_DISPLAY_BACK_BUTTON: AuthPortalStep[] = ['retry'];
@@ -25,7 +25,13 @@ interface Props {
 
 export const useAuthPortalController = (props: Props) => {
   const { t } = useTranslation();
-  const navigation = useNavigationController();
+  const navigation = useNavigationController<
+    AuthPortalStep,
+    CurrentParams,
+    NavigateParams
+  >({
+    resetSteps: ['transaction'],
+  });
   const { method } = useFlowManager();
   const { isConnected, account, isConnecting } = useSophonAccount();
   const { connectingAccount } = useSophonContext();
@@ -74,11 +80,16 @@ export const useAuthPortalController = (props: Props) => {
 
   const params = useMemo(() => {
     if (!currentStep) return null;
-
-    return (
-      navigation.currentParams?.[currentStep as keyof CurrentParams] || null
-    );
+    const currentParams =
+      navigation.currentParams?.[currentStep as keyof CurrentParams];
+    return currentParams || null;
   }, [currentStep, navigation.currentParams]);
+
+  const paramsShowBackButton = useMemo(() => {
+    return Boolean(
+      params && 'showBackButton' in params && params.showBackButton,
+    );
+  }, [params]);
 
   const showBackButton = useMemo(() => {
     if (!currentStep) return false;
@@ -89,17 +100,21 @@ export const useAuthPortalController = (props: Props) => {
       STEPS_ALLOW_BACK_BUTTON.includes(currentStep) &&
       Boolean((navigation.history?.length ?? 0) > 0);
 
-    return shouldDisplayBackButton || canGoBack;
-  }, [navigation.history?.length, currentStep]);
+    return paramsShowBackButton || shouldDisplayBackButton || canGoBack;
+  }, [navigation.history?.length, currentStep, paramsShowBackButton]);
 
   const stepDisplayName = useMemo(() => {
     switch (currentStep) {
       case 'consent':
         return t('common.consent');
+      case 'transaction':
+        return params && 'stepTitle' in params
+          ? (params.stepTitle as string)
+          : null;
       default:
         return null;
     }
-  }, [t, currentStep]);
+  }, [t, currentStep, params]);
 
   const userName = useSophonName();
 
@@ -116,13 +131,27 @@ export const useAuthPortalController = (props: Props) => {
     return '';
   }, [account, userName, currentStep, t, stepDisplayName]);
 
+  const navigationParamsHideClose = useMemo(() => {
+    if (params && 'hideCloseButton' in params) {
+      return Boolean(params.hideCloseButton);
+    }
+    return false;
+  }, [params]);
+
   const handleProps = useMemo(
     () => ({
       showBackButton,
-      hideCloseButton: isLoading || isConnecting,
+      hideCloseButton: isLoading || isConnecting || navigationParamsHideClose,
       title: displayName ?? t('common.signIn'),
     }),
-    [showBackButton, isLoading, displayName, isConnecting, t],
+    [
+      showBackButton,
+      isLoading,
+      displayName,
+      isConnecting,
+      t,
+      navigationParamsHideClose,
+    ],
   );
 
   const isConnectedAndAuthorizationComplete = useMemo(() => {

@@ -43,7 +43,26 @@
     "placeholder": "Marcador de posición para firmar mensaje."
   },
   "transactionStep": {
-    "placeholder": "Marcador de posición para transacción."
+    "rawTransaction": "Transacción en bruto",
+    "feeDetails": "Detalles de la tarifa",
+    "transfer": "Transferir {{name}}",
+    "spendingRequestFor": "Solicitud de gasto para {{name}}",
+    "transactionRequest": "Solicitud de transacción",
+    "unknownTransaction": "Transacción desconocida",
+    "networkFee": "Tarifa de red:",
+    "usdFee": "Tarifa (USD):",
+    "amountNetwork": "{{amount}} SOPH",
+    "amountUsd": "${{amount}}",
+    "viewDetails": "Ver detalles de la transacción en bruto",
+    "token": "Token",
+    "from": "De",
+    "to": "Para",
+    "contract": "Contrato",
+    "spendingCap": "Límite de gasto",
+    "currentBalance": "Saldo actual",
+    "interactingWith": "Interactuando con",
+    "amount": "Cantidad",
+    "estimatedFee": "Tarifa estimada"
   },
   "footer": {
     "byContinuing": "Al iniciar sesión aceptas nuestros\n"
@@ -57,6 +76,7 @@
     "signIn": "Iniciar sesión",
     "consent": "Consentimiento de datos",
     "retry": "Reintentar",
+    "approve": "Aprobar",
     "confirm": "Confirmar",
     "connect": "Conectar",
     "cancel": "Cancelar",

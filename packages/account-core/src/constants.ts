@@ -126,6 +126,23 @@ export const SwapAPIURL: Record<ChainId, string> = {
 };
 
 /**
+ * Mapping of possivle explorer urls
+ */
+export const ExplorerAPIURL: Record<ChainId, string> = {
+  [sophon.id]: 'https://api-explorer.sophon.xyz',
+  [sophonTestnet.id]: 'https://block-explorer-api.testnet.sophon.xyz',
+  [sophonOS.id]: 'https://api-explorer.sophon.xyz',
+  [sophonOSTestnet.id]: 'https://block-explorer-api.testnet.sophon.xyz',
+};
+
+export const BlockExplorerURL: Record<ChainId, string> = {
+  [sophon.id]: 'https://explorer.sophon.xyz',
+  [sophonTestnet.id]: 'https://explorer.testnet.sophon.xyz',
+  [sophonOS.id]: 'https://explorer.sophon.xyz',
+  [sophonOSTestnet.id]: 'https://explorer.testnet.sophon.xyz',
+};
+
+/**
  * Inline Sophon icon for mainnet
  */
 export const SophonIcon: Record<ChainId, string> = {

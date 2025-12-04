@@ -5,7 +5,9 @@ import { type ThemeColorType, useThemedStyles } from './theme-provider';
 export function Card({ style, ...restProps }: ViewProps) {
   const styles = useThemedStyles(createStyles);
   const cardStyle = useMemo(() => {
-    return [styles.card, style].filter(Boolean);
+    return Array.isArray(style)
+      ? [styles.card, ...style].filter(Boolean)
+      : [styles.card, style].filter(Boolean);
   }, [style, styles]);
 
   return <View style={cardStyle} {...restProps} />;

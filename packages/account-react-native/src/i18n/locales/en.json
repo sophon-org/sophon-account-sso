@@ -43,7 +43,26 @@
     "placeholder": "Sign Message Placeholder."
   },
   "transactionStep": {
-    "placeholder": "Transaction Placeholder."
+    "rawTransaction": "Raw Transaction",
+    "feeDetails": "Fee Details",
+    "transfer": "Transfer {{name}}",
+    "spendingRequestFor": "Spending request for {{name}}",
+    "transactionRequest": "Transaction Request",
+    "unknownTransaction": "Unknown Transaction",
+    "networkFee": "Network Fee:",
+    "usdFee": "Fee (USD):",
+    "amountNetwork": "{{amount}} SOPH",
+    "amountUsd": "${{amount}}",
+    "viewDetails": "View raw transaction details",
+    "token": "Token",
+    "from": "From",
+    "to": "To",
+    "contract": "Contract",
+    "spendingCap": "Spending cap",
+    "currentBalance": "Current balance",
+    "interactingWith": "Interacting with",
+    "amount": "Amount",
+    "estimatedFee": "Estimated Fee"
   },
   "footer": {
     "byContinuing": "By logging in you are accepting our\n"
@@ -57,6 +76,7 @@
     "signIn": "Sign In",
     "consent": "Data Permission",
     "retry": "Retry",
+    "approve": "Approve",
     "confirm": "Confirm",
     "connect": "Connect",
     "cancel": "Cancel",

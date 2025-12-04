@@ -43,7 +43,26 @@
     "placeholder": "Espaço Reservado para Assinar Mensagem."
   },
   "transactionStep": {
-    "placeholder": "Espaço Reservado para Transação."
+    "rawTransaction": "Transação bruta",
+    "feeDetails": "Detalhes da taxa",
+    "transfer": "Transferir {{name}}",
+    "spendingRequestFor": "Solicitação de gasto para {{name}}",
+    "transactionRequest": "Solicitação de transação",
+    "unknownTransaction": "Transação desconhecida",
+    "networkFee": "Taxa de rede:",
+    "usdFee": "Taxa (USD):",
+    "amountNetwork": "{{amount}} SOPH",
+    "amountUsd": "${{amount}}",
+    "viewDetails": "Ver detalhes da transação bruta",
+    "token": "Token",
+    "from": "De",
+    "to": "Para",
+    "contract": "Contrato",
+    "spendingCap": "Limite de gasto",
+    "currentBalance": "Saldo atual",
+    "interactingWith": "Interagindo com",
+    "amount": "Quantidade",
+    "estimatedFee": "Taxa estimada"
   },
   "footer": {
     "byContinuing": "Ao fazer login você está aceitando nossos\n"
@@ -57,6 +76,7 @@
     "signIn": "Entrar",
     "consent": "Permissão de Dados",
     "retry": "Tentar Novamente",
+    "approve": "Aprovar",
     "confirm": "Confirmar",
     "connect": "Conectar",
     "cancel": "Cancelar",

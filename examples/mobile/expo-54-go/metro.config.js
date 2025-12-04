@@ -27,12 +27,17 @@ const partnerProviderDir = path.resolve(
   __dirname,
   '../../../packages/account-partner',
 );
+const accountConnectorDir = path.resolve(
+  __dirname,
+  '../../../packages/account-connector',
+);
 
 const extraNodeModules = {
   '@sophon-labs/account-message-bridge': accountMessageBridgeDir,
   '@sophon-labs/account-react-native': accountReactNativeDir,
   '@sophon-labs/account-core': accountCoreDir,
   '@sophon-labs/account-communicator': accountCommunicatorDir,
+  '@sophon-labs/account-connector': accountConnectorDir,
   '@sophon-labs/account-provider': accountProviderDir,
   '@sophon-labs/account-partner': partnerProviderDir,
 };
@@ -41,6 +46,7 @@ const watchFolders = [
   accountReactNativeDir,
   accountCoreDir,
   accountCommunicatorDir,
+  accountConnectorDir,
   accountProviderDir,
   partnerProviderDir,
 ];

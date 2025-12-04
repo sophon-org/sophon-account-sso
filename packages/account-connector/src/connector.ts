@@ -34,13 +34,14 @@ export const createSophonConnector = (
   partnerId?: string,
   customAuthServerUrl?: string,
   communicator?: Communicator,
+  provider?: EIP1193Provider,
 ) => {
   const authServerUrl = customAuthServerUrl ?? AccountServerURL[chainId];
   const connectorMetadata = SophonConnectorMetadata[chainId];
   if (!connectorMetadata) {
     throw new ChainNotConfiguredError();
   }
-  let walletProvider: EIP1193Provider | undefined;
+  let walletProvider: EIP1193Provider | undefined = provider;
 
   let accountsChanged: Connector['onAccountsChanged'] | undefined;
   let chainChanged: Connector['onChainChanged'] | undefined;

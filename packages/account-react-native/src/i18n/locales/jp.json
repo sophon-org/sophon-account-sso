@@ -43,7 +43,26 @@
     "placeholder": "メッセージ署名のプレースホルダー。"
   },
   "transactionStep": {
-    "placeholder": "トランザクションのプレースホルダー。"
+    "rawTransaction": "未加工トランザクション",
+    "feeDetails": "手数料の詳細",
+    "transfer": "送金 {{name}}",
+    "spendingRequestFor": "{{name}} の支出リクエスト",
+    "transactionRequest": "トランザクション要求",
+    "unknownTransaction": "不明なトランザクション",
+    "networkFee": "ネットワーク手数料:",
+    "usdFee": "手数料 (USD):",
+    "amountNetwork": "{{amount}} SOPH",
+    "amountUsd": "${{amount}}",
+    "viewDetails": "未加工トランザクションの詳細を表示",
+    "token": "トークン",
+    "from": "送信元",
+    "to": "送信先",
+    "contract": "コントラクト",
+    "spendingCap": "支出上限",
+    "currentBalance": "現在の残高",
+    "interactingWith": "以下とやり取り中",
+    "amount": "金額",
+    "estimatedFee": "推定手数料"
   },
   "footer": {
     "byContinuing": "ログインすることで、以下に同意したことになります\n"
@@ -57,6 +76,7 @@
     "signIn": "サインイン",
     "consent": "データ許可",
     "retry": "再試行",
+    "approve": "承認する",
     "confirm": "確認",
     "connect": "接続",
     "cancel": "キャンセル",

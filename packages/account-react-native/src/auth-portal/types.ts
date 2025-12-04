@@ -1,6 +1,8 @@
 import type { DataScopes } from '@sophon-labs/account-core';
 import type { PartnerConfigSchema } from '@sophon-labs/account-partner';
 import type { ViewStyle } from 'react-native';
+import type { TransactionRequestStep } from './modules';
+import type { NavigationControllerHook } from './navigation';
 
 export enum AuthPortalSteps {
   SignIn = 'signIn',
@@ -17,11 +19,11 @@ export type AuthPortalStep = `${AuthPortalSteps}`;
 
 export type AuthPortalContextProps = {
   currentStep: AuthPortalStep | null;
-  navigate: (step: AuthPortalStep, options?: NavigateOptions) => void;
+  navigate: NavigationControllerHook['navigate'];
   goBack: () => void;
   requestClose: (forceClose?: boolean) => void;
   hideModal: () => void;
-  setParams: (params: NavigateParams) => void;
+  setParams: NavigationControllerHook['setParams'];
   params: NavigateParams | null;
   handleProps: {
     showBackButton: boolean;
@@ -71,11 +73,25 @@ export type LoadingParams = {
   from?: AuthPortalStep;
 };
 
+export type TransactionParams = {
+  rawTransaction?: string;
+  feeDetails?: {
+    networkFee?: string;
+    usdFee?: string;
+  };
+  stepTitle: string;
+  currentStep?: TransactionRequestStep;
+  showBackButton?: boolean;
+  hideCloseButton?: boolean;
+  resetParams?: boolean;
+};
+
 export type NavigateParams =
   | SignInParams
   | VerifyCodeParams
   | RetryParams
-  | LoadingParams;
+  | LoadingParams
+  | TransactionParams;
 
 export type NavigateOptions = {
   replace?: boolean;
@@ -91,7 +107,7 @@ export type CurrentParams = {
   [AuthPortalSteps.ConnectWallet]?: undefined;
   [AuthPortalSteps.Authorization]?: undefined;
   [AuthPortalSteps.SignMessage]?: undefined;
-  [AuthPortalSteps.Transaction]?: undefined;
+  [AuthPortalSteps.Transaction]?: TransactionParams;
   [AuthPortalSteps.Consent]?: undefined;
 };
 

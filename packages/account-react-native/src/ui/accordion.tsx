@@ -1,3 +1,4 @@
+import type React from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, {
   useAnimatedStyle,
@@ -13,7 +14,7 @@ interface AccordionItemProps {
   viewKey: string | number;
   style?: object;
   duration?: number;
-  children: string;
+  children: string | React.PropsWithChildren['children'];
 }
 
 export function Accordion({
@@ -48,7 +49,11 @@ export function Accordion({
         }}
         style={styles.wrapper}
       >
-        <Text color={colors.text.secondary}>{children}</Text>
+        {typeof children === 'string' ? (
+          <Text color={colors.text.secondary}>{children}</Text>
+        ) : (
+          children
+        )}
       </View>
     </Animated.View>
   );

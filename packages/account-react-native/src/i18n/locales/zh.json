@@ -43,7 +43,26 @@
     "placeholder": "签名消息占位符。"
   },
   "transactionStep": {
-    "placeholder": "交易占位符。"
+    "rawTransaction": "原始交易",
+    "feeDetails": "费用详情",
+    "transfer": "转账 {{name}}",
+    "spendingRequestFor": "为 {{name}} 的支出请求",
+    "transactionRequest": "交易请求",
+    "unknownTransaction": "未知交易",
+    "networkFee": "网络费用:",
+    "usdFee": "费用 (USD):",
+    "amountNetwork": "{{amount}} SOPH",
+    "amountUsd": "${{amount}}",
+    "viewDetails": "查看原始交易详情",
+    "token": "代币",
+    "from": "来自",
+    "to": "到",
+    "contract": "合约",
+    "spendingCap": "支出上限",
+    "currentBalance": "当前余额",
+    "interactingWith": "正在与之交互",
+    "amount": "金额",
+    "estimatedFee": "预计费用"
   },
   "footer": {
     "byContinuing": "登录即表示您接受我们的\n"
@@ -57,6 +76,7 @@
     "signIn": "登录",
     "consent": "数据许可",
     "retry": "重试",
+    "approve": "批准",
     "confirm": "确认",
     "connect": "连接",
     "cancel": "取消",

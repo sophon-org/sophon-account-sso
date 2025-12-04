@@ -8,7 +8,7 @@ import {
 import * as ScreenOrientation from 'expo-screen-orientation';
 import { useEffect, useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
-import { erc20Abi, parseEther, parseUnits } from 'viem';
+import { parseEther } from 'viem';
 import { sophonTestnet } from 'viem/chains';
 import { nftAbi } from '@/abis/nft';
 import { unverifiedAbi } from '@/abis/unverified';
@@ -16,7 +16,9 @@ import { verifiedAbi } from '@/abis/verified';
 import JWTPanel from '@/components/me.panel';
 import { SendContractButton } from '@/components/send-contract-button';
 import { TestDashboard } from '@/components/test-dashboard';
+import { TokenTransaction } from '@/components/token-transaction';
 import { Button } from '@/components/ui/button';
+import { UserBalance } from '@/components/user-balance';
 
 export default function HomeScreen() {
   const { initialized, isConnected, account, logout } = useSophonAccount();
@@ -33,7 +35,6 @@ export default function HomeScreen() {
   const { walletClient } = useSophonClient();
   const [signature, setSignature] = useState<string>();
   const [typedDataSignature, setTypedDataSignature] = useState<string>();
-  const [transaction, setTransaction] = useState<string>();
   const [error, setError] = useState<string>('');
   const [showTestDashboard, setShowTestDashboard] = useState(false);
   const { requestConsent, hasConsent } = useSophonConsent();
@@ -135,6 +136,7 @@ export default function HomeScreen() {
         )}
         {isConnected && (
           <>
+            <Text className="text-left text-xl font-bold">Signatures</Text>
             <Button
               className="mt-4 bg-purple-500/90 w-full max-w-[80%]"
               onPress={async () => {
@@ -150,9 +152,7 @@ export default function HomeScreen() {
                 }
               }}
             >
-              <Text className="text-xl font-bold text-white">
-                ✍️ Sign Message
-              </Text>
+              <Text className="text font-bold text-white">✍️ Sign Message</Text>
             </Button>
 
             {signature && (
@@ -210,68 +210,9 @@ export default function HomeScreen() {
           </>
         )}
 
-        {isConnected && (
-          <>
-            <Button
-              className="mt-4 bg-purple-500/90 w-full max-w-[80%]"
-              onPress={async () => {
-                try {
-                  setError('');
-                  const tx = await walletClient!.sendTransaction({
-                    to: '0xC988e0b689898c3D1528182F6917b765aB6C469A',
-                    value: parseEther('0.006'),
-                    data: '0x',
-                    account: account!.address,
-                    chain: sophonTestnet,
-                  });
-                  setTransaction(tx);
-                } catch (e: any) {
-                  setError(e.details ?? e.message);
-                }
-              }}
-            >
-              <Text className="text-xl font-bold text-white">👑 Send SOPH</Text>
-            </Button>
+        {isConnected ? <UserBalance /> : null}
 
-            {transaction && (
-              <Text className="text-xs my-4 text-black max-w-[80%]">
-                {transaction ?? 'N/A'}
-              </Text>
-            )}
-          </>
-        )}
-
-        {isConnected && (
-          <SendContractButton
-            title="👑 Send 0.001 DTN"
-            transactionParams={{
-              account: account!.address,
-              address: '0xE676a42fEd98d51336f02510bB5d598893AbfE90',
-              abi: erc20Abi,
-              functionName: 'transfer',
-              args: [
-                '0xC988e0b689898c3D1528182F6917b765aB6C469A',
-                parseUnits('0.001', 18),
-              ],
-            }}
-          />
-        )}
-
-        {isConnected && (
-          <SendContractButton
-            title="👑 Approve 0.001 DTN"
-            transactionParams={{
-              account: account!.address,
-              address: '0xE676a42fEd98d51336f02510bB5d598893AbfE90',
-              abi: erc20Abi,
-              functionName: 'approve',
-              args: [
-                '0xC988e0b689898c3D1528182F6917b765aB6C469A',
-                parseUnits('0.001', 18),
-              ],
-            }}
-          />
-        )}
+        {isConnected ? <TokenTransaction /> : null}
 
         {isConnected && (
           <SendContractButton

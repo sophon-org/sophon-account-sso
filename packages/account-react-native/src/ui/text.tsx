@@ -39,6 +39,8 @@ type TextStylePropKeys =
   | 'paddingTop'
   | 'paddingRight'
   | 'paddingBottom'
+  | 'overflow'
+  | 'flexWrap'
   | 'paddingLeft';
 
 type InlineTextStyleProps = Partial<Pick<TextStyle, TextStylePropKeys>>;
@@ -78,6 +80,8 @@ const TEXT_STYLE_KEYS: ReadonlyArray<TextStylePropKeys> = [
   'paddingRight',
   'paddingBottom',
   'paddingLeft',
+  'overflow',
+  'flexWrap',
 ] as const;
 
 export const Text: React.FC<Props> = ({ size = 'regular', style, ...rest }) => {
