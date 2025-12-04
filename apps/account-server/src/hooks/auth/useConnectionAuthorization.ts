@@ -1,5 +1,13 @@
 import { useDynamicContext } from '@dynamic-labs/sdk-react-core';
+import { type ChainId, isOsChainId } from '@sophon-labs/account-core';
 import { useState } from 'react';
+import {
+  concat,
+  domainSeparator,
+  encodeAbiParameters,
+  keccak256,
+  parseAbiParameters,
+} from 'viem';
 import { MainStateMachineContext } from '@/context/state-machine-context';
 import { sendMessage } from '@/events';
 import { useAccountContext } from '@/hooks/useAccountContext';
@@ -25,7 +33,7 @@ export function useConnectionAuthorization() {
   );
   const { account } = useAccountContext();
   const actorRef = MainStateMachineContext.useActorRef();
-  const { isSigning, signTypeData, signingError } = useSignature();
+  const { isSigning, signTypedData, signingError } = useSignature();
   const [authorizing, setAuthorizing] = useState(false);
   const [authorizationError, setAuthorizationError] = useState<string | null>(
     null,
@@ -80,68 +88,151 @@ export function useConnectionAuthorization() {
         user?.userId,
       );
 
-      const messageFields = [
-        { name: 'content', type: 'string' },
-        { name: 'from', type: 'address' },
-        { name: 'nonce', type: 'string' },
-        { name: 'audience', type: 'string' },
-      ];
+      let tokens: {
+        accessToken: string;
+        accessTokenExpiresAt: number;
+        refreshToken: string;
+        refreshTokenExpiresAt: number;
+      } | null = null;
 
-      const message = {
-        content: `Do you authorize this website to connect?!\n\nThis message confirms you control this wallet.`,
-        from: account.address,
-        nonce: authNonce,
-        audience: partnerId,
-      };
+      if (isCanceled()) {
+        return;
+      }
 
-      const signAuth = {
-        domain: {
-          name: 'Sophon SSO',
-          version: '1',
+      if (isOsChainId(SOPHON_VIEM_CHAIN.id as ChainId)) {
+        const appDomain = {
           chainId: SOPHON_VIEM_CHAIN.id,
-        },
-        types: {
-          Message: user?.userId
-            ? [...messageFields, { name: 'userId', type: 'string' }]
-            : messageFields,
-        },
-        primaryType: 'Message',
-        address: account.address,
-        message: user?.userId ? { ...message, userId: user.userId } : message,
-      };
+          name: 'Sophon SSO',
+          verifyingContract: account.address,
+          version: '1',
+        };
+
+        const content = `Do you authorize this website to connect?!\n\nThis message confirms you control this wallet.`;
+        const primaryType = 'Contents';
+        const types = {
+          Contents: [
+            {
+              name: 'stuff',
+              type: 'bytes32',
+            },
+          ],
+        } as const;
+
+        const abiParameters = user?.userId
+          ? 'string,address,string,string,string'
+          : 'string,address,string,string';
+        const abiValues = user?.userId
+          ? [content, account.address, authNonce, partnerId, user.userId]
+          : [content, account.address, authNonce, partnerId];
+
+        const message = {
+          stuff: keccak256(
+            encodeAbiParameters(
+              parseAbiParameters(abiParameters),
+              abiValues as [string, `0x${string}`, string, string],
+            ),
+          ),
+        };
+
+        const appDomainSeparator = domainSeparator({ domain: appDomain });
+
+        const contentsHash = keccak256(
+          concat(['0x1901', appDomainSeparator, message.stuff]),
+        );
+
+        const signAuth = {
+          domain: appDomain,
+          types,
+          primaryType,
+          address: account.address,
+          message,
+          contentsHash,
+        };
+
+        const authSignature = await signTypedData(signAuth);
+        if (isCanceled()) {
+          return;
+        }
+
+        tokens = await verifyAuthorization(
+          account.address,
+          signAuth,
+          authSignature,
+          authNonce,
+          true,
+          undefined,
+          partnerId,
+          signAuth.contentsHash,
+        );
+      } else {
+        const messageFields = [
+          { name: 'content', type: 'string' },
+          { name: 'from', type: 'address' },
+          { name: 'nonce', type: 'string' },
+          { name: 'audience', type: 'string' },
+        ];
+
+        const message = {
+          content: `Do you authorize this website to connect?!\n\nThis message confirms you control this wallet.`,
+          from: account.address,
+          nonce: authNonce,
+          audience: partnerId,
+        };
+
+        const signAuth = {
+          domain: {
+            name: 'Sophon SSO',
+            version: '1',
+            chainId: SOPHON_VIEM_CHAIN.id,
+          },
+          types: {
+            Message: user?.userId
+              ? [...messageFields, { name: 'userId', type: 'string' }]
+              : messageFields,
+          },
+          primaryType: 'Message',
+          address: account.address,
+          message: user?.userId ? { ...message, userId: user.userId } : message,
+        };
+
+        if (isCanceled()) {
+          return;
+        }
+
+        const authSignature = await signTypedData(signAuth);
+        if (isCanceled()) {
+          return;
+        }
+        tokens = await verifyAuthorization(
+          account.address,
+          signAuth,
+          authSignature,
+          authNonce,
+          true,
+          undefined,
+          partnerId,
+        );
+      }
 
       if (isCanceled()) {
         return;
       }
 
-      const authSignature = await signTypeData(signAuth);
-      if (isCanceled()) {
-        return;
+      if (tokens) {
+        // Store tokens in localStorage for later use (e.g., consent flow)
+        localStorage.setItem('SOPHON_ACCESS_TOKEN', tokens.accessToken);
+        localStorage.setItem('SOPHON_REFRESH_TOKEN', tokens.refreshToken);
+
+        // Send tokens to parent window
+        windowService.emitAccessToken(
+          tokens.accessToken,
+          tokens.accessTokenExpiresAt,
+        );
+        windowService.emitRefreshToken(
+          tokens.refreshToken,
+          tokens.refreshTokenExpiresAt,
+        );
       }
-      const {
-        accessToken,
-        accessTokenExpiresAt,
-        refreshToken,
-        refreshTokenExpiresAt,
-      } = await verifyAuthorization(
-        account.address,
-        signAuth,
-        authSignature,
-        authNonce,
-        true,
-      );
-
-      if (isCanceled()) {
-        return;
-      }
-
-      // Store tokens in localStorage for later use (e.g., consent flow)
-      localStorage.setItem('SOPHON_ACCESS_TOKEN', accessToken);
-      localStorage.setItem('SOPHON_REFRESH_TOKEN', refreshToken);
-
-      // Send tokens to parent window
-      windowService.emitAccessToken(accessToken, accessTokenExpiresAt);
-      windowService.emitRefreshToken(refreshToken, refreshTokenExpiresAt);
     }
 
     if (windowService.isManaged() && incoming) {

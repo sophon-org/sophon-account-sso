@@ -1,15 +1,15 @@
+import { sophonOSTestnet } from '@sophon-labs/account-core';
 import { cookieStorage, createConfig, createStorage, http } from 'wagmi';
-import { sophonTestnet } from 'wagmi/chains';
 
 export function getWagmiConfig() {
   return createConfig({
-    chains: [sophonTestnet],
+    chains: [sophonOSTestnet],
     ssr: true,
     storage: createStorage({
       storage: cookieStorage,
     }),
     transports: {
-      [sophonTestnet.id]: http(),
+      [sophonOSTestnet.id]: http(),
     },
   });
 }
