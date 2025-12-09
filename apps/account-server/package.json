@@ -43,7 +43,7 @@
     "eventemitter3": "5.0.1",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.525.0",
-    "next": "15.3.3",
+    "next": "15.3.6",
     "pino-pretty": "^13.0.0",
     "posthog-js": "^1.259.0",
     "qr-code-styling": "^1.9.2",
