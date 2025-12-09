@@ -689,65 +689,65 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/env@npm:15.4.3":
-  version: 15.4.3
-  resolution: "@next/env@npm:15.4.3"
-  checksum: 10c0/3f189da5eb1d70bad1dab21740f912b5931509111de4ac9782de3fa5641e4025ed515634370df2f9e1aec44780443fb07ec5b0c893d2879a589d7dfbecdc58e2
+"@next/env@npm:15.4.8":
+  version: 15.4.8
+  resolution: "@next/env@npm:15.4.8"
+  checksum: 10c0/6b0555e30c175a04781a75f0ddc2630bea1af0f31bac0c7875d6063bec9fb2ee50ccf6a3965e532604f40a2c98f1ceb8eb52283b449ba4345ab1b50a0fde8b88
   languageName: node
   linkType: hard
 
-"@next/swc-darwin-arm64@npm:15.4.3":
-  version: 15.4.3
-  resolution: "@next/swc-darwin-arm64@npm:15.4.3"
+"@next/swc-darwin-arm64@npm:15.4.8":
+  version: 15.4.8
+  resolution: "@next/swc-darwin-arm64@npm:15.4.8"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@next/swc-darwin-x64@npm:15.4.3":
-  version: 15.4.3
-  resolution: "@next/swc-darwin-x64@npm:15.4.3"
+"@next/swc-darwin-x64@npm:15.4.8":
+  version: 15.4.8
+  resolution: "@next/swc-darwin-x64@npm:15.4.8"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@next/swc-linux-arm64-gnu@npm:15.4.3":
-  version: 15.4.3
-  resolution: "@next/swc-linux-arm64-gnu@npm:15.4.3"
+"@next/swc-linux-arm64-gnu@npm:15.4.8":
+  version: 15.4.8
+  resolution: "@next/swc-linux-arm64-gnu@npm:15.4.8"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@next/swc-linux-arm64-musl@npm:15.4.3":
-  version: 15.4.3
-  resolution: "@next/swc-linux-arm64-musl@npm:15.4.3"
+"@next/swc-linux-arm64-musl@npm:15.4.8":
+  version: 15.4.8
+  resolution: "@next/swc-linux-arm64-musl@npm:15.4.8"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@next/swc-linux-x64-gnu@npm:15.4.3":
-  version: 15.4.3
-  resolution: "@next/swc-linux-x64-gnu@npm:15.4.3"
+"@next/swc-linux-x64-gnu@npm:15.4.8":
+  version: 15.4.8
+  resolution: "@next/swc-linux-x64-gnu@npm:15.4.8"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@next/swc-linux-x64-musl@npm:15.4.3":
-  version: 15.4.3
-  resolution: "@next/swc-linux-x64-musl@npm:15.4.3"
+"@next/swc-linux-x64-musl@npm:15.4.8":
+  version: 15.4.8
+  resolution: "@next/swc-linux-x64-musl@npm:15.4.8"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@next/swc-win32-arm64-msvc@npm:15.4.3":
-  version: 15.4.3
-  resolution: "@next/swc-win32-arm64-msvc@npm:15.4.3"
+"@next/swc-win32-arm64-msvc@npm:15.4.8":
+  version: 15.4.8
+  resolution: "@next/swc-win32-arm64-msvc@npm:15.4.8"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@next/swc-win32-x64-msvc@npm:15.4.3":
-  version: 15.4.3
-  resolution: "@next/swc-win32-x64-msvc@npm:15.4.3"
+"@next/swc-win32-x64-msvc@npm:15.4.8":
+  version: 15.4.8
+  resolution: "@next/swc-win32-x64-msvc@npm:15.4.8"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
@@ -1127,59 +1127,60 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-communicator@npm:2.2.1":
-  version: 2.2.1
-  resolution: "@sophon-labs/account-communicator@npm:2.2.1"
+"@sophon-labs/account-communicator@npm:2.3.8":
+  version: 2.3.8
+  resolution: "@sophon-labs/account-communicator@npm:2.3.8"
   peerDependencies:
     typescript: ^5.0.0
-  checksum: 10c0/928223b811448c7030669bef41f97b81f6a6aa9f890df51254b38045d0bd6ad55939dc2478f9520a8052e9865434e68e614b90281b07f1a3ca39a58cdc99bb7a
+  checksum: 10c0/cefdd1f75816d60e0d0bb8dd08465d6d83dffae62592073999d1131cd5095b7dd294ccdeed099aeb46c45b42b29724d9f0ea75ad3e4b228bd2797829ee837c47
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-connector@npm:2.2.1":
-  version: 2.2.1
-  resolution: "@sophon-labs/account-connector@npm:2.2.1"
+"@sophon-labs/account-connector@npm:2.3.8":
+  version: 2.3.8
+  resolution: "@sophon-labs/account-connector@npm:2.3.8"
   dependencies:
-    "@sophon-labs/account-core": "npm:2.2.1"
-    "@sophon-labs/account-provider": "npm:2.2.1"
+    "@sophon-labs/account-core": "npm:2.3.8"
+    "@sophon-labs/account-provider": "npm:2.3.8"
     "@wagmi/core": "npm:^2.17.3"
   peerDependencies:
     viem: ">=2.21.0"
-  checksum: 10c0/7c5eb9c6ef4c6a5bc768b01324f698ce80b6725096fe1553eb6c4e0df75b5d46ac03f0000797379ca4040c73b1faa58ab7cf3817d13f4861cd547898ef052fb5
+  checksum: 10c0/55e31aecd9ff6bed1ef9b9eae518ebe558f4969e43a11e7126db3a1e33cc46f2b7b1098e0e43cb0643202e192f293851d9164a79c01cc63c05c93c8b3100c189
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-core@npm:2.2.1":
-  version: 2.2.1
-  resolution: "@sophon-labs/account-core@npm:2.2.1"
+"@sophon-labs/account-core@npm:2.3.8":
+  version: 2.3.8
+  resolution: "@sophon-labs/account-core@npm:2.3.8"
   dependencies:
     text-encoding-polyfill: "npm:^0.6.7"
   peerDependencies:
     viem: ">=2.21.0"
-  checksum: 10c0/5421049c3591c8203cb5686a83c280a6ee3d7947eaba97b708025b48edbf78eb1696c50ffc26bd9d8a0eeac6cfa0d21a1b7007947a48e8a253dae9c50b0267ed
+  checksum: 10c0/f3a58c94684f04854e114ba7115e335069fc0717e1bb84cfe3f987999077e3b51a44ca8011d7a66a311739576790fa774dc420f4ee0a8484fe16b058f6a44b12
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-provider@npm:2.2.1":
-  version: 2.2.1
-  resolution: "@sophon-labs/account-provider@npm:2.2.1"
+"@sophon-labs/account-provider@npm:2.3.8":
+  version: 2.3.8
+  resolution: "@sophon-labs/account-provider@npm:2.3.8"
   dependencies:
-    "@sophon-labs/account-communicator": "npm:2.2.1"
-    "@sophon-labs/account-core": "npm:2.2.1"
+    "@sophon-labs/account-communicator": "npm:2.3.8"
+    "@sophon-labs/account-core": "npm:2.3.8"
     eventemitter3: "npm:^5.0.1"
     json-rpc-2.0: "npm:^1.7.1"
   peerDependencies:
     typescript: ^5.0.0
-  checksum: 10c0/c478a234e28dd26a82249dc84dfb6a679c4f76356c6d7e1a2825e309ced84af990c47154c013b941a9204ca3a15854028feed0e18708196c68df283fdd2d534c
+    viem: ">=2.21.0"
+  checksum: 10c0/87a59f17e22fb9c7dd73dea75f5294cc440082853b7caee98633a9bf47a0f16a1c1ae1d8325b8de527a486d280c241fbf53ecdcfae79008209832a7f2d7736c3
   languageName: node
   linkType: hard
 
 "@sophon-labs/account-react@file:../../../packages/account-react::locator=%40sophon-labs%2Fexamples-react-sdk%40workspace%3A.":
-  version: 2.2.1
-  resolution: "@sophon-labs/account-react@file:../../../packages/account-react#../../../packages/account-react::hash=dd2a97&locator=%40sophon-labs%2Fexamples-react-sdk%40workspace%3A."
+  version: 2.3.8
+  resolution: "@sophon-labs/account-react@file:../../../packages/account-react#../../../packages/account-react::hash=6e8b7d&locator=%40sophon-labs%2Fexamples-react-sdk%40workspace%3A."
   dependencies:
-    "@sophon-labs/account-connector": "npm:2.2.1"
-    "@sophon-labs/account-core": "npm:2.2.1"
+    "@sophon-labs/account-connector": "npm:2.3.8"
+    "@sophon-labs/account-core": "npm:2.3.8"
     axios: "npm:^1.11.0"
     clsx: "npm:^2.1.1"
     js-cookie: "npm:^3.0.5"
@@ -1189,7 +1190,7 @@ __metadata:
     react-dom: ">=18"
     viem: ">=2.21.0"
     wagmi: ">=2"
-  checksum: 10c0/4108aa592bda187bb72a273e813eebec3ee976cc7aee924cb60286c2f9cd1b7db3eb87876d2b214693a816761f73f7845a16c3722121a2f7032f6e5bf46563ec
+  checksum: 10c0/aad0ecd538d52678bdb1246d380999c7f7595f46b4dcfb33912b38bbb4e1f063f44095a842bb918de3f06330484ca5b19ce355e43d75a56f5eeaa913aefe8485
   languageName: node
   linkType: hard
 
@@ -1203,7 +1204,7 @@ __metadata:
     "@types/node": "npm:^20"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
-    next: "npm:15.4.3"
+    next: "npm:15.4.8"
     react: "npm:19.1.0"
     react-dom: "npm:19.1.0"
     tailwindcss: "npm:^4"
@@ -3611,19 +3612,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"next@npm:15.4.3":
-  version: 15.4.3
-  resolution: "next@npm:15.4.3"
+"next@npm:15.4.8":
+  version: 15.4.8
+  resolution: "next@npm:15.4.8"
   dependencies:
-    "@next/env": "npm:15.4.3"
-    "@next/swc-darwin-arm64": "npm:15.4.3"
-    "@next/swc-darwin-x64": "npm:15.4.3"
-    "@next/swc-linux-arm64-gnu": "npm:15.4.3"
-    "@next/swc-linux-arm64-musl": "npm:15.4.3"
-    "@next/swc-linux-x64-gnu": "npm:15.4.3"
-    "@next/swc-linux-x64-musl": "npm:15.4.3"
-    "@next/swc-win32-arm64-msvc": "npm:15.4.3"
-    "@next/swc-win32-x64-msvc": "npm:15.4.3"
+    "@next/env": "npm:15.4.8"
+    "@next/swc-darwin-arm64": "npm:15.4.8"
+    "@next/swc-darwin-x64": "npm:15.4.8"
+    "@next/swc-linux-arm64-gnu": "npm:15.4.8"
+    "@next/swc-linux-arm64-musl": "npm:15.4.8"
+    "@next/swc-linux-x64-gnu": "npm:15.4.8"
+    "@next/swc-linux-x64-musl": "npm:15.4.8"
+    "@next/swc-win32-arm64-msvc": "npm:15.4.8"
+    "@next/swc-win32-x64-msvc": "npm:15.4.8"
     "@swc/helpers": "npm:0.5.15"
     caniuse-lite: "npm:^1.0.30001579"
     postcss: "npm:8.4.31"
@@ -3666,7 +3667,7 @@ __metadata:
       optional: true
   bin:
     next: dist/bin/next
-  checksum: 10c0/72b587d09ece0bf590f208550527fbacac9cc590684cdd203f2dc10a9b89ea2986e17ec5d21be7605dfba1e8443224c785c6619817d5d7797abb01421d7997a4
+  checksum: 10c0/4bbeb66d2db81f7f8580b3db0e14569bf09d71b958a3c65ddfb23015f316f3b85a4bf32349c9d21b03a61cd31b7d4e19829ff625b71dbde6ab0aa8db60bacd90
   languageName: node
   linkType: hard
 

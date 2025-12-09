@@ -412,13 +412,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@juanelas/base64@npm:^1.1.2":
-  version: 1.1.5
-  resolution: "@juanelas/base64@npm:1.1.5"
-  checksum: 10c0/b8675cc3ec7d68fbcdd19489735f52cdc875bd336bc222fd1632021eb12e0a1e846aebb8261e4f8393214ec5d62cd9e5b8b703c80e5126c5b3390b2a26d99fb2
-  languageName: node
-  linkType: hard
-
 "@levischuck/tiny-cbor@npm:^0.2.2":
   version: 0.2.11
   resolution: "@levischuck/tiny-cbor@npm:0.2.11"
@@ -670,65 +663,65 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/env@npm:15.3.3":
-  version: 15.3.3
-  resolution: "@next/env@npm:15.3.3"
-  checksum: 10c0/b47ef78c4194900f52a274270932a633ba21f39377fc6ad478839c3c1e3fffccb8ad25b286a1beb11f91fe9d09a299087ccb9c205a4e610ad95af65f24e49e5a
+"@next/env@npm:15.3.6":
+  version: 15.3.6
+  resolution: "@next/env@npm:15.3.6"
+  checksum: 10c0/e448ec3893f1c0e8a35ea30c4834c2107f976112289d15b845675f36faa27d604f398b41c670343a948667e25c5a134b3bb73abd3f3c53f7ccf9c22981e10f27
   languageName: node
   linkType: hard
 
-"@next/swc-darwin-arm64@npm:15.3.3":
-  version: 15.3.3
-  resolution: "@next/swc-darwin-arm64@npm:15.3.3"
+"@next/swc-darwin-arm64@npm:15.3.5":
+  version: 15.3.5
+  resolution: "@next/swc-darwin-arm64@npm:15.3.5"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@next/swc-darwin-x64@npm:15.3.3":
-  version: 15.3.3
-  resolution: "@next/swc-darwin-x64@npm:15.3.3"
+"@next/swc-darwin-x64@npm:15.3.5":
+  version: 15.3.5
+  resolution: "@next/swc-darwin-x64@npm:15.3.5"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@next/swc-linux-arm64-gnu@npm:15.3.3":
-  version: 15.3.3
-  resolution: "@next/swc-linux-arm64-gnu@npm:15.3.3"
+"@next/swc-linux-arm64-gnu@npm:15.3.5":
+  version: 15.3.5
+  resolution: "@next/swc-linux-arm64-gnu@npm:15.3.5"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@next/swc-linux-arm64-musl@npm:15.3.3":
-  version: 15.3.3
-  resolution: "@next/swc-linux-arm64-musl@npm:15.3.3"
+"@next/swc-linux-arm64-musl@npm:15.3.5":
+  version: 15.3.5
+  resolution: "@next/swc-linux-arm64-musl@npm:15.3.5"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@next/swc-linux-x64-gnu@npm:15.3.3":
-  version: 15.3.3
-  resolution: "@next/swc-linux-x64-gnu@npm:15.3.3"
+"@next/swc-linux-x64-gnu@npm:15.3.5":
+  version: 15.3.5
+  resolution: "@next/swc-linux-x64-gnu@npm:15.3.5"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@next/swc-linux-x64-musl@npm:15.3.3":
-  version: 15.3.3
-  resolution: "@next/swc-linux-x64-musl@npm:15.3.3"
+"@next/swc-linux-x64-musl@npm:15.3.5":
+  version: 15.3.5
+  resolution: "@next/swc-linux-x64-musl@npm:15.3.5"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@next/swc-win32-arm64-msvc@npm:15.3.3":
-  version: 15.3.3
-  resolution: "@next/swc-win32-arm64-msvc@npm:15.3.3"
+"@next/swc-win32-arm64-msvc@npm:15.3.5":
+  version: 15.3.5
+  resolution: "@next/swc-win32-arm64-msvc@npm:15.3.5"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@next/swc-win32-x64-msvc@npm:15.3.3":
-  version: 15.3.3
-  resolution: "@next/swc-win32-x64-msvc@npm:15.3.3"
+"@next/swc-win32-x64-msvc@npm:15.3.5":
+  version: 15.3.5
+  resolution: "@next/swc-win32-x64-msvc@npm:15.3.5"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
@@ -876,7 +869,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@peculiar/asn1-ecc@npm:^2.3.13, @peculiar/asn1-ecc@npm:^2.3.8":
+"@peculiar/asn1-ecc@npm:^2.3.8":
   version: 2.4.0
   resolution: "@peculiar/asn1-ecc@npm:2.4.0"
   dependencies:
@@ -900,7 +893,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@peculiar/asn1-schema@npm:^2.3.13, @peculiar/asn1-schema@npm:^2.3.8, @peculiar/asn1-schema@npm:^2.4.0":
+"@peculiar/asn1-schema@npm:^2.3.8, @peculiar/asn1-schema@npm:^2.4.0":
   version: 2.4.0
   resolution: "@peculiar/asn1-schema@npm:2.4.0"
   dependencies:
@@ -1188,37 +1181,60 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-connector@file:../../packages/account-connector::locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A.":
-  version: 2.0.7-next.2
-  resolution: "@sophon-labs/account-connector@file:../../packages/account-connector#../../packages/account-connector::hash=27cf40&locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A."
-  dependencies:
-    "@sophon-labs/account-core": "npm:2.0.7-next.2"
-    json-rpc-2.0: "npm:^1.7.1"
-    zksync-sso: "github:sophon-org/zksync-sso-preview#20250901_1"
+"@sophon-labs/account-communicator@npm:2.3.8":
+  version: 2.3.8
+  resolution: "@sophon-labs/account-communicator@npm:2.3.8"
   peerDependencies:
-    "@wagmi/core": ^2.17.3
+    typescript: ^5.0.0
+  checksum: 10c0/cefdd1f75816d60e0d0bb8dd08465d6d83dffae62592073999d1131cd5095b7dd294ccdeed099aeb46c45b42b29724d9f0ea75ad3e4b228bd2797829ee837c47
+  languageName: node
+  linkType: hard
+
+"@sophon-labs/account-connector@file:../../packages/account-connector::locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A.":
+  version: 2.3.8
+  resolution: "@sophon-labs/account-connector@file:../../packages/account-connector#../../packages/account-connector::hash=0e0f0f&locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A."
+  dependencies:
+    "@sophon-labs/account-core": "npm:2.3.8"
+    "@sophon-labs/account-provider": "npm:2.3.8"
+    "@wagmi/core": "npm:^2.17.3"
+  peerDependencies:
     viem: ">=2.21.0"
-  checksum: 10c0/fa3e0abf239d9cd813d6e502f2bc5961dde48e79995fafb1177c2d34f56cc6da9b8379d79dafbcc17b3af07d280ad709ebdbe4d216f7b2405b4573c06b303ae6
+  checksum: 10c0/51f6260ea17de4488e2ca8e394ca8fca09004e55dfa3b937fb5f7e4ea3f64d2f794dda32215ead38656e6047bd7843f11222b801b26d6d012ab15af3ed09ef85
   languageName: node
   linkType: hard
 
 "@sophon-labs/account-core@file:../../packages/account-core::locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A.":
-  version: 2.0.7-next.2
-  resolution: "@sophon-labs/account-core@file:../../packages/account-core#../../packages/account-core::hash=4e3584&locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A."
+  version: 2.3.8
+  resolution: "@sophon-labs/account-core@file:../../packages/account-core#../../packages/account-core::hash=f29eed&locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A."
   dependencies:
     text-encoding-polyfill: "npm:^0.6.7"
   peerDependencies:
     viem: ">=2.21.0"
-  checksum: 10c0/dd761c9a8a4a45521988e8cb39c066b112e283c5aa3cf30738ad2a6daacee77e7512a706e960a12231b8bb54baef732d4204173a436cdff811be7d7cb492b0ba
+  checksum: 10c0/70bba29da50c41333a2c405f86fb32a56e2e24d25510a64f401984b81b7a854273a2d95ee57bfa2165c5377af11938a791d4d67ff60eaa32d4d3d1138e856320
+  languageName: node
+  linkType: hard
+
+"@sophon-labs/account-provider@npm:2.3.8":
+  version: 2.3.8
+  resolution: "@sophon-labs/account-provider@npm:2.3.8"
+  dependencies:
+    "@sophon-labs/account-communicator": "npm:2.3.8"
+    "@sophon-labs/account-core": "npm:2.3.8"
+    eventemitter3: "npm:^5.0.1"
+    json-rpc-2.0: "npm:^1.7.1"
+  peerDependencies:
+    typescript: ^5.0.0
+    viem: ">=2.21.0"
+  checksum: 10c0/87a59f17e22fb9c7dd73dea75f5294cc440082853b7caee98633a9bf47a0f16a1c1ae1d8325b8de527a486d280c241fbf53ecdcfae79008209832a7f2d7736c3
   languageName: node
   linkType: hard
 
 "@sophon-labs/account-react@file:../../packages/account-react::locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A.":
-  version: 2.0.7-next.2
-  resolution: "@sophon-labs/account-react@file:../../packages/account-react#../../packages/account-react::hash=266593&locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A."
+  version: 2.3.8
+  resolution: "@sophon-labs/account-react@file:../../packages/account-react#../../packages/account-react::hash=6e8b7d&locator=%40sophon-labs%2Fexamples-sandbox-web%40workspace%3A."
   dependencies:
-    "@sophon-labs/account-connector": "npm:2.0.7-next.2"
-    "@sophon-labs/account-core": "npm:2.0.7-next.2"
+    "@sophon-labs/account-connector": "npm:2.3.8"
+    "@sophon-labs/account-core": "npm:2.3.8"
     axios: "npm:^1.11.0"
     clsx: "npm:^2.1.1"
     js-cookie: "npm:^3.0.5"
@@ -1228,7 +1244,7 @@ __metadata:
     react-dom: ">=18"
     viem: ">=2.21.0"
     wagmi: ">=2"
-  checksum: 10c0/6a2ddfbd242b2fa3b81a7a41275601a819b0265a402d5cd98ca9e3cb9132fe28b4d9d7b5ed39a9183cdbe3cfe63f351c52e6a16e9bb33fb828ab0dd40e8fb5c3
+  checksum: 10c0/aad0ecd538d52678bdb1246d380999c7f7595f46b4dcfb33912b38bbb4e1f063f44095a842bb918de3f06330484ca5b19ce355e43d75a56f5eeaa913aefe8485
   languageName: node
   linkType: hard
 
@@ -1247,7 +1263,7 @@ __metadata:
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
     "@wagmi/core": "npm:^2.19.0"
-    next: "npm:15.3.3"
+    next: "npm:15.3.6"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
     tailwindcss: "npm:^4"
@@ -1564,6 +1580,26 @@ __metadata:
     typescript:
       optional: true
   checksum: 10c0/e21bbcc124cd3aef32a500b4f3cf2028aaee80fbd02a6567bd460c8b58d613bd89178556af1b138c9b733ba86a869b0c6894a947cf0184e3d7031b471379026f
+  languageName: node
+  linkType: hard
+
+"@wagmi/core@npm:^2.17.3":
+  version: 2.22.1
+  resolution: "@wagmi/core@npm:2.22.1"
+  dependencies:
+    eventemitter3: "npm:5.0.1"
+    mipd: "npm:0.0.7"
+    zustand: "npm:5.0.0"
+  peerDependencies:
+    "@tanstack/query-core": ">=5.0.0"
+    typescript: ">=5.0.4"
+    viem: 2.x
+  peerDependenciesMeta:
+    "@tanstack/query-core":
+      optional: true
+    typescript:
+      optional: true
+  checksum: 10c0/0a68b77f544b64057f8779e1e8ade38babf2ffa6585539a980b3e8101def962b69f9688c87a345113362dbc534c2b15a8df6d751b6867ffa5c9daf12e32b2fb2
   languageName: node
   linkType: hard
 
@@ -2136,15 +2172,6 @@ __metadata:
   version: 6.2.2
   resolution: "big.js@npm:6.2.2"
   checksum: 10c0/58d204f6a1a92508dc2eb98d964e2cc6dabb37a3d9fc8a1f0b77a34dead7c11e17b173d9a6df2d5a7a0f78d5c80853a9ce6df29852da59ab10b088e981195165
-  languageName: node
-  linkType: hard
-
-"bigint-conversion@npm:^2.4.3":
-  version: 2.4.3
-  resolution: "bigint-conversion@npm:2.4.3"
-  dependencies:
-    "@juanelas/base64": "npm:^1.1.2"
-  checksum: 10c0/04c7cbc2c89197d6ab3b5272d8e6d6fdacc5fa313780752f465c7a4dbc1fdebb1879154c9dbc173d747070d3445ae19e83a89b78e660f7acef074855e3ee701d
   languageName: node
   linkType: hard
 
@@ -3702,19 +3729,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"next@npm:15.3.3":
-  version: 15.3.3
-  resolution: "next@npm:15.3.3"
+"next@npm:15.3.6":
+  version: 15.3.6
+  resolution: "next@npm:15.3.6"
   dependencies:
-    "@next/env": "npm:15.3.3"
-    "@next/swc-darwin-arm64": "npm:15.3.3"
-    "@next/swc-darwin-x64": "npm:15.3.3"
-    "@next/swc-linux-arm64-gnu": "npm:15.3.3"
-    "@next/swc-linux-arm64-musl": "npm:15.3.3"
-    "@next/swc-linux-x64-gnu": "npm:15.3.3"
-    "@next/swc-linux-x64-musl": "npm:15.3.3"
-    "@next/swc-win32-arm64-msvc": "npm:15.3.3"
-    "@next/swc-win32-x64-msvc": "npm:15.3.3"
+    "@next/env": "npm:15.3.6"
+    "@next/swc-darwin-arm64": "npm:15.3.5"
+    "@next/swc-darwin-x64": "npm:15.3.5"
+    "@next/swc-linux-arm64-gnu": "npm:15.3.5"
+    "@next/swc-linux-arm64-musl": "npm:15.3.5"
+    "@next/swc-linux-x64-gnu": "npm:15.3.5"
+    "@next/swc-linux-x64-musl": "npm:15.3.5"
+    "@next/swc-win32-arm64-msvc": "npm:15.3.5"
+    "@next/swc-win32-x64-msvc": "npm:15.3.5"
     "@swc/counter": "npm:0.1.3"
     "@swc/helpers": "npm:0.5.15"
     busboy: "npm:1.6.0"
@@ -3759,7 +3786,7 @@ __metadata:
       optional: true
   bin:
     next: dist/bin/next
-  checksum: 10c0/b519d348efd905ac63b2e5cb1e5a3d8e5d11d992aba436f4eef28c66f4555f155bb2bd489d0d029867e926539b31a3f14dd81b0ebca54ce9f3d65a883fb94d4b
+  checksum: 10c0/98473d6c17fa7786cfa7178a301128161c40738514d29f22161083d1d178291f681fe72aed925e09bae0e1e865bb4f96ecc437e99d1a73d15b26e31b982103da
   languageName: node
   linkType: hard
 
@@ -5433,33 +5460,6 @@ __metadata:
     y18n: "npm:^4.0.0"
     yargs-parser: "npm:^18.1.2"
   checksum: 10c0/f1ca680c974333a5822732825cca7e95306c5a1e7750eb7b973ce6dc4f97a6b0a8837203c8b194f461969bfe1fb1176d1d423036635285f6010b392fa498ab2d
-  languageName: node
-  linkType: hard
-
-"zksync-sso@github:sophon-org/zksync-sso-preview#20250901_1":
-  version: 0.0.0-development
-  resolution: "zksync-sso@https://github.com/sophon-org/zksync-sso-preview.git#commit=f5d9b27b244127d6ce21ce2e53b85fa11e8a5c11"
-  dependencies:
-    "@peculiar/asn1-ecc": "npm:^2.3.13"
-    "@peculiar/asn1-schema": "npm:^2.3.13"
-    abitype: "npm:^1.0.6"
-    bigint-conversion: "npm:^2.4.3"
-    buffer: "npm:^6.0.3"
-    ms: "npm:^2.1.3"
-  peerDependencies:
-    "@simplewebauthn/browser": 13.x
-    "@simplewebauthn/server": 13.x
-    "@wagmi/core": 2.x
-  peerDependenciesMeta:
-    "@simplewebauthn/browser":
-      optional: true
-    "@simplewebauthn/server":
-      optional: true
-    "@wagmi/core":
-      optional: true
-    typescript:
-      optional: true
-  checksum: 10c0/e69a700b8b1678804b5fb43ca97162acf3711445175cc6a976f00848cd81a04ee2c92b880d516e50d0e572eb83402c33ecad5ef1ffc5e9326f71cee01cacbf1a
   languageName: node
   linkType: hard
 
