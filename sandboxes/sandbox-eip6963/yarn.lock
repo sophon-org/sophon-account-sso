@@ -929,65 +929,65 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/env@npm:15.4.3":
-  version: 15.4.3
-  resolution: "@next/env@npm:15.4.3"
-  checksum: 10c0/3f189da5eb1d70bad1dab21740f912b5931509111de4ac9782de3fa5641e4025ed515634370df2f9e1aec44780443fb07ec5b0c893d2879a589d7dfbecdc58e2
+"@next/env@npm:15.4.8":
+  version: 15.4.8
+  resolution: "@next/env@npm:15.4.8"
+  checksum: 10c0/6b0555e30c175a04781a75f0ddc2630bea1af0f31bac0c7875d6063bec9fb2ee50ccf6a3965e532604f40a2c98f1ceb8eb52283b449ba4345ab1b50a0fde8b88
   languageName: node
   linkType: hard
 
-"@next/swc-darwin-arm64@npm:15.4.3":
-  version: 15.4.3
-  resolution: "@next/swc-darwin-arm64@npm:15.4.3"
+"@next/swc-darwin-arm64@npm:15.4.8":
+  version: 15.4.8
+  resolution: "@next/swc-darwin-arm64@npm:15.4.8"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@next/swc-darwin-x64@npm:15.4.3":
-  version: 15.4.3
-  resolution: "@next/swc-darwin-x64@npm:15.4.3"
+"@next/swc-darwin-x64@npm:15.4.8":
+  version: 15.4.8
+  resolution: "@next/swc-darwin-x64@npm:15.4.8"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@next/swc-linux-arm64-gnu@npm:15.4.3":
-  version: 15.4.3
-  resolution: "@next/swc-linux-arm64-gnu@npm:15.4.3"
+"@next/swc-linux-arm64-gnu@npm:15.4.8":
+  version: 15.4.8
+  resolution: "@next/swc-linux-arm64-gnu@npm:15.4.8"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@next/swc-linux-arm64-musl@npm:15.4.3":
-  version: 15.4.3
-  resolution: "@next/swc-linux-arm64-musl@npm:15.4.3"
+"@next/swc-linux-arm64-musl@npm:15.4.8":
+  version: 15.4.8
+  resolution: "@next/swc-linux-arm64-musl@npm:15.4.8"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@next/swc-linux-x64-gnu@npm:15.4.3":
-  version: 15.4.3
-  resolution: "@next/swc-linux-x64-gnu@npm:15.4.3"
+"@next/swc-linux-x64-gnu@npm:15.4.8":
+  version: 15.4.8
+  resolution: "@next/swc-linux-x64-gnu@npm:15.4.8"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@next/swc-linux-x64-musl@npm:15.4.3":
-  version: 15.4.3
-  resolution: "@next/swc-linux-x64-musl@npm:15.4.3"
+"@next/swc-linux-x64-musl@npm:15.4.8":
+  version: 15.4.8
+  resolution: "@next/swc-linux-x64-musl@npm:15.4.8"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@next/swc-win32-arm64-msvc@npm:15.4.3":
-  version: 15.4.3
-  resolution: "@next/swc-win32-arm64-msvc@npm:15.4.3"
+"@next/swc-win32-arm64-msvc@npm:15.4.8":
+  version: 15.4.8
+  resolution: "@next/swc-win32-arm64-msvc@npm:15.4.8"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@next/swc-win32-x64-msvc@npm:15.4.3":
-  version: 15.4.3
-  resolution: "@next/swc-win32-x64-msvc@npm:15.4.3"
+"@next/swc-win32-x64-msvc@npm:15.4.8":
+  version: 15.4.8
+  resolution: "@next/swc-win32-x64-msvc@npm:15.4.8"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
@@ -1051,7 +1051,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@noble/curves@npm:^1.6.0, @noble/curves@npm:^1.9.1, @noble/curves@npm:~1.9.0":
+"@noble/curves@npm:1.9.6, @noble/curves@npm:^1.6.0, @noble/curves@npm:^1.9.1, @noble/curves@npm:~1.9.0":
   version: 1.9.6
   resolution: "@noble/curves@npm:1.9.6"
   dependencies:
@@ -1379,13 +1379,21 @@ __metadata:
 "@sophon-labs/account-core@link:../../account-core::locator=%40sophon-labs%2Fexamples-sandbox-eip6963%40workspace%3A.":
   version: 0.0.0-use.local
   resolution: "@sophon-labs/account-core@link:../../account-core::locator=%40sophon-labs%2Fexamples-sandbox-eip6963%40workspace%3A."
+"@sophon-labs/account-core@link:../../account-core::locator=%40sophon-labs%2Fexamples-sandbox-eip6963%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@sophon-labs/account-core@link:../../account-core::locator=%40sophon-labs%2Fexamples-sandbox-eip6963%40workspace%3A."
   languageName: node
+  linkType: soft
   linkType: soft
 
 "@sophon-labs/account-eip6963@link:../../account-eip6963::locator=%40sophon-labs%2Fexamples-sandbox-eip6963%40workspace%3A.":
   version: 0.0.0-use.local
   resolution: "@sophon-labs/account-eip6963@link:../../account-eip6963::locator=%40sophon-labs%2Fexamples-sandbox-eip6963%40workspace%3A."
+"@sophon-labs/account-eip6963@link:../../account-eip6963::locator=%40sophon-labs%2Fexamples-sandbox-eip6963%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@sophon-labs/account-eip6963@link:../../account-eip6963::locator=%40sophon-labs%2Fexamples-sandbox-eip6963%40workspace%3A."
   languageName: node
+  linkType: soft
   linkType: soft
 
 "@sophon-labs/examples-sandbox-eip6963@workspace:.":
@@ -1394,13 +1402,15 @@ __metadata:
   dependencies:
     "@sophon-labs/account-core": "link:../../account-core"
     "@sophon-labs/account-eip6963": "link:../../account-eip6963"
+    "@sophon-labs/account-core": "link:../../account-core"
+    "@sophon-labs/account-eip6963": "link:../../account-eip6963"
     "@tailwindcss/postcss": "npm:^4"
     "@tanstack/react-query": "npm:^5.83.0"
     "@types/node": "npm:^20"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
     connectkit: "npm:^1.9.1"
-    next: "npm:15.4.3"
+    next: "npm:15.4.8"
     react: "npm:19.1.0"
     react-dom: "npm:19.1.0"
     tailwindcss: "npm:^4"
@@ -3872,19 +3882,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"next@npm:15.4.3":
-  version: 15.4.3
-  resolution: "next@npm:15.4.3"
+"next@npm:15.4.8":
+  version: 15.4.8
+  resolution: "next@npm:15.4.8"
   dependencies:
-    "@next/env": "npm:15.4.3"
-    "@next/swc-darwin-arm64": "npm:15.4.3"
-    "@next/swc-darwin-x64": "npm:15.4.3"
-    "@next/swc-linux-arm64-gnu": "npm:15.4.3"
-    "@next/swc-linux-arm64-musl": "npm:15.4.3"
-    "@next/swc-linux-x64-gnu": "npm:15.4.3"
-    "@next/swc-linux-x64-musl": "npm:15.4.3"
-    "@next/swc-win32-arm64-msvc": "npm:15.4.3"
-    "@next/swc-win32-x64-msvc": "npm:15.4.3"
+    "@next/env": "npm:15.4.8"
+    "@next/swc-darwin-arm64": "npm:15.4.8"
+    "@next/swc-darwin-x64": "npm:15.4.8"
+    "@next/swc-linux-arm64-gnu": "npm:15.4.8"
+    "@next/swc-linux-arm64-musl": "npm:15.4.8"
+    "@next/swc-linux-x64-gnu": "npm:15.4.8"
+    "@next/swc-linux-x64-musl": "npm:15.4.8"
+    "@next/swc-win32-arm64-msvc": "npm:15.4.8"
+    "@next/swc-win32-x64-msvc": "npm:15.4.8"
     "@swc/helpers": "npm:0.5.15"
     caniuse-lite: "npm:^1.0.30001579"
     postcss: "npm:8.4.31"
@@ -3927,7 +3937,7 @@ __metadata:
       optional: true
   bin:
     next: dist/bin/next
-  checksum: 10c0/72b587d09ece0bf590f208550527fbacac9cc590684cdd203f2dc10a9b89ea2986e17ec5d21be7605dfba1e8443224c785c6619817d5d7797abb01421d7997a4
+  checksum: 10c0/4bbeb66d2db81f7f8580b3db0e14569bf09d71b958a3c65ddfb23015f316f3b85a4bf32349c9d21b03a61cd31b7d4e19829ff625b71dbde6ab0aa8db60bacd90
   languageName: node
   linkType: hard
 
@@ -5090,6 +5100,7 @@ __metadata:
   linkType: hard
 
 "tslib@npm:^2.0.0, tslib@npm:^2.1.0, tslib@npm:^2.3.1, tslib@npm:^2.4.0, tslib@npm:^2.6.0, tslib@npm:^2.8.0":
+"tslib@npm:^2.0.0, tslib@npm:^2.1.0, tslib@npm:^2.3.1, tslib@npm:^2.4.0, tslib@npm:^2.6.0, tslib@npm:^2.8.0":
   version: 2.8.1
   resolution: "tslib@npm:2.8.1"
   checksum: 10c0/9c4759110a19c53f992d9aae23aac5ced636e99887b51b9e61def52611732872ff7668757d4e4c61f19691e36f4da981cd9485e869b4a7408d689f6bf1f14e62
@@ -5565,6 +5576,21 @@ __metadata:
     utf-8-validate:
       optional: true
   checksum: 10c0/4b50f67931b8c6943c893f59c524f0e4905bbd183016cfb0f2b8653aa7f28dad4e456b9d99d285bbb67cca4fedd9ce90dfdfaa82b898a11414ebd66ee99141e4
+  languageName: node
+  linkType: hard
+
+"ws@npm:8.18.3":
+  version: 8.18.3
+  resolution: "ws@npm:8.18.3"
+  peerDependencies:
+    bufferutil: ^4.0.1
+    utf-8-validate: ">=5.0.2"
+  peerDependenciesMeta:
+    bufferutil:
+      optional: true
+    utf-8-validate:
+      optional: true
+  checksum: 10c0/eac918213de265ef7cb3d4ca348b891a51a520d839aa51cdb8ca93d4fa7ff9f6ccb339ccee89e4075324097f0a55157c89fa3f7147bde9d8d7e90335dc087b53
   languageName: node
   linkType: hard
 
