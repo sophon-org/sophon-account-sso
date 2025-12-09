@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 3.0.0-next.24
+
+### Patch Changes
+
+- Latest changes with basic transaction support on react and web using biconomy'
+
 ## 3.0.0-next.23
 
 ### Patch Changes

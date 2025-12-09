@@ -1,5 +1,18 @@
 # @sophon-labs/account-react-native
 
+## 3.0.0-next.24
+
+### Patch Changes
+
+- Latest changes with basic transaction support on react and web using biconomy'
+- Updated dependencies
+  - @sophon-labs/account-message-bridge@3.0.0-next.24
+  - @sophon-labs/account-communicator@3.0.0-next.24
+  - @sophon-labs/account-connector@3.0.0-next.24
+  - @sophon-labs/account-provider@3.0.0-next.24
+  - @sophon-labs/account-partner@3.0.0-next.24
+  - @sophon-labs/account-core@3.0.0-next.24
+
 ## 3.0.0-next.23
 
 ### Patch Changes
