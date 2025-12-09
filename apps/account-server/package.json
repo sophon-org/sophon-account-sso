@@ -17,10 +17,10 @@
     "test:e2e:dev": "npm-run-all --parallel dev test:e2e:ui"
   },
   "dependencies": {
-    "@dynamic-labs/ethereum": "4.49.0",
-    "@dynamic-labs/message-transport": "4.49.0",
-    "@dynamic-labs/sdk-react-core": "4.49.0",
-    "@dynamic-labs/wagmi-connector": "4.49.0",
+    "@dynamic-labs/ethereum": "4.31.4",
+    "@dynamic-labs/message-transport": "4.31.4",
+    "@dynamic-labs/sdk-react-core": "4.31.4",
+    "@dynamic-labs/wagmi-connector": "4.31.4",
     "@next/bundle-analyzer": "^16.0.8",
     "@phosphor-icons/react": "^2.1.10",
     "@radix-ui/react-accordion": "^1.2.12",
