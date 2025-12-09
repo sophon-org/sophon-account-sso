@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 3.0.0-next.25
+
+### Patch Changes
+
+- Adding all chains as supported by the connector
+
 ## 3.0.0-next.24
 
 ### Patch Changes

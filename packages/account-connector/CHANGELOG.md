@@ -1,5 +1,14 @@
 # @sophon-labs/account-connector
 
+## 3.0.0-next.25
+
+### Patch Changes
+
+- Adding all chains as supported by the connector
+- Updated dependencies
+  - @sophon-labs/account-provider@3.0.0-next.25
+  - @sophon-labs/account-core@3.0.0-next.25
+
 ## 3.0.0-next.24
 
 ### Patch Changes
