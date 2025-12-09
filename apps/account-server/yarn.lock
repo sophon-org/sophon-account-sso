@@ -5029,9 +5029,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-core@file:../../packages/account-core::locator=%40sophon-labs%2Faccount-server%40workspace%3A.":
-  version: 3.0.0-next.23
-  resolution: "@sophon-labs/account-core@file:../../packages/account-core#../../packages/account-core::hash=3177c3&locator=%40sophon-labs%2Faccount-server%40workspace%3A."
+"@sophon-labs/account-core@npm:3.0.0-next.24":
+  version: 3.0.0-next.24
+  resolution: "@sophon-labs/account-core@npm:3.0.0-next.24"
   dependencies:
     "@biconomy/abstractjs": "npm:^1.1.14"
     "@metamask/delegation-toolkit": "npm:~0.11.0"
@@ -5039,18 +5039,18 @@ __metadata:
     text-encoding-polyfill: "npm:^0.6.7"
   peerDependencies:
     viem: ">=2.21.0"
-  checksum: 10c0/dd08313f263d22a2c6c43f726dad10ebd9a6b22b659b5290fdd89524c2cffdc0a15d6357821f1cb0f818bcd08a1700db2a06434352295d086b2899bf60523f88
+  checksum: 10c0/5c3c3782bc16ea434c153dababc6d72ebfe79abe8ee014ca24bd888a8e6ff57b35e2041ed8354003271124b8d467d72c656e3326fee513353dfd649acfc03a9e
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-message-bridge@file:../../packages/account-message-bridge::locator=%40sophon-labs%2Faccount-server%40workspace%3A.":
-  version: 3.0.0-next.23
-  resolution: "@sophon-labs/account-message-bridge@file:../../packages/account-message-bridge#../../packages/account-message-bridge::hash=246a44&locator=%40sophon-labs%2Faccount-server%40workspace%3A."
+"@sophon-labs/account-message-bridge@npm:3.0.0-next.24":
+  version: 3.0.0-next.24
+  resolution: "@sophon-labs/account-message-bridge@npm:3.0.0-next.24"
   dependencies:
     eventemitter3: "npm:5.0.1"
   peerDependencies:
     react-native-webview: ">=13.12.5"
-  checksum: 10c0/9ab7a36435751178bfbc08b9f1376c573141278c10c192f1dd4cb57e86cc8e4d483455ce72d51d3104b921096da6b104c1546bc7b5fd19e15d1487e1fb0b8207
+  checksum: 10c0/aab6dca6a30a79c98bf550ba50bdefd703aef34701d4d32e216a600e5a2030194012b57382655fda961309a050c389810df32ed1dc351907f54f4d4053b92656
   languageName: node
   linkType: hard
 
@@ -5074,8 +5074,8 @@ __metadata:
     "@radix-ui/react-tooltip": "npm:^1.2.8"
     "@sentry/nextjs": "npm:^10.29.0"
     "@simplewebauthn/server": "npm:^13.2.2"
-    "@sophon-labs/account-core": "file:../../packages/account-core"
-    "@sophon-labs/account-message-bridge": "file:../../packages/account-message-bridge"
+    "@sophon-labs/account-core": "npm:3.0.0-next.24"
+    "@sophon-labs/account-message-bridge": "npm:3.0.0-next.24"
     "@t3-oss/env-nextjs": "npm:^0.13.8"
     "@tailwindcss/postcss": "npm:^4.1.17"
     "@tanstack/react-query": "npm:^5.90.12"

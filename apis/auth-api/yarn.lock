@@ -6010,9 +6010,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-core@file:../../packages/account-core::locator=%40sophon-labs%2Fauth-api%40workspace%3A.":
-  version: 3.0.0-next.23
-  resolution: "@sophon-labs/account-core@file:../../packages/account-core#../../packages/account-core::hash=511c38&locator=%40sophon-labs%2Fauth-api%40workspace%3A."
+"@sophon-labs/account-core@npm:3.0.0-next.24":
+  version: 3.0.0-next.24
+  resolution: "@sophon-labs/account-core@npm:3.0.0-next.24"
   dependencies:
     "@biconomy/abstractjs": "npm:^1.1.14"
     "@metamask/delegation-toolkit": "npm:~0.11.0"
@@ -6020,7 +6020,7 @@ __metadata:
     text-encoding-polyfill: "npm:^0.6.7"
   peerDependencies:
     viem: ">=2.21.0"
-  checksum: 10c0/be25afb851db788a7f3cfd73cac869226ee2ababee337e0f1f6ab0c4d7a1f6314f793c205369dfdba970111ba2aaffa57b1f185397f7184b8422e6d1315c2c68
+  checksum: 10c0/5c3c3782bc16ea434c153dababc6d72ebfe79abe8ee014ca24bd888a8e6ff57b35e2041ed8354003271124b8d467d72c656e3326fee513353dfd649acfc03a9e
   languageName: node
   linkType: hard
 
@@ -6056,7 +6056,7 @@ __metadata:
     "@sentry/profiling-node": "npm:^10.15.0"
     "@simplewebauthn/browser": "npm:13.2.2"
     "@simplewebauthn/server": "npm:^13.2.2"
-    "@sophon-labs/account-core": ../../packages/account-core
+    "@sophon-labs/account-core": "npm:3.0.0-next.24"
     "@swc/cli": "npm:^0.6.0"
     "@swc/core": "npm:^1.10.7"
     "@types/cookie-parser": "npm:^1.4.9"
