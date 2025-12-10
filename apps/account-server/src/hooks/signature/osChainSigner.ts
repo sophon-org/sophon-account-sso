@@ -5,6 +5,7 @@ import {
 } from '@biconomy/abstractjs';
 import type { Address } from 'viem';
 import { http } from 'wagmi';
+import { buildBiconomyTypedDataPayload } from '@/lib/biconomyTypedSignature';
 import { SOPHON_VIEM_CHAIN } from '@/lib/constants';
 import { safeParseTypedData } from '@/lib/helpers';
 import type {
@@ -36,7 +37,8 @@ export const signTypedDataOnOsChain = async (
       },
     });
 
-    const safePayload = safeParseTypedData(payload);
+    const biconomyPayload = buildBiconomyTypedDataPayload(payload) ?? payload;
+    const safePayload = safeParseTypedData(biconomyPayload);
 
     return await smartAccount.signTypedData({
       domain: safePayload.domain,
@@ -68,7 +70,8 @@ export const signTypedDataOnOsChain = async (
       },
     });
 
-    const safePayload = safeParseTypedData(payload);
+    const biconomyPayload = buildBiconomyTypedDataPayload(payload) ?? payload;
+    const safePayload = safeParseTypedData(biconomyPayload);
 
     return await nexusAccount.signTypedData({
       domain: safePayload.domain,
