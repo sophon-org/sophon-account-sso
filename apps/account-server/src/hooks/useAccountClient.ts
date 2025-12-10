@@ -63,7 +63,10 @@ export const useClientStore = () => {
   // Public client for reading blockchain data
   const getPublicClient = ({ chainId }: { chainId: SupportedChainId }) => {
     const chain = supportedChains.find((chain) => chain.id === chainId);
-    if (!chain) throw new Error(`Chain with id ${chainId} is not supported`);
+    if (!chain)
+      throw new Error(
+        `Chain with id ${chainId} is not supported on getPublicClient`,
+      );
 
     const client = createPublicClient({
       chain,
@@ -83,7 +86,8 @@ export const useClientStore = () => {
       throw new Error('Username is not set - user must be logged in');
 
     const chain = supportedChains.find((chain) => chain.id === chainId);
-    if (!chain) throw new Error(`Chain with id ${chainId} is not supported`);
+    if (!chain)
+      throw new Error(`Chain with id ${chainId} is not supported on getClient`);
 
     const client = createZksyncPasskeyClient({
       address: address,
@@ -107,7 +111,10 @@ export const useClientStore = () => {
     address: Address;
   }) => {
     const chain = supportedChains.find((chain) => chain.id === chainId);
-    if (!chain) throw new Error(`Chain with id ${chainId} is not supported`);
+    if (!chain)
+      throw new Error(
+        `Chain with id ${chainId} is not supported on getRecoveryClient`,
+      );
 
     const client = createZksyncRecoveryGuardianClient({
       address: recoveryAddress,
@@ -132,7 +139,10 @@ export const useClientStore = () => {
     username: string;
   }) => {
     const chain = supportedChains.find((chain) => chain.id === chainId);
-    if (!chain) throw new Error(`Chain with id ${chainId} is not supported`);
+    if (!chain)
+      throw new Error(
+        `Chain with id ${chainId} is not supported on getConfigurableClient`,
+      );
 
     return createZksyncPasskeyClient({
       address: clientAddress,
@@ -148,7 +158,10 @@ export const useClientStore = () => {
   // Temporary client with generated private key (for testing/demo purposes)
   const getThrowAwayClient = ({ chainId }: { chainId: SupportedChainId }) => {
     const chain = supportedChains.find((chain) => chain.id === chainId);
-    if (!chain) throw new Error(`Chain with id ${chainId} is not supported`);
+    if (!chain)
+      throw new Error(
+        `Chain with id ${chainId} is not supported on getThrowAwayClient`,
+      );
 
     const throwAwayClient = createWalletClient({
       account: privateKeyToAccount(generatePrivateKey()),
@@ -169,7 +182,7 @@ export const useClientStore = () => {
     chainId: SupportedChainId;
   }) => {
     const chain = supportedChains.find((chain) => chain.id === chainId);
-    if (!chain) throw new Error(`Chain with id ${chainId} is not supported`);
+    if (!chain) throw new Error(`Chain with id ${chainId} is not supported 6`);
 
     // Check if window.ethereum exists (MetaMask or other injected wallet)
     if (typeof window === 'undefined' || !window.ethereum) {

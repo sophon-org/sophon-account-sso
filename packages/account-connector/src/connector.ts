@@ -1,5 +1,9 @@
 import type { Communicator } from '@sophon-labs/account-communicator';
-import { AccountServerURL, type ChainId } from '@sophon-labs/account-core';
+import {
+  AccountServerURL,
+  type ChainId,
+  SophonChains,
+} from '@sophon-labs/account-core';
 import {
   createSophonEIP1193Provider,
   type EIP1193Provider,
@@ -137,12 +141,16 @@ export const createSophonConnector = (
     },
     async getClient(parameters): Promise<Client> {
       if (!walletProvider) throw new Error('Wallet provider not initialized');
-      const supportedChains: number[] = [sophon.id, sophonTestnet.id];
+      const supportedChains: ChainId[] = Object.values(SophonChains).map(
+        (chain) => chain.id as ChainId,
+      );
       if (
         parameters?.chainId &&
-        !supportedChains.includes(parameters.chainId)
+        !supportedChains.includes(parameters.chainId as ChainId)
       ) {
-        throw new Error(`Chain with id ${parameters.chainId} is not supported`);
+        throw new Error(
+          `Chain with id ${parameters.chainId} is not supported by this connector.`,
+        );
       }
 
       const provider = await this.getProvider();

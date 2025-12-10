@@ -5,6 +5,11 @@ export const AuthService = {
   getSmartAccount: async (chainId: ChainId, owner: Address) => {
     const response = await fetch(
       `${AccountAuthAPIURL[chainId]}/contract/by-owner/${owner}`,
+      {
+        headers: {
+          'X-Chain-Id': chainId.toString(),
+        },
+      },
     );
     if (!response.ok) {
       console.log('ERROR', response.status, response.statusText);
@@ -22,8 +27,19 @@ export const AuthService = {
       `${AccountAuthAPIURL[chainId]}/contract/${owner}`,
       {
         method: 'POST',
+        headers: {
+          'X-Chain-Id': chainId.toString(),
+        },
       },
     );
+
+    if (!response.ok) {
+      console.log('ERROR', response.status, response.statusText);
+      const content = await response.text();
+      console.log('ERROR', content);
+      throw new Error(`Failed to deploy smart account by owner: ${content}`);
+    }
+
     return response.json() as Promise<{ contracts: Address[]; owner: Address }>;
   },
 
@@ -38,6 +54,7 @@ export const AuthService = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'X-Chain-Id': chainId.toString(),
       },
       body: JSON.stringify({ address, partnerId, fields, userId }),
     });
@@ -58,6 +75,7 @@ export const AuthService = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'X-Chain-Id': chainId.toString(),
       },
       body: JSON.stringify({
         typedData,

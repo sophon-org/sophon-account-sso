@@ -1,7 +1,9 @@
+import type { ChainId } from '@sophon-labs/account-core';
 import type { Address, TypedDataDefinition } from 'viem';
 import { env } from '@/env';
 
 export const requestNonce = async (
+  chainId: ChainId,
   address: string,
   partnerId: string,
   fields: string[],
@@ -15,7 +17,7 @@ export const requestNonce = async (
         // Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ address, partnerId, fields, userId }),
+      body: JSON.stringify({ address, partnerId, fields, userId, chainId }),
     },
   );
 

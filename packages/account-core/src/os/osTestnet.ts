@@ -10,14 +10,14 @@ export const sophonOSTestnet = defineChain({
   },
   rpcUrls: {
     default: {
-      http: ['https://zksync-os-testnet-sophon.zksync.dev'],
-      webSocket: ['wss://zksync-os-testnet-sophon.zksync.dev/ws'],
+      http: ['https://rpc.testnet.os.sophon.com'],
+      webSocket: ['wss://rpc.testnet.os.sophon.com/ws'],
     },
   },
   blockExplorers: {
     default: {
       name: 'Sophon OS Testnet Block Explorer',
-      url: 'https://block-explorer.zksync-os-testnet-sophon.zksync.dev',
+      url: 'https://explorer.testnet.os.sophon.com',
     },
   },
   contracts: {

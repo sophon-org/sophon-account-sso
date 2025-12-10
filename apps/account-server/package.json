@@ -17,10 +17,10 @@
     "test:e2e:dev": "npm-run-all --parallel dev test:e2e:ui"
   },
   "dependencies": {
-    "@dynamic-labs/ethereum": "4.49.0",
-    "@dynamic-labs/message-transport": "4.49.0",
-    "@dynamic-labs/sdk-react-core": "4.49.0",
-    "@dynamic-labs/wagmi-connector": "4.49.0",
+    "@dynamic-labs/ethereum": "4.31.4",
+    "@dynamic-labs/message-transport": "4.31.4",
+    "@dynamic-labs/sdk-react-core": "4.31.4",
+    "@dynamic-labs/wagmi-connector": "4.31.4",
     "@next/bundle-analyzer": "^16.0.8",
     "@phosphor-icons/react": "^2.1.10",
     "@radix-ui/react-accordion": "^1.2.12",
@@ -31,8 +31,8 @@
     "@radix-ui/react-tooltip": "^1.2.8",
     "@sentry/nextjs": "^10.29.0",
     "@simplewebauthn/server": "^13.2.2",
-    "@sophon-labs/account-core": "3.0.0-next.24",
-    "@sophon-labs/account-message-bridge": "3.0.0-next.24",
+    "@sophon-labs/account-core": "file:../../packages/account-core",
+    "@sophon-labs/account-message-bridge": "file:../../packages/account-message-bridge",
     "@t3-oss/env-nextjs": "^0.13.8",
     "@tanstack/react-query": "^5.90.12",
     "@xstate/react": "^6.0.0",
@@ -78,5 +78,9 @@
     "vite": "^7.2.7",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^4.0.15"
+  },
+  "resolutions": {
+    "viem": "2.41.2",
+    "wagmi": "^3.1.0"
   }
 }

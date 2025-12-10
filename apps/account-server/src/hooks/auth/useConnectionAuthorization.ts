@@ -80,6 +80,7 @@ export function useConnectionAuthorization() {
     // otherwise the partner is using EIP-6963 and don't need that
     if (partnerId) {
       const authNonce = await requestNonce(
+        SOPHON_VIEM_CHAIN.id as ChainId,
         account.address,
         partnerId,
         Object.keys(scopes)
