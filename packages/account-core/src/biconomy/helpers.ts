@@ -5,7 +5,7 @@ import {
   keccak256,
   parseAbiParameters,
 } from 'viem';
-import type { TypedDataSigningRequest } from '@/types/auth';
+import type { TypedDataSigningRequest } from '../types';
 
 type BiconomyTypedData = TypedDataSigningRequest & {
   contentsHash: `0x${string}`;

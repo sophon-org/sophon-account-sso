@@ -6,8 +6,8 @@ import {
   MEEVersion,
   toMultichainNexusAccount,
 } from '@biconomy/abstractjs';
+import { sophonOSTestnet } from '@sophon-labs/account-core';
 import type { Address } from 'viem';
-
 import { http } from 'viem';
 import { SOPHON_VIEM_CHAIN } from '@/lib/constants';
 import type { TransactionRequest } from '@/types/auth';
@@ -17,8 +17,8 @@ import {
   createWalletAccount,
 } from '../signature/localAccounts';
 
-const isStaging = true; // select staging environment for testnet access
-const sponsorshipApiKey = 'mee_3Zmc7H6Pbd5wUfUGu27aGzdf'; // default staging api key (rate limited) with sponsorship enabled
+const isStaging = SOPHON_VIEM_CHAIN.id === sophonOSTestnet.id; // isStaging should be true for testnet
+const sponsorshipApiKey = process.env.NEXT_PUBLIC_SPONSORSHIP_API_KEY; // default staging api key (rate limited) with sponsorship enabled
 const meeNetworkUrl = getDefaultMEENetworkUrl(isStaging);
 const meeGasTank = getDefaultMeeGasTank(isStaging);
 
@@ -62,6 +62,10 @@ const executeMeeTransaction = async (
       chainId: SOPHON_VIEM_CHAIN.id,
     },
   });
+
+  if (!sponsorshipApiKey) {
+    throw new Error('Sponsorship API key is not set');
+  }
 
   const meeClient = await createMeeClient({
     account: smartAccount,

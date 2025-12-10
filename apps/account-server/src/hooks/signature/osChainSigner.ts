@@ -3,9 +3,9 @@ import {
   MEEVersion,
   toNexusAccount,
 } from '@biconomy/abstractjs';
+import { buildBiconomyTypedDataPayload } from '@sophon-labs/account-core';
 import type { Address } from 'viem';
 import { http } from 'wagmi';
-import { buildBiconomyTypedDataPayload } from '@/lib/biconomyTypedSignature';
 import { SOPHON_VIEM_CHAIN } from '@/lib/constants';
 import { safeParseTypedData } from '@/lib/helpers';
 import type {
