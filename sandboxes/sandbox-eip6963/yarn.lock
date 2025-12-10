@@ -1051,7 +1051,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@noble/curves@npm:1.9.6, @noble/curves@npm:^1.6.0, @noble/curves@npm:^1.9.1, @noble/curves@npm:~1.9.0":
+"@noble/curves@npm:^1.6.0, @noble/curves@npm:^1.9.1, @noble/curves@npm:~1.9.0":
   version: 1.9.6
   resolution: "@noble/curves@npm:1.9.6"
   dependencies:
@@ -1379,29 +1379,19 @@ __metadata:
 "@sophon-labs/account-core@link:../../account-core::locator=%40sophon-labs%2Fexamples-sandbox-eip6963%40workspace%3A.":
   version: 0.0.0-use.local
   resolution: "@sophon-labs/account-core@link:../../account-core::locator=%40sophon-labs%2Fexamples-sandbox-eip6963%40workspace%3A."
-"@sophon-labs/account-core@link:../../account-core::locator=%40sophon-labs%2Fexamples-sandbox-eip6963%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@sophon-labs/account-core@link:../../account-core::locator=%40sophon-labs%2Fexamples-sandbox-eip6963%40workspace%3A."
   languageName: node
-  linkType: soft
   linkType: soft
 
 "@sophon-labs/account-eip6963@link:../../account-eip6963::locator=%40sophon-labs%2Fexamples-sandbox-eip6963%40workspace%3A.":
   version: 0.0.0-use.local
   resolution: "@sophon-labs/account-eip6963@link:../../account-eip6963::locator=%40sophon-labs%2Fexamples-sandbox-eip6963%40workspace%3A."
-"@sophon-labs/account-eip6963@link:../../account-eip6963::locator=%40sophon-labs%2Fexamples-sandbox-eip6963%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@sophon-labs/account-eip6963@link:../../account-eip6963::locator=%40sophon-labs%2Fexamples-sandbox-eip6963%40workspace%3A."
   languageName: node
-  linkType: soft
   linkType: soft
 
 "@sophon-labs/examples-sandbox-eip6963@workspace:.":
   version: 0.0.0-use.local
   resolution: "@sophon-labs/examples-sandbox-eip6963@workspace:."
   dependencies:
-    "@sophon-labs/account-core": "link:../../account-core"
-    "@sophon-labs/account-eip6963": "link:../../account-eip6963"
     "@sophon-labs/account-core": "link:../../account-core"
     "@sophon-labs/account-eip6963": "link:../../account-eip6963"
     "@tailwindcss/postcss": "npm:^4"
@@ -5100,7 +5090,6 @@ __metadata:
   linkType: hard
 
 "tslib@npm:^2.0.0, tslib@npm:^2.1.0, tslib@npm:^2.3.1, tslib@npm:^2.4.0, tslib@npm:^2.6.0, tslib@npm:^2.8.0":
-"tslib@npm:^2.0.0, tslib@npm:^2.1.0, tslib@npm:^2.3.1, tslib@npm:^2.4.0, tslib@npm:^2.6.0, tslib@npm:^2.8.0":
   version: 2.8.1
   resolution: "tslib@npm:2.8.1"
   checksum: 10c0/9c4759110a19c53f992d9aae23aac5ced636e99887b51b9e61def52611732872ff7668757d4e4c61f19691e36f4da981cd9485e869b4a7408d689f6bf1f14e62
@@ -5576,21 +5565,6 @@ __metadata:
     utf-8-validate:
       optional: true
   checksum: 10c0/4b50f67931b8c6943c893f59c524f0e4905bbd183016cfb0f2b8653aa7f28dad4e456b9d99d285bbb67cca4fedd9ce90dfdfaa82b898a11414ebd66ee99141e4
-  languageName: node
-  linkType: hard
-
-"ws@npm:8.18.3":
-  version: 8.18.3
-  resolution: "ws@npm:8.18.3"
-  peerDependencies:
-    bufferutil: ^4.0.1
-    utf-8-validate: ">=5.0.2"
-  peerDependenciesMeta:
-    bufferutil:
-      optional: true
-    utf-8-validate:
-      optional: true
-  checksum: 10c0/eac918213de265ef7cb3d4ca348b891a51a520d839aa51cdb8ca93d4fa7ff9f6ccb339ccee89e4075324097f0a55157c89fa3f7147bde9d8d7e90335dc087b53
   languageName: node
   linkType: hard
 

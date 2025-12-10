@@ -3,6 +3,7 @@ import {
   MEEVersion,
   toNexusAccount,
 } from '@biconomy/abstractjs';
+import { buildBiconomyTypedDataPayload } from '@sophon-labs/account-core';
 import type { Address } from 'viem';
 import { http } from 'wagmi';
 import { SOPHON_VIEM_CHAIN } from '@/lib/constants';
@@ -36,7 +37,8 @@ export const signTypedDataOnOsChain = async (
       },
     });
 
-    const safePayload = safeParseTypedData(payload);
+    const biconomyPayload = buildBiconomyTypedDataPayload(payload) ?? payload;
+    const safePayload = safeParseTypedData(biconomyPayload);
 
     return await smartAccount.signTypedData({
       domain: safePayload.domain,
@@ -68,7 +70,8 @@ export const signTypedDataOnOsChain = async (
       },
     });
 
-    const safePayload = safeParseTypedData(payload);
+    const biconomyPayload = buildBiconomyTypedDataPayload(payload) ?? payload;
+    const safePayload = safeParseTypedData(biconomyPayload);
 
     return await nexusAccount.signTypedData({
       domain: safePayload.domain,
