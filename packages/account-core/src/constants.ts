@@ -100,8 +100,8 @@ export const AccountAuthAPIURL: Record<ChainId, string> = {
 export const AvailableRPCURL: Record<ChainId, string> = {
   [sophon.id]: 'https://rpc.sophonapi.com',
   [sophonTestnet.id]: 'https://rpc.testnet.sophonapi.com',
-  [sophonOS.id]: 'https://rpc.sophonapi.com',
-  [sophonOSTestnet.id]: 'https://rpc.testnet.sophonapi.com',
+  [sophonOS.id]: 'https://rpc.os.sophon.com',
+  [sophonOSTestnet.id]: 'https://rpc.testnet.os.sophon.com',
 };
 
 /**

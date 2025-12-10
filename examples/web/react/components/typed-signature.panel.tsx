@@ -1,8 +1,9 @@
-import { useAccount, useSignTypedData } from 'wagmi';
-import { sophonTestnet } from 'wagmi/chains';
+import { useCallback } from 'react';
+import { useAccount, useChainId, useSignTypedData } from 'wagmi';
 
 export default function TypedSignaturePanel() {
   const { address } = useAccount();
+  const chainId = useChainId();
   const {
     data: signTypedDataData,
     error: signTypedDataErrorWagmi,
@@ -10,12 +11,12 @@ export default function TypedSignaturePanel() {
     signTypedData,
   } = useSignTypedData();
 
-  const handleSignTypedData = () => {
+  const handleSignTypedData = useCallback(() => {
     signTypedData({
       domain: {
         name: 'Sophon SSO',
         version: '1',
-        chainId: sophonTestnet.id,
+        chainId: chainId,
       },
       types: {
         Message: [
@@ -31,12 +32,12 @@ export default function TypedSignaturePanel() {
         timestamp: BigInt(Math.floor(Date.now() / 1000)),
       },
     });
-  };
+  }, [chainId, address, signTypedData]);
 
   return (
     <div className="flex flex-col gap-2 mt-4 w-full">
       <button
-        className="bg-orange-400 text-white p-2 rounded-md w-full hover:bg-orange-500 hover:cursor-pointer border-1 border-black/40"
+        className="bg-orange-400 text-white p-2 rounded-md w-full hover:bg-orange-500 hover:cursor-pointer border border-black/40"
         onClick={handleSignTypedData}
         type="button"
       >

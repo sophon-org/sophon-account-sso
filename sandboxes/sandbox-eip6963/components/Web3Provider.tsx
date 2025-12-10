@@ -14,7 +14,7 @@ const queryClient = new QueryClient();
 
 if (!projectId) throw new Error('Project ID is not defined');
 
-export const TESTNET_RPC_URL = 'https://zksync-os-testnet-sophon.zksync.dev';
+export const TESTNET_RPC_URL = 'https://rpc.testnet.os.sophon.com';
 
 // TODO: change config to new sophon testnet
 export const new_sophon_testnet = {

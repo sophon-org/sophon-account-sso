@@ -1,8 +1,8 @@
 import type { Communicator } from '@sophon-labs/account-communicator';
 import {
   AccountServerURL,
-  SophonChains,
   type ChainId,
+  SophonChains,
 } from '@sophon-labs/account-core';
 import {
   createSophonEIP1193Provider,
@@ -148,7 +148,9 @@ export const createSophonConnector = (
         parameters?.chainId &&
         !supportedChains.includes(parameters.chainId as ChainId)
       ) {
-        throw new Error(`Chain with id ${parameters.chainId} is not supported by this connector.`);
+        throw new Error(
+          `Chain with id ${parameters.chainId} is not supported by this connector.`,
+        );
       }
 
       const provider = await this.getProvider();

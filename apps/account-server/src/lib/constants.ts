@@ -28,8 +28,8 @@ export const SOPHON_VIEM_CHAIN: Chain =
 export const BLOCK_EXPLORER_URL_BY_CHAIN: Record<ChainId, string> = {
   '531050104': 'https://explorer.testnet.sophon.xyz',
   '50104': 'https://explorer.sophon.xyz',
-  '5010405': 'https://explorer.sophon.xyz',
-  '531050204': 'https://explorer.sophon.xyz',
+  '5010405': 'https://explorer.os.sophon.com',
+  '531050204': 'https://explorer.testnet.os.sophon.com',
 };
 
 /**
