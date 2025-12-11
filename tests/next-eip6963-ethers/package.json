@@ -20,8 +20,8 @@
     "ethers": "^6.9.2",
     "next": "15.4.8",
     "pino-pretty": "^13.1.1",
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
+    "react": "19.1.2",
+    "react-dom": "19.1.2",
     "zksync-ethers": "^6.0.0",
     "zksync-sso": "github:sophon-org/zksync-sso-preview#20250901_1"
   },
