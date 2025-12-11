@@ -62,7 +62,14 @@
     "currentBalance": "Current balance",
     "interactingWith": "Interacting with",
     "amount": "Amount",
-    "estimatedFee": "Estimated Fee"
+    "estimatedFee": "Estimated Fee",
+    "errorDetails": "Error Details",
+    "errorDetailButton": "The transaction failed. Click to see error.",
+    "contractWarning": {
+      "approve": "You will give permission to the following address to spend tokens on your behalf",
+      "contract": "This contract is not verified. Make sure you trust it before proceeding. We are showing the transaction details based on commonly known interactions.",
+      "contractNotVerified": "This contract is not verified, and for this reason it is not possible to show the transaction details. Make sure you trust it before proceeding."
+    }
   },
   "footer": {
     "byContinuing": "By logging in you are accepting our\n"

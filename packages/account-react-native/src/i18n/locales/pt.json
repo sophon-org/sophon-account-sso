@@ -62,7 +62,14 @@
     "currentBalance": "Saldo atual",
     "interactingWith": "Interagindo com",
     "amount": "Quantidade",
-    "estimatedFee": "Taxa estimada"
+    "estimatedFee": "Taxa estimada",
+    "errorDetails": "Detalhes do erro",
+    "errorDetailButton": "A transação falhou. Clique para ver o erro.",
+    "contractWarning": {
+      "approve": "Você dará permissão para o seguinte endereço gastar tokens em seu nome",
+      "contract": "Este contrato não está verificado. Certifique-se de que confia nele antes de continuar. Estamos exibindo os detalhes da transação com base em interações geralmente conhecidas.",
+      "contractNotVerified": "Este contrato não está verificado e, por isso, não é possível exibir os detalhes da transação. Certifique-se de que confia nele antes de continuar."
+    }
   },
   "footer": {
     "byContinuing": "Ao fazer login você está aceitando nossos\n"

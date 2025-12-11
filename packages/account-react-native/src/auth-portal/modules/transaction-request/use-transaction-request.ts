@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { Address } from 'viem';
 import { enrichFallbackTransaction } from '../../../enrichers';
-import { useERC20Approval, useFlowManager } from '../../../hooks';
+import { useFlowManager } from '../../../hooks';
 import type {
   ContentCurrentRequest,
   EnrichedTransactionRequest,
@@ -34,12 +33,6 @@ export function useTransactionRequest() {
     getTokenBalance,
     openExplorerAddress,
   } = useTransactionUtils(transactionRequest);
-
-  const { isLoading: isERC20ApprovalLoading } = useERC20Approval({
-    tokenAddress: transactionRequest?.to as Address,
-    spender: transactionRequest?.from as Address,
-    amount: BigInt(transactionRequest?.value ?? '0'),
-  });
 
   const isSophonTransaction = useMemo(() => {
     if (!transactionRequest) return false;
@@ -142,7 +135,7 @@ export function useTransactionRequest() {
   return {
     isSophonTransaction,
     enrichedTransactionRequest,
-    loading: isERC20ApprovalLoading || loading,
+    loading,
     transactionRequest,
     error,
     retryEnrichment,

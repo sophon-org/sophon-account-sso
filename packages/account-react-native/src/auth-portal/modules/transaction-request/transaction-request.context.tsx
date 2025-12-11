@@ -5,6 +5,8 @@ import {
   useContext,
   useMemo,
 } from 'react';
+import { type Address, parseUnits } from 'viem';
+import { useERC20Approval } from '../../../hooks';
 import { useTranslation } from '../../../i18n';
 import { StepTransitionView } from '../../components/step-transition';
 import { useAuthPortal } from '../../hooks';
@@ -20,7 +22,11 @@ import {
 interface TransactionRequestContextProps extends UseTransactionRequestHook {
   onViewFeeDetailsPress: () => void;
   onViewTransactionDetailsPress: () => void;
+  onViewErrorDetailsPress: (error: Error) => void;
   transactionCurrentStep: TransactionRequestStep;
+  isApproveLoading?: boolean;
+  approveError: Error | null;
+  approve: () => void;
 }
 
 const TransactionRequestContext = createContext<TransactionRequestContextProps>(
@@ -76,6 +82,17 @@ export function TransactionRequestProvider(props: PropsWithChildren) {
     onSetNavigationParams,
   ]);
 
+  const onViewErrorDetailsPress = useCallback(
+    (error: Error) => {
+      const params = {
+        rawTransaction: JSON.stringify(error, null, 2),
+        stepTitle: t('transactionStep.errorDetails'),
+      };
+      onSetNavigationParams(params);
+    },
+    [t, onSetNavigationParams],
+  );
+
   const transactionCurrentStep = useMemo(() => {
     return navigationParams?.currentStep as TransactionRequestStep;
   }, [navigationParams?.currentStep]);
@@ -91,6 +108,41 @@ export function TransactionRequestProvider(props: PropsWithChildren) {
 
   const isBackAvailable = Boolean(transactionCurrentStep);
 
+  // Extract correct approval parameters from enriched transaction
+  const approvalParams = useMemo(() => {
+    const enrichedTransactionRequest =
+      transactionRequestHook?.enrichedTransactionRequest;
+    const spender =
+      enrichedTransactionRequest && 'spender' in enrichedTransactionRequest
+        ? enrichedTransactionRequest?.spender
+        : undefined;
+    const spendingCapStr = spender?.spendingCap || '0';
+    const spendingCapValue = spendingCapStr.split(' ')[0];
+
+    // Convert to wei/smallest units using token decimals
+    const decimals = Number(
+      enrichedTransactionRequest?.token?.tokenDecimal || 18,
+    );
+    const spendingCapBigInt = parseUnits(spendingCapValue ?? '0', decimals);
+    return {
+      tokenAddress: enrichedTransactionRequest?.token
+        ?.contractAddress as Address,
+      spender: spender?.address as Address,
+      amount: spendingCapBigInt,
+    };
+  }, [transactionRequestHook?.enrichedTransactionRequest]);
+
+  const {
+    isLoading: isApproveLoading,
+    approve,
+    error: approveError,
+  } = useERC20Approval({
+    tokenAddress: approvalParams.tokenAddress,
+    spender: approvalParams.spender,
+    amount: approvalParams.amount,
+    onError: onViewErrorDetailsPress,
+  });
+
   return (
     <TransactionRequestContext.Provider
       value={{
@@ -98,6 +150,10 @@ export function TransactionRequestProvider(props: PropsWithChildren) {
         transactionCurrentStep,
         onViewFeeDetailsPress,
         onViewTransactionDetailsPress,
+        onViewErrorDetailsPress,
+        isApproveLoading,
+        approve,
+        approveError,
       }}
     >
       <StepTransitionView

@@ -62,7 +62,14 @@
     "currentBalance": "現在の残高",
     "interactingWith": "以下とやり取り中",
     "amount": "金額",
-    "estimatedFee": "推定手数料"
+    "estimatedFee": "推定手数料",
+    "errorDetails": "エラーの詳細",
+    "errorDetailButton": "トランザクションが失敗しました。エラーを見るにはクリックしてください。",
+    "contractWarning": {
+      "approve": "次のアドレスにトークンを使用する許可を与えます",
+      "contract": "このコントラクトは検証されていません。続行する前に信頼できることを確認してください。一般的に知られているやり取りに基づいてトランザクションの詳細を表示しています。",
+      "contractNotVerified": "このコントラクトは検証されていないため、トランザクションの詳細を表示できません。続行する前に信頼できることを確認してください。"
+    }
   },
   "footer": {
     "byContinuing": "ログインすることで、以下に同意したことになります\n"
