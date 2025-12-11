@@ -1,18 +1,31 @@
-import { DataScopes } from '@sophon-labs/account-core';
-import { SophonContextProvider } from '@sophon-labs/account-react-native';
+import { sophonOSTestnet } from '@sophon-labs/account-core';
+import {
+  SophonContextProvider,
+  SophonWagmiConnector,
+  SophonWagmiProvider,
+} from '@sophon-labs/account-react-native';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+const queryClient = new QueryClient();
 
 export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
   const insets = useSafeAreaInsets();
   return (
     <SophonContextProvider
-      network="mainnet"
+      chainId={sophonOSTestnet.id}
       partnerId="123b216c-678e-4611-af9a-2d5b7b061258"
-      // authServerUrl="http://localhost:3000"
       insets={insets}
-      dataScopes={[DataScopes.email, DataScopes.apple, DataScopes.google]}
+      locale="en"
+
+      // dataScopes={[DataScopes.email, DataScopes.apple]}
+      // requestedCapabilities={[Capabilities.WALLET_CONNECT]}
     >
-      {children}
+      <SophonWagmiProvider>
+        <QueryClientProvider client={queryClient}>
+          <SophonWagmiConnector>{children}</SophonWagmiConnector>
+        </QueryClientProvider>
+      </SophonWagmiProvider>
     </SophonContextProvider>
   );
 };

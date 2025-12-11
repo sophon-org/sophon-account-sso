@@ -1,12 +1,11 @@
 import {
 	BadGatewayException,
+	BadRequestException,
 	GatewayTimeoutException,
-	Inject,
 	Injectable,
 } from "@nestjs/common";
-import { ConfigType } from "@nestjs/config";
 import { Address } from "viem";
-import { hyperindexConfig } from "../config/hyperindex.config";
+import { hyperIndexerByChain } from "../config/hyperindex.config";
 
 type K1OwnerState = {
 	id: string;
@@ -18,27 +17,32 @@ type GqlResp<T> = { data?: T; errors?: Array<{ message: string }> };
 
 @Injectable()
 export class HyperindexService {
-	constructor(
-		@Inject(hyperindexConfig.KEY)
-		private readonly cfg: ConfigType<typeof hyperindexConfig>,
-	) {}
-
 	private async gql<T>(
 		query: string,
+		chainId: number,
 		variables?: Record<string, unknown>,
 	): Promise<T> {
+		const config = hyperIndexerByChain[chainId];
+		if (!config) {
+			throw new BadRequestException(
+				`HyperIndex config not found for chainId ${chainId}`,
+			);
+		}
+		if (config.graphqlUrl == null || config.graphqlUrl.trim() === "") {
+			throw new BadRequestException(
+				`HyperIndex GraphQL URL not configured for chainId ${chainId}`,
+			);
+		}
+
 		try {
-			const res = await fetch(this.cfg.graphqlUrl, {
+			const res = await fetch(config.graphqlUrl, {
 				method: "POST",
 				headers: {
 					"content-type": "application/json",
-					...(this.cfg.apiKey
-						? { authorization: `Bearer ${this.cfg.apiKey}` }
-						: {}),
 				},
 				body: JSON.stringify({ query, variables }),
 
-				signal: AbortSignal.timeout(this.cfg.timeoutMs),
+				signal: AbortSignal.timeout(config.timeoutMs),
 			});
 
 			if (!res.ok) {
@@ -75,7 +79,10 @@ export class HyperindexService {
 	 * Fetch K1OwnerState rows by exact k1Owner ( lowercasing).
 	 * Ensure indexer stores lowercase; .
 	 */
-	async getK1OwnerStateByOwner(k1Owner: string): Promise<K1OwnerState[]> {
+	async getK1OwnerStateByOwner(
+		k1Owner: string,
+		chainId: number,
+	): Promise<K1OwnerState[]> {
 		const addr = this.normalizeAddress(k1Owner);
 		if (!addr) {
 			throw new BadGatewayException("Invalid k1Owner address");
@@ -91,9 +98,13 @@ export class HyperindexService {
       }
     `;
 
-		const data = await this.gql<{ K1OwnerState: K1OwnerState[] }>(query, {
-			k1Owner: this.normalizeAddress(addr),
-		});
+		const data = await this.gql<{ K1OwnerState: K1OwnerState[] }>(
+			query,
+			chainId,
+			{
+				k1Owner: this.normalizeAddress(addr),
+			},
+		);
 
 		return data.K1OwnerState ?? [];
 	}

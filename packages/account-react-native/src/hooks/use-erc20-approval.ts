@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { createPublicClient, erc20Abi, http, maxUint256 } from 'viem';
 import type { UseERC20ApprovalArgs } from '../types';
+import { ERC20FunctionName } from '../types/transaction-request';
 import { useSophonContext } from './use-sophon-context';
 
 // Explicit ERC20 approve ABI to avoid MetaMask confusion
@@ -10,7 +11,7 @@ const ERC20_APPROVE_ABI = [
       { name: 'spender', type: 'address' },
       { name: 'amount', type: 'uint256' },
     ],
-    name: 'approve',
+    name: ERC20FunctionName.APPROVE,
     outputs: [{ name: '', type: 'bool' }],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -20,7 +21,7 @@ const ERC20_APPROVE_ABI = [
       { name: 'owner', type: 'address' },
       { name: 'spender', type: 'address' },
     ],
-    name: 'allowance',
+    name: ERC20FunctionName.ALLOWANCE,
     outputs: [{ name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
@@ -62,10 +63,10 @@ export function useERC20Approval(args: UseERC20ApprovalArgs) {
       const allowance = await publicClient.readContract({
         address: tokenAddress as `0x${string}`,
         abi: erc20Abi,
-        functionName: 'allowance',
-        args: [account.address, spender as `0x${string}`],
+        functionName: ERC20FunctionName.ALLOWANCE,
+        args: account?.address && [account.address, spender as `0x${string}`],
+        authorizationList: undefined,
       });
-
       setCurrentAllowance(allowance as bigint);
     } catch (err) {
       console.error('Failed to read allowance:', err);
@@ -101,7 +102,7 @@ export function useERC20Approval(args: UseERC20ApprovalArgs) {
       const hash = await walletClient.writeContract({
         address: tokenAddress as `0x${string}`,
         abi: ERC20_APPROVE_ABI,
-        functionName: 'approve',
+        functionName: ERC20FunctionName.APPROVE,
         args: [spender as `0x${string}`, amount],
         account: account.address,
         chain,

@@ -1,17 +1,12 @@
-// import { polyfillWebCrypto } from 'expo-standard-web-crypto';
-// import 'text-encoding-polyfill';
-// import { randomUUID } from 'expo-crypto';
-
-// polyfillWebCrypto();
-// // @ts-ignore
-// crypto.randomUUID = randomUUID;
-// //
+// Import polyfills FIRST before any other imports
+import '@sophon-labs/account-react-native/src/pollyfills';
 
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 import './global.css';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { ThemeProvider } from '@/lib/theme-context';
 import { Web3Provider } from '@/providers/Web3Provider';
@@ -27,14 +22,16 @@ export default function RootLayout() {
   }
 
   return (
-    <Web3Provider>
-      <ThemeProvider defaultTheme="system">
-        <Stack>
-          <Stack.Screen name="(screens)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-        <StatusBar style="auto" />
-      </ThemeProvider>
-    </Web3Provider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <Web3Provider>
+        <ThemeProvider defaultTheme="system">
+          <Stack>
+            <Stack.Screen name="(screens)" options={{ headerShown: false }} />
+            <Stack.Screen name="+not-found" />
+          </Stack>
+          <StatusBar style="auto" />
+        </ThemeProvider>
+      </Web3Provider>
+    </GestureHandlerRootView>
   );
 }

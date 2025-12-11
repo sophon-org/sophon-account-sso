@@ -1,16 +1,13 @@
-import {
-  AccountServerURL,
-  SophonIcon,
-  SophonIconTestnet,
-  type SophonNetworkType,
-} from '@sophon-labs/account-core';
+import { AccountServerURL, type ChainId } from '@sophon-labs/account-core';
 import { createSophonEIP1193Provider } from '@sophon-labs/account-provider';
+import { sophonTestnet } from 'viem/chains';
+import { SophonEIP6963Metadata } from './constants';
 import { announceEip6963Provider } from './eip6963';
 
 export function createSophonEIP6963Emitter(
-  network: SophonNetworkType = 'testnet',
+  chainId: ChainId = sophonTestnet.id,
   partnerId?: string,
-  authServerUrl: string = AccountServerURL[network],
+  accountServerUrl: string = AccountServerURL[chainId],
 ) {
   // Skip on server-side
   if (typeof window === 'undefined') {
@@ -19,26 +16,20 @@ export function createSophonEIP6963Emitter(
 
   // Create the provider
   const provider = createSophonEIP1193Provider(
-    network,
+    chainId,
     partnerId,
-    authServerUrl,
+    accountServerUrl,
   );
 
   // Announce it via EIP-6963
   announceEip6963Provider({
     info: {
-      uuid: network === 'mainnet' ? 'sophon' : `sophon-testnet`,
-      name: network === 'mainnet' ? 'Sophon Account' : 'Sophon Account Test',
-      icon: network === 'mainnet' ? SophonIcon : SophonIconTestnet,
-      rdns:
-        network === 'mainnet'
-          ? 'xyz.sophon.account'
-          : `xyz.sophon.staging.account`,
+      ...SophonEIP6963Metadata[chainId],
     },
     provider,
   });
 
   console.log(
-    `Sophon EIP-6963 provider announced for ${network} and url ${authServerUrl}`,
+    `Sophon EIP-6963 provider announced for chainId ${chainId} and url ${accountServerUrl}`,
   );
 }

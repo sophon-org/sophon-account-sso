@@ -2271,6 +2271,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@biconomy/abstractjs@npm:^1.1.14":
+  version: 1.1.17
+  resolution: "@biconomy/abstractjs@npm:1.1.17"
+  peerDependencies:
+    "@metamask/delegation-toolkit": ^0.11.0
+    "@rhinestone/module-sdk": 0.4.0
+    typescript: ^5.8.2
+    viem: ^2.26.2
+  checksum: 10c0/c0abc661a0075ac67be19fd68c0d2490bb7b7fac4ce33356b63a7ab2daf759886d33ff01b68dad5062dcd0af2d4ad1a937c84f8cb38b48f241ce13d6534a6483
+  languageName: node
+  linkType: hard
+
 "@biomejs/biome@npm:^2.0.6":
   version: 2.0.6
   resolution: "@biomejs/biome@npm:2.0.6"
@@ -4147,6 +4159,45 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@metamask/delegation-abis@npm:^0.11.0":
+  version: 0.11.0
+  resolution: "@metamask/delegation-abis@npm:0.11.0"
+  checksum: 10c0/92a240ddc5c89fe6d128e6f54884cc443c260ac59fba27c3717ed2e2715ddf128e54659a4a10384d4aa6ab8f83153fefa72e2e3205b94f696995d870041fc2eb
+  languageName: node
+  linkType: hard
+
+"@metamask/delegation-deployments@npm:^0.11.0":
+  version: 0.11.0
+  resolution: "@metamask/delegation-deployments@npm:0.11.0"
+  checksum: 10c0/254c1334b9d4cb84e6eb8179c219082a8295cff9d444331409c327cc4a6f7af3d58d9d095668e16e963c398f3dfe484164771e170302128a48dc639834526fe3
+  languageName: node
+  linkType: hard
+
+"@metamask/delegation-toolkit@npm:~0.11.0":
+  version: 0.11.0
+  resolution: "@metamask/delegation-toolkit@npm:0.11.0"
+  dependencies:
+    "@metamask/delegation-utils": "npm:^0.11.0"
+    webauthn-p256: "npm:^0.0.5"
+  peerDependencies:
+    viem: ">=2.18.2 <3.0.0"
+  checksum: 10c0/4aa7a5ae512a7340cd3e40af3b70a019db268774a05f47dafaff2d19a2f89180c9e73bdfe3057c782f301c3826596fb2a7681a5b6e0ae081fae2a2d08b6f2df4
+  languageName: node
+  linkType: hard
+
+"@metamask/delegation-utils@npm:^0.11.0":
+  version: 0.11.0
+  resolution: "@metamask/delegation-utils@npm:0.11.0"
+  dependencies:
+    "@metamask/delegation-abis": "npm:^0.11.0"
+    "@metamask/delegation-deployments": "npm:^0.11.0"
+    buffer: "npm:^6.0.3"
+  peerDependencies:
+    viem: ">=2.18.2 <3.0.0"
+  checksum: 10c0/ef04565c9e383dae8b29f8d39491a49d31b14b7cf8d945d4719d7aeb9f0a9e46d686262de2cffa9e00bb7c5faf674c9b0f3fa3df8b307a199b021514dc9c0ccc
+  languageName: node
+  linkType: hard
+
 "@microsoft/tsdoc@npm:0.15.1":
   version: 0.15.1
   resolution: "@microsoft/tsdoc@npm:0.15.1"
@@ -4560,7 +4611,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@noble/curves@npm:1.9.6, @noble/curves@npm:^1.9.1, @noble/curves@npm:~1.9.0":
+"@noble/curves@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@noble/curves@npm:1.9.1"
+  dependencies:
+    "@noble/hashes": "npm:1.8.0"
+  checksum: 10c0/39c84dbfecdca80cfde2ecea4b06ef2ec1255a4df40158d22491d1400057a283f57b2b26c8b1331006e6e061db791f31d47764961c239437032e2f45e8888c1e
+  languageName: node
+  linkType: hard
+
+"@noble/curves@npm:^1.4.0":
+  version: 1.9.7
+  resolution: "@noble/curves@npm:1.9.7"
+  dependencies:
+    "@noble/hashes": "npm:1.8.0"
+  checksum: 10c0/150014751ebe8ca06a8654ca2525108452ea9ee0be23430332769f06808cddabfe84f248b6dbf836916bc869c27c2092957eec62c7506d68a1ed0a624017c2a3
+  languageName: node
+  linkType: hard
+
+"@noble/curves@npm:^1.9.1, @noble/curves@npm:~1.9.0":
   version: 1.9.6
   resolution: "@noble/curves@npm:1.9.6"
   dependencies:
@@ -4576,7 +4645,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@noble/hashes@npm:1.8.0, @noble/hashes@npm:^1.1.2, @noble/hashes@npm:^1.1.5, @noble/hashes@npm:^1.8.0, @noble/hashes@npm:~1.8.0":
+"@noble/hashes@npm:1.8.0, @noble/hashes@npm:^1.1.2, @noble/hashes@npm:^1.1.5, @noble/hashes@npm:^1.4.0, @noble/hashes@npm:^1.8.0, @noble/hashes@npm:~1.8.0":
   version: 1.8.0
   resolution: "@noble/hashes@npm:1.8.0"
   checksum: 10c0/06a0b52c81a6fa7f04d67762e08b2c476a00285858150caeaaff4037356dd5e119f45b2a530f638b77a5eeca013168ec1b655db41bae3236cb2e9d511484fc77
@@ -5239,6 +5308,18 @@ __metadata:
   version: 3.0.6
   resolution: "@repeaterjs/repeater@npm:3.0.6"
   checksum: 10c0/c3915e2603927c7d6a9eb09673bc28fc49ab3a86947ec191a74663b33deebee2fcc4b03c31cc663ff27bd6db9e6c9487639b6935e265d601ce71b8c497f5f4a8
+  languageName: node
+  linkType: hard
+
+"@rhinestone/module-sdk@npm:0.4.0":
+  version: 0.4.0
+  resolution: "@rhinestone/module-sdk@npm:0.4.0"
+  dependencies:
+    solady: "npm:^0.0.235"
+    tslib: "npm:^2.7.0"
+  peerDependencies:
+    viem: ^2.0.0
+  checksum: 10c0/82a45cc964d1bbbe913951f650cc7b7a93601917dca9b0fca373e3511e360d10678a6e7d1a891d0cf5aaf334f9b80414242f956667a65c0c15b43cc251f291ee
   languageName: node
   linkType: hard
 
@@ -5929,14 +6010,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-core@npm:2.3.6":
-  version: 2.3.6
-  resolution: "@sophon-labs/account-core@npm:2.3.6"
+"@sophon-labs/account-core@npm:3.0.0-next.24":
+  version: 3.0.0-next.24
+  resolution: "@sophon-labs/account-core@npm:3.0.0-next.24"
   dependencies:
+    "@biconomy/abstractjs": "npm:^1.1.14"
+    "@metamask/delegation-toolkit": "npm:~0.11.0"
+    "@rhinestone/module-sdk": "npm:0.4.0"
     text-encoding-polyfill: "npm:^0.6.7"
   peerDependencies:
     viem: ">=2.21.0"
-  checksum: 10c0/b1a8413ca9c0e519057075302d710b17f702b99b5f4e808907a7d6cddee857b05b6f48783677087c3502bd4506b407c1cc7d5943e3d9f906f7a7009e43bf490f
+  checksum: 10c0/5c3c3782bc16ea434c153dababc6d72ebfe79abe8ee014ca24bd888a8e6ff57b35e2041ed8354003271124b8d467d72c656e3326fee513353dfd649acfc03a9e
   languageName: node
   linkType: hard
 
@@ -5957,6 +6041,7 @@ __metadata:
     "@graphql-codegen/typescript-graphql-request": "npm:^6.3.0"
     "@graphql-codegen/typescript-operations": "npm:^5.0.0"
     "@jest/globals": "npm:^30.0.3"
+    "@metamask/delegation-toolkit": "npm:~0.11.0"
     "@nestjs/cli": "npm:^11.0.0"
     "@nestjs/common": "npm:^11.0.1"
     "@nestjs/config": "npm:^4.0.2"
@@ -5966,11 +6051,12 @@ __metadata:
     "@nestjs/swagger": "npm:^11.2.0"
     "@nestjs/testing": "npm:^11.0.1"
     "@nestjs/typeorm": "npm:^11.0.0"
+    "@rhinestone/module-sdk": "npm:0.4.0"
     "@sentry/node": "npm:^10.15.0"
     "@sentry/profiling-node": "npm:^10.15.0"
     "@simplewebauthn/browser": "npm:13.2.2"
     "@simplewebauthn/server": "npm:^13.2.2"
-    "@sophon-labs/account-core": "npm:2.3.6"
+    "@sophon-labs/account-core": "npm:3.0.0-next.24"
     "@swc/cli": "npm:^0.6.0"
     "@swc/core": "npm:^1.10.7"
     "@types/cookie-parser": "npm:^1.4.9"
@@ -6012,7 +6098,7 @@ __metadata:
     tsconfig-paths: "npm:^4.2.0"
     typeorm: "npm:^0.3.26"
     typescript: "npm:^5.7.3"
-    viem: "npm:2.36.0"
+    viem: "npm:2.38.3"
     zksync-sso: "github:sophon-org/zksync-sso-preview#20250901_1"
   languageName: unknown
   linkType: soft
@@ -7172,18 +7258,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"abitype@npm:1.0.8, abitype@npm:^1.0.8":
-  version: 1.0.8
-  resolution: "abitype@npm:1.0.8"
+"abitype@npm:1.1.0":
+  version: 1.1.0
+  resolution: "abitype@npm:1.1.0"
   peerDependencies:
     typescript: ">=5.0.4"
-    zod: ^3 >=3.22.0
+    zod: ^3.22.0 || ^4.0.0
   peerDependenciesMeta:
     typescript:
       optional: true
     zod:
       optional: true
-  checksum: 10c0/d3393f32898c1f0f6da4eed2561da6830dcd0d5129a160fae9517214236ee6a6c8e5a0380b8b960c5bc1b949320bcbd015ec7f38b5d7444f8f2b854a1b5dd754
+  checksum: 10c0/99218d442951c60324fcd96a372c30d71ca8d5434cab62b95d5d80bae89e3024a445a90db323ef1fe4da0d749d86e815ca555a37719b06e6ca03ccad2116c45b
   languageName: node
   linkType: hard
 
@@ -7199,6 +7285,21 @@ __metadata:
     zod:
       optional: true
   checksum: 10c0/d52fd8195cb37cdb462ba4d1817dafdba8da403eeab50f144f251748d7458a43308ee29ea46889db2969c91c074780e6d1f00f86acd22dc5772570432ee56b9c
+  languageName: node
+  linkType: hard
+
+"abitype@npm:^1.0.9":
+  version: 1.1.2
+  resolution: "abitype@npm:1.1.2"
+  peerDependencies:
+    typescript: ">=5.0.4"
+    zod: ^3.22.0 || ^4.0.0
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+    zod:
+      optional: true
+  checksum: 10c0/5b1aca1fedab8d53a97c800bb84cf85f22db6b5bbd5996fc061fc87891302bc935d3cdb0fc09f204d62dbb54ea6ba0ea70895470a21b64fd3bbb5b5f30b47af4
   languageName: node
   linkType: hard
 
@@ -12060,24 +12161,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ox@npm:0.9.1":
-  version: 0.9.1
-  resolution: "ox@npm:0.9.1"
+"ox@npm:0.9.6":
+  version: 0.9.6
+  resolution: "ox@npm:0.9.6"
   dependencies:
     "@adraffy/ens-normalize": "npm:^1.11.0"
     "@noble/ciphers": "npm:^1.3.0"
-    "@noble/curves": "npm:^1.9.1"
+    "@noble/curves": "npm:1.9.1"
     "@noble/hashes": "npm:^1.8.0"
     "@scure/bip32": "npm:^1.7.0"
     "@scure/bip39": "npm:^1.6.0"
-    abitype: "npm:^1.0.8"
+    abitype: "npm:^1.0.9"
     eventemitter3: "npm:5.0.1"
   peerDependencies:
     typescript: ">=5.4.0"
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10c0/1678b0cb3e0f1b0986e8a944f64789ca00eb9e3d02fcb4a613f43fa9d75d9fb782f15a18133779fe6095f190fec2fd8be7a3c9df7ecf9c038fb0037ef542256d
+  checksum: 10c0/559b39051f80a25352e1ca6e7aba6e04f60c4e29f98e4ef3ec0c8d2b0432d400004ce09d2991200eaf21745179af47367dc28c553da43403dd0b69c2453ebabe
   languageName: node
   linkType: hard
 
@@ -13370,6 +13471,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"solady@npm:^0.0.235":
+  version: 0.0.235
+  resolution: "solady@npm:0.0.235"
+  checksum: 10c0/3380ef3ba885ada70c1d4d8ef1be5fed61d6851ad15dbba7525626deec9cc33a839b461e2b3c51448149603aedb2282f1a0ddf1a676068ca5546ade49d66c484
+  languageName: node
+  linkType: hard
+
 "sonic-boom@npm:^4.0.1":
   version: 4.2.0
   resolution: "sonic-boom@npm:4.2.0"
@@ -14142,7 +14250,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:2.8.1, tslib@npm:^2.0.3, tslib@npm:^2.1.0, tslib@npm:^2.4.0, tslib@npm:^2.5.0, tslib@npm:^2.6.2, tslib@npm:^2.6.3, tslib@npm:^2.8.1":
+"tslib@npm:2.8.1, tslib@npm:^2.0.3, tslib@npm:^2.1.0, tslib@npm:^2.4.0, tslib@npm:^2.5.0, tslib@npm:^2.6.2, tslib@npm:^2.6.3, tslib@npm:^2.7.0, tslib@npm:^2.8.1":
   version: 2.8.1
   resolution: "tslib@npm:2.8.1"
   checksum: 10c0/9c4759110a19c53f992d9aae23aac5ced636e99887b51b9e61def52611732872ff7668757d4e4c61f19691e36f4da981cd9485e869b4a7408d689f6bf1f14e62
@@ -14643,24 +14751,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"viem@npm:2.36.0":
-  version: 2.36.0
-  resolution: "viem@npm:2.36.0"
+"viem@npm:2.38.3":
+  version: 2.38.3
+  resolution: "viem@npm:2.38.3"
   dependencies:
-    "@noble/curves": "npm:1.9.6"
+    "@noble/curves": "npm:1.9.1"
     "@noble/hashes": "npm:1.8.0"
     "@scure/bip32": "npm:1.7.0"
     "@scure/bip39": "npm:1.6.0"
-    abitype: "npm:1.0.8"
+    abitype: "npm:1.1.0"
     isows: "npm:1.0.7"
-    ox: "npm:0.9.1"
+    ox: "npm:0.9.6"
     ws: "npm:8.18.3"
   peerDependencies:
     typescript: ">=5.0.4"
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10c0/b46e19ffaf85b0e80d168a707d7b295cf58ebefde27cfb8626510dfdf845bcd25c0154a02b488fc545b07397fd880d87543622d2be6973b35ab94012092b512c
+  checksum: 10c0/ec69d641d26e64e793883021618ca0d5c833d4807c53201ff0441c1e8369cbc12079fc08edfb4e69c8e75ec47ff80058b989916cbc257770dc8c430e320e1428
   languageName: node
   linkType: hard
 
@@ -14696,6 +14804,16 @@ __metadata:
   version: 3.3.3
   resolution: "web-streams-polyfill@npm:3.3.3"
   checksum: 10c0/64e855c47f6c8330b5436147db1c75cb7e7474d924166800e8e2aab5eb6c76aac4981a84261dd2982b3e754490900b99791c80ae1407a9fa0dcff74f82ea3a7f
+  languageName: node
+  linkType: hard
+
+"webauthn-p256@npm:^0.0.5":
+  version: 0.0.5
+  resolution: "webauthn-p256@npm:0.0.5"
+  dependencies:
+    "@noble/curves": "npm:^1.4.0"
+    "@noble/hashes": "npm:^1.4.0"
+  checksum: 10c0/8a445dddaf0e699363a0a7bca51742f672dbbec427c1a97618465bfc418df0eff10d3f1cf5e43bcd0cd0dc5abcdaad7914916c06c84107eaf226f5a1d0690c13
   languageName: node
   linkType: hard
 

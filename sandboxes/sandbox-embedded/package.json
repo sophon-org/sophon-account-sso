@@ -20,7 +20,7 @@
     "next": "15.4.8",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "viem": "2.36.0",
+    "viem": "2.38.3",
     "wagmi": "^2.16.0",
     "zksync-sso": "github:sophon-org/zksync-sso-preview#20250901_1"
   },

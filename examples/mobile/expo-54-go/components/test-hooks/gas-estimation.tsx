@@ -1,3 +1,4 @@
+import { sophonOSTestnet } from '@sophon-labs/account-core';
 import {
   useGasEstimation,
   useSophonAccount,
@@ -16,7 +17,7 @@ export const GasEstimation = () => {
     to: '0xE676a42fEd98d51336f02510bB5d598893AbfE90', // MOCK MintMe token
     data: '0xa9059cbb000000000000000000000000feb22da05537b4b63bb63417b10935819facb81c0000000000000000000000000000000000000000000000000de0b6b3a7640000', // transfer(address,uint256)
     value: '0', // ETH value to send
-    chainId: 531050104, // Sophon Testnet
+    chainId: sophonOSTestnet.id, // Sophon Testnet
     enabled: false,
   });
 
@@ -172,12 +173,12 @@ export const GasEstimation = () => {
                 onChangeText={(text) =>
                   handleInputChange(
                     'chainId',
-                    Number.parseInt(text) || 531050104,
+                    Number.parseInt(text) || sophonOSTestnet.id,
                   )
                 }
                 className="bg-white border border-gray-300 rounded p-2 text-black"
                 keyboardType="numeric"
-                placeholder="531050104"
+                placeholder={sophonOSTestnet.id.toString()}
               />
             </View>
           </View>

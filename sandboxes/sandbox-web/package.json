@@ -23,7 +23,7 @@
     "next": "15.3.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "viem": "2.36.0",
+    "viem": "2.38.3",
     "wagmi": "^2.15.6"
   },
   "devDependencies": {

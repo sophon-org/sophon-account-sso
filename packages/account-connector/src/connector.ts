@@ -1,7 +1,8 @@
 import type { Communicator } from '@sophon-labs/account-communicator';
 import {
   AccountServerURL,
-  type SophonNetworkType,
+  type ChainId,
+  SophonChains,
 } from '@sophon-labs/account-core';
 import {
   createSophonEIP1193Provider,
@@ -26,15 +27,25 @@ import {
 } from 'viem';
 import { sophon, sophonTestnet } from 'viem/chains';
 import { eip712WalletActions } from 'viem/zksync';
+import { SophonConnectorMetadata } from './constants';
+
+export type SophonConnectorConfigType = Parameters<
+  ReturnType<typeof createSophonConnector>
+>[0];
 
 export const createSophonConnector = (
-  network: SophonNetworkType = 'testnet',
+  chainId: ChainId = sophonTestnet.id,
   partnerId?: string,
   customAuthServerUrl?: string,
   communicator?: Communicator,
+  provider?: EIP1193Provider,
 ) => {
-  const authServerUrl = customAuthServerUrl ?? AccountServerURL[network];
-  let walletProvider: EIP1193Provider | undefined;
+  const authServerUrl = customAuthServerUrl ?? AccountServerURL[chainId];
+  const connectorMetadata = SophonConnectorMetadata[chainId];
+  if (!connectorMetadata) {
+    throw new ChainNotConfiguredError();
+  }
+  let walletProvider: EIP1193Provider | undefined = provider;
 
   let accountsChanged: Connector['onAccountsChanged'] | undefined;
   let chainChanged: Connector['onChainChanged'] | undefined;
@@ -59,13 +70,10 @@ export const createSophonConnector = (
   };
 
   return createConnector<EIP1193Provider>((config) => ({
-    id:
-      network === 'mainnet'
-        ? 'xyz.sophon.account'
-        : 'xyz.sophon.staging.account',
-    name: network === 'mainnet' ? 'Sophon Account' : 'Sophon Account Test',
-    icon: 'https://sophon.xyz/favicon.ico',
-    type: 'zksync-sso',
+    id: connectorMetadata.id,
+    name: connectorMetadata.name,
+    icon: connectorMetadata.icon,
+    type: connectorMetadata.type,
 
     async connect({ chainId } = {}) {
       try {
@@ -133,12 +141,16 @@ export const createSophonConnector = (
     },
     async getClient(parameters): Promise<Client> {
       if (!walletProvider) throw new Error('Wallet provider not initialized');
-      const supportedChains: number[] = [sophon.id, sophonTestnet.id];
+      const supportedChains: ChainId[] = Object.values(SophonChains).map(
+        (chain) => chain.id as ChainId,
+      );
       if (
         parameters?.chainId &&
-        !supportedChains.includes(parameters.chainId)
+        !supportedChains.includes(parameters.chainId as ChainId)
       ) {
-        throw new Error(`Chain with id ${parameters.chainId} is not supported`);
+        throw new Error(
+          `Chain with id ${parameters.chainId} is not supported by this connector.`,
+        );
       }
 
       const provider = await this.getProvider();
@@ -146,7 +158,7 @@ export const createSophonConnector = (
 
       const walletClient = createWalletClient({
         account: accounts[0] as Address,
-        chain: network === 'mainnet' ? sophon : sophonTestnet,
+        chain: chainId === sophon.id ? sophon : sophonTestnet,
         transport: custom(walletProvider),
       })
         .extend(publicActions)
@@ -158,7 +170,7 @@ export const createSophonConnector = (
     async getProvider() {
       if (!walletProvider) {
         walletProvider = createSophonEIP1193Provider(
-          network,
+          chainId,
           partnerId,
           authServerUrl,
           communicator,
@@ -200,7 +212,6 @@ export const createSophonConnector = (
     },
     async onDisconnect(error) {
       config.emitter.emit('disconnect');
-      // if (error instanceof EthereumProviderError && error.code === 4900) return; // User initiated
       console.error('Account disconnected', error);
     },
   }));

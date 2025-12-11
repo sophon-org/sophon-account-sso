@@ -1,0 +1,146 @@
+import { useCallback, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { useBooleanState, useFlowManager, useSophonAccount } from '../../hooks';
+import { useTranslation } from '../../i18n';
+import { Button, Card, CardError, CheckBox, Container, Text } from '../../ui';
+import { sentenceCase } from '../../utils/string-utils';
+import { StepContainer } from '../components/step-container';
+import type { BaseAuthError, BasicStepProps } from '../types';
+
+export const AuthorizationStep = ({
+  onComplete,
+  onError,
+  onCancel,
+  scopes,
+  partner,
+}: BasicStepProps) => {
+  const { t } = useTranslation();
+  const isLoadingState = useBooleanState(false);
+  const {
+    actions: { authorize },
+  } = useFlowManager();
+  const { logout } = useSophonAccount();
+  const [error, setError] = useState<null | string>(null);
+  const [selectedScopes, setSelectedScopes] = useState<string[]>([]);
+
+  const handleOnSelectScope = useCallback(
+    (scope: string, isSelected: boolean) => {
+      setSelectedScopes((prev) => {
+        if (isSelected) {
+          return prev.includes(scope) ? prev : [...prev, scope];
+        } else {
+          return prev.filter((s) => s !== scope);
+        }
+      });
+    },
+    [],
+  );
+
+  const handleAuthorize = useCallback(async () => {
+    try {
+      setError(null);
+      isLoadingState.setOn();
+      await authorize(selectedScopes);
+      await onComplete({ hide: true });
+    } catch (error) {
+      console.error(JSON.stringify(error, null, 2));
+      setError(
+        (error as BaseAuthError)?.shortMessage ?? t('common.genericError'),
+      );
+      onError(error as Error);
+    } finally {
+      isLoadingState.setOff();
+    }
+  }, [onComplete, onError, authorize, isLoadingState, selectedScopes, t]);
+
+  const handleCancel = useCallback(async () => {
+    await Promise.all([logout(), onCancel()]);
+  }, [logout, onCancel]);
+
+  return (
+    <StepContainer>
+      <Container style={styles.content}>
+        <Text size="large" textAlign="center">
+          {t('authorizationStep.connectWith', {
+            partnerName: partner?.name ?? 'Sophon',
+          })}
+        </Text>
+        <Container isVisible={!!partner?.domains.length}>
+          <Text textAlign="center">{partner?.domains[0]}</Text>
+        </Container>
+      </Container>
+      <Card style={styles.contentCard}>
+        <Container style={styles.cardSection} marginBottom={16}>
+          <Text fontWeight="bold">{t('authorizationStep.can')}</Text>
+          <CheckBox
+            defaultChecked
+            locked
+            label={t('authorizationStep.seeYourAddress')}
+          />
+          <CheckBox
+            defaultChecked
+            locked
+            label={t('authorizationStep.askForTransactionApproval')}
+          />
+          {scopes?.map((scope) => (
+            <CheckBox
+              key={scope}
+              label={`See your ${sentenceCase(scope)} account`}
+              onChange={(checked) => handleOnSelectScope(scope, checked)}
+              locked={isLoadingState.state}
+            />
+          ))}
+        </Container>
+        <Container style={styles.cardSection}>
+          <Text fontWeight="bold">{t('authorizationStep.cant')}</Text>
+          <CheckBox
+            unavailable
+            label={t('authorizationStep.performActionsOnYourBehalf')}
+          />
+        </Container>
+      </Card>
+      <CardError isVisible={!!error} text={error ?? ''} marginVertical={8} />
+      <View style={styles.buttons}>
+        <Button
+          containerStyle={styles.buttonWrapper}
+          text={t('common.cancel')}
+          variant="secondary"
+          onPress={handleCancel}
+          disabled={isLoadingState.state}
+        />
+        <Button
+          containerStyle={styles.buttonWrapper}
+          text={t('common.connect')}
+          onPress={handleAuthorize}
+          loading={isLoadingState.state}
+        />
+      </View>
+    </StepContainer>
+  );
+};
+
+const styles = StyleSheet.create({
+  buttonWrapper: {
+    flex: 1,
+  },
+  buttons: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 8,
+    marginVertical: 16,
+  },
+  content: {
+    gap: 8,
+    marginBottom: 16,
+  },
+  contentCard: {
+    gap: 24,
+    padding: 24,
+    marginVertical: 16,
+  },
+  cardSection: {
+    gap: 12,
+  },
+});

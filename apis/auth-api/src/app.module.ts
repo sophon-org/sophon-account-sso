@@ -61,6 +61,8 @@ import { MeModule } from "./me/me.module";
 				db: ReturnType<typeof dbConfig>,
 				jwtKeys: JwtKeysService,
 			) => {
+				console.log("db.url", db.url);
+				console.log("process.env.DATABASE_URL", process.env.DATABASE_URL);
 				let url = db.url || process.env.DATABASE_URL;
 				if (!url) {
 					url = await jwtKeys.getDatabaseUrl();

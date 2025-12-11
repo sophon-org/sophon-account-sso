@@ -1,31 +1,5 @@
-import { AvailableCDNURL, type SophonNetworkType } from './constants';
-
-/**
- * Check if a partnerId is valid
- *
- * @param network - The network to use
- * @param partnerId - The partner id to check
- * @returns True if the partner is valid, false otherwise
- */
-export const isValidPartner = async (
-  network: SophonNetworkType,
-  partnerId: string,
-) => {
-  if (!partnerId) {
-    return false;
-  }
-
-  const baseDns = AvailableCDNURL[network];
-
-  try {
-    const url = `${baseDns}/partners/sdk/${partnerId}.json`;
-    const response = await fetch(url);
-    return response.ok;
-  } catch (error) {
-    console.error('Error fetching partner', error);
-    return false;
-  }
-};
+import { type ChainId, SophonChainCapabilities } from './constants';
+import { type ChainCapability, ChainCapabilityValue } from './types';
 
 /**
  * Check if the code is running on the server
@@ -34,4 +8,25 @@ export const isValidPartner = async (
  */
 export const isSSR = () => {
   return typeof window === 'undefined';
+};
+
+/**
+ * Check if the browser has localStorage. In some cases we have window available but no localStorage.
+ *
+ * @returns True if the browser has localStorage, false otherwise
+ */
+export const hasLocalStorage = () => {
+  return typeof localStorage !== 'undefined';
+};
+
+export const checkChainCapability = (
+  chainId: ChainId,
+  capability: keyof ChainCapability,
+) => {
+  const value = SophonChainCapabilities[chainId][capability];
+  return {
+    disabled: value === ChainCapabilityValue.DISABLED,
+    onChain: value === ChainCapabilityValue.ENABLED,
+    offChain: value === ChainCapabilityValue.OFF_CHAIN,
+  };
 };

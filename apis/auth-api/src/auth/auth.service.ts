@@ -8,6 +8,7 @@ import {
 	UnauthorizedException,
 } from "@nestjs/common";
 import { ConfigType } from "@nestjs/config";
+import { isChainId, SophonChains } from "@sophon-labs/account-core";
 import jwt, {
 	JsonWebTokenError,
 	type JwtPayload,
@@ -18,7 +19,6 @@ import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
 import { toConsentClaims } from "src/consents/consent-claims.util";
 import { ConsentsService } from "src/consents/consents.service";
 import { Address, type TypedDataDefinition, verifyTypedData } from "viem";
-import { sophon, sophonTestnet } from "viem/chains";
 import { JwtKeysService } from "../aws/jwt-keys.service";
 import { authConfig } from "../config/auth.config";
 import {
@@ -39,6 +39,7 @@ type NoncePayload = JwtPayload & {
 	scope?: string;
 	sub: string;
 	userId?: string;
+	chainId?: number;
 };
 
 type ClientInfo = { ip?: string | null; userAgent?: string | null };
@@ -82,6 +83,7 @@ export class AuthService {
 		audience: string,
 		fields: PermissionAllowedField[],
 		userId?: string,
+		chainId?: number,
 	): Promise<string> {
 		await this.partnerRegistry.assertExists(audience);
 		try {
@@ -92,6 +94,7 @@ export class AuthService {
 					address,
 					scope: packScope(fields),
 					...(userId?.trim() ? { userId: userId.trim() } : {}),
+					...(chainId != null ? { chainId } : {}),
 				},
 				await this.keys.getAccessPrivateKey(),
 				{
@@ -126,6 +129,8 @@ export class AuthService {
 		nonceToken: string,
 		client?: ClientInfo,
 		ownerAddress?: Address,
+		audience?: string,
+		contentsHash?: string,
 	): Promise<{
 		accessToken: string;
 		accessTokenExpiresAt: number;
@@ -133,9 +138,15 @@ export class AuthService {
 		refreshTokenExpiresAt: number;
 		sid: string;
 	}> {
-		const expectedAud = String(typedData.message.audience);
+		const expectedAud = audience || String(typedData.message.audience);
 		await this.partnerRegistry.assertExists(expectedAud);
 		const expectedIss = this.auth.nonceIssuer;
+
+		const typedDataChainId = typedData.domain?.chainId;
+		if (!typedDataChainId || !isChainId(Number(typedDataChainId))) {
+			throw new BadRequestException("chainId is required in typedData.domain");
+		}
+		const effectiveChainId = Number(typedDataChainId);
 
 		let payload!: NoncePayload;
 		try {
@@ -148,27 +159,70 @@ export class AuthService {
 			this.mapJwtError(e, "nonce");
 		}
 
-		if (
-			nonceToken !== typedData.message.nonce ||
-			payload.address.toLowerCase() !==
-				(typedData.message.from as string).toLowerCase()
-		) {
-			this.logger.info(
-				{ evt: "auth.verify.mismatch", address, aud: expectedAud },
-				"nonce or address mismatch",
+		if (payload.chainId !== effectiveChainId) {
+			this.logger.warn(
+				{
+					evt: "auth.verify.chain_id_mismatch",
+					nonceChainId: payload.chainId,
+					typedDataChainId: effectiveChainId,
+					address,
+				},
+				`chain ID mismatch between nonce (${payload.chainId}) and typed data (${effectiveChainId})`,
 			);
-			throw new UnauthorizedException("Nonce or address mismatch");
+			throw new ForbiddenException({
+				error:
+					"chain ID in typed data does not match the chain ID used when requesting the nonce",
+				typedDataChainId: effectiveChainId,
+				nonceChainId: payload.chainId,
+			});
 		}
 
-		if (String(typedData.message.audience) !== payload.aud) {
-			this.logger.info(
-				{ evt: "auth.verify.aud_mismatch", expected: payload.aud },
-				"audience mismatch",
+		// For Biconomy flow, we verify that the client-provided audience
+		// matches the nonce JWT's audience claim to prevent tampering.
+		// The nonce JWT is cryptographically signed and contains the true audience.
+		if (audience && audience !== payload.aud) {
+			this.logger.warn(
+				{
+					evt: "auth.verify.aud_tampering_attempt",
+					claimed: audience,
+					actual: payload.aud,
+					address,
+				},
+				"audience parameter doesn't match nonce JWT",
 			);
-			throw new ForbiddenException("audience mismatch");
+			throw new ForbiddenException("audience mismatch with nonce");
 		}
 
-		const network = process.env.CHAIN_ID === "50104" ? sophon : sophonTestnet;
+		// For Biconomy flow (when audience is explicitly passed), skip message field checks
+		// as the message only contains a hash. For zkSync flow, validate message fields.
+		if (!audience) {
+			if (
+				nonceToken !== typedData.message.nonce ||
+				payload.address.toLowerCase() !==
+					(typedData.message.from as string).toLowerCase()
+			) {
+				this.logger.info(
+					{ evt: "auth.verify.mismatch", address, aud: expectedAud },
+					"nonce or address mismatch",
+				);
+				throw new UnauthorizedException("Nonce or address mismatch");
+			}
+
+			if (String(typedData.message.audience) !== payload.aud) {
+				this.logger.info(
+					{ evt: "auth.verify.aud_mismatch", expected: payload.aud },
+					"audience mismatch",
+				);
+				throw new ForbiddenException("audience mismatch");
+			}
+		}
+
+		const network = SophonChains[effectiveChainId];
+		if (!network) {
+			throw new BadRequestException(
+				`Invalid chain ID: ${effectiveChainId}. Chain not supported.`,
+			);
+		}
 
 		let isValid = false;
 		// with the new blockchain comming, for now, if we receive an owner address,
@@ -194,6 +248,7 @@ export class AuthService {
 				message: typedData.message,
 				chain: network,
 				logger: this.logger,
+				contentsHash,
 			});
 		}
 
@@ -225,6 +280,7 @@ export class AuthService {
 				sid,
 				typ: "access",
 				c,
+				chainId: effectiveChainId,
 			},
 			await this.keys.getAccessPrivateKey(),
 			{
@@ -246,6 +302,7 @@ export class AuthService {
 				sid,
 				jti: refreshJti,
 				typ: "refresh",
+				chainId: effectiveChainId,
 			},
 			await this.keys.getRefreshPrivateKey(),
 			{
@@ -270,6 +327,7 @@ export class AuthService {
 					: new Date(Date.now() + refreshExp * 1000),
 			createdIp: client?.ip ?? null,
 			createdUserAgent: client?.userAgent ?? null,
+			chainId: effectiveChainId,
 		});
 
 		this.logger.info(
@@ -343,6 +401,25 @@ export class AuthService {
 				);
 				throw new UnauthorizedException("session revoked or expired");
 			}
+
+			const tokenChainId = (payload as AccessTokenPayload).chainId;
+			if (tokenChainId && row.chainId !== tokenChainId) {
+				this.logger.info(
+					{
+						evt: "auth.access.chain_mismatch",
+						sid: rowSid,
+						sessionChainId: row.chainId,
+						tokenChainId,
+					},
+					"chain ID mismatch",
+				);
+				throw new UnauthorizedException({
+					error: "token chain ID does not match session",
+					tokenChainId,
+					sessionChainId: row.chainId,
+				});
+			}
+
 			if (row.invalidateBefore) {
 				const iatSec = payload.iat ?? 0;
 				const cut = Math.floor(new Date(row.invalidateBefore).getTime() / 1000);
@@ -445,6 +522,7 @@ export class AuthService {
 				sid: r.sid,
 				typ: "access",
 				c,
+				chainId: r.chainId,
 			},
 			await this.keys.getAccessPrivateKey(),
 			{
@@ -467,6 +545,7 @@ export class AuthService {
 				sid: r.sid,
 				jti: newJti,
 				typ: "refresh",
+				chainId: r.chainId,
 			},
 			await this.keys.getRefreshPrivateKey(),
 			{

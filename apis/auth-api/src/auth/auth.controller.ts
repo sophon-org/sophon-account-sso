@@ -1,8 +1,10 @@
 import {
+	BadRequestException,
 	Body,
 	Controller,
 	Delete,
 	Get,
+	Headers,
 	Param,
 	Post,
 	Req,
@@ -14,9 +16,11 @@ import {
 	ApiBearerAuth,
 	ApiBody,
 	ApiCookieAuth,
+	ApiHeaders,
 	ApiOkResponse,
 	ApiTags,
 } from "@nestjs/swagger";
+import { isChainId } from "@sophon-labs/account-core";
 import type { Request, Response } from "express";
 import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
 import { extractRefreshToken } from "../utils/token-extractor";
@@ -56,8 +60,38 @@ export class AuthController {
 
 	@Post("nonce")
 	@ApiBody({ type: NonceRequestDto, required: true })
+	@ApiHeaders([
+		{
+			name: "x-chain-id",
+			description: `Chain ID to query contracts on (defaults to server default value ${process.env.CHAIN_ID} if not provided)`,
+			example: 5010405,
+			required: false, // Optional for backward compatibility
+		},
+	])
 	@ApiOkResponse({ description: "Returns signed nonce JWT" })
-	async getNonce(@Body() body: NonceRequestDto, @Res() res: Response) {
+	async getNonce(
+		@Headers("x-chain-id") chainId: string,
+		@Body() body: NonceRequestDto,
+		@Res() res: Response,
+	) {
+		const effectiveChainId = Number(chainId ?? process.env.CHAIN_ID);
+
+		console.log("effectiveChainId", effectiveChainId);
+		if (!isChainId(effectiveChainId)) {
+			this.logger.warn(
+				{
+					evt: "auth.nonce.invalid_chain_id",
+					address: body.address,
+					partnerId: body.partnerId,
+					chainId: effectiveChainId,
+				},
+				"invalid chain ID",
+			);
+			throw new BadRequestException({
+				error: "invalid chain ID",
+				chainId: effectiveChainId,
+			});
+		}
 		this.logger.info(
 			{
 				evt: "auth.nonce.request",
@@ -65,6 +99,7 @@ export class AuthController {
 				partnerId: body.partnerId,
 				fieldsCount: body.fields?.length ?? 0,
 				hasUserId: Boolean(body.userId),
+				chainId: effectiveChainId,
 			},
 			"nonce requested",
 		);
@@ -74,6 +109,7 @@ export class AuthController {
 			body.partnerId,
 			body.fields,
 			body.userId,
+			effectiveChainId,
 		);
 
 		this.logger.debug({ evt: "auth.nonce.issued" }, "nonce issued");
@@ -90,11 +126,29 @@ export class AuthController {
 		@Res() res: Response,
 		@Req() req: Request,
 	) {
+		const typedDataChainId = Number(body.typedData.domain?.chainId);
+		if (!isChainId(typedDataChainId)) {
+			this.logger.warn(
+				{
+					evt: "auth.verify.invalid_chain_id",
+					address: body.address,
+					typedDataChainId,
+				},
+				"invalid or missing chain ID in typedData.domain",
+			);
+			throw new BadRequestException({
+				error:
+					"chainId is required in typedData.domain and must be a valid chain ID",
+				chainId: typedDataChainId,
+			});
+		}
+
 		const ci = clientInfo(req);
 		this.logger.info(
 			{
 				evt: "auth.verify.attempt",
 				address: body.address,
+				chainId: typedDataChainId,
 				hasTypedData: Boolean(body.typedData),
 				hasSignature: Boolean(body.signature),
 				hasNonce: Boolean(body.nonceToken),
@@ -117,12 +171,15 @@ export class AuthController {
 				body.nonceToken,
 				ci,
 				body.ownerAddress,
+				body.audience,
+				body.contentsHash,
 			);
 
 			this.logger.info(
 				{
 					evt: "auth.verify.success",
 					address: body.address,
+					chainId: typedDataChainId,
 					sid,
 					accessTokenExp: accessTokenExpiresAt,
 					refreshTokenExp: refreshTokenExpiresAt,

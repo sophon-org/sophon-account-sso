@@ -1,6 +1,6 @@
 {
   "name": "@sophon-labs/account-eip6963",
-  "version": "2.3.8",
+  "version": "3.0.0-next.25",
   "description": "EIP-6963 provider for Sophon SSO",
   "license": "MIT",
   "author": "Sophon Team",
@@ -29,6 +29,26 @@
         "require": "./dist/mainnet.cjs"
       }
     },
+    "./os-mainnet": {
+      "import": {
+        "types": "./dist/os-mainnet.d.ts",
+        "import": "./dist/os-mainnet.js"
+      },
+      "require": {
+        "types": "./dist/os-mainnet.d.cts",
+        "require": "./dist/os-mainnet.cjs"
+      }
+    },
+    "./os-testnet": {
+      "import": {
+        "types": "./dist/os-testnet.d.ts",
+        "import": "./dist/os-testnet.js"
+      },
+      "require": {
+        "types": "./dist/os-testnet.d.cts",
+        "require": "./dist/os-testnet.cjs"
+      }
+    },
     "./testnet": {
       "import": {
         "types": "./dist/testnet.d.ts",
@@ -47,26 +67,22 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
     "------------------------- UNIT TESTING -------------------------": "",
     "test": "vitest",
     "test:watch": "vitest --watch",
-    "test:ci": "vitest run --coverage",
-    "----------------------- INTEGRATION TESTING ---------------------": "",
-    "test:e2e:ci": "playwright test",
-    "test:e2e:ui": "playwright test --ui",
-    "test:e2e:dev": "npm-run-all --parallel dev test:e2e:ui"
+    "test:ci": "vitest run --coverage"
   },
   "devDependencies": {
     "@faker-js/faker": "^10.0.0",
-    "@playwright/test": "^1.54.1",
     "@types/node": "^20.0.0",
     "tsup": "^8.5.0",
     "typescript": "^5.0.0",
     "vitest": "^3.2.4"
   },
   "dependencies": {
-    "@sophon-labs/account-core": "2.3.8",
-    "@sophon-labs/account-provider": "2.3.8",
+    "@sophon-labs/account-core": "3.0.0-next.25",
+    "@sophon-labs/account-provider": "3.0.0-next.25",
     "eventemitter3": "^5.0.1",
     "json-rpc-2.0": "^1.7.1"
   },

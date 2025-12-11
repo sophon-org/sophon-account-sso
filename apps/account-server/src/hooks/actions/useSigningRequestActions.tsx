@@ -31,7 +31,8 @@ export const useSigningRequestActions = (
   const { incoming, typedDataSigning, messageSigning } =
     MainStateMachineContext.useSelector((state) => state.context.requests);
   const actorRef = MainStateMachineContext.useActorRef();
-  const { isSigning, signTypeData, signMessage, signingError } = useSignature();
+  const { isSigning, signTypedData, signMessage, signingError } =
+    useSignature();
   const { isOffline } = useNetworkStatus();
 
   useEffect(() => {
@@ -71,7 +72,7 @@ export const useSigningRequestActions = (
     try {
       let signature: string | undefined;
       if (typedDataSigning) {
-        signature = await signTypeData(typedDataSigning);
+        signature = await signTypedData(typedDataSigning);
       } else if (messageSigning) {
         signature = await signMessage(messageSigning);
       }

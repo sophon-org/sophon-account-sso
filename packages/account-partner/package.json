@@ -1,0 +1,49 @@
+{
+  "name": "@sophon-labs/account-partner",
+  "version": "3.0.0-next.25",
+  "description": "Handles partner related functionality for Sophon Account",
+  "license": "MIT",
+  "author": "Sophon Team",
+  "type": "module",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "require": "./dist/index.cjs"
+      }
+    }
+  },
+  "packageManager": "yarn@4.9.2",
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "------------------------- UNIT TESTING -------------------------": "",
+    "test": "vitest --watch false --passWithNoTests",
+    "test:watch": "vitest --watch ",
+    "test:ci": "vitest run --coverage --passWithNoTests --watch false"
+  },
+  "dependencies": {
+    "@sophon-labs/account-core": "3.0.0-next.25"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^10.0.0",
+    "@types/node": "^20.0.0",
+    "tsup": "^8.5.0",
+    "typescript": "^5.0.0",
+    "vitest": "^3.2.4"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

@@ -1,5 +1,5 @@
-import type { Communicator, Message } from './communicator.js';
 import { standardErrors } from './errors';
+import type { Communicator, Message } from './types.js';
 
 export interface PopupConfigMessage extends Message {
   event: 'PopupLoaded' | 'PopupUnload';
@@ -34,6 +34,19 @@ export class PopupCommunicator implements Communicator {
     this.width = options?.width ?? 420;
     this.height = options?.height ?? 600;
     this.calculatePosition = options?.calculatePosition;
+  }
+
+  // get for width and height
+  public get popupWidth() {
+    return this.width;
+  }
+
+  public get popupHeight() {
+    return this.height;
+  }
+
+  public get currentPopup() {
+    return this.popup;
   }
 
   postMessage = async (message: Message) => {
@@ -71,7 +84,7 @@ export class PopupCommunicator implements Communicator {
     });
   };
 
-  private disconnect = () => {
+  public disconnect = () => {
     // Note: Auth Server popup handles closing itself. this is a fallback.
     try {
       if (this.popup && !this.popup.closed) {

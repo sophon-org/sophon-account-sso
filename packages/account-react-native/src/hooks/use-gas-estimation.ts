@@ -30,7 +30,7 @@ export function useGasEstimation(
 
   // Function to estimate gas
   const estimateGas = useCallback(async () => {
-    if (!to || !data || !enabled) {
+    if (!to || !data) {
       setGasEstimate(undefined);
       return;
     }
@@ -44,24 +44,28 @@ export function useGasEstimation(
       });
 
       setGasEstimate(estimate);
+      return estimate;
     } catch (err) {
       console.error('Failed to estimate gas:', err);
       setError(err instanceof Error ? err : new Error('Gas estimation failed'));
       setGasEstimate(undefined);
+      return undefined;
     }
-  }, [to, from, data, value, enabled, publicClient, account?.address]);
+  }, [to, from, data, value, publicClient, account?.address]);
 
   // Function to get gas price
   const getGasPrice = useCallback(async () => {
     try {
       const price = await publicClient.getGasPrice();
       setGasPrice(price);
+      return price;
     } catch (err) {
       console.error('Failed to get gas price:', err);
       setError(
         err instanceof Error ? err : new Error('Gas price fetch failed'),
       );
       setGasPrice(undefined);
+      return undefined;
     }
   }, [publicClient]);
 
@@ -95,7 +99,20 @@ export function useGasEstimation(
           setIsLoading(false);
         });
     }
-  }, [enabled, to, data, from, value, estimateGas, getGasPrice]);
+  }, [enabled, to, data, estimateGas, getGasPrice]);
+
+  const estimateFee = useCallback(async () => {
+    try {
+      const [price, gasLimit] = await Promise.all([
+        getGasPrice(),
+        estimateGas(),
+      ]);
+      const value = gasLimit && price ? gasLimit * price : undefined;
+      return value;
+    } catch {
+      return undefined;
+    }
+  }, [estimateGas, getGasPrice]);
 
   // Calculate total fee estimates
   const totalFeeEstimate =
@@ -109,6 +126,8 @@ export function useGasEstimation(
     isError: !!error,
     error,
     refetch,
+    estimateGas,
+    estimateFee,
   };
 }
 

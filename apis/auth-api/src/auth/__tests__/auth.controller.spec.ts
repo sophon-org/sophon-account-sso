@@ -92,7 +92,13 @@ describe("AuthController (new flows)", () => {
 
 		const body = {
 			address: "0xabc0000000000000000000000000000000000001",
-			typedData: {} as unknown as VerifySiweDto["typedData"],
+			typedData: {
+				domain: {
+					name: "Sophon SSO",
+					version: "1",
+					chainId: 531050104,
+				},
+			} as unknown as VerifySiweDto["typedData"],
 			signature: "0xsignature",
 			nonceToken: "nonce.jwt",
 		} as unknown as VerifySiweDto;
@@ -230,6 +236,7 @@ describe("AuthController (new flows)", () => {
 			userId: "u1",
 			scope: "email x",
 			sub: "0xabc",
+			chainId: 531050104,
 		};
 
 		const req = { user: userPayload } as unknown as Request & {
@@ -272,7 +279,13 @@ describe("AuthController (new flows)", () => {
 
 		const body = {
 			address: "0xabc0000000000000000000000000000000000001",
-			typedData: {} as unknown as VerifySiweDto["typedData"],
+			typedData: {
+				domain: {
+					name: "Sophon SSO",
+					version: "1",
+					chainId: 531050104,
+				},
+			} as unknown as VerifySiweDto["typedData"],
 			signature: "0xsignature",
 			nonceToken: "nonce.jwt",
 		} as unknown as VerifySiweDto;
@@ -334,7 +347,13 @@ describe("AuthController (new flows)", () => {
 
 		const body = {
 			address: "0xabc0000000000000000000000000000000000001",
-			typedData: {} as unknown as VerifySiweDto["typedData"],
+			typedData: {
+				domain: {
+					name: "Sophon SSO",
+					version: "1",
+					chainId: 531050104,
+				},
+			} as unknown as VerifySiweDto["typedData"],
 			signature: "0xsignature",
 			nonceToken: "nonce.jwt",
 		} as unknown as VerifySiweDto;
@@ -397,7 +416,13 @@ describe("AuthController (new flows)", () => {
 
 		const body = {
 			address: "0xabc0000000000000000000000000000000000001",
-			typedData: {} as unknown as VerifySiweDto["typedData"],
+			typedData: {
+				domain: {
+					name: "Sophon SSO",
+					version: "1",
+					chainId: 531050104,
+				},
+			} as unknown as VerifySiweDto["typedData"],
 			signature: "0xsignature",
 			nonceToken: "nonce.jwt",
 		} as unknown as VerifySiweDto;
@@ -459,7 +484,13 @@ describe("AuthController (new flows)", () => {
 
 		const body = {
 			address: "0xabc0000000000000000000000000000000000001",
-			typedData: {} as unknown as VerifySiweDto["typedData"],
+			typedData: {
+				domain: {
+					name: "Sophon SSO",
+					version: "1",
+					chainId: 531050104,
+				},
+			} as unknown as VerifySiweDto["typedData"],
 			signature: "0xsignature",
 			nonceToken: "nonce.jwt",
 		} as unknown as VerifySiweDto;

@@ -1,3 +1,4 @@
+export * from './NexusFactoryPassthroughAbi';
 export * from './SessionKeyValidatorAbi';
 export * from './SNSRegistryAbi';
 export * from './SophonAAFactoryAbi';

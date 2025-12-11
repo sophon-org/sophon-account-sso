@@ -1,0 +1,89 @@
+{
+  "loadingStep": {
+    "signingIn": "로그인 중..."
+  },
+  "signInStep": {
+    "alternatively": "또는",
+    "signInWithWallet": "지갑으로 로그인",
+    "enterEmail": "이메일을 입력하세요"
+  },
+  "verifyEmailStep": {
+    "insertCode": "6자리 코드를 입력하세요",
+    "checkEmailFor": "{{email}}에서 확인 코드를 확인하세요",
+    "theCode": "코드",
+    "invalidCode": "잘못된 코드입니다. 이메일을 확인하고 다시 시도하세요.",
+    "didNotReceiveCode": "코드를 받지 못하셨나요? 스팸함을 확인하거나",
+    "resendLink": "링크 재전송",
+    "errorResendLink": "코드를 보내는 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요."
+  },
+  "authorizationStep": {
+    "connectWith": "{{partnerName}}에 연결",
+    "seeYourAddress": "주소/신원, 잔액 및 활동 보기",
+    "askForTransactionApproval": "거래 승인 요청",
+    "performActionsOnYourBehalf": "사용자를 대신하여 작업 수행 또는 자금 이체",
+    "cant": "불가능합니다",
+    "can": "가능합니다"
+  },
+  "consentStep": {
+    "title": "다음 목적을 위해 귀하의 데이터 사용에 대한 허가를 받고자 합니다.",
+    "personalization": {
+      "label": "맞춤화 및 광고:",
+      "description": "관련 광고를 포함하여 귀하의 경험을 맞춤화하기 위해 귀하의 데이터를 사용합니다."
+    },
+    "sharingData": {
+      "label": "데이터 공유:",
+      "description": "맞춤형 광고, 경험 및 추천을 제공할 수 있도록 귀하의 데이터 또는 해당 데이터와 관련된 zkTLS 증명을 데이터 파트너와 공유합니다."
+    },
+    "selectAll": "모두 선택",
+    "withdrawalInfoPart1": "언제든지 이메일을 보내어 동의를 철회할 수 있습니다:",
+    "withdrawalInfoPart2": ". 철회는 이러한 목적을 위한 향후 데이터 사용을 중단하지만, 동의가 활성화되어 있는 동안 이미 수행된 처리에는 영향을 미치지 않습니다. 자세한 내용은",
+    "withdrawalInfoPart3": "에서 데이터 처리 및 보호 방법과 귀하의 권리 행사 방법을 확인하세요."
+  },
+  "signMessageStep": {
+    "placeholder": "메시지 서명 자리 표시자."
+  },
+  "transactionStep": {
+    "rawTransaction": "원시 트랜잭션",
+    "feeDetails": "수수료 상세",
+    "transfer": "송금 {{name}}",
+    "spendingRequestFor": "{{name}} 에 대한 지출 요청",
+    "transactionRequest": "트랜잭션 요청",
+    "unknownTransaction": "알 수 없는 트랜잭션",
+    "networkFee": "네트워크 수수료:",
+    "usdFee": "수수료 (USD):",
+    "amountNetwork": "{{amount}} SOPH",
+    "amountUsd": "${{amount}}",
+    "viewDetails": "원시 트랜잭션 상세 보기",
+    "token": "토큰",
+    "from": "보낸 사람",
+    "to": "받는 사람",
+    "contract": "컨트랙트",
+    "spendingCap": "지출 한도",
+    "currentBalance": "현재 잔액",
+    "interactingWith": "상호작용 대상",
+    "amount": "금액",
+    "estimatedFee": "예상 수수료"
+  },
+  "footer": {
+    "byContinuing": "로그인함으로써 다음에 동의하게 됩니다\n"
+  },
+  "retryStep": {
+    "thatDidWork": "앗! 작동하지 않았습니다.",
+    "pleaseTryAgain": "다시 시도하거나 세부 정보를 확인한 후 다시 시도할 수 있습니다.",
+    "backToSignIn": "로그인으로 돌아가기"
+  },
+  "common": {
+    "signIn": "로그인",
+    "consent": "데이터 권한",
+    "retry": "재시도",
+    "approve": "승인",
+    "confirm": "확인",
+    "connect": "연결",
+    "cancel": "취소",
+    "privacyPolicy": "개인정보 처리방침",
+    "termsOfUse": "이용약관",
+    "poweredBy": "제공:",
+    "and": "및",
+    "genericError": "예기치 않은 오류가 발생했습니다. 다시 시도해주세요."
+  }
+}

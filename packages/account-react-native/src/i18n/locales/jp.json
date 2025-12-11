@@ -1,0 +1,89 @@
+{
+  "loadingStep": {
+    "signingIn": "サインイン中..."
+  },
+  "signInStep": {
+    "alternatively": "または",
+    "signInWithWallet": "ウォレットでサインイン",
+    "enterEmail": "メールアドレスを入力"
+  },
+  "verifyEmailStep": {
+    "insertCode": "6桁のコードを入力",
+    "checkEmailFor": "{{email}}で確認してください",
+    "theCode": "コード",
+    "invalidCode": "無効なコードです。メールを確認してもう一度お試しください。",
+    "didNotReceiveCode": "コードが届きませんでしたか？迷惑メールフォルダを確認するか",
+    "resendLink": "リンクを再送信",
+    "errorResendLink": "コードの送信中に問題が発生しました。しばらくしてからもう一度お試しください。"
+  },
+  "authorizationStep": {
+    "connectWith": "{{partnerName}}に接続",
+    "seeYourAddress": "アドレス/ID、残高、アクティビティを確認",
+    "askForTransactionApproval": "トランザクションの承認を要求",
+    "performActionsOnYourBehalf": "あなたに代わってアクションを実行または資金を移動",
+    "cant": "できません",
+    "can": "できます"
+  },
+  "consentStep": {
+    "title": "以下の目的でお客様のデータを使用する許可をいただきたいと思います。",
+    "personalization": {
+      "label": "パーソナライゼーションと広告：",
+      "description": "関連性の高い広告を表示するなど、お客様の体験をパーソナライズするためにデータを使用します。"
+    },
+    "sharingData": {
+      "label": "データの共有：",
+      "description": "パーソナライズされた広告、体験、推奨事項を提供するために、お客様のデータまたはそのようなデータに関連するzkTLS証明をデータパートナーと共有します。"
+    },
+    "selectAll": "すべて選択",
+    "withdrawalInfoPart1": "次のメールアドレスにご連絡いただくことで、いつでも同意を撤回できます：",
+    "withdrawalInfoPart2": "。撤回により、これらの目的でのお客様のデータの今後の使用は停止されますが、同意が有効であった間に実施された処理には影響しません。詳細については、当社の",
+    "withdrawalInfoPart3": "をご参照ください。当社がお客様のデータをどのように処理および保護し、お客様の権利をどのように行使できるかについてご確認いただけます。"
+  },
+  "signMessageStep": {
+    "placeholder": "メッセージ署名のプレースホルダー。"
+  },
+  "transactionStep": {
+    "rawTransaction": "未加工トランザクション",
+    "feeDetails": "手数料の詳細",
+    "transfer": "送金 {{name}}",
+    "spendingRequestFor": "{{name}} の支出リクエスト",
+    "transactionRequest": "トランザクション要求",
+    "unknownTransaction": "不明なトランザクション",
+    "networkFee": "ネットワーク手数料:",
+    "usdFee": "手数料 (USD):",
+    "amountNetwork": "{{amount}} SOPH",
+    "amountUsd": "${{amount}}",
+    "viewDetails": "未加工トランザクションの詳細を表示",
+    "token": "トークン",
+    "from": "送信元",
+    "to": "送信先",
+    "contract": "コントラクト",
+    "spendingCap": "支出上限",
+    "currentBalance": "現在の残高",
+    "interactingWith": "以下とやり取り中",
+    "amount": "金額",
+    "estimatedFee": "推定手数料"
+  },
+  "footer": {
+    "byContinuing": "ログインすることで、以下に同意したことになります\n"
+  },
+  "retryStep": {
+    "thatDidWork": "エラーが発生しました。",
+    "pleaseTryAgain": "再試行するか、詳細を確認してもう一度お試しください。",
+    "backToSignIn": "サインインに戻る"
+  },
+  "common": {
+    "signIn": "サインイン",
+    "consent": "データ許可",
+    "retry": "再試行",
+    "approve": "承認する",
+    "confirm": "確認",
+    "connect": "接続",
+    "cancel": "キャンセル",
+    "privacyPolicy": "プライバシーポリシー",
+    "termsOfUse": "利用規約",
+    "poweredBy": "提供：",
+    "and": "および",
+    "genericError": "予期しないエラーが発生しました。もう一度お試しください。"
+  }
+}

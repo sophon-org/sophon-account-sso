@@ -1,0 +1,89 @@
+{
+  "loadingStep": {
+    "signingIn": "登录中..."
+  },
+  "signInStep": {
+    "alternatively": "或者",
+    "signInWithWallet": "使用钱包登录",
+    "enterEmail": "输入您的电子邮件"
+  },
+  "verifyEmailStep": {
+    "insertCode": "输入6位数字代码",
+    "checkEmailFor": "请检查 {{email}} 以获取确认",
+    "theCode": "验证码",
+    "invalidCode": "无效的验证码。请检查您的电子邮件后重试。",
+    "didNotReceiveCode": "没有收到验证码？请检查垃圾邮件或",
+    "resendLink": "重新发送链接",
+    "errorResendLink": "发送验证码时出错。请稍后再试。"
+  },
+  "authorizationStep": {
+    "connectWith": "连接到 {{partnerName}}",
+    "seeYourAddress": "查看您的地址/身份、余额和活动",
+    "askForTransactionApproval": "请求批准交易",
+    "performActionsOnYourBehalf": "代表您执行操作或转移资金",
+    "cant": "它不能",
+    "can": "它可以"
+  },
+  "consentStep": {
+    "title": "我们希望获得您的许可，将您的数据用于以下目的。",
+    "personalization": {
+      "label": "个性化和广告：",
+      "description": "使用您的数据来个性化您的体验，包括向您展示相关广告。"
+    },
+    "sharingData": {
+      "label": "共享您的数据：",
+      "description": "与我们的数据合作伙伴共享您的数据或与此类数据相关的zkTLS证明，以便他们可以提供个性化的广告、体验和推荐。"
+    },
+    "selectAll": "全选",
+    "withdrawalInfoPart1": "您可以随时通过向我们发送电子邮件来撤回您的同意",
+    "withdrawalInfoPart2": "。撤回将停止将您的数据用于这些目的的任何未来使用，但不会影响您同意生效期间已经进行的处理。请参阅我们的",
+    "withdrawalInfoPart3": "了解我们如何处理和保护您的数据以及您如何行使您的权利。"
+  },
+  "signMessageStep": {
+    "placeholder": "签名消息占位符。"
+  },
+  "transactionStep": {
+    "rawTransaction": "原始交易",
+    "feeDetails": "费用详情",
+    "transfer": "转账 {{name}}",
+    "spendingRequestFor": "为 {{name}} 的支出请求",
+    "transactionRequest": "交易请求",
+    "unknownTransaction": "未知交易",
+    "networkFee": "网络费用:",
+    "usdFee": "费用 (USD):",
+    "amountNetwork": "{{amount}} SOPH",
+    "amountUsd": "${{amount}}",
+    "viewDetails": "查看原始交易详情",
+    "token": "代币",
+    "from": "来自",
+    "to": "到",
+    "contract": "合约",
+    "spendingCap": "支出上限",
+    "currentBalance": "当前余额",
+    "interactingWith": "正在与之交互",
+    "amount": "金额",
+    "estimatedFee": "预计费用"
+  },
+  "footer": {
+    "byContinuing": "登录即表示您接受我们的\n"
+  },
+  "retryStep": {
+    "thatDidWork": "糟糕！出了点问题。",
+    "pleaseTryAgain": "您可以重试或检查您的详细信息后再试一次。",
+    "backToSignIn": "返回登录"
+  },
+  "common": {
+    "signIn": "登录",
+    "consent": "数据许可",
+    "retry": "重试",
+    "approve": "批准",
+    "confirm": "确认",
+    "connect": "连接",
+    "cancel": "取消",
+    "privacyPolicy": "隐私政策",
+    "termsOfUse": "使用条款",
+    "poweredBy": "技术支持",
+    "and": "和",
+    "genericError": "发生意外错误。请重试。"
+  }
+}

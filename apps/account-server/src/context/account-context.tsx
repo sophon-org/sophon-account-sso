@@ -1,14 +1,18 @@
 'use client';
 import type { Wallet } from '@dynamic-labs/sdk-react-core';
 import {
+  getBiconomyAccountsByOwner,
+  isOsChainId,
+} from '@sophon-labs/account-core';
+import {
   createContext,
   useCallback,
   useEffect,
   useMemo,
   useState,
 } from 'react';
-import { zeroAddress } from 'viem';
-import { LOCAL_STORAGE_KEY } from '@/lib/constants';
+import { type Address, zeroAddress } from 'viem';
+import { LOCAL_STORAGE_KEY, SOPHON_VIEM_CHAIN } from '@/lib/constants';
 import { sendAuthMessage } from '@/lib/events';
 import { getDeployedSmartContractAddress } from '@/lib/smart-contract';
 import type { SmartAccount } from '@/types/smart-account';
@@ -54,9 +58,21 @@ const AccountContextProvider: React.FC<{ children: React.ReactNode }> = ({
     (async () => {
       if (!account?.address || !isInitialized) return;
 
-      const deployedAddress = await getDeployedSmartContractAddress(
-        account!.address,
-      );
+      let deployedAddress: Address | null = null;
+
+      if (isOsChainId(SOPHON_VIEM_CHAIN.id)) {
+        deployedAddress = (
+          await getBiconomyAccountsByOwner(
+            SOPHON_VIEM_CHAIN.id,
+            account!.address,
+          )
+        )[0];
+      } else {
+        deployedAddress = await getDeployedSmartContractAddress(
+          account!.address,
+        );
+      }
+
       setSmartAccountDeployed(
         !!deployedAddress && deployedAddress !== zeroAddress,
       );

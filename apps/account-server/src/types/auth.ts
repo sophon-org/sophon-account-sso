@@ -61,6 +61,8 @@ export interface TransactionRequest {
   to: string;
   value?: string;
   data?: string;
+  gas?: string;
+  gasLimit?: string;
   paymaster?: string;
   paymasterInput?: string;
 }

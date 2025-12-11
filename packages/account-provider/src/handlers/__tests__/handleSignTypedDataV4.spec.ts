@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { handleSignTypedDataV4 } from '../handleSignTypedDataV4';
 
-describe('handleSendTransaction', () => {
+describe('Provider > Handlers > handleSignTypedDataV4', () => {
   it('should return result body if available', async () => {
     // given
     const expectedPayload = {

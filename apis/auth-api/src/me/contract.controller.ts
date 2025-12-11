@@ -1,5 +1,13 @@
-import { Controller, Get, Param, Post } from "@nestjs/common";
-import { ApiOkResponse, ApiParam, ApiTags } from "@nestjs/swagger";
+import {
+	BadRequestException,
+	Controller,
+	Get,
+	Headers,
+	Param,
+	Post,
+} from "@nestjs/common";
+import { ApiHeaders, ApiOkResponse, ApiParam, ApiTags } from "@nestjs/swagger";
+import { isChainId } from "@sophon-labs/account-core";
 import type { Address } from "viem";
 import { ContractService } from "./contract.service";
 import { ContractDeployResponse } from "./dto/contract-deploy-response.dto";
@@ -15,9 +23,28 @@ export class ContractController {
 		description: "EOA address (0x...) signer of the contract",
 		example: "0x19e7e376e7c213b7e7e46cc70a5dd086daff2a",
 	})
+	@ApiHeaders([
+		{
+			name: "x-chain-id",
+			description: `Chain ID to query contracts on (defaults to server default value ${process.env.CHAIN_ID} if not provided)`,
+			example: 50104,
+			required: false, // Optional for backward compatibility
+		},
+	])
 	@ApiOkResponse({ type: String, isArray: true })
-	async byOwner(@Param("owner") owner: Address): Promise<Address[]> {
-		return this.contractService.getContractByOwner(owner);
+	async byOwner(
+		@Param("owner") owner: Address,
+		@Headers("x-chain-id") chainId?: number,
+	): Promise<Address[]> {
+		const effectiveChainId = Number(chainId ?? process.env.CHAIN_ID);
+		if (!isChainId(effectiveChainId)) {
+			throw new BadRequestException({
+				error: "invalid chain ID",
+				chainId: effectiveChainId,
+			});
+		}
+
+		return this.contractService.getContractByOwner(owner, effectiveChainId);
 	}
 
 	@Post(":owner")
@@ -26,8 +53,27 @@ export class ContractController {
 		description: "EOA address (0x...) to deploy smart contract as signer",
 		example: "0x19e7e376e7c213b7e7e46cc70a5dd086daff2a",
 	})
+	@ApiHeaders([
+		{
+			name: "x-chain-id",
+			description: `Chain ID to deploy contract on (defaults to server default value ${process.env.CHAIN_ID} if not provided)`,
+			example: 50104,
+			required: false, // Optional for backward compatibility
+		},
+	])
 	@ApiOkResponse({ type: ContractDeployResponse })
-	async deploy(@Param("owner") owner: Address) {
-		return this.contractService.deployContractForOwner(owner);
+	async deploy(
+		@Param("owner") owner: Address,
+		@Headers("x-chain-id") chainId?: number,
+	) {
+		const effectiveChainId = Number(chainId ?? process.env.CHAIN_ID);
+		if (!isChainId(effectiveChainId)) {
+			throw new BadRequestException({
+				error: "invalid chain ID",
+				chainId: effectiveChainId,
+			});
+		}
+
+		return this.contractService.deployContractForOwner(owner, effectiveChainId);
 	}
 }

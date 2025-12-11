@@ -1,9 +1,10 @@
 'use client';
 
+import { AuthService, type ChainId } from '@sophon-labs/account-core';
 import { MainStateMachineContext } from '@/context/state-machine-context';
 import { useEventHandler } from '@/events/hooks';
 import { useAccountContext } from '@/hooks/useAccountContext';
-import { deployAccount } from '@/service/account.service';
+import { SOPHON_VIEM_CHAIN } from '@/lib/constants';
 import { getsSmartAccounts } from '@/service/smart-account.server';
 
 /**
@@ -27,8 +28,11 @@ export const useK1LoginHandler = () => {
 
     let smartAccountAddress: `0x${string}`;
     if (accounts.length === 0) {
-      const response = await deployAccount(payload.address);
-      smartAccountAddress = response.accounts[0];
+      const response = await AuthService.deploySmartAccount(
+        SOPHON_VIEM_CHAIN.id as ChainId,
+        payload.address,
+      );
+      smartAccountAddress = response.contracts[0];
     } else {
       smartAccountAddress = accounts[0];
     }

@@ -4,18 +4,21 @@ import {
 } from '@sophon-labs/account-communicator';
 import {
   AccountServerURL,
-  type SophonNetworkType,
+  type ChainId,
   type StorageLike,
 } from '@sophon-labs/account-core';
 import { EventEmitter } from 'eventemitter3';
+import { sophonTestnet } from 'viem/chains';
 import { handleAccounts } from './handlers/handleAccounts';
 import { handleChainId } from './handlers/handleChainId';
 import { handlePersonalSign } from './handlers/handlePersonalSign';
 import { handleRequestAccounts } from './handlers/handleRequestAccounts';
+import { handleRequestConsent } from './handlers/handleRequestConsent';
 import { handleRevokePermissions } from './handlers/handleRevokePermissions';
 import { handleSendTransaction } from './handlers/handleSendTransaction';
 import { handleSignTypedDataV4 } from './handlers/handleSignTypedDataV4';
 import { handleSwitchEthereumChain } from './handlers/handleSwitchEthereumChain';
+import { handleWalletDisconnect } from './handlers/handleWalletDisconnect';
 import { clearAccounts, getAccounts } from './lib/accounts';
 import { genericRPCHandler } from './lib/genericRPC';
 import { awaitForPopupUnload } from './lib/popup';
@@ -24,14 +27,15 @@ import type { EIP1193Provider, RPCResponse } from './types';
 
 // The main provider function
 export function createSophonEIP1193Provider(
-  network: SophonNetworkType = 'testnet',
+  chainId: ChainId = sophonTestnet.id,
   partnerId?: string,
   customAuthServerUrl?: string,
   customCommunicator?: Communicator,
   customStorage?: StorageLike,
+  isNative?: boolean,
 ): EIP1193Provider {
   const eventEmitter = new EventEmitter();
-  const authServerUrl = customAuthServerUrl ?? AccountServerURL[network];
+  const authServerUrl = customAuthServerUrl ?? AccountServerURL[chainId];
   const serverUrl = partnerId ? `${authServerUrl}/${partnerId}` : authServerUrl;
 
   let storage =
@@ -66,7 +70,9 @@ export function createSophonEIP1193Provider(
     };
 
     const response = await communicator.postRequestAndWaitForResponse(request);
-    await awaitForPopupUnload(serverUrl);
+    if (!isNative) {
+      await awaitForPopupUnload(serverUrl);
+    }
     return response as RPCResponse<T>;
   }
 
@@ -74,9 +80,9 @@ export function createSophonEIP1193Provider(
     on: eventEmitter.on.bind(eventEmitter),
     removeListener: eventEmitter.removeListener.bind(eventEmitter),
     disconnect: async () => {
-      clearAccounts(storage, network);
+      clearAccounts(storage, chainId);
     },
-    accounts: () => getAccounts(storage, network),
+    accounts: () => getAccounts(storage, chainId),
     async request({ method, params }) {
       // console.log('EIP-1193 request:', method, params);
       switch (method) {
@@ -84,7 +90,7 @@ export function createSophonEIP1193Provider(
           // console.log('EIP-1193 eth_requestAccounts:', method, params);
           return handleRequestAccounts(
             storage,
-            network,
+            chainId,
             executeRequest,
             eventEmitter,
           );
@@ -92,17 +98,17 @@ export function createSophonEIP1193Provider(
 
         case 'eth_accounts': {
           // console.log('EIP-1193 eth_accounts:', method, params);
-          return handleAccounts(storage, network);
+          return handleAccounts(storage, chainId);
         }
 
         case 'eth_chainId': {
           // console.log('EIP-1193 eth_chainId:', method, params);
-          return handleChainId(network);
+          return handleChainId(chainId);
         }
 
         case 'wallet_switchEthereumChain': {
           // console.log('EIP-1193 wallet_switchEthereumChain:', method, params);
-          return handleSwitchEthereumChain(network, params as unknown[]);
+          return handleSwitchEthereumChain(chainId, params as unknown[]);
         }
 
         case 'personal_sign': {
@@ -120,11 +126,16 @@ export function createSophonEIP1193Provider(
           return handleSendTransaction(executeRequest, params as unknown[]);
         }
 
+        case 'sophon_requestConsent': {
+          // console.log('EIP-1193 sophon_requestConsent:', method, params);
+          return handleRequestConsent(executeRequest, params as unknown[]);
+        }
+
         case 'wallet_revokePermissions': {
           // console.log('EIP-1193 wallet_revokePermissions:', method, params);
           return handleRevokePermissions(
             storage,
-            network,
+            chainId,
             executeRequest,
             eventEmitter,
           );
@@ -134,17 +145,22 @@ export function createSophonEIP1193Provider(
           // console.log('EIP-1193 wallet_requestPermissions:', method, params);
           return handleRequestAccounts(
             storage,
-            network,
+            chainId,
             executeRequest,
             eventEmitter,
           );
+        }
+
+        case 'wallet_disconnect': {
+          // console.log('EIP-1193 wallet_disconnect:', method, params);
+          return handleWalletDisconnect(storage, chainId, eventEmitter);
         }
 
         default: {
           // passthrough methods to the RPC client, no need for sending them to the account server
           // we can do common RPC call here
           // console.log('EIP-1193 passthrough method:', method, params);
-          return await genericRPCHandler(network).request(method, params);
+          return await genericRPCHandler(chainId).request(method, params);
         }
       }
     },

@@ -1,0 +1,89 @@
+{
+  "loadingStep": {
+    "signingIn": "Iniciando sesión..."
+  },
+  "signInStep": {
+    "alternatively": "Alternativamente",
+    "signInWithWallet": "Iniciar sesión con Wallet",
+    "enterEmail": "Ingresa tu email"
+  },
+  "verifyEmailStep": {
+    "insertCode": "Ingresa el código de 6 dígitos",
+    "checkEmailFor": "Revisa {{email}} para la confirmación",
+    "theCode": "el código",
+    "invalidCode": "Código inválido. Por favor revisa tu email e inténtalo de nuevo.",
+    "didNotReceiveCode": "¿No recibiste un código? Revisa el spam o",
+    "resendLink": "Reenviar enlace",
+    "errorResendLink": "Algo salió mal al enviar el código. Vuelve a intentarlo pronto."
+  },
+  "authorizationStep": {
+    "connectWith": "Conectar con {{partnerName}}",
+    "seeYourAddress": "Ver tu dirección / identidad, saldo y actividad",
+    "askForTransactionApproval": "Solicitar aprobación de transacciones",
+    "performActionsOnYourBehalf": "Realizar acciones o transferir fondos en tu nombre",
+    "cant": "No puede",
+    "can": "Puede"
+  },
+  "consentStep": {
+    "title": "Nos gustaría contar con tu permiso para usar tus datos con los siguientes fines.",
+    "personalization": {
+      "label": "Personalización y anuncios:",
+      "description": "Usar tus datos para personalizar tu experiencia, incluyendo mostrarte anuncios relevantes."
+    },
+    "sharingData": {
+      "label": "Compartir tus datos:",
+      "description": "Compartir tus datos o pruebas zkTLS relacionadas con estos datos con nuestros socios de datos, para que puedan ofrecer anuncios, experiencias y recomendaciones personalizadas."
+    },
+    "selectAll": "Seleccionar todo",
+    "withdrawalInfoPart1": "Puedes retirar tu consentimiento en cualquier momento enviándonos un email a",
+    "withdrawalInfoPart2": ". La retirada detendrá cualquier uso futuro de tus datos con estos fines, pero no afectará el procesamiento realizado mientras tu consentimiento estaba activo. Consulta nuestra",
+    "withdrawalInfoPart3": "para saber cómo procesamos y protegemos tus datos y cómo puedes ejercer tus derechos."
+  },
+  "signMessageStep": {
+    "placeholder": "Marcador de posición para firmar mensaje."
+  },
+  "transactionStep": {
+    "rawTransaction": "Transacción en bruto",
+    "feeDetails": "Detalles de la tarifa",
+    "transfer": "Transferir {{name}}",
+    "spendingRequestFor": "Solicitud de gasto para {{name}}",
+    "transactionRequest": "Solicitud de transacción",
+    "unknownTransaction": "Transacción desconocida",
+    "networkFee": "Tarifa de red:",
+    "usdFee": "Tarifa (USD):",
+    "amountNetwork": "{{amount}} SOPH",
+    "amountUsd": "${{amount}}",
+    "viewDetails": "Ver detalles de la transacción en bruto",
+    "token": "Token",
+    "from": "De",
+    "to": "Para",
+    "contract": "Contrato",
+    "spendingCap": "Límite de gasto",
+    "currentBalance": "Saldo actual",
+    "interactingWith": "Interactuando con",
+    "amount": "Cantidad",
+    "estimatedFee": "Tarifa estimada"
+  },
+  "footer": {
+    "byContinuing": "Al iniciar sesión aceptas nuestros\n"
+  },
+  "retryStep": {
+    "thatDidWork": "¡Ups! Eso no funcionó.",
+    "pleaseTryAgain": "Puedes intentarlo de nuevo o verificar tus datos.",
+    "backToSignIn": "Volver a iniciar sesión"
+  },
+  "common": {
+    "signIn": "Iniciar sesión",
+    "consent": "Consentimiento de datos",
+    "retry": "Reintentar",
+    "approve": "Aprobar",
+    "confirm": "Confirmar",
+    "connect": "Conectar",
+    "cancel": "Cancelar",
+    "privacyPolicy": "Política de privacidad",
+    "termsOfUse": "Términos de uso",
+    "poweredBy": "Desarrollado por",
+    "and": "y",
+    "genericError": "Ocurrió un error inesperado. Por favor, inténtalo de nuevo."
+  }
+}

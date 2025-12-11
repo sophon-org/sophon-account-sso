@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { handlePersonalSign } from '../handlePersonalSign';
 
-describe('handlePersonalSign', () => {
+describe('Provider > Handlers > handlePersonalSign', () => {
   it('should return result body if available', async () => {
     // given
     const expectedPayload = {

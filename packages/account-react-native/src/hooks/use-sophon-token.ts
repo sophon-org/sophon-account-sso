@@ -9,14 +9,14 @@ export const useSophonToken = () => {
   const {
     accessToken,
     refreshToken,
-    network,
+    chainId,
     updateAccessToken,
     updateRefreshToken,
   } = useSophonContext();
 
   const baseAuthAPIURL = useMemo(() => {
-    return AccountAuthAPIURL[network];
-  }, [network]);
+    return AccountAuthAPIURL[chainId];
+  }, [chainId]);
 
   const getAccessToken = useCallback(
     async (
@@ -30,7 +30,6 @@ export const useSophonToken = () => {
 
       const now = new Date();
       const expiresAt = new Date(accessToken.expiresAt * 1000);
-      const isExpired = expiresAt < now;
       const needsRefreshAt = new Date(
         expiresAt.getTime() - ACCESS_TOKEN_EXPIRATION_THRESHOLD,
       );
@@ -55,12 +54,9 @@ export const useSophonToken = () => {
 
         if (!response.ok) {
           // if we got an error, but the token is not expired, then try to reuse the token for now
-          if (isExpired) {
-            throw new Error(
-              `Failed to refresh access token: ${response.statusText}`,
-            );
-          }
-          return accessToken;
+          throw new Error(
+            `Failed to refresh access token: ${response.statusText}`,
+          );
         }
 
         const data = await response.json();
