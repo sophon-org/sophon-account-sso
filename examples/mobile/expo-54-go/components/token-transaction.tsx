@@ -1,9 +1,8 @@
+import { sophonOSTestnet } from '@sophon-labs/account-core';
 import { useSophonAccount } from '@sophon-labs/account-react-native';
 import React from 'react';
 import { Text, TextInput, View } from 'react-native';
 import { type Address, erc20Abi, parseEther, parseUnits } from 'viem';
-import { sophonTestnet } from 'viem/chains';
-import { useBalance } from 'wagmi';
 import { Button } from './ui/button';
 import { CardAction } from './ui/card-action';
 
@@ -14,9 +13,6 @@ interface State {
 
 export function TokenTransaction() {
   const { account, walletClient } = useSophonAccount();
-  const { data: balance } = useBalance({
-    address: account?.address,
-  });
   const [transaction, setTransaction] = React.useState<string>();
   const [error, setError] = React.useState<string | null>(null);
   const [{ address, amount }, setState] = React.useState<State>({
@@ -50,7 +46,7 @@ export function TokenTransaction() {
         value: parseEther(amount),
         data: '0x',
         account: account!.address,
-        chain: sophonTestnet,
+        chain: sophonOSTestnet,
       });
       setTransaction(tx);
     } catch (e: any) {
@@ -70,7 +66,7 @@ export function TokenTransaction() {
         functionName,
         args: [address as Address, parseUnits(amount, 18)],
         account: account!.address,
-        chain: sophonTestnet,
+        chain: sophonOSTestnet,
       });
       setTransaction(tx);
     } catch (e: any) {

@@ -548,7 +548,7 @@ __metadata:
 
 "@sophon-labs/account-core@file:../../../packages/account-core::locator=%40sophon-labs%2Fexamples-react-sdk%40workspace%3A.":
   version: 3.0.0-next.25
-  resolution: "@sophon-labs/account-core@file:../../../packages/account-core#../../../packages/account-core::hash=afecc8&locator=%40sophon-labs%2Fexamples-react-sdk%40workspace%3A."
+  resolution: "@sophon-labs/account-core@file:../../../packages/account-core#../../../packages/account-core::hash=d34f7a&locator=%40sophon-labs%2Fexamples-react-sdk%40workspace%3A."
   dependencies:
     "@biconomy/abstractjs": "npm:^1.1.14"
     "@metamask/delegation-toolkit": "npm:~0.11.0"
@@ -556,7 +556,7 @@ __metadata:
     text-encoding-polyfill: "npm:^0.6.7"
   peerDependencies:
     viem: ">=2.21.0"
-  checksum: 10c0/ae171738ce2eafa22819368df280ecafef64849c8e13ca8bd9ac2e775af1ac9aaab10bf9f3bbb6fd40e2146e9fe296b7785e0f43477d38c529f823405132aef3
+  checksum: 10c0/81ec0b2a3b210e4183fbea039e46489e1bc462fac0e050480bc2840ef24a5111731f90bae0359df43b21b2626a7b8e579e7c83f8e50868e285b13b549a8e19fa
   languageName: node
   linkType: hard
 

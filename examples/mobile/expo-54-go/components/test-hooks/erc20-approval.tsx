@@ -1,3 +1,4 @@
+import { sophonOSTestnet } from '@sophon-labs/account-core';
 import {
   useERC20Approval,
   useSophonAccount,
@@ -15,7 +16,7 @@ export const ERC20Approval = () => {
     tokenAddress: '0xE676a42fEd98d51336f02510bB5d598893AbfE90', // MOCK MintMe token
     spender: '0xfeb22da05537b4b63bb63417b10935819facb81c', // Example 1inch router
     amount: '100000000000000000', // 0.1 (18 decimals)
-    chainId: 531050104, // Sophon Testnet
+    chainId: sophonOSTestnet.id, // Sophon Testnet
   });
 
   const config = useMemo(
@@ -137,11 +138,14 @@ export const ERC20Approval = () => {
           <TextInput
             value={formData.chainId.toString()}
             onChangeText={(text) =>
-              handleInputChange('chainId', Number.parseInt(text) || 531050104)
+              handleInputChange(
+                'chainId',
+                Number.parseInt(text) || sophonOSTestnet.id,
+              )
             }
             className="bg-white border border-gray-300 rounded p-2 mb-2 text-black"
             keyboardType="numeric"
-            placeholder="531050104"
+            placeholder={sophonOSTestnet.id.toString()}
           />
         </View>
       </View>

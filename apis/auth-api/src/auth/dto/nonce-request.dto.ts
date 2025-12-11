@@ -4,7 +4,6 @@ import {
 	IsArray,
 	IsEthereumAddress,
 	IsIn,
-	IsInt,
 	IsNotEmpty,
 	IsOptional,
 	IsString,
@@ -49,15 +48,4 @@ export class NonceRequestDto {
 	@IsString()
 	@IsNotEmpty()
 	userId?: string; // ← optional
-
-	@ApiPropertyOptional({
-		description:
-			"Chain ID for the authentication request (defaults to CHAIN_ID env var if not provided)",
-		example: 531050104,
-		examples: [50104, 531050104],
-	})
-	@IsOptional()
-	@IsInt()
-	// @IsNotEmpty() // Temporarily commented for backward compatibility
-	chainId?: number;
 }

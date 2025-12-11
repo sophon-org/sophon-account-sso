@@ -4,6 +4,7 @@ import {
 	Controller,
 	Delete,
 	Get,
+	Headers,
 	Param,
 	Post,
 	Req,
@@ -15,6 +16,7 @@ import {
 	ApiBearerAuth,
 	ApiBody,
 	ApiCookieAuth,
+	ApiHeaders,
 	ApiOkResponse,
 	ApiTags,
 } from "@nestjs/swagger";
@@ -58,9 +60,23 @@ export class AuthController {
 
 	@Post("nonce")
 	@ApiBody({ type: NonceRequestDto, required: true })
+	@ApiHeaders([
+		{
+			name: "x-chain-id",
+			description: `Chain ID to query contracts on (defaults to server default value ${process.env.CHAIN_ID} if not provided)`,
+			example: 5010405,
+			required: false, // Optional for backward compatibility
+		},
+	])
 	@ApiOkResponse({ description: "Returns signed nonce JWT" })
-	async getNonce(@Body() body: NonceRequestDto, @Res() res: Response) {
-		const effectiveChainId = body.chainId ?? Number(process.env.CHAIN_ID);
+	async getNonce(
+		@Headers("x-chain-id") chainId: string,
+		@Body() body: NonceRequestDto,
+		@Res() res: Response,
+	) {
+		const effectiveChainId = Number(chainId ?? process.env.CHAIN_ID);
+
+		console.log("effectiveChainId", effectiveChainId);
 		if (!isChainId(effectiveChainId)) {
 			this.logger.warn(
 				{

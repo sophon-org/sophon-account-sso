@@ -9,7 +9,7 @@ import * as ScreenOrientation from 'expo-screen-orientation';
 import { useEffect, useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import { parseEther } from 'viem';
-import { sophonTestnet } from 'viem/chains';
+import { useChainId } from 'wagmi';
 import { nftAbi } from '@/abis/nft';
 import { unverifiedAbi } from '@/abis/unverified';
 import { verifiedAbi } from '@/abis/verified';
@@ -38,6 +38,7 @@ export default function HomeScreen() {
   const [error, setError] = useState<string>('');
   const [showTestDashboard, setShowTestDashboard] = useState(false);
   const { requestConsent, hasConsent } = useSophonConsent();
+  const chainId = useChainId();
 
   if (!initialized) {
     return (
@@ -175,7 +176,7 @@ export default function HomeScreen() {
                     domain: {
                       name: 'Sophon SSO',
                       version: '1',
-                      chainId: sophonTestnet.id,
+                      chainId,
                     },
                     types: {
                       Message: [

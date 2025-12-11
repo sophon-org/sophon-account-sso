@@ -167,7 +167,7 @@ export class AuthService {
 					typedDataChainId: effectiveChainId,
 					address,
 				},
-				"chain ID mismatch between nonce and typed data",
+				`chain ID mismatch between nonce (${payload.chainId}) and typed data (${effectiveChainId})`,
 			);
 			throw new ForbiddenException({
 				error:
