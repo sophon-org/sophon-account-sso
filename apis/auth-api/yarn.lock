@@ -2271,15 +2271,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@biconomy/abstractjs@npm:^1.1.14":
-  version: 1.1.17
-  resolution: "@biconomy/abstractjs@npm:1.1.17"
+"@biconomy/abstractjs@npm:^1.1.19":
+  version: 1.1.19
+  resolution: "@biconomy/abstractjs@npm:1.1.19"
   peerDependencies:
     "@metamask/delegation-toolkit": ^0.11.0
     "@rhinestone/module-sdk": 0.4.0
     typescript: ^5.8.2
     viem: ^2.26.2
-  checksum: 10c0/c0abc661a0075ac67be19fd68c0d2490bb7b7fac4ce33356b63a7ab2daf759886d33ff01b68dad5062dcd0af2d4ad1a937c84f8cb38b48f241ce13d6534a6483
+  checksum: 10c0/8df074faa0f1f2d893d78a169d0feb38db97ce7aa9565089faed647895c50da2712c7edf26a8b34592c7c7d31356162a0295456302aad034fcb94dd3c62029a2
   languageName: node
   linkType: hard
 
@@ -6010,18 +6010,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-core@npm:3.0.0-next.26":
-  version: 3.0.0-next.26
-  resolution: "@sophon-labs/account-core@npm:3.0.0-next.26"
+"@sophon-labs/account-core@npm:3.0.0-next.27":
+  version: 3.0.0-next.27
+  resolution: "@sophon-labs/account-core@npm:3.0.0-next.27"
   dependencies:
-    "@biconomy/abstractjs": "npm:^1.1.14"
+    "@biconomy/abstractjs": "npm:^1.1.19"
     "@metamask/delegation-toolkit": "npm:~0.11.0"
     "@rhinestone/module-sdk": "npm:0.4.0"
     text-encoding-polyfill: "npm:^0.6.7"
     tslib: "npm:^2.8.1"
   peerDependencies:
     viem: ">=2.21.0"
-  checksum: 10c0/df5359fda9150b4bc3f12ead1ba9250e589e0d1489ae66b666b7bafb21ce26a7335a57475bf6e2dfbed60ea4d073523eab1b4ef892426aeab0cd254ddf734e87
+  checksum: 10c0/fa312e13959c176596b68c46286b0e87809580786f34e0855edd891fc007455e66c1ae6c6adba9172cac50c633b7cec77ac20a3f3d22bfccf7d1f46f5141eebb
   languageName: node
   linkType: hard
 
@@ -6057,7 +6057,7 @@ __metadata:
     "@sentry/profiling-node": "npm:^10.15.0"
     "@simplewebauthn/browser": "npm:13.2.2"
     "@simplewebauthn/server": "npm:^13.2.2"
-    "@sophon-labs/account-core": "npm:3.0.0-next.26"
+    "@sophon-labs/account-core": "npm:3.0.0-next.27"
     "@swc/cli": "npm:^0.6.0"
     "@swc/core": "npm:^1.10.7"
     "@types/cookie-parser": "npm:^1.4.9"
