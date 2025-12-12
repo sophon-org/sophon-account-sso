@@ -15,10 +15,10 @@
   "dependencies": {
     "@sophon-labs/account-provider": "2.0.10-next.2",
     "@tanstack/react-query": "^5.76.0",
-    "next": "15.3.6",
+    "next": "15.3.7",
     "next-auth": "^5.0.0-beta.28",
-    "react": "^19.0.1",
-    "react-dom": "^19.0.1",
+    "react": "^19.0.2",
+    "react-dom": "^19.0.2",
     "viem": "^2.29.2",
     "zksync-ethers": "^6.17.0"
   },

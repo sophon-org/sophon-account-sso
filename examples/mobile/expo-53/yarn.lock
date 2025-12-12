@@ -2277,8 +2277,8 @@ __metadata:
     expo-system-ui: "npm:~5.0.11"
     expo-web-browser: "npm:~14.2.0"
     json-rpc-2.0: "npm:^1.7.1"
-    react: "npm:19.0.1"
-    react-dom: "npm:19.0.1"
+    react: "npm:19.0.2"
+    react-dom: "npm:19.0.2"
     react-native: "npm:0.79.5"
     react-native-gesture-handler: "npm:~2.24.0"
     react-native-mmkv: "npm:^3.3.0"
@@ -6706,14 +6706,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:19.0.1":
-  version: 19.0.1
-  resolution: "react-dom@npm:19.0.1"
+"react-dom@npm:19.0.2":
+  version: 19.0.2
+  resolution: "react-dom@npm:19.0.2"
   dependencies:
     scheduler: "npm:^0.25.0"
   peerDependencies:
-    react: ^19.0.1
-  checksum: 10c0/e9286a106bd33976c533db6f9df56e8d9dd56ae49abb16c0720d26968a1f5ec6f17ed7f38150fa054b68c25bcbde00be8f3a9efa193554a8bfacb47f73ca603b
+    react: ^19.0.2
+  checksum: 10c0/e4ef16aa54d1779f9e117f43d679d3f321013c3f8dbdaa089b2d2f1c8cd8606916cb96383c6f4e772c8a85da5551b9d542d05737710022828824354cba92cf5e
   languageName: node
   linkType: hard
 
@@ -6974,10 +6974,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:19.0.1":
-  version: 19.0.1
-  resolution: "react@npm:19.0.1"
-  checksum: 10c0/bc2e2e86ea4e67235f1adb329363bf1c998b3fed0842116614cbef6ae162d0a70227eda4cfed6d28cb95b2ad8b507a0894ed9af26f7f6cd635797585be2fb16c
+"react@npm:19.0.2":
+  version: 19.0.2
+  resolution: "react@npm:19.0.2"
+  checksum: 10c0/ef65c2125f1f9b8da2f571442fe779cde5d3c4a222b15b927ff5b05cf6d61846cdb6f7a0f1ee08d6a5c3137ef11eb0ac920915fd441f01761ccdab5c2d7bf48a
   languageName: node
   linkType: hard
 
