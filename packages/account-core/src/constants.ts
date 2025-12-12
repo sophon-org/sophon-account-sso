@@ -82,15 +82,15 @@ export const SophonChainCapabilities: Record<ChainId, ChainCapability> = {
 export const AccountServerURL: Record<ChainId, string> = {
   [sophon.id]: 'https://account.sophonauth.com',
   [sophonTestnet.id]: 'https://account.staging.sophonauth.com',
-  [sophonOS.id]: 'https://account.sophonauth.com',
-  [sophonOSTestnet.id]: 'https://account.staging.sophonauth.com',
+  [sophonOS.id]: 'https://auth.sophon.com',
+  [sophonOSTestnet.id]: 'https://auth.staging.sophon.com',
 };
 
 export const AccountAuthAPIURL: Record<ChainId, string> = {
   [sophon.id]: 'https://auth.sophonauth.com',
   [sophonTestnet.id]: 'https://auth.staging.sophonauth.com',
-  [sophonOS.id]: 'https://auth.sophonauth.com',
-  [sophonOSTestnet.id]: 'http://localhost:4001',
+  [sophonOS.id]: 'https://api.auth.sophon.com',
+  [sophonOSTestnet.id]: 'https://api.auth.staging.sophon.com',
 };
 
 /**
@@ -111,8 +111,8 @@ export const AvailableRPCURL: Record<ChainId, string> = {
 export const AvailableCDNURL: Record<ChainId, string> = {
   [sophon.id]: 'https://cdn.sophonauth.com',
   [sophonTestnet.id]: 'https://cdn.staging.sophonauth.com',
-  [sophonOS.id]: 'https://cdn.sophonauth.com',
-  [sophonOSTestnet.id]: 'https://cdn.staging.sophonauth.com',
+  [sophonOS.id]: 'https://cdn.sophon.com',
+  [sophonOSTestnet.id]: 'https://cdn.staging.sophon.com',
 };
 
 /**
