@@ -1,5 +1,11 @@
 # @sophon-labs/account-eip6963
 
+## 3.0.0-next.28
+
+### Patch Changes
+
+- Updating zkOs urls
+
 ## 3.0.0-next.27
 
 ### Patch Changes

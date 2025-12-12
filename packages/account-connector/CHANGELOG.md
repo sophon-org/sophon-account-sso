@@ -1,5 +1,14 @@
 # @sophon-labs/account-connector
 
+## 3.0.0-next.28
+
+### Patch Changes
+
+- Updating zkOs urls
+- Updated dependencies
+  - @sophon-labs/account-provider@3.0.0-next.28
+  - @sophon-labs/account-core@3.0.0-next.28
+
 ## 3.0.0-next.27
 
 ### Patch Changes
