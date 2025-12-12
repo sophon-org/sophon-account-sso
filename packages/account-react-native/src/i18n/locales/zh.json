@@ -62,7 +62,14 @@
     "currentBalance": "当前余额",
     "interactingWith": "正在与之交互",
     "amount": "金额",
-    "estimatedFee": "预计费用"
+    "estimatedFee": "预计费用",
+    "errorDetails": "错误详情",
+    "errorDetailButton": "交易失败。点击查看错误。",
+    "contractWarning": {
+      "approve": "您将授权以下地址代表您花费代币",
+      "contract": "此合约未通过验证。继续之前请确保您信任它。我们根据常见的交互方式显示交易详情。",
+      "contractNotVerified": "此合约未通过验证，因此无法显示交易详情。继续之前请确保您信任它。"
+    }
   },
   "footer": {
     "byContinuing": "登录即表示您接受我们的\n"

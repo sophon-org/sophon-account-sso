@@ -1,11 +1,10 @@
 import { shortenAddress } from '@sophon-labs/account-core';
-import { useMemo } from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 import { useTranslation } from '../../i18n';
-import { TransactionType } from '../../types/transaction-request';
 import {
   Button,
   Card,
+  CardError,
   Container,
   Skeleton,
   Text,
@@ -14,14 +13,12 @@ import {
 } from '../../ui';
 import { StepContainer } from '../components/step-container';
 import {
+  CardContractWarning,
   TransactionRequestProvider,
   useTransactionRequestContext,
+  useTransactionRequestFormatter,
 } from '../modules/transaction-request';
 import { AddressLink } from '../modules/transaction-request/components/address-link';
-import {
-  formatDecodeArgsValue,
-  truncateContractName,
-} from '../modules/transaction-request/utils/transaction-request-utils';
 import type { BasicStepProps } from '../types';
 
 const TransactionStepComponent: React.FC<BasicStepProps> = (params) => {
@@ -34,110 +31,21 @@ const TransactionStepComponent: React.FC<BasicStepProps> = (params) => {
     transactionRequest,
     loading,
     isSophonTransaction,
+    isApproveLoading,
     openExplorerAddress,
+    approve,
+    approveError,
+    onViewErrorDetailsPress,
   } = useTransactionRequestContext();
 
-  const transactionTitle = useMemo(() => {
-    if (!enrichedTransactionRequest) return '';
-    switch (enrichedTransactionRequest?.transactionType) {
-      case TransactionType.SOPH:
-        return t('transactionStep.transfer', {
-          name:
-            'token' in enrichedTransactionRequest
-              ? enrichedTransactionRequest.token.symbol
-              : 'SOPH',
-        });
-      case TransactionType.ERC20:
-        return t('transactionStep.transfer', {
-          name:
-            'token' in enrichedTransactionRequest
-              ? enrichedTransactionRequest.token.symbol
-              : 'Token',
-        });
-      case TransactionType.APPROVE:
-        return t('transactionStep.spendingRequestFor', {
-          name:
-            'token' in enrichedTransactionRequest
-              ? enrichedTransactionRequest.token.symbol
-              : 'Token',
-        });
-      case TransactionType.CONTRACT:
-        return t('transactionStep.transactionRequest');
-
-      default:
-        return t('transactionStep.unknownTransaction');
-    }
-  }, [enrichedTransactionRequest, t]);
-
-  const currentToken = useMemo(() => {
-    return {
-      name: enrichedTransactionRequest?.token?.tokenName || '',
-      address: shortenAddress(enrichedTransactionRequest?.recipient) || '',
-      recipient: enrichedTransactionRequest?.recipient,
-    };
-  }, [enrichedTransactionRequest]);
-
-  const spenderParams = useMemo(() => {
-    if (enrichedTransactionRequest && 'spender' in enrichedTransactionRequest) {
-      return {
-        contract: {
-          name: truncateContractName(
-            enrichedTransactionRequest.spender.name || '',
-          ),
-          address:
-            shortenAddress(
-              enrichedTransactionRequest.spender.address as `0x${string}`,
-            ) || '',
-          recipient: enrichedTransactionRequest.spender.address,
-        },
-        spendingCap: `${enrichedTransactionRequest.spender.spendingCap} ${enrichedTransactionRequest.token.symbol}`,
-        currentBalance: `${enrichedTransactionRequest.token.currentBalance} ${enrichedTransactionRequest.token.symbol}`,
-      };
-    }
-    return null;
-  }, [enrichedTransactionRequest]);
-
-  const interactingWith = useMemo(() => {
-    if (
-      enrichedTransactionRequest?.transactionType ===
-        TransactionType.CONTRACT &&
-      enrichedTransactionRequest?.decodedData
-    ) {
-      return {
-        contract: {
-          name: truncateContractName(
-            enrichedTransactionRequest?.contractName || '',
-          ),
-          address: shortenAddress(enrichedTransactionRequest?.recipient) || '',
-          recipient: enrichedTransactionRequest?.recipient,
-        },
-        data: enrichedTransactionRequest?.decodedData?.args?.map((it) => ({
-          ...it,
-          value: formatDecodeArgsValue(it),
-        })),
-      };
-    }
-
-    return null;
-  }, [enrichedTransactionRequest]);
-
-  const renderInteractingArgs = (
-    item: NonNullable<typeof interactingWith>['data'][number],
-  ) => {
-    if (Array.isArray(item.value)) {
-      return item.value.map((it) => (
-        <Text fontWeight="bold" lineHeight={24} key={it.name}>
-          • {it.name}: <Text fontWeight="400">{it.value}</Text>
-        </Text>
-      ));
-    }
-
-    return (
-      <Text fontWeight="bold">
-        • {item.name}: <Text fontWeight="400">{item.value}</Text>
-      </Text>
-    );
-  };
+  const {
+    transactionDisplay,
+    transactionTitle,
+    currentToken,
+    spenderParams,
+    interactingWith,
+    renderInteractingArgs,
+  } = useTransactionRequestFormatter();
 
   return (
     <StepContainer>
@@ -153,6 +61,7 @@ const TransactionStepComponent: React.FC<BasicStepProps> = (params) => {
           </Text>
         </Skeleton>
       </Container>
+      <CardContractWarning transactionRequest={enrichedTransactionRequest} />
       <Card>
         <Container style={styles.contentCard}>
           <Container isVisible={Boolean(spenderParams?.contract)}>
@@ -203,10 +112,7 @@ const TransactionStepComponent: React.FC<BasicStepProps> = (params) => {
                 </Text>
               </Skeleton>
               <Skeleton height={20} loading={loading}>
-                <Text lineHeight={24}>
-                  {enrichedTransactionRequest?.displayValue ?? '0'}{' '}
-                  {enrichedTransactionRequest?.token?.symbol}
-                </Text>
+                <Text lineHeight={24}>{transactionDisplay.value}</Text>
               </Skeleton>
             </Container>
           </Container>
@@ -274,37 +180,50 @@ const TransactionStepComponent: React.FC<BasicStepProps> = (params) => {
           </Skeleton>
         </TouchableOpacity>
       </Card>
-      <TouchableOpacity onPress={onViewFeeDetailsPress}>
-        <Card style={[styles.contentCard, styles.feeCard]}>
-          <Container>
-            <Text fontWeight="bold">{t('transactionStep.estimatedFee')}</Text>
-          </Container>
-          <Container alignItems="flex-end" flexWrap="wrap">
-            <Skeleton height={20} loading={loading}>
-              <Text textAlign="right" fontWeight="bold" ellipsizeMode="tail">
-                {enrichedTransactionRequest?.fee?.SOPH} SOPH
-              </Text>
-            </Skeleton>
-            <Skeleton height={20} loading={loading}>
-              <Text textAlign="right">
-                {enrichedTransactionRequest?.fee?.USD} USD
-              </Text>
-            </Skeleton>
-          </Container>
-        </Card>
-      </TouchableOpacity>
+      <Container isVisible={!!approveError}>
+        <TouchableOpacity
+          onPress={() => onViewErrorDetailsPress(approveError!)}
+        >
+          <CardError
+            isVisible
+            text={t('transactionStep.errorDetailButton')}
+            marginVertical={8}
+          />
+        </TouchableOpacity>
+      </Container>
+      <Container isVisible={!approveError}>
+        <TouchableOpacity onPress={onViewFeeDetailsPress}>
+          <Card style={[styles.contentCard, styles.feeCard]}>
+            <Container>
+              <Text fontWeight="bold">{t('transactionStep.estimatedFee')}</Text>
+            </Container>
+            <Container alignItems="flex-end" flexWrap="wrap">
+              <Skeleton height={20} loading={loading}>
+                <Text textAlign="right" fontWeight="bold" ellipsizeMode="tail">
+                  {transactionDisplay.feeSOPH}
+                </Text>
+              </Skeleton>
+              <Skeleton height={20} loading={loading}>
+                <Text textAlign="right">{transactionDisplay.feeUSD}</Text>
+              </Skeleton>
+            </Container>
+          </Card>
+        </TouchableOpacity>
+      </Container>
       <Container style={styles.buttons}>
         <Button
           containerStyle={styles.buttonWrapper}
           text={t('common.cancel')}
           variant="secondary"
-          disabled={loading}
+          disabled={loading || isApproveLoading}
           onPress={params.onCancel}
         />
         <Button
           containerStyle={styles.buttonWrapper}
           text={t('common.approve')}
-          disabled={loading}
+          disabled={loading || isApproveLoading}
+          loading={isApproveLoading}
+          onPress={approve}
         />
       </Container>
     </StepContainer>

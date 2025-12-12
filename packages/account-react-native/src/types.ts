@@ -121,6 +121,7 @@ export interface UseERC20ApprovalArgs {
   spender: Address;
   amount: bigint;
   chainId?: Chain['id'];
+  onError?: (error: Error) => void;
 }
 
 export interface UseGasEstimationArgs {

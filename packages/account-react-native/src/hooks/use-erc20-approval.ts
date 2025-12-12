@@ -116,16 +116,15 @@ export function useERC20Approval(args: UseERC20ApprovalArgs) {
         hash,
       });
 
-      if (receipt.status === 'success') {
-        setIsConfirmed(true);
-        // Refresh allowance after successful approval
-        await refetchAllowance();
-      } else {
-        throw new Error('Transaction failed');
-      }
+      if (receipt.status !== 'success') throw new Error('Transaction failed');
+      setIsConfirmed(true);
+      // Refresh allowance after successful approval
+      await refetchAllowance();
     } catch (err) {
       const error = err instanceof Error ? err : new Error('Approval failed');
       setError(error);
+      setIsLoading(false);
+      args?.onError?.(error);
       throw error;
     } finally {
       setIsLoading(false);
@@ -140,6 +139,7 @@ export function useERC20Approval(args: UseERC20ApprovalArgs) {
     chain,
     publicClient,
     refetchAllowance,
+    args?.onError,
   ]);
 
   return {
@@ -152,6 +152,9 @@ export function useERC20Approval(args: UseERC20ApprovalArgs) {
     approvalTxHash,
     isConfirmed,
     refetch: refetchAllowance,
+    clearError: () => {
+      setError(null);
+    },
   };
 }
 

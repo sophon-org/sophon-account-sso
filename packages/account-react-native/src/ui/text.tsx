@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { type ThemeColorType, useThemedStyles } from './theme-provider';
 
-type TextVariant = 'small' | 'regular' | 'large';
+type TextVariant = 'small' | 'caption' | 'regular' | 'large';
 
 type TextStylePropKeys =
   | 'color'
@@ -120,6 +120,10 @@ const createStyles = (colors: ThemeColorType) =>
     small: {
       fontSize: 10,
       lineHeight: 10 * 1.33,
+    },
+    caption: {
+      fontSize: 12,
+      lineHeight: 12 * 1.33,
     },
     regular: {
       fontSize: 15,
