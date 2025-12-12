@@ -1,5 +1,11 @@
 # @sophon-labs/account-core
 
+## 3.0.0-next.26
+
+### Patch Changes
+
+- Adding tslib as requirement
+
 ## 3.0.0-next.25
 
 ### Patch Changes

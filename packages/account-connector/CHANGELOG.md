@@ -1,5 +1,14 @@
 # @sophon-labs/account-connector
 
+## 3.0.0-next.26
+
+### Patch Changes
+
+- Adding tslib as requirement
+- Updated dependencies
+  - @sophon-labs/account-provider@3.0.0-next.26
+  - @sophon-labs/account-core@3.0.0-next.26
+
 ## 3.0.0-next.25
 
 ### Patch Changes
