@@ -449,15 +449,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@biconomy/abstractjs@npm:^1.1.14":
-  version: 1.1.18
-  resolution: "@biconomy/abstractjs@npm:1.1.18"
+"@biconomy/abstractjs@npm:^1.1.19":
+  version: 1.1.19
+  resolution: "@biconomy/abstractjs@npm:1.1.19"
   peerDependencies:
     "@metamask/delegation-toolkit": ^0.11.0
     "@rhinestone/module-sdk": 0.4.0
     typescript: ^5.8.2
     viem: ^2.26.2
-  checksum: 10c0/1023c26d383b61332a21f9d610217346590c9b44d07754c693570051695dc04b05d649cb0cea53d1bcbf4bb4eba783824fdd8d8c186cc0621c6b2d46ee248e59
+  checksum: 10c0/8df074faa0f1f2d893d78a169d0feb38db97ce7aa9565089faed647895c50da2712c7edf26a8b34592c7c7d31356162a0295456302aad034fcb94dd3c62029a2
   languageName: node
   linkType: hard
 
@@ -4828,28 +4828,29 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-core@file:../../packages/account-core::locator=%40sophon-labs%2Faccount-server%40workspace%3A.":
-  version: 3.0.0-next.25
-  resolution: "@sophon-labs/account-core@file:../../packages/account-core#../../packages/account-core::hash=d34f7a&locator=%40sophon-labs%2Faccount-server%40workspace%3A."
+"@sophon-labs/account-core@npm:3.0.0-next.28":
+  version: 3.0.0-next.28
+  resolution: "@sophon-labs/account-core@npm:3.0.0-next.28"
   dependencies:
-    "@biconomy/abstractjs": "npm:^1.1.14"
+    "@biconomy/abstractjs": "npm:^1.1.19"
     "@metamask/delegation-toolkit": "npm:~0.11.0"
     "@rhinestone/module-sdk": "npm:0.4.0"
     text-encoding-polyfill: "npm:^0.6.7"
+    tslib: "npm:^2.8.1"
   peerDependencies:
     viem: ">=2.21.0"
-  checksum: 10c0/81ec0b2a3b210e4183fbea039e46489e1bc462fac0e050480bc2840ef24a5111731f90bae0359df43b21b2626a7b8e579e7c83f8e50868e285b13b549a8e19fa
+  checksum: 10c0/ab65812dbd4306bf591077a3f4a5edea8b20bc5926cb2e19bb428c9d2783bd1732bfd8b716c4a6819bdb090867a734db92e001e58af0655d6b5c3e8bc79ed0cd
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-message-bridge@file:../../packages/account-message-bridge::locator=%40sophon-labs%2Faccount-server%40workspace%3A.":
-  version: 3.0.0-next.25
-  resolution: "@sophon-labs/account-message-bridge@file:../../packages/account-message-bridge#../../packages/account-message-bridge::hash=503db1&locator=%40sophon-labs%2Faccount-server%40workspace%3A."
+"@sophon-labs/account-message-bridge@npm:3.0.0-next.28":
+  version: 3.0.0-next.28
+  resolution: "@sophon-labs/account-message-bridge@npm:3.0.0-next.28"
   dependencies:
     eventemitter3: "npm:5.0.1"
   peerDependencies:
     react-native-webview: ">=13.12.5"
-  checksum: 10c0/88ac30601107e4241f4883a8e961d00dcb8cd916843ef5ed090d5a406b5cbc1a9da6509794f80b44878a2afeedf8c95becbc14d73c7e5e63d1156b7f4a84777b
+  checksum: 10c0/a1cbdecb3bd968a3bb189e5f6e14f90ab370a1d6fefdf9828674c7fdf652376d3cd6cb5ea63a6cf9ff85caee6ae31a40bc54adb0757f2e0c36575f4ff94f894f
   languageName: node
   linkType: hard
 
@@ -4873,8 +4874,8 @@ __metadata:
     "@radix-ui/react-tooltip": "npm:^1.2.8"
     "@sentry/nextjs": "npm:^10.29.0"
     "@simplewebauthn/server": "npm:^13.2.2"
-    "@sophon-labs/account-core": "file:../../packages/account-core"
-    "@sophon-labs/account-message-bridge": "file:../../packages/account-message-bridge"
+    "@sophon-labs/account-core": "npm:3.0.0-next.28"
+    "@sophon-labs/account-message-bridge": "npm:3.0.0-next.28"
     "@t3-oss/env-nextjs": "npm:^0.13.8"
     "@tailwindcss/postcss": "npm:^4.1.17"
     "@tanstack/react-query": "npm:^5.90.12"
