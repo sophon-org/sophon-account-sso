@@ -20,17 +20,17 @@
     "@sophon-labs/account-react": "file:../../packages/account-react",
     "@tanstack/react-query": "^5.80.7",
     "@wagmi/core": "^2.19.0",
-    "next": "15.3.6",
-    "react": "^19.0.1",
-    "react-dom": "^19.0.1",
+    "next": "15.3.7",
+    "react": "^19.0.2",
+    "react-dom": "^19.0.2",
     "viem": "2.36.0",
     "wagmi": "^2.15.6"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
-    "@types/react": "^19.0.1",
-    "@types/react-dom": "^19.0.1",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
     "tailwindcss": "^4",
     "typescript": "^5"
   },
