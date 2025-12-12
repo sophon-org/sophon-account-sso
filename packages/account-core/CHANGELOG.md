@@ -1,5 +1,11 @@
 # @sophon-labs/account-core
 
+## 3.0.0-next.27
+
+### Patch Changes
+
+- updating biconomy lib
+
 ## 3.0.0-next.26
 
 ### Patch Changes

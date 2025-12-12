@@ -14,7 +14,8 @@
 		"outDir": "./dist",
 		"baseUrl": "./",
 		"paths": {
-			"src/*": ["src/*"]
+			"src/*": ["src/*"],
+			"tslib": ["node_modules/tslib/tslib.d.ts"]
 		},
 		"incremental": true,
 		"skipLibCheck": true,

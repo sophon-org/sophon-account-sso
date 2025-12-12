@@ -19,7 +19,7 @@
     "ci": "biome ci ."
   },
   "dependencies": {
-    "@biconomy/abstractjs": "^1.1.14",
+    "@biconomy/abstractjs": "^1.1.19",
     "@dynamic-labs/client": "^4.38.0",
     "@dynamic-labs/react-hooks": "^4.38.0",
     "@dynamic-labs/react-native-extension": "^4.38.0",
