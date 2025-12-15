@@ -17,7 +17,7 @@ export const requestNonce = async (
         // Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ address, partnerId, fields, userId, chainId }),
+      body: JSON.stringify({ address, partnerId, fields, userId }),
     },
   );
 
