@@ -45,7 +45,7 @@ const executeMeeTransaction = async (
       {
         chain: SOPHON_VIEM_CHAIN,
         transport: http(),
-        version: getMEEVersion(MEEVersion.V2_1_0),
+        version: getMEEVersion(MEEVersion.V2_2_1),
         ...(accountAddress ? { accountAddress } : {}),
       },
     ],

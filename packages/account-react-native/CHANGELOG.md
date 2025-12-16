@@ -1,5 +1,18 @@
 # @sophon-labs/account-react-native
 
+## 3.0.0-next.29
+
+### Patch Changes
+
+- updating mee module
+- Updated dependencies
+  - @sophon-labs/account-message-bridge@3.0.0-next.29
+  - @sophon-labs/account-communicator@3.0.0-next.29
+  - @sophon-labs/account-connector@3.0.0-next.29
+  - @sophon-labs/account-provider@3.0.0-next.29
+  - @sophon-labs/account-partner@3.0.0-next.29
+  - @sophon-labs/account-core@3.0.0-next.29
+
 ## 3.0.0-next.28
 
 ### Patch Changes

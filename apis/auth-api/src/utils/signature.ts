@@ -6,6 +6,7 @@ import {
 	type Hash,
 	hashTypedData,
 	http,
+	TypedDataDomain,
 } from "viem";
 
 export const verifyEIP1271Signature = async ({
@@ -21,13 +22,7 @@ export const verifyEIP1271Signature = async ({
 }: {
 	accountAddress: Address;
 	signature: Hash;
-	domain: {
-		name?: string;
-		version?: string;
-		chainId?: number | bigint;
-		verifyingContract?: Hash;
-		salt?: Hash;
-	};
+	domain: TypedDataDomain;
 	types: Record<string, readonly unknown[]>;
 	primaryType: string;
 	message: Record<string, unknown>;
@@ -38,7 +33,13 @@ export const verifyEIP1271Signature = async ({
 	try {
 		const publicClient = createPublicClient({ chain, transport: http() });
 		const messageHash =
-			contentsHash || hashTypedData({ domain, types, primaryType, message });
+			contentsHash ?? hashTypedData({ domain, types, primaryType, message });
+
+		console.log("🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥 contentsHash", contentsHash);
+		console.log(
+			"HASHED MESSAGE",
+			hashTypedData({ domain, types, primaryType, message }),
+		);
 
 		logger.debug({
 			evt: "eip1271.hash",
@@ -65,6 +66,7 @@ export const verifyEIP1271Signature = async ({
 			functionName: "isValidSignature",
 			args: [messageHash as `0x${string}`, signature as `0x${string}`],
 		});
+		console.log("result", result);
 
 		const EIP1271_MAGIC_VALUE = "0x1626ba7e";
 		const isValid = result === EIP1271_MAGIC_VALUE;

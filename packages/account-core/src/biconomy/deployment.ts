@@ -56,7 +56,7 @@ export const computeBiconomyAccountAddress = async (
     transport: http(),
   });
 
-  const meeConfig = getMEEVersion(MEEVersion.V2_1_0);
+  const meeConfig = getMEEVersion(MEEVersion.V2_2_1);
   const factoryAddress = CHAIN_CONTRACTS[chainId].accountFactory;
   const bootstrapAddress = meeConfig.bootStrapAddress;
   const accountIndex = BigInt(0);
@@ -185,8 +185,8 @@ export const deployBiconomyAccount = async (
   const txHash = await deployerClient.writeContract({
     address: factoryAddress,
     abi: NexusFactoryPassthroughAbi,
-    functionName: 'createAccountWithName',
-    args: [initData, saltHex, sophonName],
+    functionName: 'createAccount',
+    args: [initData, saltHex],
     value: BigInt(0),
   });
 

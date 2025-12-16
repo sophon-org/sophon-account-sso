@@ -23,8 +23,8 @@ export const signTypedDataOnOsChain = async (
   payload: TypedDataSigningRequest,
 ) => {
   const { isEthereumWallet } = await import('@dynamic-labs/ethereum');
-
   if (deps.primaryWallet && isEthereumWallet(deps.primaryWallet)) {
+    console.log('SIGNING TYPED DATA ON OS CHAIN WITH PRIMARY WALLET', deps.primaryWallet.address, deps.account?.address);
     const ownerAccount = await createPrimaryWalletAccount(deps.primaryWallet);
 
     const smartAccount = await toNexusAccount({
@@ -32,7 +32,7 @@ export const signTypedDataOnOsChain = async (
       chainConfiguration: {
         chain: SOPHON_VIEM_CHAIN,
         transport: http(),
-        version: getMEEVersion(MEEVersion.V2_1_0),
+        version: getMEEVersion(MEEVersion.V2_2_1),
         versionCheck: false,
       },
     });
@@ -49,6 +49,7 @@ export const signTypedDataOnOsChain = async (
   }
 
   if (deps.isEOAAccount) {
+    console.log('SIGNING TYPED DATA ON OS CHAIN WITH EOA', deps.connectedAddress);
     if (!deps.connectedAddress) {
       throw new Error('Wallet not connected for EOA signing!');
     }
@@ -65,7 +66,7 @@ export const signTypedDataOnOsChain = async (
       chainConfiguration: {
         chain: SOPHON_VIEM_CHAIN,
         transport: http(),
-        version: getMEEVersion(MEEVersion.V2_1_0),
+        version: getMEEVersion(MEEVersion.V2_2_1),
         versionCheck: false,
       },
     });
@@ -96,7 +97,7 @@ export const signMessageOnOsChain = async (
       chainConfiguration: {
         chain: SOPHON_VIEM_CHAIN,
         transport: http(),
-        version: getMEEVersion(MEEVersion.V2_1_0),
+        version: getMEEVersion(MEEVersion.V2_2_1),
         versionCheck: false,
       },
     });
@@ -123,7 +124,7 @@ export const signMessageOnOsChain = async (
       chainConfiguration: {
         chain: SOPHON_VIEM_CHAIN,
         transport: http(),
-        version: getMEEVersion(MEEVersion.V2_1_0),
+        version: getMEEVersion(MEEVersion.V2_2_1),
         versionCheck: false,
       },
     });

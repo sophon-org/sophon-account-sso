@@ -101,6 +101,7 @@ export function useConnectionAuthorization() {
       }
 
       if (isOsChainId(SOPHON_VIEM_CHAIN.id as ChainId)) {
+        console.log('VALIDATING OS CHAIN', account?.address);
         const appDomain = {
           chainId: SOPHON_VIEM_CHAIN.id,
           name: 'Sophon SSO',
@@ -150,6 +151,8 @@ export function useConnectionAuthorization() {
           contentsHash,
         };
 
+        console.log('SIGN AUTH', signAuth);
+
         const authSignature = await signTypedData(signAuth);
         if (isCanceled()) {
           return;
@@ -166,6 +169,7 @@ export function useConnectionAuthorization() {
           signAuth.contentsHash,
         );
       } else {
+        console.log('VALIDATING EIP1271', account?.address);
         const messageFields = [
           { name: 'content', type: 'string' },
           { name: 'from', type: 'address' },
@@ -185,6 +189,7 @@ export function useConnectionAuthorization() {
             name: 'Sophon SSO',
             version: '1',
             chainId: SOPHON_VIEM_CHAIN.id,
+            verifyingContract: account.address,
           },
           types: {
             Message: user?.userId
