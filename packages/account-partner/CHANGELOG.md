@@ -1,5 +1,13 @@
 # @sophon-labs/account-partner
 
+## 3.0.0-next.35
+
+### Patch Changes
+
+- cporre
+- Updated dependencies
+  - @sophon-labs/account-core@3.0.0-next.35
+
 ## 3.0.0-next.34
 
 ### Patch Changes

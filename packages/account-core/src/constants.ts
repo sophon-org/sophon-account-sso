@@ -96,7 +96,7 @@ export const AccountAuthAPIURL: Record<ChainId, string> = {
   [sophon.id]: 'https://auth.sophonauth.com',
   [sophonTestnet.id]: 'https://auth.staging.sophonauth.com',
   [sophonOS.id]: 'https://api.auth.sophon.com',
-  [sophonOSTestnet.id]: 'http://localhost:4001',
+  [sophonOSTestnet.id]: 'https://api.auth.staging.sophon.com',
 };
 
 /**

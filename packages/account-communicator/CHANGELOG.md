@@ -1,5 +1,11 @@
 # @sophon-labs/account-eip6963
 
+## 3.0.0-next.35
+
+### Patch Changes
+
+- cporre
+
 ## 3.0.0-next.34
 
 ### Patch Changes

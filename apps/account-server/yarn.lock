@@ -5753,9 +5753,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-core@npm:3.0.0-next.34":
-  version: 3.0.0-next.34
-  resolution: "@sophon-labs/account-core@npm:3.0.0-next.34"
+"@sophon-labs/account-core@npm:3.0.0-next.35":
+  version: 3.0.0-next.35
+  resolution: "@sophon-labs/account-core@npm:3.0.0-next.35"
   dependencies:
     "@biconomy/abstractjs": "npm:^1.1.19"
     "@metamask/delegation-toolkit": "npm:~0.11.0"
@@ -5764,18 +5764,18 @@ __metadata:
     tslib: "npm:^2.8.1"
   peerDependencies:
     viem: ">=2.21.0"
-  checksum: 10c0/04048d793cd5d3c28c807b9978b55a7482d1c82100c4b18303cab1c8fc3c4f25f95535ead5099c173f53e7b50a26999fa06916bd750fe8b7737d9a7f801e3c6d
+  checksum: 10c0/449508fe4cbeb032ab060004cd7796aed26b1f9f563c4bc3d2ed4935fa3ec3f233cde9d1783c0d98a4c668afba9f39c65da8bd0801e1ca5a6a938170ec6c2b05
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-message-bridge@npm:3.0.0-next.34":
-  version: 3.0.0-next.34
-  resolution: "@sophon-labs/account-message-bridge@npm:3.0.0-next.34"
+"@sophon-labs/account-message-bridge@npm:3.0.0-next.35":
+  version: 3.0.0-next.35
+  resolution: "@sophon-labs/account-message-bridge@npm:3.0.0-next.35"
   dependencies:
     eventemitter3: "npm:5.0.1"
   peerDependencies:
     react-native-webview: ">=13.12.5"
-  checksum: 10c0/49445254587583c67eeb5b330849e4270cab6ca2386283b66d84360894d3736ac489da17a395c9a9f7f69f9ce149a737d152bf40b88cd379aa322e859881f324
+  checksum: 10c0/b9875fd04072406721afb3127ed22f7aa888b3e603982c863fc98e0ce814e26857584beb2c3f3341d866bfa6647ee360594a51f82cda89ba3ea75b1e5899afb6
   languageName: node
   linkType: hard
 
@@ -5799,8 +5799,8 @@ __metadata:
     "@radix-ui/react-tooltip": "npm:^1.2.8"
     "@sentry/nextjs": "npm:^10.29.0"
     "@simplewebauthn/server": "npm:^13.2.2"
-    "@sophon-labs/account-core": "npm:3.0.0-next.34"
-    "@sophon-labs/account-message-bridge": "npm:3.0.0-next.34"
+    "@sophon-labs/account-core": "npm:3.0.0-next.35"
+    "@sophon-labs/account-message-bridge": "npm:3.0.0-next.35"
     "@t3-oss/env-nextjs": "npm:^0.13.8"
     "@tailwindcss/postcss": "npm:^4.1.17"
     "@tanstack/react-query": "npm:^5.90.12"
