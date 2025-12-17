@@ -6,7 +6,8 @@ import {
 } from '@biconomy/abstractjs';
 import {
   buildBiconomyAccount,
-  sophonOSTestnet,
+  type ChainId,
+  IsStagingChain,
 } from '@sophon-labs/account-core';
 import type { Address } from 'viem';
 import { SOPHON_VIEM_CHAIN } from '@/lib/constants';
@@ -17,7 +18,7 @@ import {
   createWalletAccount,
 } from '../signature/localAccounts';
 
-const isStaging = SOPHON_VIEM_CHAIN.id === sophonOSTestnet.id; // isStaging should be true for testnet
+const isStaging = IsStagingChain(SOPHON_VIEM_CHAIN.id as ChainId);
 const sponsorshipApiKey = process.env.NEXT_PUBLIC_SPONSORSHIP_API_KEY; // default staging api key (rate limited) with sponsorship enabled
 const meeNetworkUrl = getDefaultMEENetworkUrl(isStaging);
 const meeGasTank = getDefaultMeeGasTank(isStaging);
