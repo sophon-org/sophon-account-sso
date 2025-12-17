@@ -1,3 +1,4 @@
+import { sophonOSTestnet } from '@sophon-labs/account-core';
 import { useERC20Approval } from '@sophon-labs/account-react';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -9,7 +10,7 @@ export const ERC20Approval = () => {
     tokenAddress: '0xE676a42fEd98d51336f02510bB5d598893AbfE90', // MOCK MintMe token
     spender: '0xfeb22da05537b4b63bb63417b10935819facb81c', // Example 1inch router
     amount: '100000000000000000', // 0.1 (18 decimals)
-    chainId: 531050104, // Sophon Testnet
+    chainId: sophonOSTestnet.id, // Sophon Testnet
   });
 
   const config = useMemo(

@@ -1,5 +1,68 @@
 # @sophon-labs/account-eip6963
 
+## 3.0.0-next.35
+
+### Patch Changes
+
+- cporre
+- Updated dependencies
+  - @sophon-labs/account-provider@3.0.0-next.35
+  - @sophon-labs/account-core@3.0.0-next.35
+
+## 3.0.0-next.34
+
+### Patch Changes
+
+- Refactoring
+- Updated dependencies
+  - @sophon-labs/account-provider@3.0.0-next.34
+  - @sophon-labs/account-core@3.0.0-next.34
+
+## 3.0.0-next.33
+
+### Patch Changes
+
+- .2
+- Updated dependencies
+  - @sophon-labs/account-provider@3.0.0-next.33
+  - @sophon-labs/account-core@3.0.0-next.33
+
+## 3.0.0-next.32
+
+### Patch Changes
+
+- .
+- Updated dependencies
+  - @sophon-labs/account-provider@3.0.0-next.32
+  - @sophon-labs/account-core@3.0.0-next.32
+
+## 3.0.0-next.31
+
+### Patch Changes
+
+- Updating viem extension
+- Updated dependencies
+  - @sophon-labs/account-provider@3.0.0-next.31
+  - @sophon-labs/account-core@3.0.0-next.31
+
+## 3.0.0-next.30
+
+### Patch Changes
+
+- Adding hooks and viem support for session request
+- Updated dependencies
+  - @sophon-labs/account-provider@3.0.0-next.30
+  - @sophon-labs/account-core@3.0.0-next.30
+
+## 3.0.0-next.29
+
+### Patch Changes
+
+- updating mee module
+- Updated dependencies
+  - @sophon-labs/account-provider@3.0.0-next.29
+  - @sophon-labs/account-core@3.0.0-next.29
+
 ## 3.0.0-next.28
 
 ### Patch Changes

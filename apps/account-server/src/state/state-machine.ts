@@ -5,6 +5,7 @@ import type {
   IncomingRequest,
   LogoutRequest,
   MessageSigningRequest,
+  SessionPermissionRequest,
   TransactionRequest,
   TypedDataSigningRequest,
 } from '@/types/auth';
@@ -30,6 +31,7 @@ const defaultContext = {
     authentication: null as AuthenticationRequest | null | undefined,
     logout: null as LogoutRequest | null | undefined,
     consent: null as ConsentRequest | null | undefined,
+    sessionPermission: null as SessionPermissionRequest | null | undefined,
   },
   response: null as RPCResponse | null,
   scopes: {
@@ -317,6 +319,14 @@ export const userWalletRequestStateMachine = createMachine({
           },
           target: 'incoming-consent',
         },
+        {
+          guard: ({ context }) => {
+            return (
+              context.isAuthenticated && !!context.requests.sessionPermission
+            );
+          },
+          target: 'incoming-session-permission',
+        },
       ],
     },
     'incoming-authentication': {
@@ -384,6 +394,18 @@ export const userWalletRequestStateMachine = createMachine({
       },
     },
     'incoming-consent': {
+      on: {
+        ACCEPT: {
+          target: 'completed',
+          actions: 'clearRequests',
+        },
+        CANCEL: {
+          target: 'completed',
+          actions: 'cancelRequests',
+        },
+      },
+    },
+    'incoming-session-permission': {
       on: {
         ACCEPT: {
           target: 'completed',

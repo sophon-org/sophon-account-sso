@@ -1,3 +1,4 @@
+import type { SessionAction } from '@sophon-labs/account-core';
 import type { Address, Hash, TypedDataParameter } from 'viem';
 import type { SmartAccount } from './smart-account';
 
@@ -37,6 +38,11 @@ export interface LogoutRequest {
 }
 
 export type ConsentRequest = Record<string, never>;
+
+export interface SessionPermissionRequest {
+  actions: SessionAction[];
+  signer: Address;
+}
 
 export interface Token {
   contractAddress: string;

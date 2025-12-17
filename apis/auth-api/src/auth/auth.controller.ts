@@ -76,7 +76,6 @@ export class AuthController {
 	) {
 		const effectiveChainId = Number(chainId ?? process.env.CHAIN_ID);
 
-		console.log("effectiveChainId", effectiveChainId);
 		if (!isChainId(effectiveChainId)) {
 			this.logger.warn(
 				{

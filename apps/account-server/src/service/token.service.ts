@@ -14,12 +14,14 @@ export const requestNonce = async (
     {
       method: 'POST',
       headers: {
-        // Accept: 'application/json',
         'Content-Type': 'application/json',
+        'x-chain-id': chainId.toString(),
       },
       body: JSON.stringify({ address, partnerId, fields, userId }),
     },
   );
+
+  console.log('response', chainId);
 
   if (!response.ok) {
     console.error(response.statusText);

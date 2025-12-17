@@ -1,13 +1,7 @@
 import { useDynamicContext } from '@dynamic-labs/sdk-react-core';
 import { type ChainId, isOsChainId } from '@sophon-labs/account-core';
 import { useState } from 'react';
-import {
-  concat,
-  domainSeparator,
-  encodeAbiParameters,
-  keccak256,
-  parseAbiParameters,
-} from 'viem';
+import type { Address, SignTypedDataParameters } from 'viem';
 import { MainStateMachineContext } from '@/context/state-machine-context';
 import { sendMessage } from '@/events';
 import { useAccountContext } from '@/hooks/useAccountContext';
@@ -17,6 +11,7 @@ import { SOPHON_VIEM_CHAIN } from '@/lib/constants';
 import { withTimeout } from '@/lib/timeout';
 import { requestNonce, verifyAuthorization } from '@/service/token.service';
 import { windowService } from '@/service/window.service';
+import { useCurrentClient } from '../useCurrentClient';
 
 const AUTHORIZATION_TIMEOUT = 20000;
 
@@ -39,6 +34,7 @@ export function useConnectionAuthorization() {
     null,
   );
   const { user } = useDynamicContext();
+  const { getCurrentClient } = useCurrentClient();
 
   const onRefuseConnection = async () => {
     setAuthorizationError(null); // Clear any errors when refusing connection
@@ -101,69 +97,59 @@ export function useConnectionAuthorization() {
       }
 
       if (isOsChainId(SOPHON_VIEM_CHAIN.id as ChainId)) {
-        const appDomain = {
-          chainId: SOPHON_VIEM_CHAIN.id,
-          name: 'Sophon SSO',
-          verifyingContract: account.address,
-          version: '1',
-        };
+        const currentClient = await getCurrentClient();
+        if (!currentClient) {
+          throw new Error('No current client found');
+        }
 
-        const content = `Do you authorize this website to connect?!\n\nThis message confirms you control this wallet.`;
-        const primaryType = 'Contents';
-        const types = {
-          Contents: [
-            {
-              name: 'stuff',
-              type: 'bytes32',
-            },
-          ],
-        } as const;
-
-        const abiParameters = user?.userId
-          ? 'string,address,string,string,string'
-          : 'string,address,string,string';
-        const abiValues = user?.userId
-          ? [content, account.address, authNonce, partnerId, user.userId]
-          : [content, account.address, authNonce, partnerId];
+        const messageFields = [
+          { name: 'content', type: 'string' },
+          { name: 'from', type: 'address' },
+          { name: 'nonce', type: 'string' },
+          { name: 'audience', type: 'string' },
+        ];
 
         const message = {
-          stuff: keccak256(
-            encodeAbiParameters(
-              parseAbiParameters(abiParameters),
-              abiValues as [string, `0x${string}`, string, string],
-            ),
-          ),
+          content: `Do you authorize this website to connect?!\n\nThis message confirms you control this wallet.`,
+          from: account.address,
+          nonce: authNonce,
+          audience: partnerId,
         };
 
-        const appDomainSeparator = domainSeparator({ domain: appDomain });
-
-        const contentsHash = keccak256(
-          concat(['0x1901', appDomainSeparator, message.stuff]),
-        );
-
-        const signAuth = {
-          domain: appDomain,
-          types,
-          primaryType,
+        const signAuth: SignTypedDataParameters & { address: Address } = {
+          domain: {
+            name: 'Sophon SSO',
+            version: '1',
+            chainId: SOPHON_VIEM_CHAIN.id,
+            verifyingContract: account.address,
+          },
+          account: account.address,
+          types: {
+            Message: user?.userId
+              ? [...messageFields, { name: 'userId', type: 'string' }]
+              : messageFields,
+          },
+          primaryType: 'Message',
           address: account.address,
-          message,
-          contentsHash,
+          message: user?.userId ? { ...message, userId: user.userId } : message,
         };
 
-        const authSignature = await signTypedData(signAuth);
         if (isCanceled()) {
           return;
         }
 
+        const authSignature = await currentClient.signTypedData(signAuth);
+        if (isCanceled()) {
+          return;
+        }
         tokens = await verifyAuthorization(
           account.address,
           signAuth,
           authSignature,
           authNonce,
           true,
-          undefined,
+          account.owner.address,
           partnerId,
-          signAuth.contentsHash,
         );
       } else {
         const messageFields = [
@@ -185,6 +171,7 @@ export function useConnectionAuthorization() {
             name: 'Sophon SSO',
             version: '1',
             chainId: SOPHON_VIEM_CHAIN.id,
+            verifyingContract: account.address,
           },
           types: {
             Message: user?.userId

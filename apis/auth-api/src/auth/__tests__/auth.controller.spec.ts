@@ -309,7 +309,6 @@ describe("AuthController (new flows)", () => {
 			[k: string]: unknown;
 		};
 		expect(payload).toBeTruthy();
-		console.log("payload", payload);
 		const bucket = payload.consent ?? payload;
 		const pa =
 			bucket.pa ??
@@ -386,7 +385,6 @@ describe("AuthController (new flows)", () => {
 			payload["consent.personalization_ads"];
 		const sd =
 			payload.sd ?? payload.sharingData ?? payload["consent.sharing_data"];
-		console.log("payload", payload);
 		expect(pa).toBeUndefined();
 		expect(sd).toBeUndefined();
 	});

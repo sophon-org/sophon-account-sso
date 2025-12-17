@@ -13,14 +13,14 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@sophon-labs/account-core": "file:../../../packages/account-core",
-    "@sophon-labs/account-react": "file:../../../packages/account-react",
+    "@sophon-labs/account-core": "3.0.0-next.35",
+    "@sophon-labs/account-react": "3.0.0-next.35",
     "@tanstack/react-query": "^5.90.12",
-    "next": "16.0.8",
+    "next": "15.4.10",
     "react": "19.2.1",
     "react-dom": "19.2.1",
-    "viem": "2.41.2",
-    "wagmi": "^3.1.0"
+    "viem": "2.38.3",
+    "wagmi": "^2.16.9"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.17",

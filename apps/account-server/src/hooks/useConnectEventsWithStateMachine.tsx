@@ -16,6 +16,7 @@ export const useConnectEventsWithStateMachine = () => {
     authenticationRequest,
     logoutRequest,
     consentRequest,
+    sessionPermissionRequest,
   } = useLoadingResources();
 
   useEffect(() => {
@@ -30,6 +31,7 @@ export const useConnectEventsWithStateMachine = () => {
         authentication: authenticationRequest,
         logout: logoutRequest,
         consent: consentRequest,
+        sessionPermission: sessionPermissionRequest,
       },
     });
   }, [
@@ -42,5 +44,6 @@ export const useConnectEventsWithStateMachine = () => {
     logoutRequest,
     actorRef,
     consentRequest,
+    sessionPermissionRequest,
   ]);
 };

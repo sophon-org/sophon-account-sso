@@ -19,6 +19,7 @@ import LoginSuccessView from '@/views/LoginSuccessView';
 import { LogoutView } from '@/views/LogoutView';
 import { NotAuthenticatedView } from '@/views/NotAuthenticatedView';
 import SelectingWalletView from '@/views/SelectingWalletView';
+import SessionRequestView from '@/views/SessionRequestView';
 import SigningRequestView from '@/views/SigningRequestView';
 import TransactionRequestView from '@/views/TransactionRequestView';
 import WaitOtpView from '@/views/WaitOtpView';
@@ -41,6 +42,7 @@ export default function DesktopRoot({ partnerId, scopes }: DesktopRootProps) {
 
   const signingActions = SigningRequestView.useActions({ openDrawer });
   const connectActions = ConnectAuthorizationView.useActions({ openDrawer });
+  const sessionActions = SessionRequestView.useActions({ openDrawer });
   const transactionActions = TransactionRequestView.useActions({
     openDrawer,
   });
@@ -75,6 +77,24 @@ export default function DesktopRoot({ partnerId, scopes }: DesktopRootProps) {
           actions={signingActions.renderActions()}
         >
           <SigningRequestView openDrawer={openDrawer} />
+        </Dialog>
+        <DrawerComponent />
+      </>
+    );
+  }
+
+  if (state.matches('incoming-session-permission')) {
+    return (
+      <>
+        <Dialog
+          className="relative"
+          title={account?.address}
+          showSettings={true}
+          showLegalNotice={false}
+          dialogType="session_permission_request"
+          actions={sessionActions.renderActions()}
+        >
+          <SessionRequestView openDrawer={openDrawer} />
         </Dialog>
         <DrawerComponent />
       </>

@@ -2,6 +2,8 @@ import {
   getMEEVersion,
   MEEVersion,
   NexusBootstrapAbi,
+  type Signer,
+  toSmartSessionsModule,
 } from '@biconomy/abstractjs';
 import {
   type Address,
@@ -50,17 +52,27 @@ interface DeploymentResult {
 export const computeBiconomyAccountAddress = async (
   chainId: ChainId,
   ownerAddress: Address,
+  sessionSigner?: Signer,
 ): Promise<ComputeAddressResult> => {
   const publicClient = createPublicClient({
     chain: SophonChains[chainId],
     transport: http(),
   });
 
-  const meeConfig = getMEEVersion(MEEVersion.V2_1_0);
+  const meeConfig = getMEEVersion(MEEVersion.V2_2_1);
   const factoryAddress = CHAIN_CONTRACTS[chainId].accountFactory;
   const bootstrapAddress = meeConfig.bootStrapAddress;
   const accountIndex = BigInt(0);
   const saltHex = pad(toHex(accountIndex), { size: 32 }) as Hex;
+  const validatorModules: BootstrapConfig[] = [];
+
+  if (sessionSigner) {
+    const ssValidator = toSmartSessionsModule({ signer: sessionSigner });
+    validatorModules.push({
+      module: ssValidator.module,
+      data: ssValidator.initData,
+    });
+  }
 
   // Empty module arrays for basic account
   const emptyModules: BootstrapConfig[] = [];
@@ -73,7 +85,7 @@ export const computeBiconomyAccountAddress = async (
     functionName: 'initNexusWithDefaultValidatorAndOtherModulesNoRegistry',
     args: [
       ownerAddress,
-      emptyModules,
+      validatorModules,
       emptyModules,
       hookConfig,
       emptyModules,
@@ -104,6 +116,7 @@ export const computeBiconomyAccountAddress = async (
 
 /**
  * Checks if a Biconomy account is deployed at the predicted address
+ *
  * @param chain - The chain to check on
  * @param accountAddress - The account address to check
  * @returns True if deployed, false otherwise

@@ -116,7 +116,6 @@ export const signTypedDataOnZksync = async (
     transport: http(),
   });
 
-  console.log('passkey signature');
   const signature = await client.signTypedData({
     domain: payload.domain,
     types: payload.types,
@@ -208,7 +207,6 @@ export const signMessageOnZksync = async (
     transport: http(),
   });
 
-  console.log('passkey signature');
   const signature = await client.signMessage({
     message: payload.message,
   });

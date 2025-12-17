@@ -1,7 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { hexToString, toHex } from 'viem';
-import { logWithUser } from '@/debug/log';
 import { isValidPaymaster } from '@/lib/paymaster';
 import { windowService } from '@/service/window.service';
 import type {
@@ -10,6 +9,7 @@ import type {
   IncomingRequest,
   LogoutRequest,
   MessageSigningRequest,
+  SessionPermissionRequest,
   TransactionRequest,
   TypedDataSigningRequest,
 } from '@/types/auth';
@@ -23,6 +23,7 @@ interface UseMessageHandlerReturn {
   authenticationRequest: AuthenticationRequest | null;
   logoutRequest: LogoutRequest | null;
   consentRequest: ConsentRequest | null;
+  sessionPermissionRequest: SessionPermissionRequest | null;
   handlerInitialized: boolean;
 }
 
@@ -45,6 +46,10 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
   const [consentRequest, setConsentRequest] = useState<ConsentRequest | null>(
     null,
   );
+
+  const [sessionPermissionRequest, setSessionPermissionRequest] =
+    useState<SessionPermissionRequest | null>(null);
+
   useEffect(() => {
     // biome-ignore lint/suspicious/noExplicitAny: review that in the future TODO
     const messageHandler = (data: any) => {
@@ -57,7 +62,7 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
       // Store the incoming request if it's an RPC request
       if (data?.id && data?.content) {
         const method = data.content?.action?.method;
-        logWithUser(`RPC Method Requested > ${method} > ${data.id}`);
+        // logWithUser(`RPC Method Requested > ${method} > ${data.id}`);
         if (method === 'eth_requestAccounts') {
           const params = data.content.action?.params as
             | { sessionPreferences?: unknown }
@@ -73,6 +78,7 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
           setMessageSigningRequest(null);
           setTransactionRequest(null);
           setConsentRequest(null);
+          setSessionPermissionRequest(null);
           setAuthenticationRequest({
             domain: 'https://sophon.xyz', // placeholder
           });
@@ -83,6 +89,7 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
           setTransactionRequest(null);
           setSessionPreferences(null);
           setConsentRequest(null);
+          setSessionPermissionRequest(null);
           setAuthenticationRequest({
             domain: 'profile',
             type: 'profile_view',
@@ -100,6 +107,7 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
             setTypedDataSigningRequest(null);
             setTransactionRequest(null);
             setConsentRequest(null);
+            setSessionPermissionRequest(null);
           }
         } else if (
           method === 'wallet_revokePermissions' ||
@@ -115,6 +123,7 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
           setMessageSigningRequest(null);
           setTransactionRequest(null);
           setConsentRequest(null);
+          setSessionPermissionRequest(null);
         } else if (method === 'eth_signTypedData_v4') {
           const params = data.content.action?.params;
 
@@ -180,6 +189,7 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
                 setAuthenticationRequest(null);
                 setMessageSigningRequest(null);
                 setConsentRequest(null);
+                setSessionPermissionRequest(null);
                 setTransactionRequest(transactionData);
               } else {
                 setTypedDataSigningRequest(signingRequestData);
@@ -187,6 +197,7 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
                 setAuthenticationRequest(null);
                 setMessageSigningRequest(null);
                 setConsentRequest(null);
+                setSessionPermissionRequest(null);
                 setTransactionRequest(null);
               }
             } catch (parseError) {
@@ -223,10 +234,24 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
             setSessionPreferences(null);
             setAuthenticationRequest(null);
             setConsentRequest(null);
+            setSessionPermissionRequest(null);
           }
         } else if (method === 'sophon_requestConsent') {
           const params = data.content.action?.params;
           setConsentRequest(params);
+          setTransactionRequest(null);
+          setTypedDataSigningRequest(null);
+          setMessageSigningRequest(null);
+          setSessionPreferences(null);
+          setAuthenticationRequest(null);
+          setSessionPermissionRequest(null);
+        } else if (method === 'sophon_requestSessionPermission') {
+          const params = data.content.action?.params;
+          const signer = params[0];
+          const actions = params[1];
+
+          setSessionPermissionRequest({ signer, actions });
+          setConsentRequest(null);
           setTransactionRequest(null);
           setTypedDataSigningRequest(null);
           setMessageSigningRequest(null);
@@ -286,6 +311,7 @@ export const useMessageHandler = (): UseMessageHandlerReturn => {
   return {
     incomingRequest,
     sessionPreferences,
+    sessionPermissionRequest,
     authenticationRequest,
     typedDataSigningRequest,
     messageSigningRequest,

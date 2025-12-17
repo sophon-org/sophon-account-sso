@@ -1,3 +1,4 @@
+import { sophonOSTestnet } from '@sophon-labs/account-core';
 import { useGasEstimation } from '@sophon-labs/account-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useAccount } from 'wagmi';
@@ -11,7 +12,7 @@ export const GasEstimation = () => {
     to: '0xE676a42fEd98d51336f02510bB5d598893AbfE90', // MOCK MintMe token
     data: '0xa9059cbb000000000000000000000000feb22da05537b4b63bb63417b10935819facb81c0000000000000000000000000000000000000000000000000de0b6b3a7640000', // transfer(address,uint256)
     value: '0',
-    chainId: 531050104, // Sophon Testnet
+    chainId: sophonOSTestnet.id, // Sophon Testnet
     enabled: false,
   });
 

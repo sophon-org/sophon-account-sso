@@ -3,6 +3,7 @@ import { useSophonAccount, useSophonConsent } from '@sophon-labs/account-react';
 import { formatUnits } from 'viem';
 import { useBalance } from 'wagmi';
 import MintPanel from './mint.panel';
+import SessionPanel from './session.panel';
 import SimpleSignaturePanel from './simple-signature.panel';
 import TransactionERC20Panel from './transaction-erc20.panel';
 import TransactionNativePanel from './transaction-native.panel';
@@ -22,14 +23,9 @@ export const ProfilePanel = () => {
   const handleRequestConsent = async () => {
     try {
       const response = await requestConsent();
-      const content = response.content;
-      if (content.result) {
-        console.log('✅ Consent granted:', content.result);
-      } else if (content.error) {
-        console.log('❌ Consent refused:', content.error.message);
-      }
+      console.log('✅ Consent granted:', response);
     } catch (error) {
-      console.error('Consent request failed:', error);
+      console.error('❌ Consent request failed:', error);
     }
   };
 
@@ -46,6 +42,7 @@ export const ProfilePanel = () => {
           {balance ? formatUnits(balance.value, balance.decimals) : '0'}
         </p>
       </div>
+      <SessionPanel />
       <SimpleSignaturePanel />
       <TypedSignaturePanel />
       <TransactionNativePanel />

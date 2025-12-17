@@ -2,22 +2,23 @@ import {
   createMeeClient,
   getDefaultMEENetworkUrl,
   getDefaultMeeGasTank,
-  getMEEVersion,
-  MEEVersion,
-  toMultichainNexusAccount,
+  type Signer,
 } from '@biconomy/abstractjs';
-import { sophonOSTestnet } from '@sophon-labs/account-core';
+import {
+  buildBiconomyAccount,
+  type ChainId,
+  IsStagingChain,
+} from '@sophon-labs/account-core';
 import type { Address } from 'viem';
-import { http } from 'viem';
 import { SOPHON_VIEM_CHAIN } from '@/lib/constants';
 import type { TransactionRequest } from '@/types/auth';
-import type { MeeSigner, TransactionDeps } from '@/types/transaction';
+import type { TransactionDeps } from '@/types/transaction';
 import {
   createPrimaryWalletAccount,
   createWalletAccount,
 } from '../signature/localAccounts';
 
-const isStaging = SOPHON_VIEM_CHAIN.id === sophonOSTestnet.id; // isStaging should be true for testnet
+const isStaging = IsStagingChain(SOPHON_VIEM_CHAIN.id as ChainId);
 const sponsorshipApiKey = process.env.NEXT_PUBLIC_SPONSORSHIP_API_KEY; // default staging api key (rate limited) with sponsorship enabled
 const meeNetworkUrl = getDefaultMEENetworkUrl(isStaging);
 const meeGasTank = getDefaultMeeGasTank(isStaging);
@@ -35,22 +36,15 @@ const buildTransactionData = (transactionRequest: TransactionRequest) => {
 };
 
 const executeMeeTransaction = async (
-  ownerAccount: MeeSigner,
+  ownerAccount: Signer,
   transactionRequest: TransactionRequest,
   accountAddress?: Address,
 ) => {
-  const smartAccount = await toMultichainNexusAccount({
-    signer: ownerAccount,
-    chainConfigurations: [
-      {
-        chain: SOPHON_VIEM_CHAIN,
-        transport: http(),
-        version: getMEEVersion(MEEVersion.V2_1_0),
-        ...(accountAddress ? { accountAddress } : {}),
-      },
-    ],
-  });
-
+  const smartAccount = await buildBiconomyAccount(
+    SOPHON_VIEM_CHAIN,
+    ownerAccount,
+    accountAddress,
+  );
   const instructions = await smartAccount.build({
     type: 'default',
     data: {

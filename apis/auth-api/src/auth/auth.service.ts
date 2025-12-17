@@ -18,7 +18,12 @@ import jwt, {
 import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
 import { toConsentClaims } from "src/consents/consent-claims.util";
 import { ConsentsService } from "src/consents/consents.service";
-import { Address, type TypedDataDefinition, verifyTypedData } from "viem";
+import {
+	Address,
+	type TypedDataDefinition,
+	TypedDataDomain,
+	verifyTypedData,
+} from "viem";
 import { JwtKeysService } from "../aws/jwt-keys.service";
 import { authConfig } from "../config/auth.config";
 import {
@@ -242,7 +247,7 @@ export class AuthService {
 			isValid = await verifyEIP1271Signature({
 				accountAddress: address,
 				signature,
-				domain: { name: "Sophon SSO", version: "1", chainId: network.id },
+				domain: typedData.domain as TypedDataDomain,
 				types: typedData.types,
 				primaryType: typedData.primaryType,
 				message: typedData.message,

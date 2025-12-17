@@ -14,6 +14,7 @@ import { handleChainId } from './handlers/handleChainId';
 import { handlePersonalSign } from './handlers/handlePersonalSign';
 import { handleRequestAccounts } from './handlers/handleRequestAccounts';
 import { handleRequestConsent } from './handlers/handleRequestConsent';
+import { handleRequestSessionPermission } from './handlers/handleRequestSessionPermission';
 import { handleRevokePermissions } from './handlers/handleRevokePermissions';
 import { handleSendTransaction } from './handlers/handleSendTransaction';
 import { handleSignTypedDataV4 } from './handlers/handleSignTypedDataV4';
@@ -129,6 +130,18 @@ export function createSophonEIP1193Provider(
         case 'sophon_requestConsent': {
           // console.log('EIP-1193 sophon_requestConsent:', method, params);
           return handleRequestConsent(executeRequest, params as unknown[]);
+        }
+
+        case 'sophon_requestSessionPermission': {
+          // console.log(
+          //   'EIP-1193 sophon_requestSessionPermission:',
+          //   method,
+          //   params,
+          // );
+          return handleRequestSessionPermission(
+            executeRequest,
+            params as unknown[],
+          );
         }
 
         case 'wallet_revokePermissions': {
