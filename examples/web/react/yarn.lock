@@ -1872,31 +1872,31 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-communicator@npm:3.0.0-next.33":
-  version: 3.0.0-next.33
-  resolution: "@sophon-labs/account-communicator@npm:3.0.0-next.33"
+"@sophon-labs/account-communicator@npm:3.0.0-next.34":
+  version: 3.0.0-next.34
+  resolution: "@sophon-labs/account-communicator@npm:3.0.0-next.34"
   peerDependencies:
     typescript: ^5.0.0
-  checksum: 10c0/82e79e6d3546f2419f4c4fbc15ee69b86563fac4a4efc0d1518d3efbdfdc9e9da2a0185549a2e16d709f368bc6e709bd2ed6c284404cc97a02e719f74107a908
+  checksum: 10c0/8e147e003a5547a4b65b5bcabb2a64ccc5008704c35d837a169fb1b7cde61f3626aa71db9f4fcd05f5849ef86082b55cd5fd02124286e0e22f234c243be01c0f
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-connector@file:../../../packages/account-connector::locator=%40sophon-labs%2Fexamples-react-sdk%40workspace%3A.":
-  version: 3.0.0-next.33
-  resolution: "@sophon-labs/account-connector@file:../../../packages/account-connector#../../../packages/account-connector::hash=e746c7&locator=%40sophon-labs%2Fexamples-react-sdk%40workspace%3A."
+"@sophon-labs/account-connector@npm:3.0.0-next.34":
+  version: 3.0.0-next.34
+  resolution: "@sophon-labs/account-connector@npm:3.0.0-next.34"
   dependencies:
-    "@sophon-labs/account-core": "npm:3.0.0-next.33"
-    "@sophon-labs/account-provider": "npm:3.0.0-next.33"
+    "@sophon-labs/account-core": "npm:3.0.0-next.34"
+    "@sophon-labs/account-provider": "npm:3.0.0-next.34"
     "@wagmi/core": "npm:^2.17.3"
   peerDependencies:
     viem: ">=2.21.0"
-  checksum: 10c0/18228c57fa98ad633369f9704ba80d09090189aa3dbeb46bcad3e480a27d1806c4a1ae366a777f4f8288c3dedcdab6e4e2679c1742ff5fce38287a3b554eb6b1
+  checksum: 10c0/ad775b21a7714600115ad0c171cbce50854ce745ad329289e6ff62027f9d629d2f384e1c2ba3e799d2e27d02ccabf7be01ad778afee3489a75a08282614534b7
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-core@file:../../../packages/account-core::locator=%40sophon-labs%2Fexamples-react-sdk%40workspace%3A.":
-  version: 3.0.0-next.33
-  resolution: "@sophon-labs/account-core@file:../../../packages/account-core#../../../packages/account-core::hash=0b6cb1&locator=%40sophon-labs%2Fexamples-react-sdk%40workspace%3A."
+"@sophon-labs/account-core@npm:3.0.0-next.34":
+  version: 3.0.0-next.34
+  resolution: "@sophon-labs/account-core@npm:3.0.0-next.34"
   dependencies:
     "@biconomy/abstractjs": "npm:^1.1.19"
     "@metamask/delegation-toolkit": "npm:~0.11.0"
@@ -1905,31 +1905,31 @@ __metadata:
     tslib: "npm:^2.8.1"
   peerDependencies:
     viem: ">=2.21.0"
-  checksum: 10c0/ac0ff6e934dee9e29718e8cc490d0c58f6e2f971562a3a50aed0e3f0eba1bf8c38cbe6c49106500b23677ce71ee9adb73649bd316361fe9881a4e780d7e687bc
+  checksum: 10c0/04048d793cd5d3c28c807b9978b55a7482d1c82100c4b18303cab1c8fc3c4f25f95535ead5099c173f53e7b50a26999fa06916bd750fe8b7737d9a7f801e3c6d
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-provider@file:../../../packages/account-provider::locator=%40sophon-labs%2Fexamples-react-sdk%40workspace%3A.":
-  version: 3.0.0-next.33
-  resolution: "@sophon-labs/account-provider@file:../../../packages/account-provider#../../../packages/account-provider::hash=9cdb3e&locator=%40sophon-labs%2Fexamples-react-sdk%40workspace%3A."
+"@sophon-labs/account-provider@npm:3.0.0-next.34":
+  version: 3.0.0-next.34
+  resolution: "@sophon-labs/account-provider@npm:3.0.0-next.34"
   dependencies:
-    "@sophon-labs/account-communicator": "npm:3.0.0-next.33"
-    "@sophon-labs/account-core": "npm:3.0.0-next.33"
+    "@sophon-labs/account-communicator": "npm:3.0.0-next.34"
+    "@sophon-labs/account-core": "npm:3.0.0-next.34"
     eventemitter3: "npm:^5.0.1"
     json-rpc-2.0: "npm:^1.7.1"
   peerDependencies:
     typescript: ^5.0.0
     viem: ">=2.21.0"
-  checksum: 10c0/c6681e24c174ded1f89f476fb9c0d1ea2cc4fd20a8b7b22d37b67e0b154810b541a23d20693b699ea3a6d4154cc246982809d1a3f5a5476642812edb158ce6cf
+  checksum: 10c0/c40e6b2fb869bb28c08c91aa9c1ae73d9a188137513d6e60dce9235717821691ad8b03bb1d9265c4c0acf21d361b74d27d969b3bc93c9278b5256e3a896d3e98
   languageName: node
   linkType: hard
 
-"@sophon-labs/account-react@file:../../../packages/account-react::locator=%40sophon-labs%2Fexamples-react-sdk%40workspace%3A.":
-  version: 3.0.0-next.33
-  resolution: "@sophon-labs/account-react@file:../../../packages/account-react#../../../packages/account-react::hash=bec7fa&locator=%40sophon-labs%2Fexamples-react-sdk%40workspace%3A."
+"@sophon-labs/account-react@npm:3.0.0-next.34":
+  version: 3.0.0-next.34
+  resolution: "@sophon-labs/account-react@npm:3.0.0-next.34"
   dependencies:
-    "@sophon-labs/account-connector": "npm:3.0.0-next.33"
-    "@sophon-labs/account-core": "npm:3.0.0-next.33"
+    "@sophon-labs/account-connector": "npm:3.0.0-next.34"
+    "@sophon-labs/account-core": "npm:3.0.0-next.34"
     axios: "npm:^1.11.0"
     clsx: "npm:^2.1.1"
     js-cookie: "npm:^3.0.5"
@@ -1939,7 +1939,7 @@ __metadata:
     react-dom: ">=18"
     viem: ">=2.21.0"
     wagmi: ">=2"
-  checksum: 10c0/3304a2f534d5ac416997b56e5e58b6a7d1e26079a9c17c0c2b01baebcce4cadba9330ecaad823072022c80533b46cd7cb41c6dc4f3e7625a8fa0db4f58cf7d25
+  checksum: 10c0/f6928a31695eff2fb6aab69fe64e15e391738cde348aad820ba573665ced3e6d99eee4d2c1280ed1c43190d8b39fd65a3513bfb5d0450dafbc7c8f8b5d9dc3ff
   languageName: node
   linkType: hard
 
@@ -1947,10 +1947,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@sophon-labs/examples-react-sdk@workspace:."
   dependencies:
-    "@sophon-labs/account-connector": "file:../../../packages/account-connector"
-    "@sophon-labs/account-core": "file:../../../packages/account-core"
-    "@sophon-labs/account-provider": "file:../../../packages/account-provider"
-    "@sophon-labs/account-react": "file:../../../packages/account-react"
+    "@sophon-labs/account-core": "npm:3.0.0-next.34"
+    "@sophon-labs/account-react": "npm:3.0.0-next.34"
     "@tailwindcss/postcss": "npm:^4.1.17"
     "@tanstack/react-query": "npm:^5.90.12"
     "@types/node": "npm:^24.10.2"
