@@ -24,7 +24,6 @@ export const signTypedDataOnOsChain = async (
 ) => {
   const { isEthereumWallet } = await import('@dynamic-labs/ethereum');
   if (deps.primaryWallet && isEthereumWallet(deps.primaryWallet)) {
-    console.log('SIGNING TYPED DATA ON OS CHAIN WITH PRIMARY WALLET', deps.primaryWallet.address, deps.account?.address);
     const ownerAccount = await createPrimaryWalletAccount(deps.primaryWallet);
 
     const smartAccount = await toNexusAccount({
@@ -49,7 +48,6 @@ export const signTypedDataOnOsChain = async (
   }
 
   if (deps.isEOAAccount) {
-    console.log('SIGNING TYPED DATA ON OS CHAIN WITH EOA', deps.connectedAddress);
     if (!deps.connectedAddress) {
       throw new Error('Wallet not connected for EOA signing!');
     }

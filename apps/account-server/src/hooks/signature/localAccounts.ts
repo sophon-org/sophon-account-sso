@@ -15,7 +15,6 @@ export const createPrimaryWalletAccount = async (primaryWallet: {
   return toAccount({
     address: walletClient.account.address as Address,
     async signMessage({ message }) {
-      console.log('DYNAMIC SIGN MESSAGE', walletClient.account!.address, message);
       const result = await walletClient.signMessage({
         message,
         account: walletClient.account!.address as Address,
@@ -24,7 +23,6 @@ export const createPrimaryWalletAccount = async (primaryWallet: {
       return result;
     },
     async signTransaction(transaction) {
-      console.log('DYNAMIC SIGN TRANSACTION', walletClient.account!.address);
       const result = await walletClient.signTransaction(
         transaction as WalletSignTxParams,
       );
@@ -32,7 +30,6 @@ export const createPrimaryWalletAccount = async (primaryWallet: {
       return result;
     },
     async signTypedData(typedData) {
-      console.log('DYNAMIC SIGN TYPED', walletClient.account!.address);
       const result = await walletClient.signTypedData({
         ...typedData,
         account: walletClient.account!.address as Address,

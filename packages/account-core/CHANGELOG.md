@@ -1,5 +1,35 @@
 # @sophon-labs/account-core
 
+## 3.0.0-next.34
+
+### Patch Changes
+
+- Refactoring
+
+## 3.0.0-next.33
+
+### Patch Changes
+
+- .2
+
+## 3.0.0-next.32
+
+### Patch Changes
+
+- .
+
+## 3.0.0-next.31
+
+### Patch Changes
+
+- Updating viem extension
+
+## 3.0.0-next.30
+
+### Patch Changes
+
+- Adding hooks and viem support for session request
+
 ## 3.0.0-next.29
 
 ### Patch Changes

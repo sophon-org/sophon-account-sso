@@ -7,6 +7,7 @@ import { MainStateMachineContext } from '@/context/state-machine-context';
 type DrawerContentType =
   | 'raw-transaction'
   | 'raw-signing'
+  | 'raw-session'
   | 'fee-details'
   | 'error'
   | null;
@@ -37,6 +38,7 @@ export const useRequestDrawer = () => {
     const transactionRequest = state.context.requests?.transaction;
     const typedDataSigning = state.context.requests?.typedDataSigning;
     const messageSigning = state.context.requests?.messageSigning;
+    const sessionPermission = state.context.requests?.sessionPermission;
 
     switch (drawerState.contentType) {
       case 'raw-transaction':
@@ -52,6 +54,14 @@ export const useRequestDrawer = () => {
           <div className="p-4">
             <pre className="text-xs bg-gray-100 p-3 rounded overflow-auto whitespace-pre-wrap break-words">
               {JSON.stringify(typedDataSigning || messageSigning, null, 2)}
+            </pre>
+          </div>
+        );
+      case 'raw-session':
+        return (
+          <div className="p-4">
+            <pre className="text-xs bg-gray-100 p-3 rounded overflow-auto whitespace-pre-wrap break-words">
+              {JSON.stringify(sessionPermission, null, 2)}
             </pre>
           </div>
         );

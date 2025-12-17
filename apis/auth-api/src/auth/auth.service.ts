@@ -229,21 +229,12 @@ export class AuthService {
 			);
 		}
 
-		console.log("VALIDATING network", effectiveChainId);
 		let isValid = false;
 		// with the new blockchain comming, for now, if we receive an owner address,
 		// it means that we don't have the contract deployed already, so we need to verify
 		// the signature with the owner address
 		// TODO: when we have the new blockchain ready, we need to remove this logic and use the EIP-1271 signature verification
 		if (ownerAddress) {
-			console.log("VALIDATING ownerAddress", ownerAddress, {
-				address: ownerAddress,
-				primaryType: typedData.primaryType,
-				types: typedData.types,
-				domain: typedData.domain,
-				message: typedData.message,
-				signature,
-			});
 			isValid = await verifyTypedData({
 				address: ownerAddress,
 				primaryType: typedData.primaryType,
@@ -252,22 +243,7 @@ export class AuthService {
 				message: typedData.message,
 				signature,
 			});
-
-			console.log(
-				"isValid",
-				{
-					address: ownerAddress,
-					primaryType: typedData.primaryType,
-					types: typedData.types,
-					domain: typedData.domain,
-					message: typedData.message,
-					signature,
-				},
-				isValid,
-			);
 		} else {
-			console.log("VALIDATING EIP1271", address, contentsHash);
-			console.log("NETWORK", network.id, typedData.domain?.chainId);
 			isValid = await verifyEIP1271Signature({
 				accountAddress: address,
 				signature,

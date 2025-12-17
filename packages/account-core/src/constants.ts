@@ -24,6 +24,12 @@ export const SophonChains: Record<ChainId, Chain> = {
   [sophonOSTestnet.id]: sophonOSTestnet,
 };
 
+export const IsProductionChain = (chainId: ChainId) => {
+  return chainId === sophon.id || chainId === sophonOS.id;
+};
+
+export const IsStagingChain = (chainId: ChainId) => !IsProductionChain(chainId);
+
 /**
  * Maps the embedded wallet provider per chain, in the near future we may
  * have one for the old chain and other for the new os chain
@@ -196,7 +202,8 @@ export const CHAIN_CONTRACTS: Record<ChainId, ContractAddresses> = {
   [sophonOS.id]: {
     session: zeroAddress,
     passkey: zeroAddress,
-    accountFactory: '0x000000002c9A405a196f2dc766F2476B731693c3',
+    // accountFactory: '0x000000002c9A405a196f2dc766F2476B731693c3', // original biconomy account factory
+    accountFactory: '0x5457Ce09A36cCd2b976497670979b90dC9465852', // sophon account factory wrapper with SNS support
     accountImplementation: '0x0000000020fe2F30453074aD916eDeB653eC7E9D',
     bootstrap: '0x000000007BfEdA33ac982cb38eAaEf5D7bCC954c',
     accountPaymaster: zeroAddress,
@@ -210,7 +217,8 @@ export const CHAIN_CONTRACTS: Record<ChainId, ContractAddresses> = {
   [sophonOSTestnet.id]: {
     session: zeroAddress,
     passkey: zeroAddress,
-    accountFactory: '0x000000002c9A405a196f2dc766F2476B731693c3',
+    // accountFactory: '0x000000002c9A405a196f2dc766F2476B731693c3', // original biconomy account factory
+    accountFactory: '0x5457Ce09A36cCd2b976497670979b90dC9465852', // sophon account factory wrapper with SNS support
     accountImplementation: '0x0000000020fe2F30453074aD916eDeB653eC7E9D',
     bootstrap: '0x000000007BfEdA33ac982cb38eAaEf5D7bCC954c',
     accountPaymaster: zeroAddress,

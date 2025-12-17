@@ -66,7 +66,6 @@ export class ContractController {
 		@Param("owner") owner: Address,
 		@Headers("x-chain-id") chainId?: number,
 	) {
-		console.log('DEPLOY CONTRACT', owner, chainId);
 		const effectiveChainId = Number(chainId ?? process.env.CHAIN_ID);
 		if (!isChainId(effectiveChainId)) {
 			throw new BadRequestException({

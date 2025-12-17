@@ -5754,8 +5754,8 @@ __metadata:
   linkType: hard
 
 "@sophon-labs/account-core@file:../../packages/account-core::locator=%40sophon-labs%2Faccount-server%40workspace%3A.":
-  version: 3.0.0-next.29
-  resolution: "@sophon-labs/account-core@file:../../packages/account-core#../../packages/account-core::hash=76feb6&locator=%40sophon-labs%2Faccount-server%40workspace%3A."
+  version: 3.0.0-next.33
+  resolution: "@sophon-labs/account-core@file:../../packages/account-core#../../packages/account-core::hash=0b6cb1&locator=%40sophon-labs%2Faccount-server%40workspace%3A."
   dependencies:
     "@biconomy/abstractjs": "npm:^1.1.19"
     "@metamask/delegation-toolkit": "npm:~0.11.0"
@@ -5764,18 +5764,18 @@ __metadata:
     tslib: "npm:^2.8.1"
   peerDependencies:
     viem: ">=2.21.0"
-  checksum: 10c0/bee22c446f3a4ee19c08ca2357a8daa594ecc16c53ef0a5626447042e0137f49606298be48e275149e8f849c38d2b3f4b48d00d2cb58f023a60afe1da4c907c5
+  checksum: 10c0/ac0ff6e934dee9e29718e8cc490d0c58f6e2f971562a3a50aed0e3f0eba1bf8c38cbe6c49106500b23677ce71ee9adb73649bd316361fe9881a4e780d7e687bc
   languageName: node
   linkType: hard
 
 "@sophon-labs/account-message-bridge@file:../../packages/account-message-bridge::locator=%40sophon-labs%2Faccount-server%40workspace%3A.":
-  version: 3.0.0-next.29
-  resolution: "@sophon-labs/account-message-bridge@file:../../packages/account-message-bridge#../../packages/account-message-bridge::hash=05f3ed&locator=%40sophon-labs%2Faccount-server%40workspace%3A."
+  version: 3.0.0-next.33
+  resolution: "@sophon-labs/account-message-bridge@file:../../packages/account-message-bridge#../../packages/account-message-bridge::hash=7ddf06&locator=%40sophon-labs%2Faccount-server%40workspace%3A."
   dependencies:
     eventemitter3: "npm:5.0.1"
   peerDependencies:
     react-native-webview: ">=13.12.5"
-  checksum: 10c0/a27b484b6f82f150661b00608888a991418cbca6ab4554144afdd466374933f1303a99ad19411e2034c8169be38196efd1aff1c174f8339f54613f3f6e17d5c3
+  checksum: 10c0/279115bdc95f34b9293e62213a3288f6226a9ce060d50359be593ac5c2b64dcd0e2d1aa458d0c2431725cb0f6a72a47006234e1c64ed6e20c7163765238c5d81
   languageName: node
   linkType: hard
 

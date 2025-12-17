@@ -1,5 +1,7 @@
 import { defineChain } from 'viem';
 
+export const TESTNET_RPC_URL = 'https://zksync-os-testnet-sophon.zksync.dev';
+
 export const sophonOSTestnet = defineChain({
   id: 531050204,
   name: 'Sophon OS Testnet',
@@ -10,7 +12,11 @@ export const sophonOSTestnet = defineChain({
   },
   rpcUrls: {
     default: {
-      http: ['https://rpc.testnet.os.sophon.com'],
+      http: [TESTNET_RPC_URL],
+      webSocket: ['wss://rpc.testnet.os.sophon.com/ws'],
+    },
+    public: {
+      http: [TESTNET_RPC_URL],
       webSocket: ['wss://rpc.testnet.os.sophon.com/ws'],
     },
   },

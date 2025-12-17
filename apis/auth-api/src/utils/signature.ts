@@ -35,12 +35,6 @@ export const verifyEIP1271Signature = async ({
 		const messageHash =
 			contentsHash ?? hashTypedData({ domain, types, primaryType, message });
 
-		console.log("🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥 contentsHash", contentsHash);
-		console.log(
-			"HASHED MESSAGE",
-			hashTypedData({ domain, types, primaryType, message }),
-		);
-
 		logger.debug({
 			evt: "eip1271.hash",
 			accountAddress,

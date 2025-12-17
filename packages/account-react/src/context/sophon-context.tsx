@@ -8,8 +8,10 @@ import {
   AccountAuthAPIURL,
   AccountServerURL,
   type ChainId,
+  createSophonWalletClient,
   type DataScopes,
   SophonChains,
+  type SophonWalletClient,
 } from '@sophon-labs/account-core';
 import type { EIP1193Provider } from '@sophon-labs/account-provider';
 import {
@@ -19,15 +21,8 @@ import {
   useMemo,
   useState,
 } from 'react';
-import {
-  type Address,
-  type Chain,
-  createWalletClient,
-  custom,
-  type WalletClient,
-} from 'viem';
+import { type Address, type Chain, custom } from 'viem';
 import { sophon, sophonTestnet } from 'viem/chains';
-import { eip712WalletActions } from 'viem/zksync';
 import type { Connector } from 'wagmi';
 import { clearCookieAuthToken, setCookieAuthToken } from '../cookie';
 import { SophonAppStorage, StorageKeys } from '../storage/storage';
@@ -37,7 +32,7 @@ import { SophonMessageHandler } from './sophon-message-handler';
 export interface SophonContextConfig {
   partnerId: string;
   authServerUrl?: string;
-  walletClient?: WalletClient;
+  walletClient?: SophonWalletClient;
   account?: SophonAccount;
   setAccount: (account?: SophonAccount) => void;
   chain: Chain;
@@ -174,16 +169,17 @@ export const SophonContextProvider = ({
 
   const walletClient = useMemo(
     () =>
-      createWalletClient({
-        chain: chain,
-        transport: custom({
+      createSophonWalletClient(
+        chain,
+        custom({
           async request({ method, params }) {
             // biome-ignore lint/suspicious/noExplicitAny: TODO: revisit the typing
             const provider: any = await connector.getProvider();
+            console.log('request on provider:', method, params);
             return await provider.request({ method, params });
           },
         }),
-      }).extend(eip712WalletActions()),
+      ),
     [chain, connector],
   );
 
