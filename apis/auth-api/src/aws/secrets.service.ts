@@ -16,6 +16,8 @@ export type JwtSecrets = {
 	databaseUrl?: string;
 	dynamicToken?: string;
 	deployer: { privateKey: Hex };
+	signer: { privateKey: Hex };
+	biconomy: { apiKey: string };
 };
 
 @Injectable()
@@ -70,6 +72,12 @@ export class SecretsService {
 			dynamicToken: s.DYNAMICAUTH_API_TOKEN,
 			deployer: {
 				privateKey: this.normalize(s.DEPLOYER_PRIVATE_KEY) as Hex,
+			},
+			signer: {
+				privateKey: this.normalize(s.SIGNER_PRIVATE_KEY) as Hex,
+			},
+			biconomy: {
+				apiKey: s.BICONOMY_API_KEY,
 			},
 		};
 

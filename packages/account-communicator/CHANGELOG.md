@@ -1,5 +1,11 @@
 # @sophon-labs/account-eip6963
 
+## 3.0.0-next.37
+
+### Patch Changes
+
+- adding signer to biconomy calls
+
 ## 3.0.0-next.36
 
 ### Patch Changes

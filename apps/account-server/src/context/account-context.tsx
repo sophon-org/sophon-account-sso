@@ -12,6 +12,7 @@ import {
   useState,
 } from 'react';
 import { type Address, zeroAddress } from 'viem';
+import { privateKeyToAccount } from 'viem/accounts';
 import { LOCAL_STORAGE_KEY, SOPHON_VIEM_CHAIN } from '@/lib/constants';
 import { sendAuthMessage } from '@/lib/events';
 import { getDeployedSmartContractAddress } from '@/lib/smart-contract';
@@ -61,10 +62,14 @@ const AccountContextProvider: React.FC<{ children: React.ReactNode }> = ({
       let deployedAddress: Address | null = null;
 
       if (isOsChainId(SOPHON_VIEM_CHAIN.id)) {
+        const signerAccount = privateKeyToAccount(
+          '0x6481b563bd4fc0da729186c3a7d100b42f494502ccb9fc06211dd746bdc75162',
+        ); // TODO: move to backend
         deployedAddress = (
           await getBiconomyAccountsByOwner(
             SOPHON_VIEM_CHAIN.id,
             account!.address,
+            signerAccount,
           )
         )[0];
       } else {

@@ -13,6 +13,7 @@ import { SecretsService } from "src/aws/secrets.service";
 import { HyperindexService } from "src/hyperindex/hyperindex.service";
 import { normalizeAndValidateAddress } from "src/utils/address";
 import {
+	Account,
 	Address,
 	Chain,
 	createWalletClient,
@@ -92,8 +93,13 @@ export class ContractService {
 	private async getContractByOwnerBiconomy(
 		owner: Address,
 		chainId: ChainId,
+		signerAccount: Account,
 	): Promise<Address[]> {
-		const accounts = await getBiconomyAccountsByOwner(chainId, owner);
+		const accounts = await getBiconomyAccountsByOwner(
+			chainId,
+			owner,
+			signerAccount,
+		);
 
 		this.logger.log(
 			{
@@ -214,10 +220,28 @@ export class ContractService {
 		owner: Address,
 		chainId: ChainId,
 	): Promise<ContractDeployResponse> {
+		const secrets = await this.secretsService.loadAWSSecrets();
+
+		if (!secrets.biconomy.apiKey) {
+			throw new BadRequestException("Biconomy API key is not set");
+		}
+
+		if (!secrets.deployer.privateKey) {
+			throw new BadRequestException("Deployer private key is not set");
+		}
+
+		if (!secrets.signer.privateKey) {
+			throw new BadRequestException("Signer private key is not set");
+		}
+
+		const deployerAccount = privateKeyToAccount(secrets.deployer.privateKey);
+		const signerAccount = privateKeyToAccount(secrets.signer.privateKey);
+
 		// Check if already deployed (no Hyperindex, go straight to on-chain check)
 		const existingContracts = await this.getContractByOwnerBiconomy(
 			owner,
 			chainId,
+			signerAccount,
 		);
 		if (existingContracts.length > 0) {
 			this.logger.log("Contract already exists on chain");
@@ -228,14 +252,14 @@ export class ContractService {
 		}
 
 		// Deploy using Biconomy
-		//const secrets = await this.secretsService.loadAWSSecrets();
 		this.logger.log("Deploying contract with Biconomy Nexus");
 
 		const result = await deployBiconomyAccount(
 			chainId,
 			owner,
-			"0x0a64c2dbb70fb9059a354312467af1a5a6d4e041b67bcbebc11b1d7492d19142",
+			deployerAccount,
 			"", // Empty string for sophonName (SNS not implemented yet)
+			signerAccount,
 		);
 
 		this.logger.log({

@@ -6,6 +6,7 @@ import {
   toSmartSessionsModule,
 } from '@biconomy/abstractjs';
 import {
+  type Account,
   type Address,
   type Chain,
   createPublicClient,
@@ -145,12 +146,13 @@ export const isBiconomyAccountDeployed = async (
 export const deployBiconomyAccount = async (
   chainId: ChainId,
   ownerAddress: Address,
-  deployerPrivateKey: Hex,
+  deployerAccount: Account,
   sophonName: string = '',
+  sessionSigner?: Signer,
 ): Promise<DeploymentResult> => {
   // Compute the predicted address
   const { predictedAddress, initData, saltHex } =
-    await computeBiconomyAccountAddress(chainId, ownerAddress);
+    await computeBiconomyAccountAddress(chainId, ownerAddress, sessionSigner);
 
   // Check if already deployed
   const alreadyDeployed = await isBiconomyAccountDeployed(
@@ -165,9 +167,6 @@ export const deployBiconomyAccount = async (
       transactionHash: null,
     };
   }
-
-  // Create deployer account
-  const deployerAccount = privateKeyToAccount(deployerPrivateKey);
 
   // Create public client to check balance
   const publicClient = createPublicClient({
@@ -222,10 +221,12 @@ export const deployBiconomyAccount = async (
 export const getBiconomyAccountsByOwner = async (
   chainId: ChainId,
   ownerAddress: Address,
+  sessionSigner?: Signer,
 ): Promise<Address[]> => {
   const { predictedAddress } = await computeBiconomyAccountAddress(
     chainId,
     ownerAddress,
+    sessionSigner,
   );
 
   const isDeployed = await isBiconomyAccountDeployed(

@@ -1,5 +1,14 @@
 # @sophon-labs/account-react
 
+## 3.0.0-next.37
+
+### Patch Changes
+
+- adding signer to biconomy calls
+- Updated dependencies
+  - @sophon-labs/account-connector@3.0.0-next.37
+  - @sophon-labs/account-core@3.0.0-next.37
+
 ## 3.0.0-next.36
 
 ### Patch Changes
