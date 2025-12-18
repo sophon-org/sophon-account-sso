@@ -7,8 +7,10 @@ import {
   AuthService,
   CHAIN_CONTRACTS,
   checkChainCapability,
+  grantSessionPermission,
   isOsChainId,
   predictNexusOffchainByChain,
+  type SessionAction,
   safeParseTypedData,
 } from '@sophon-labs/account-core';
 import { useCallback, useMemo } from 'react';
@@ -394,6 +396,30 @@ export const useFlowManager = () => {
     [chainId, getAccessToken, currentRequest, setCurrentRequest],
   );
 
+  const approveSession = useCallback(
+    async (signer: Address, actions: SessionAction[]) => {
+      const ownerAccount = await createEmbeddedAccountSigner();
+      const approval = await grantSessionPermission(
+        chainId,
+        ownerAccount,
+        signer,
+        actions,
+        'mee_3Zmc7H6Pbd5wUfUGu27aGzdf', // TODO: Get from env
+      );
+
+      sendUIMessage('incomingRpc', {
+        id: crypto.randomUUID(),
+        requestId: currentRequest!.id,
+        content: {
+          result: approval,
+        },
+      });
+
+      setCurrentRequest(undefined);
+    },
+    [currentRequest, createEmbeddedAccountSigner, chainId, setCurrentRequest],
+  );
+
   return {
     hasRequest: !!currentRequest,
     method,
@@ -407,6 +433,7 @@ export const useFlowManager = () => {
       authorize,
       consent,
       waitForAuthentication,
+      approveSession,
     },
   };
 };

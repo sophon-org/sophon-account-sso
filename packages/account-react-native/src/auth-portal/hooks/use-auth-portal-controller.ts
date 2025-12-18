@@ -64,8 +64,8 @@ export const useAuthPortalController = (props: Props) => {
         return 'transaction';
       case 'sophon_requestConsent':
         return 'consent';
-      // case 'sophon_requestSessionPermission':
-      //   return 'sessionPermission';
+      case 'sophon_requestSessionPermission':
+        return 'sessionPermission';
       default:
         return null;
     }

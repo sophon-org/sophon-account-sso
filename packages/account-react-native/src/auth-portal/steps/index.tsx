@@ -4,6 +4,7 @@ import { AuthorizationStep } from './authorization-step';
 import { ConsentStep } from './consent-step';
 import { LoadingStep } from './loading-step';
 import { RetryStep } from './retry-step';
+import { SessionStep } from './session-step';
 import { SignInStep } from './sign-in-step';
 import { SignMessageStep } from './sign-message';
 import { TransactionStep } from './transaction-step';
@@ -23,6 +24,7 @@ const stepComponents: Record<
   [AuthPortalSteps.Retry]: RetryStep,
   [AuthPortalSteps.ConnectWallet]:
     null as unknown as React.ComponentType<BasicStepProps>,
+  [AuthPortalSteps.SessionPermission]: SessionStep,
 } as const;
 
 export const StepControllerComponent = memo(

@@ -161,8 +161,14 @@ export const useEmbeddedAuth = () => {
       },
       async signTypedData(typedData) {
         try {
+          console.log(
+            'Signing typed data',
+            typedData,
+            wallets.primary!.address,
+          );
           // @ts-expect-error - Type mismatch between viem account interface and wallet client
-          const result = await walletClient.signTypedData(...typedData, {
+          const result = await walletClient.signTypedData({
+            ...typedData,
             account: wallets.primary!.address as Address,
           });
           return result;

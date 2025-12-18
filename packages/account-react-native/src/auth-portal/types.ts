@@ -14,6 +14,7 @@ export enum AuthPortalSteps {
   SignMessage = 'signMessage',
   Transaction = 'transaction',
   Consent = 'consent',
+  SessionPermission = 'sessionPermission',
 }
 export type AuthPortalStep = `${AuthPortalSteps}`;
 
@@ -109,6 +110,7 @@ export type CurrentParams = {
   [AuthPortalSteps.SignMessage]?: undefined;
   [AuthPortalSteps.Transaction]?: TransactionParams;
   [AuthPortalSteps.Consent]?: undefined;
+  [AuthPortalSteps.SessionPermission]?: undefined;
 };
 
 export type NavigationAuthPortalState = {

@@ -15,6 +15,7 @@ import { unverifiedAbi } from '@/abis/unverified';
 import { verifiedAbi } from '@/abis/verified';
 import JWTPanel from '@/components/me.panel';
 import { SendContractButton } from '@/components/send-contract-button';
+import { SessionPanel } from '@/components/session.panel';
 import { TestDashboard } from '@/components/test-dashboard';
 import { TokenTransaction } from '@/components/token-transaction';
 import { Button } from '@/components/ui/button';
@@ -135,6 +136,7 @@ export default function HomeScreen() {
             {hasConsent ? 'Consent granted' : 'Consent denied'}
           </Text>
         )}
+        {isConnected && <SessionPanel />}
         {isConnected && (
           <>
             <Text className="text-left text-xl font-bold">Signatures</Text>

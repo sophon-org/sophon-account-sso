@@ -11,4 +11,5 @@ export * from './use-sophon-client';
 export * from './use-sophon-consent';
 export * from './use-sophon-context';
 export * from './use-sophon-name';
+export * from './use-sophon-session';
 export * from './use-sophon-token';

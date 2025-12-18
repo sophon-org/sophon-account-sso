@@ -1,5 +1,11 @@
 # @sophon-labs/account-message-bridge
 
+## 3.0.0-next.36
+
+### Patch Changes
+
+- React native support
+
 ## 3.0.0-next.35
 
 ### Patch Changes
