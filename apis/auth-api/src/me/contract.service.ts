@@ -13,12 +13,12 @@ import { SecretsService } from "src/aws/secrets.service";
 import { HyperindexService } from "src/hyperindex/hyperindex.service";
 import { normalizeAndValidateAddress } from "src/utils/address";
 import {
-	Account,
 	Address,
 	Chain,
 	createWalletClient,
 	http,
 	isAddress,
+	LocalAccount,
 	zeroAddress,
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
@@ -45,6 +45,7 @@ export class ContractService {
 	async getContractByOwner(
 		owner: Address,
 		chainId: ChainId,
+		signerAccount: LocalAccount,
 	): Promise<Address[]> {
 		if (!owner?.trim() || !isAddress(owner.toLowerCase())) {
 			throw new BadRequestException(`Invalid address provided: ${owner}`);
@@ -59,7 +60,7 @@ export class ContractService {
 
 		// Route to appropriate implementation based on chain
 		if (isOsChainId(chainId)) {
-			return this.getContractByOwnerBiconomy(address, chainId);
+			return this.getContractByOwnerBiconomy(address, chainId, signerAccount);
 		}
 
 		return this.getContractByOwnerZkSync(address, chainId);
@@ -93,7 +94,7 @@ export class ContractService {
 	private async getContractByOwnerBiconomy(
 		owner: Address,
 		chainId: ChainId,
-		signerAccount: Account,
+		signerAccount: LocalAccount,
 	): Promise<Address[]> {
 		const accounts = await getBiconomyAccountsByOwner(
 			chainId,

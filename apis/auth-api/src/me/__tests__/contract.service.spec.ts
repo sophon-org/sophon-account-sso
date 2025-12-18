@@ -44,7 +44,7 @@ jest.mock("viem/zksync", () => ({
 }));
 
 import { getDeployedSmartContractAddress } from "@sophon-labs/account-core";
-import { privateKeyToAccount } from "viem/accounts";
+import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { sophonTestnet } from "viem/chains";
 import { deployModularAccount } from "zksync-sso/client";
 
@@ -88,11 +88,13 @@ describe("ContractService", () => {
 		it("fails with invalid address provided - empty string", async () => {
 			// given
 			const invalidAddress = "" as Address;
+			const mockSignerAccount = privateKeyToAccount(generatePrivateKey());
 
 			// when
 			const promise = contractService.getContractByOwner(
 				invalidAddress,
 				531050104,
+				mockSignerAccount,
 			);
 
 			// then
@@ -103,11 +105,13 @@ describe("ContractService", () => {
 		it("fails with invalid address provided - not a valid ethereum address", async () => {
 			// given
 			const invalidAddress = "not-an-address" as Address;
+			const mockSignerAccount = privateKeyToAccount(generatePrivateKey());
 
 			// when
 			const promise = contractService.getContractByOwner(
 				invalidAddress,
 				531050104,
+				mockSignerAccount,
 			);
 
 			// then
@@ -125,11 +129,13 @@ describe("ContractService", () => {
 			hyperindexServiceMock.getK1OwnerStateByOwner.mockResolvedValue(
 				mockResponse,
 			);
+			const mockSignerAccount = privateKeyToAccount(generatePrivateKey());
 
 			// when
 			const result = await contractService.getContractByOwner(
 				validAddress,
 				531050104,
+				mockSignerAccount,
 			);
 
 			// then
@@ -146,11 +152,13 @@ describe("ContractService", () => {
 		it("calls hyperindex getK1OwnerStateByOwner and returns [] when empty array", async () => {
 			// given
 			hyperindexServiceMock.getK1OwnerStateByOwner.mockResolvedValue([]);
+			const mockSignerAccount = privateKeyToAccount(generatePrivateKey());
 
 			// when
 			const result = await contractService.getContractByOwner(
 				validAddress,
 				531050104,
+				mockSignerAccount,
 			);
 
 			// then

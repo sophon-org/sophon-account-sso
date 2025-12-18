@@ -21,7 +21,6 @@ import {
   zeroAddress,
   zeroHash,
 } from 'viem';
-import { privateKeyToAccount } from 'viem/accounts';
 import { NexusFactoryPassthroughAbi } from '../abis';
 import { CHAIN_CONTRACTS, type ChainId, SophonChains } from '../constants';
 

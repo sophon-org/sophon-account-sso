@@ -8,14 +8,19 @@ import {
 } from "@nestjs/common";
 import { ApiHeaders, ApiOkResponse, ApiParam, ApiTags } from "@nestjs/swagger";
 import { isChainId } from "@sophon-labs/account-core";
+import { SecretsService } from "src/aws/secrets.service";
 import type { Address } from "viem";
+import { privateKeyToAccount } from "viem/accounts";
 import { ContractService } from "./contract.service";
 import { ContractDeployResponse } from "./dto/contract-deploy-response.dto";
 
 @ApiTags("Smart Contract")
 @Controller("contract")
 export class ContractController {
-	constructor(private readonly contractService: ContractService) {}
+	constructor(
+		private readonly contractService: ContractService,
+		private readonly secretsService: SecretsService,
+	) {}
 
 	@Get("by-owner/:owner")
 	@ApiParam({
@@ -44,7 +49,17 @@ export class ContractController {
 			});
 		}
 
-		return this.contractService.getContractByOwner(owner, effectiveChainId);
+		const secrets = await this.secretsService.loadAWSSecrets();
+		const signerAccount = privateKeyToAccount(secrets.signer.privateKey);
+		if (!signerAccount) {
+			throw new BadRequestException("Signer account not found");
+		}
+
+		return this.contractService.getContractByOwner(
+			owner,
+			effectiveChainId,
+			signerAccount,
+		);
 	}
 
 	@Post(":owner")
