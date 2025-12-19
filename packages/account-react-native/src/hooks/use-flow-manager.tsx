@@ -1,9 +1,4 @@
 import {
-  getMEEVersion,
-  MEEVersion,
-  toNexusAccount,
-} from '@biconomy/abstractjs';
-import {
   AuthService,
   CHAIN_CONTRACTS,
   checkChainCapability,
@@ -14,15 +9,7 @@ import {
   safeParseTypedData,
 } from '@sophon-labs/account-core';
 import { useCallback, useMemo } from 'react';
-import {
-  type Address,
-  concat,
-  domainSeparator,
-  encodeAbiParameters,
-  http,
-  keccak256,
-  parseAbiParameters,
-} from 'viem';
+import type { Address } from 'viem';
 import type { SophonAccount } from '../context/sophon-context';
 import { sendUIMessage } from '../messaging';
 import { getRefusedRPC } from '../messaging/utils';
@@ -86,89 +73,66 @@ export const useFlowManager = () => {
       };
 
       if (isOsChainId(chainId)) {
-        try {
-          const appDomain = {
-            chainId: chainId,
+        // request signature
+        const messageFields = [
+          { name: 'content', type: 'string' },
+          { name: 'from', type: 'address' },
+          { name: 'nonce', type: 'string' },
+          { name: 'audience', type: 'string' },
+        ];
+
+        const message = {
+          content: `Do you authorize this website to connect?!\n\nThis message confirms you control this wallet.`,
+          from: account.address.toLowerCase(),
+          nonce,
+          audience: partnerId,
+        };
+
+        const signAuth = {
+          domain: {
             name: 'Sophon SSO',
-            verifyingContract: account.address as Address,
             version: '1',
-          };
-
-          const content = `Do you authorize this website to connect?!\n\nThis message confirms you control this wallet.`;
-          const primaryType = 'Contents';
-          const types = {
-            Contents: [
-              {
-                name: 'stuff',
-                type: 'bytes32',
-              },
+            chainId: chain.id,
+            verifyingContract: account.address,
+          },
+          types: {
+            Message: embeddedUserId
+              ? [...messageFields, { name: 'userId', type: 'string' }]
+              : messageFields,
+            EIP712Domain: [
+              { name: 'name', type: 'string' },
+              { name: 'version', type: 'string' },
+              { name: 'chainId', type: 'uint256' },
             ],
-          } as const;
+          },
+          primaryType: 'Message',
+          address: account.address.toLowerCase(),
+          message: embeddedUserId
+            ? { ...message, userId: embeddedUserId }
+            : message,
+        };
 
-          const abiParameters = embeddedUserId
-            ? 'string,address,string,string,string'
-            : 'string,address,string,string';
-          const abiValues = embeddedUserId
-            ? [content, account.address, nonce, partnerId, embeddedUserId]
-            : [content, account.address, nonce, partnerId];
+        const safePayload = safeParseTypedData(signAuth);
 
-          const message = {
-            stuff: keccak256(
-              encodeAbiParameters(
-                parseAbiParameters(abiParameters),
-                abiValues as [string, `0x${string}`, string, string],
-              ),
-            ),
-          };
+        const embeddedWalletClient = await createEmbeddedWalletClient();
 
-          const appDomainSeparator = domainSeparator({ domain: appDomain });
+        const signature = await embeddedWalletClient.signTypedData({
+          domain: safePayload.domain,
+          types: safePayload.types,
+          primaryType: safePayload.primaryType,
+          message: safePayload.message,
+        });
 
-          const contentsHash = keccak256(
-            concat(['0x1901', appDomainSeparator, message.stuff]),
-          );
-
-          const signAuth = {
-            domain: appDomain,
-            types,
-            primaryType,
-            address: account.address,
-            message,
-            contentsHash,
-          };
-
-          const safePayload = safeParseTypedData(signAuth);
-          const ownerAccount = await createEmbeddedAccountSigner();
-          const smartAccount = await toNexusAccount({
-            signer: ownerAccount,
-            chainConfiguration: {
-              chain: chain,
-              transport: http(),
-              version: getMEEVersion(MEEVersion.V2_2_1),
-              versionCheck: false,
-            },
-          });
-
-          const signature = await smartAccount.signTypedData({
-            domain: safePayload.domain,
-            primaryType: safePayload.primaryType,
-            types: safePayload.types,
-            message: safePayload.message,
-          });
-
-          tokens = await AuthService.requestToken(
-            chainId,
-            account.address.toLowerCase() as Address,
-            signAuth,
-            signature,
-            nonce,
-            undefined,
-            partnerId,
-            signAuth.contentsHash,
-          );
-        } catch (error) {
-          console.error('Failed to authorize', error);
-          throw error;
-        }
+        // exchange tokens
+        tokens = await AuthService.requestToken(
+          chainId,
+          account.address.toLowerCase() as Address,
+          signAuth,
+          signature,
+          nonce,
+          account.owner.toLowerCase() as Address,
+          partnerId,
+        );
       } else {
         // request signature
         const messageFields = [
@@ -190,6 +154,7 @@ export const useFlowManager = () => {
             name: 'Sophon SSO',
             version: '1',
             chainId: chain.id,
+            verifyingContract: account.address,
           },
           types: {
             Message: embeddedUserId
@@ -309,7 +274,6 @@ export const useFlowManager = () => {
       embeddedUserId,
       setConnectingAccount,
       setCurrentRequest,
-      createEmbeddedAccountSigner,
     ],
   );
 

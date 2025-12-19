@@ -1,5 +1,13 @@
 # @sophon-labs/account-partner
 
+## 3.0.0-next.38
+
+### Patch Changes
+
+- Updating react native signature to use owner instead of contract
+- Updated dependencies
+  - @sophon-labs/account-core@3.0.0-next.38
+
 ## 3.0.0-next.37
 
 ### Patch Changes
