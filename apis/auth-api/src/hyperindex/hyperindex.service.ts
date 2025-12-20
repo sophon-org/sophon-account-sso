@@ -3,9 +3,10 @@ import {
 	GatewayTimeoutException,
 	Inject,
 	Injectable,
+	Logger,
 } from "@nestjs/common";
 import { ConfigType } from "@nestjs/config";
-import { Address } from "viem";
+import { Address, keccak256, toHex } from "viem";
 import { hyperindexConfig } from "../config/hyperindex.config";
 
 type K1OwnerState = {
@@ -18,10 +19,16 @@ type GqlResp<T> = { data?: T; errors?: Array<{ message: string }> };
 
 @Injectable()
 export class HyperindexService {
+	private logger = new Logger(HyperindexService.name);
+
 	constructor(
 		@Inject(hyperindexConfig.KEY)
 		private readonly cfg: ConfigType<typeof hyperindexConfig>,
-	) {}
+	) {
+		if (this.cfg.mockMode) {
+			this.logger.log("HyperindexService initialized in MOCK MODE");
+		}
+	}
 
 	private async gql<T>(
 		query: string,
@@ -81,6 +88,21 @@ export class HyperindexService {
 			throw new BadGatewayException("Invalid k1Owner address");
 		}
 
+		// Mock mode: return deterministic mock smart wallet address
+		if (this.cfg.mockMode) {
+			const mockSmartWallet = this.generateMockSmartWallet(addr);
+			this.logger.debug(
+				`Mock mode: returning mock smart wallet ${mockSmartWallet} for owner ${addr}`,
+			);
+			return [
+				{
+					id: `mock-${addr}`,
+					k1Owner: addr as Address,
+					accounts: [mockSmartWallet as Address],
+				},
+			];
+		}
+
 		const query = /* GraphQL */ `
       query ($k1Owner: String!) {
         K1OwnerState(where: { k1Owner: { _eq: $k1Owner } }) {
@@ -96,6 +118,14 @@ export class HyperindexService {
 		});
 
 		return data.K1OwnerState ?? [];
+	}
+
+	/**
+	 * Generate a deterministic mock smart wallet address from owner address
+	 */
+	private generateMockSmartWallet(ownerAddress: string): string {
+		const hash = keccak256(toHex(`mock-smart-wallet:${ownerAddress}`));
+		return hash.slice(0, 42); // Return first 20 bytes as address
 	}
 
 	private normalizeAddress(s: string | undefined | null): string | null {

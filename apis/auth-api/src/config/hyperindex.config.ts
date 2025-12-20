@@ -6,4 +6,5 @@ export const hyperindexConfig = registerAs("hyperindex", () => ({
 		"https://indexer.hyperindex.xyz/0789a2f/v1/graphql", // TODO
 	apiKey: process.env.HYPERINDEX_API_KEY ?? undefined,
 	timeoutMs: Number(process.env.HYPERINDEX_TIMEOUT_MS ?? 8000),
+	mockMode: process.env.MOCK_CHAIN === "true",
 }));

@@ -15,6 +15,8 @@ import {
 	createWalletClient,
 	http,
 	isAddress,
+	keccak256,
+	toHex,
 	Transport,
 	WalletClient,
 	zeroAddress,
@@ -24,6 +26,8 @@ import { eip712WalletActions } from "viem/zksync";
 import { deployModularAccount } from "zksync-sso/client";
 import { ContractDeployResponse } from "./dto/contract-deploy-response.dto";
 
+const MOCK_MODE = process.env.MOCK_CHAIN === "true";
+
 @Injectable()
 export class ContractService {
 	private logger = new Logger(ContractService.name);
@@ -31,7 +35,11 @@ export class ContractService {
 	constructor(
 		private readonly hyperindex: HyperindexService,
 		private readonly secretsService: SecretsService,
-	) {}
+	) {
+		if (MOCK_MODE) {
+			this.logger.log("ContractService initialized in MOCK MODE");
+		}
+	}
 
 	/**
 	 * Fetch the deployed contract address for a given owner, if deployed.
@@ -88,6 +96,18 @@ export class ContractService {
 			};
 		}
 
+		// Mock mode: return deterministic mock smart wallet without actual deployment
+		if (MOCK_MODE) {
+			const mockSmartWallet = this.generateMockSmartWallet(ownerAddress);
+			this.logger.log(
+				`Mock mode: returning mock smart wallet ${mockSmartWallet} for deploy`,
+			);
+			return {
+				contracts: [mockSmartWallet as Address],
+				owner: ownerAddress,
+			};
+		}
+
 		const chain = getChainById(process.env.CHAIN_ID as SupportedChainId);
 		const secrets = await this.secretsService.loadAWSSecrets();
 		const deployerAccount = privateKeyToAccount(secrets.deployer.privateKey);
@@ -129,5 +149,13 @@ export class ContractService {
 			contracts: [deployedAccount.address],
 			owner: ownerAddress,
 		};
+	}
+
+	/**
+	 * Generate a deterministic mock smart wallet address from owner address
+	 */
+	private generateMockSmartWallet(ownerAddress: string): string {
+		const hash = keccak256(toHex(`mock-smart-wallet:${ownerAddress}`));
+		return hash.slice(0, 42); // Return first 20 bytes as address
 	}
 }
